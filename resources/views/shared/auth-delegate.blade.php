@@ -388,44 +388,24 @@
         <main id="main-content" role="main">
             <div class="form-back-drop"></div>
 
+            @hasSection('show-page-title')
             <!--Page Title-->
             <section class="page-title">
-                {{-- <img src="{{ asset('shared/user/images/slider_in/about_banner') }}.jpg"
-                    alt="ISMM 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
-                    title="ISMM 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
-                    style="width:100%; height:auto;"> --}}
                 <div class="anim-icons full-width">
                     <span class="icon icon-bull-eye"></span>
                     <span class="icon icon-dotted-circle"></span>
                 </div>
-
             </section>
             <!--End Page Title-->
+            @endif
 
             <!-- About Section Two -->
-            <section class="about-section-two">
+            <section class="about-section-two py-2">
                 <div class="auto-container">
-                    {{-- <div class="row">
-                        <!-- Content Column -->
-                        <div class="content-column col-lg-12 col-md-12 col-sm-12">
-                            <div class="inner-column">
-                                <div class="sec-title">
-                                    <!--<span class="sub-title">Get the latest info about</span>-->
-                                    <h2>@yield('inner-title')</h2>
-                                    <span class="divider"></span>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-
                     @yield('delegate-content')
-
-
                 </div>
-
-
             </section>
+        </main>
 
       <footer class="footer-area">
         <div class="footer-shape">

@@ -2,18 +2,18 @@
 @section('title', 'Payment - Scan QR Code')
 
 @section('delegate-content')
-    <div class="container py-4">
+    <div class="container py-2">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                    <div class="card-header text-center py-4"
-                        style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 15px 15px 0 0;">
-                        <h3 class="text-white mb-0 fw-bold">
+                <div class="card shadow border-0" style="border-radius: 12px;">
+                    <div class="card-header text-center py-2.5 px-3"
+                        style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 12px 12px 0 0;">
+                        <h5 class="text-white mb-0 fw-bold">
                             <i class="fas fa-qrcode me-2"></i>Payment - Scan QR Code
-                        </h3>
+                        </h5>
                     </div>
 
-                    <div class="card-body p-4 p-md-5">
+                    <div class="card-body p-3 p-md-4">
 
                         <!-- Session / Alert Messages -->
                         @if (session('success'))

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class AdminUser extends Authenticatable
 {
@@ -95,6 +96,10 @@ class AdminUser extends Authenticatable
      */
     public function permissions()
     {
+        if (!Schema::hasTable('admin_permissions') || !Schema::hasTable('admin_role_permissions')) {
+            return [];
+        }
+
         return DB::table('admin_permissions')
             ->join('admin_role_permissions', 'admin_permissions.id', '=', 'admin_role_permissions.permission_id')
             ->where('admin_role_permissions.role', $this->role)
@@ -107,6 +112,10 @@ class AdminUser extends Authenticatable
      */
     public function hasPermission($permission)
     {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
+            return true;
+        }
+
         return in_array($permission, $this->permissions());
     }
 
@@ -115,6 +124,10 @@ class AdminUser extends Authenticatable
      */
     public function hasAnyPermission(array $permissions)
     {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
+            return true;
+        }
+
         return count(array_intersect($permissions, $this->permissions())) > 0;
     }
 
@@ -123,6 +136,10 @@ class AdminUser extends Authenticatable
      */
     public function hasAllPermissions(array $permissions)
     {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
+            return true;
+        }
+
         return count(array_intersect($permissions, $this->permissions())) === count($permissions);
     }
 }
