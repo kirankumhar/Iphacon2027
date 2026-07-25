@@ -1,0 +1,556 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Registration;
+use App\Models\Payment;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Crypt;
+
+class PaymentController extends Controller
+{
+
+    public function gateway($encRegistrationId)
+    {
+        $user = Auth::user();
+
+        $decrypted = Crypt::decryptString($encRegistrationId);
+        $stepData = json_decode($decrypted, true);
+
+        if (!isset($stepData['reg_id'], $stepData['uid'])) {
+            abort(404);
+        }
+
+        $registrationId = (int) $stepData['reg_id'];
+        $uid = (int) $stepData['uid'];
+
+        $registration = Registration::where('user_id', $user->id)
+            ->where('id', $registrationId)
+            ->with(['delegateCategory', 'country', 'state'])
+            ->firstOrFail();
+
+        // Check if registration is ready for payment
+        if ($registration->status !== 'Draft' && $registration->step_completed < 3) {
+            return redirect()->route('registration.create')
+                ->with('error', 'Please complete all registration steps before payment.');
+        }
+
+        $data = $this->index($registration);
+
+        return view('payment.gateway', compact('registration', 'data'));
+    }
+
+    public function index($registration)
+    {
+        $merchTxnId = 'CONF' . $registration->id . '_' . time();
+        $totalAmount = $registration->calculateTotalAmount();
+
+        $login = "738775";
+        $password = "c7c909aa";
+        $product_id = "ASSOCIATION";
+        $date = date('Y-m-d H:i:s'); // current date
+        $encRequestKey = "FECC5464AF23EB279B7E1A3A746043E4";
+        $decResponseKey = "4AE12A7794F02329204685C298B4EDF0";
+        $api_url = "https://payment1.atomtech.in/ots/aipay/auth";
+        $user_email = auth()->user()->email;
+        $user_contact_number = auth()->user()->mobile_number;
+        $return_url = "http://127.0.0.1:8000/api/response";
+
+        $payData = array(
+            'login' => $login,
+            'password' => $password,
+            'amount' => $totalAmount,
+            'prod_id' => $product_id,
+            'txnId' => $merchTxnId,
+            'date' => $date,
+            'encKey' => $encRequestKey,
+            'decKey' => $decResponseKey,
+            'payUrl' => $api_url,
+            'email' => $user_email,
+            'mobile' => $user_contact_number,
+            'txnCurrency' => 'INR',
+            'return_url' => $return_url,
+            'udf1' => $registration->id,  // optional
+            'udf2' => "",  // optional
+            'udf3' => "",  // optional
+            'udf4' => "",  // optional
+            'udf5' => ""   // optional
+        );
+
+        $atomTokenId = $this->createTokenId($payData);
+
+        $data = array(
+            'login' => $login,
+            'amount' => $totalAmount,
+            'txnId' => $merchTxnId,
+            'mid' => 738775,
+            'email' => $user_email,
+            'mobile' => $user_contact_number,
+            'atomTokenId' => $atomTokenId,
+            'return_url' => $return_url,
+        );
+
+        return $data;
+
+        // return view('atompay')->with('data', $data)
+        //     ->with('atomTokenId', $atomTokenId);
+    }
+
+    //do not change anything in below function
+    public function createTokenId($data)
+    {
+
+        $jsondata = '{
+                 "payInstrument": {
+                     "headDetails": {
+                         "version": "OTSv1.1",
+                         "api": "AUTH",
+                         "platform": "FLASH"
+                     },
+                     "merchDetails": {
+                         "merchId": "' . $data['login'] . '",
+                         "userId": "",
+                         "password": "' . $data['password'] . '",
+                         "merchTxnId": "' . $data['txnId'] . '",
+                         "merchTxnDate": "' . $data['date'] . '"
+                     },
+                     "payDetails": {
+                         "amount": "' . $data['amount'] . '",
+                         "product": "' . $data['prod_id'] . '",
+                         "custAccNo": "41727831402",
+                         "txnCurrency": "' . $data['txnCurrency'] . '"
+                     },
+                     "custDetails": {
+                         "custEmail": "' . $data['email'] . '",
+                         "custMobile": "' . $data['mobile'] . '"
+                     },
+                     "extras": {
+                         "udf1": "' . $data['udf1'] . '",
+                         "udf2": "' . $data['udf2'] . '",
+                         "udf3": "' . $data['udf3'] . '",
+                         "udf4": "' . $data['udf4'] . '",
+                         "udf5": "' . $data['udf5'] . '"
+                     }
+                 }
+             }';
+        $encData = $this->encrypt($jsondata, $data['encKey'], $data['encKey']);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $data['payUrl'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_SSL_VERIFYPEER => 1,
+            CURLOPT_CAINFO => dirname(__FILE__) . '/cacert.pem', //added in Controllers folder
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "encData=" . $encData . "&merchId=" . $data['login'],
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/x-www-form-urlencoded"
+            ),
+        ));
+        $atomTokenId = null;
+        $response = curl_exec($curl);
+
+        // return response()->json(['success' => true, 'msg' => $response]);
+
+        $getresp = explode("&", $response);
+
+        $encresp = substr($getresp[1], strpos($getresp[1], "=") + 1);
+        $decData = $this->decrypt($encresp, $data['decKey'], $data['decKey']);
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            echo "error = " . $error_msg;
+        }
+        if (isset($error_msg)) {
+            echo "error = " . $error_msg;
+        }
+        curl_close($curl);
+        $res = json_decode($decData, true);
+        if ($res) {
+            if ($res['responseDetails']['txnStatusCode'] == 'OTS0000') {
+                $atomTokenId = $res['atomTokenId'];
+            } else {
+                echo "Error getting data";
+                $atomTokenId = null;
+            }
+        }
+        return $atomTokenId;
+    }
+
+    //do not change anything in below function
+    public function encrypt($data, $salt, $key)
+    {
+        $method = "AES-256-CBC";
+        $iv = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        $chars = array_map("chr", $iv);
+        $IVbytes = join($chars);
+        $salt1 = mb_convert_encoding($salt, "UTF-8"); //Encoding to UTF-8
+        $key1 = mb_convert_encoding($key, "UTF-8"); //Encoding to UTF-8
+        $hash = openssl_pbkdf2($key1, $salt1, '256', '65536', 'sha512');
+        $encrypted = openssl_encrypt($data, $method, $hash, OPENSSL_RAW_DATA, $IVbytes);
+        return strtoupper(bin2hex($encrypted));
+    }
+
+    //do not change anything in below function
+    public function decrypt($data, $salt, $key)
+    {
+        $dataEncypted = hex2bin($data);
+        $method = "AES-256-CBC";
+        $iv = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        $chars = array_map("chr", $iv);
+        $IVbytes = join($chars);
+        $salt1 = mb_convert_encoding($salt, "UTF-8");//Encoding to UTF-8
+        $key1 = mb_convert_encoding($key, "UTF-8");//Encoding to UTF-8
+        $hash = openssl_pbkdf2($key1, $salt1, '256', '65536', 'sha512');
+        $decrypted = openssl_decrypt($dataEncypted, $method, $hash, OPENSSL_RAW_DATA, $IVbytes);
+        return $decrypted;
+    }
+
+    public function response()
+    {
+        $data = $_POST['encData'];
+
+        // change decryption key below for production
+        $decData = $this->decrypt($data, '97236B9426D15E619E278B507C478BF1', '97236B9426D15E619E278B507C478BF1');
+        $jsonData = json_decode($decData, true);
+
+        dd($jsonData);
+
+        // switch ($jsonData['payInstrument']['responseDetails']['statusCode']) {
+        //     case 'OTS0000':
+
+        //         StudentPaymentInfo::where('id', $jsonData['payInstrument']['extras']['udf3'])->update(
+        //             [
+        //                 'transaction_id' => $jsonData['payInstrument']['merchDetails']['merchTxnId'],
+        //                 'transaction_date' => $jsonData['payInstrument']['merchDetails']['merchTxnDate'],
+        //                 'bank_transaction_id' => $jsonData['payInstrument']['payModeSpecificData']['bankDetails']['bankTxnId'],
+        //                 'transaction_amount' => $jsonData['payInstrument']['payDetails']['amount'],
+        //                 'transaction_surcharge_amount' => $jsonData['payInstrument']['payDetails']['surchargeAmount'],
+        //                 'transaction_total_amount' => $jsonData['payInstrument']['payDetails']['totalAmount'],
+        //                 'transaction_status' => $jsonData['payInstrument']['responseDetails']['statusCode'],
+        //                 'transaction_message' => $jsonData['payInstrument']['responseDetails']['message'],
+        //             ]
+        //         );
+
+        //         Student::where('id', $jsonData['payInstrument']['extras']['udf1'])->update(
+        //             [
+        //                 'appl_no' => $jsonData['payInstrument']['extras']['udf2']
+        //             ]
+        //         );
+
+        //         $student = Student::where('students.id', $jsonData['payInstrument']['extras']['udf1'])
+        //             ->join('student_payment_infos', 'student_payment_infos.student_id', '=', 'students.id')
+        //             ->join('states', 'states.state_id', '=', 'students.state')
+        //             ->latest('students.created_at')->first();
+
+        //         $pdf = PDF::loadView('admin.modules.pdfs.student_registration', [
+        //             'student' => $student,
+        //             'applicationNumber' => $student->appl_no
+        //         ])->setPaper('a4', 'portrait')
+        //             ->setOption('margin-top', 10)
+        //             ->setOption('margin-bottom', 10)
+        //             ->setOption('margin-left', 10)
+        //             ->setOption('margin-right', 10);
+
+        //         $filename = "student_registration_{$student->appl_no}.pdf";
+        //         $path = "student_registrations/{$student->session_year}/{$filename}";
+
+        //         \Illuminate\Support\Facades\Storage::disk('public')->put($path, $pdf->output());
+
+        //         $student->update([
+        //             'student_id' => $student->id,
+        //             'registration_pdf_path' => $path,
+        //         ]);
+
+        //         try {
+        //             Mail::send('emails.student_registration_confirmation', ['student' => $student, 'studentID' => $student->appl_no], function ($message) use ($student, $path) {
+        //                 $message->to($student->email)
+        //                     ->subject('Vikas Vidyalaya : Student Registration Confirmation')
+        //                     ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+
+        //                 // Attach the PDF file
+        //                 $localPath = storage_path("app/public/$path");
+
+        //                 $message->attach($localPath, [
+        //                     'as' => "Student Registration - {$student->appl_no}.pdf",
+        //                     'mime' => 'application/pdf'
+        //                 ]);
+        //             });
+
+        //             Mail::send('emails.student_registration_confirmation', ['student' => $student, 'studentID' => $student->appl_no], function ($message) use ($student, $path) {
+        //                 // $message->to("pskalra03@gmail.com")
+        //                 $message->to("vikashk931@gmail.com")
+        //                     ->subject('Vikas Vidyalaya : Student Registration Confirmation')
+        //                     ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+
+        //                 // Attach the PDF file
+        //                 $localPath = storage_path("app/public/$path");
+
+        //                 $message->attach($localPath, [
+        //                     'as' => "Student Registration - {$student->appl_no}.pdf",
+        //                     'mime' => 'application/pdf'
+        //                 ]);
+        //             });
+
+        //             Mail::send('emails.student_registration_confirmation', ['student' => $student, 'studentID' => $student->appl_no], function ($message) use ($student, $path) {
+        //                 // $message->to("vikasvid@vitalmail.com")
+        //                 $message->to("vkg@computered.co.in")
+        //                     ->subject('Vikas Vidyalaya : Student Registration Confirmation')
+        //                     ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+
+        //                 // Attach the PDF file
+        //                 $localPath = storage_path("app/public/$path");
+
+        //                 $message->attach($localPath, [
+        //                     'as' => "Student Registration - {$student->appl_no}.pdf",
+        //                     'mime' => 'application/pdf'
+        //                 ]);
+        //             });
+
+        //         } catch (\Exception $e) {
+        //             \Log::error('Mail sending failed: ' . $e->getMessage());
+
+        //             return response()->json([
+        //                 'status' => 'failed',
+        //                 'error' => $e->getMessage(),
+        //             ]);
+        //         }
+
+        //         $salt = 'vikash_goswami';
+        //         $encoded_app = base64_encode(strrev($jsonData['payInstrument']['extras']['udf2']) . $salt);
+        //         $encoded_email = base64_encode(strrev($student->email) . $salt);
+        //         $encoded_path = base64_encode(strrev($student->registration_pdf_path) . $salt);
+        //         $encoded_fname = base64_encode(strrev($student->first_name) . $salt);
+        //         $encoded_class = base64_encode(strrev($student->apply_class) . $salt);
+        //         $data = [
+        //             'ap' => $encoded_app,
+        //             'ai' => $encoded_email,
+        //             'th' => $encoded_path,
+        //             'an' => $encoded_fname,
+        //             'as' => $encoded_class
+        //         ];
+
+        //         $queryString = http_build_query($data);
+
+        //         header("Location: http://localhost/project/admn/regn_confirm.php?$queryString");
+        //         exit;
+
+        //         break;
+        //     default:
+        //         echo 'Payment status = Transaction Failed';
+        //         break;
+        // }
+    }
+
+    /**
+     * Prepare NTT Data Payment Request
+     */
+    private function prepareNTTDataRequest(Registration $registration, $amount, $transactionId)
+    {
+        $user = $registration->user;
+
+        // Get base URL for return URL
+        $returnUrl = route('payment.nttdata.response');
+
+        // Prepare payment parameters
+        $paymentParams = [
+            'login' => $this->nttDataConfig['login'],
+            'pass' => $this->nttDataConfig['password'],
+            'ttype' => 'NBFundTransfer',
+            'prodid' => $this->nttDataConfig['product_id'],
+            'amt' => number_format($amount, 2, '.', ''),
+            'txncurr' => 'INR',
+            'txnscamt' => number_format($amount, 2, '.', ''),
+            'clientcode' => base64_encode($this->nttDataConfig['client_code']),
+            'txnid' => $transactionId,
+            'date' => date('d/m/Y'),
+            'custacc' => $user->id,
+            'custname' => $user->full_name,
+            'custemail' => $user->email,
+            'custmobile' => $user->mobile_number,
+            'custaddr' => $registration->address,
+            'ru' => $returnUrl,
+        ];
+
+        // Generate signature
+        $signature = $this->generateNTTDataSignature($paymentParams);
+        $paymentParams['signature'] = $signature;
+
+        // Set gateway URL based on mode
+        $gatewayUrl = $this->nttDataConfig['mode'] === 'live'
+            ? 'https://payment.nttdatapay.com/paynetz/epi/fts'
+            : 'https://paynetzuat.nttdatapay.com/paynetz/epi/fts';
+
+        return [
+            'gateway_url' => $gatewayUrl,
+            'parameters' => $paymentParams
+        ];
+    }
+
+    /**
+     * Generate NTT Data Signature
+     */
+    private function generateNTTDataSignature($params)
+    {
+        $signatureString = $params['login'] . $params['pass'] . $params['ttype'] .
+            $params['prodid'] . $params['txnid'] . $params['amt'] .
+            $params['txncurr'];
+
+        return hash_hmac('sha512', $signatureString, $this->nttDataConfig['request_hash_key']);
+    }
+
+    /**
+     * Handle NTT Data Gateway Response
+     */
+    public function handleNTTDataResponse(Request $request)
+    {
+        $responseData = $request->all();
+
+        // Verify signature
+        if (!$this->verifyNTTDataResponse($responseData)) {
+            return redirect()->route('payment.failed')
+                ->with('error', 'Payment verification failed. Invalid signature.');
+        }
+
+        $transactionId = $responseData['mer_txn'] ?? '';
+        $paymentStatus = $responseData['f_code'] ?? '';
+        $gatewayTxnId = $responseData['mmp_txn'] ?? '';
+        $amount = $responseData['amt'] ?? 0;
+
+        // Find the payment record
+        $payment = Payment::where('transaction_id', $transactionId)->first();
+
+        if (!$payment) {
+            return redirect()->route('payment.failed')
+                ->with('error', 'Payment record not found.');
+        }
+
+        $registration = $payment->registration;
+
+        // Update payment based on response
+        if ($paymentStatus === 'Ok') {
+            // Payment successful
+            $payment->update([
+                'payment_status' => 'Success',
+                'gateway_transaction_id' => $gatewayTxnId,
+                'gateway_response' => json_encode($responseData)
+            ]);
+
+            $registration->update([
+                'status' => 'Approved',
+                'approved_at' => now()
+            ]);
+
+            return redirect()->route('payment.success', $registration->id)
+                ->with('success', 'Payment successful! Your registration is now complete.');
+        } else {
+            // Payment failed
+            $payment->update([
+                'payment_status' => 'Failed',
+                'gateway_transaction_id' => $gatewayTxnId,
+                'gateway_response' => json_encode($responseData)
+            ]);
+
+            return redirect()->route('payment.failed', $registration->id)
+                ->with('error', 'Payment failed. Please try again or contact support.');
+        }
+    }
+
+    /**
+     * Verify NTT Data Response Signature
+     */
+    private function verifyNTTDataResponse($responseData)
+    {
+        $signatureString = $responseData['mer_txn'] . $responseData['f_code'] .
+            $responseData['prod'] . $responseData['amt'] .
+            $responseData['bank_txn'];
+
+        $expectedSignature = hash_hmac('sha512', $signatureString, $this->nttDataConfig['response_hash_key']);
+
+        return hash_equals($expectedSignature, $responseData['signature'] ?? '');
+    }
+
+    public function success($registrationId)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)
+            ->where('id', $registrationId)
+            ->with(['delegateCategory', 'country', 'state', 'payments'])
+            ->firstOrFail();
+
+        return view('payment.success', compact('registration'));
+    }
+
+    public function failed($registrationId = null)
+    {
+        $registration = null;
+
+        if ($registrationId) {
+            $user = Auth::user();
+            $registration = Registration::where('user_id', $user->id)
+                ->where('id', $registrationId)
+                ->firstOrFail();
+        }
+
+        return view('payment.failed', compact('registration'));
+    }
+
+    /**
+     * Check payment status from NTT Data
+     */
+    public function checkPaymentStatus($transactionId)
+    {
+        // Prepare status check request
+        $statusParams = [
+            'login' => $this->nttDataConfig['login'],
+            'pass' => $this->nttDataConfig['password'],
+            'mer_txn' => $transactionId,
+            'amt' => '', // Amount for verification
+            'date' => date('d/m/Y')
+        ];
+
+        // Add signature
+        $signatureString = implode('', $statusParams);
+        $statusParams['signature'] = hash_hmac('sha512', $signatureString, $this->nttDataConfig['request_hash_key']);
+
+        // Make API call to check status
+        $statusUrl = $this->nttDataConfig['mode'] === 'live'
+            ? 'https://payment.nttdatapay.com/paynetz/epi/fts'
+            : 'https://paynetzuat.nttdatapay.com/paynetz/epi/fts';
+
+        // Return status response
+        return $this->makeHttpRequest($statusUrl, $statusParams);
+    }
+
+    /**
+     * Make HTTP request to gateway
+     */
+    private function makeHttpRequest($url, $params)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new Exception('HTTP request failed with code: ' . $httpCode);
+        }
+
+        return $response;
+    }
+}

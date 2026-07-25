@@ -1,0 +1,1 @@
+var baseUrl='https://ismm.computered.co.in/admin/';
