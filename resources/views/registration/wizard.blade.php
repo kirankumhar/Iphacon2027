@@ -202,7 +202,7 @@
                     // CME fee
                     const cmeCheckbox = document.querySelector('input[name="participate_in_cme"]');
                     if (cmeCheckbox && cmeCheckbox.checked) {
-                        total += 1500;
+                        total += 1000;
                     }
 
                     document.getElementById('total-amount').textContent = '₹' + total.toLocaleString('en-IN') +

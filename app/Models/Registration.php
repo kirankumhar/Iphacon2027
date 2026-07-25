@@ -120,7 +120,7 @@ class Registration extends Model
 
         // Add CME fee if participating
         if ($this->participate_in_cme) {
-            $total += 1500;
+            $total += 1000;
         }
 
         return $total;

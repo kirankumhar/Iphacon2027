@@ -1,197 +1,204 @@
 @extends('shared.auth-delegate')
-@section('title', 'Make Payment')
+@section('title', 'Payment - Scan QR Code')
 
 @section('delegate-content')
-    <div class="container">
+    <div class="container py-4">
         <div class="row justify-content-center">
-            <div class="col-md-10">
+            <div class="col-lg-10">
                 <div class="card shadow-lg border-0" style="border-radius: 15px;">
                     <div class="card-header text-center py-4"
                         style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 15px 15px 0 0;">
                         <h3 class="text-white mb-0 fw-bold">
-                            <i class="fas fa-credit-card me-2"></i>Payment Gateway
+                            <i class="fas fa-qrcode me-2"></i>Payment - Scan QR Code
                         </h3>
                     </div>
 
-                    <div class="card-body p-5">
-                        @if ($registration->delegate_type === 'Foreign')
-                            <!-- Foreign Delegate Payment -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header bg-info text-white">
-                                            <h5 class="mb-0">Payment Information</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <h3 class="text-center text-success mb-3">Total Amount: $175.00</h3>
+                    <div class="card-body p-4 p-md-5">
 
-                                            <div class="text-center mb-4">
-                                                <div class="p-4 bg-light rounded">
-                                                    <i class="fas fa-qrcode fa-5x text-primary mb-2"></i>
-                                                    <p><strong>Scan QR Code to Pay</strong></p>
-                                                    <small class="text-muted">Use any UPI app or international payment
-                                                        method</small>
-                                                </div>
-                                            </div>
-
-                                            <div class="alert alert-warning">
-                                                <strong>Payment Instructions:</strong>
-                                                <ul class="mb-0 mt-2">
-                                                    <li>Pay $175.00 using the QR code</li>
-                                                    <li>Upload payment receipt below</li>
-                                                    <li>Enter transaction details</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="card-header bg-success text-white">
-                                            <h5 class="mb-0">Upload Payment Proof</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <form method="POST" action="{{ route('payment.process', $registration->id) }}"
-                                                enctype="multipart/form-data">
-                                                @csrf
-
-                                                <div class="mb-3">
-                                                    <label for="transaction_id" class="form-label fw-semibold">
-                                                        Transaction ID<span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text"
-                                                        class="form-control @error('transaction_id') is-invalid @enderror"
-                                                        id="transaction_id" name="transaction_id"
-                                                        value="{{ old('transaction_id') }}" required>
-                                                    @error('transaction_id')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="payment_receipt" class="form-label fw-semibold">
-                                                        Payment Receipt<span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="file"
-                                                        class="form-control @error('payment_receipt') is-invalid @enderror"
-                                                        id="payment_receipt" name="payment_receipt"
-                                                        accept=".pdf,.jpg,.jpeg,.png" required>
-                                                    <small class="text-muted">Upload receipt/screenshot (PDF, JPG, PNG - Max
-                                                        5MB)</small>
-                                                    @error('payment_receipt')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-
-                                                <button type="submit" class="btn btn-success btn-lg w-100">
-                                                    <i class="fas fa-upload me-2"></i>Submit Payment Details
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <!-- Indian Delegate Payment -->
-                            <div class="row justify-content-center">
-                                <div class="col-md-8">
-                                    <div class="card">
-                                        <div class="card-header bg-primary text-white">
-                                            <h5 class="mb-0">Payment Summary</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <td><strong>Delegate Category</strong></td>
-                                                    <td class="text-end">
-                                                        ₹{{ number_format($registration->delegateCategory->indian_fee) }}
-                                                    </td>
-                                                </tr>
-                                                @if ($registration->accompanying_persons > 0)
-                                                    <tr>
-                                                        <td><strong>Accompanying Person </strong></td>
-                                                        <td class="text-end">
-                                                            ₹{{ number_format($registration->accompanying_persons * 4000) }}
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                                @if ($registration->participate_in_cme)
-                                                    <tr>
-                                                        <td><strong> CME/Workshop Participation</strong></td>
-                                                        <td class="text-end">₹1,500</td>
-                                                    </tr>
-                                                @endif
-                                                <tr class="table-success">
-                                                    <td><strong>Total Amount</strong></td>
-                                                    <td class="text-end">
-                                                        <strong>₹{{ number_format($registration->calculateTotalAmount()) }}</strong>
-                                                    </td>
-                                                </tr>
-                                            </table>
-
-                                            <div class="text-center mt-4">
-
-                                                <a class="btn btn-primary btn-lg px-5 py-3" href="javascript:openPay()"
-                                                    role="button" <i class="fas fa-credit-card me-2"></i>Pay Now -
-                                                    ₹{{ number_format($registration->calculateTotalAmount()) }}
-                                                </a>
-
-                                            </div>
-
-                                            <div class="alert alert-info mt-4">
-                                                <i class="fas fa-shield-alt me-2"></i>
-                                                <strong>Secure Payment:</strong> Your payment is processed securely.
-                                                After successful payment, your registration will be completed automatically.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Session / Alert Messages -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
+                                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         @endif
 
-                        <!-- Registration Summary -->
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="card bg-light">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Registration Summary</h6>
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
+                                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
+                                <i class="fas fa-exclamation-triangle me-2"></i><strong>Attention Required:</strong>
+                                <ul class="mb-0 mt-1 ps-3">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        <div class="row g-4">
+                            <!-- Left Column: Payment Summary & QR Code Image -->
+                            <div class="col-lg-6">
+                                <div class="card border shadow-sm h-100" style="border-radius: 12px;">
+                                    <div class="card-header bg-primary text-white py-3">
+                                        <h5 class="mb-0 fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i>Payment Details & QR Code</h5>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row">
+                                    <div class="card-body p-4 text-center">
+
+                                        <!-- Amount Badge -->
+                                        <div class="mb-3">
+                                            <span class="badge bg-success fs-5 px-4 py-2.5 rounded-pill shadow-sm">
+                                                Total Payable:
+                                                @if ($registration->delegate_type === 'International')
+                                                    $175.00 USD
+                                                @else
+                                                    ₹{{ number_format($registration->calculateTotalAmount()) }} INR
+                                                @endif
+                                            </span>
+                                        </div>
+
+                                        <!-- QR Code Image -->
+                                        <div class="p-3 bg-light rounded-3 border d-inline-block shadow-sm my-2">
+                                            <img src="{{ asset('images/qr_code.jpg') }}" alt="Payment QR Code" class="img-fluid rounded" style="max-width: 220px; height: auto;">
+                                        </div>
+
+                                        <p class="mt-2 mb-1 fw-bold text-dark fs-6">
+                                            <i class="fas fa-camera me-1 text-primary"></i>Scan QR Code to Pay
+                                        </p>
+                                        <p class="text-muted small mb-3">Use GPay, PhonePe, Paytm, BHIM or any UPI app</p>
+
+                                        <!-- Summary Table -->
+                                        <div class="table-responsive text-start mt-3">
+                                            <table class="table table-bordered align-middle small mb-0">
+                                                @if ($registration->delegate_type === 'International')
+                                                    <tr>
+                                                        <td><strong>Delegate Category (Foreign)</strong></td>
+                                                        <td class="text-end fw-bold">$175.00</td>
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <td><strong>Delegate Category</strong></td>
+                                                        <td class="text-end">
+                                                            ₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}
+                                                        </td>
+                                                    </tr>
+                                                    @if (($registration->accompanying_persons ?? 0) > 0)
+                                                        <tr>
+                                                            <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }})</strong></td>
+                                                            <td class="text-end">
+                                                                ₹{{ number_format($registration->accompanying_persons * 4000) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                    @if ($registration->participate_in_cme)
+                                                        <tr>
+                                                            <td><strong>CME/Workshop Participation</strong></td>
+                                                            <td class="text-end">₹1,000</td>
+                                                        </tr>
+                                                    @endif
+                                                @endif
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Upload Payment Receipt Form -->
+                            <div class="col-lg-6">
+                                <div class="card border-success border-2 shadow-sm h-100" style="border-radius: 12px;">
+                                    <div class="card-header bg-success text-white py-3">
+                                        <h5 class="mb-0 fw-bold"><i class="fas fa-upload me-2"></i>Upload Payment Proof</h5>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="alert alert-warning small mb-3" style="border-radius: 8px;">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            <strong>Payment Steps:</strong>
+                                            <ol class="mb-0 ps-3 mt-1">
+                                                <li>Scan QR Code on the left and complete payment.</li>
+                                                <li>Enter the 12-digit UTR / Transaction ID below.</li>
+                                                <li>Upload screenshot/receipt of successful payment.</li>
+                                            </ol>
+                                        </div>
+
+                                        <form method="POST" action="{{ route('payment.process', $registration->id) }}" enctype="multipart/form-data">
+                                            @csrf
+
+                                            <div class="mb-3">
+                                                <label for="transaction_id" class="form-label fw-semibold">
+                                                    Transaction ID / UTR Number <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text"
+                                                    class="form-control @error('transaction_id') is-invalid @enderror"
+                                                    id="transaction_id" name="transaction_id"
+                                                    placeholder="Enter 12-digit UTR or Transaction ID"
+                                                    value="{{ old('transaction_id') }}" required style="border-radius: 8px; padding: 10px;">
+                                                <small class="text-muted">Example: 420192837465</small>
+                                                @error('transaction_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label for="payment_receipt" class="form-label fw-semibold">
+                                                    Upload Receipt / Screenshot <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="file"
+                                                    class="form-control @error('payment_receipt') is-invalid @enderror"
+                                                    id="payment_receipt" name="payment_receipt"
+                                                    accept=".pdf,.jpg,.jpeg,.png" required style="border-radius: 8px; padding: 10px;">
+                                                <small class="text-muted">Allowed formats: PDF, JPG, JPEG, PNG (Max 5MB)</small>
+                                                @error('payment_receipt')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
+                                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px;">
+                                                <i class="fas fa-check-circle me-2"></i>Submit Payment Details
+                                            </button>
+                                        </form>
+
+                                        <div class="alert alert-info mt-4 mb-0 small" style="border-radius: 8px;">
+                                            <i class="fas fa-clock me-1"></i>
+                                            After submission, your registration status will be updated and verified by the organizing team.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Registration Info Summary -->
+                        <div class="row justify-content-center mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light border-0 shadow-sm" style="border-radius: 12px;">
+                                    <div class="card-header bg-white border-bottom fw-bold text-dark">
+                                        <i class="fas fa-user-check me-2 text-primary"></i>Registration Information
+                                    </div>
+                                    <div class="card-body p-3.5">
+                                        <div class="row g-2">
                                             <div class="col-md-6">
-                                                <p><strong>Full Name:</strong> {{ $registration->user->prefix }}
-                                                    {{ $registration->user->full_name }}</p>
-                                                <p><strong>Email:</strong> {{ $registration->user->email }}</p>
+                                                <p class="mb-1"><strong>Full Name:</strong> {{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? '' }}</p>
+                                                <p class="mb-0"><strong>Email:</strong> {{ $registration->user->email ?? '' }}</p>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><strong>Delegate Type:</strong> {{ $registration->delegate_type }}</p>
-                                                <p><strong>Category:</strong>
-                                                    {{ $registration->delegateCategory->category_name }}</p>
+                                                <p class="mb-1"><strong>Delegate Type:</strong> {{ $registration->delegate_type }}</p>
+                                                <p class="mb-0"><strong>Category:</strong> {{ $registration->delegateCategory->category_name ?? 'N/A' }}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://psa.atomtech.in/staticdata/ots/js/atomcheckout.js"></script>
-    <script>
-        function openPay() {
-
-            const options = {
-                "atomTokenId": {{ $data['atomTokenId'] }},
-                "merchId": {{ $data['mid'] }},
-                "custEmail": "{{ $data['email'] }}",
-                "custMobile": "{{ $data['mobile'] }}",
-                "returnUrl": "{{ $data['return_url'] }}"
-            }
-            let atom = new AtomPaynetz(options, 'uat');
-        }
-    </script>
 @endsection

@@ -161,7 +161,7 @@
                         @if ($registration->participate_in_cme)
                             <tr>
                                 <td><strong>Participating in CME</strong></td>
-                                <td class="text-end">₹1,500</td>
+                                <td class="text-end">₹1,000</td>
                             </tr>
                         @endif
                         <tr class="table-success">

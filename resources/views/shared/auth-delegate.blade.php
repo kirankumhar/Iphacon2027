@@ -41,6 +41,7 @@
     <link href="{{ asset('shared/user/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('shared/user/css/style_in.css') }}" rel="stylesheet">
     <link href="{{ asset('shared/user/css/responsive.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     <link rel="shortcut icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/x-icon">
     <link rel="icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/x-icon">
@@ -163,8 +164,8 @@
                         <!-- Left Logo (ISMM) -->
                         <div
                             class="col-lg-3 col-md-3 col-12 mb-2 mb-md-2 d-flex justify-content-center align-items-center">
-                            <a href="https://ismmconference.com/index.php" title="ISMM 2027">
-                                <img src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo"
+                            <a href="https://www.iphacon2027.com/index.php" title="ISMM 2027">
+                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
                                     title="ISMM 2027 Logo" class="img-fluid"
                                     style="max-height: 90px; object-fit: contain;">
                             </a>
@@ -173,17 +174,17 @@
                         <!-- Center Title -->
                         <div class="col-lg-6 col-md-6 col-12 mb-2 mb-md-2 text-center event-heading">
                             <!--<h3 class="ismm-title">ISMM 2027</h3>-->
-                            <a href="https://ismmconference.com/index.php" title="RIMS Logo">
+                            <!-- <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
                                 <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}"
                                     alt="ISMM Logo Main Image" title="ISMM Logo Main Image" class="img-fluid"
                                     style="max-height: 90px; object-fit: contain;">
-                            </a>
+                            </a> -->
                         </div>
 
                         <!-- Right Logo (Jharkhand/RIMS) -->
                         <div
                             class="col-lg-3 col-md-3 col-12 mb-2 mb-md-2 d-flex justify-content-center align-items-center">
-                            <a href="https://ismmconference.com/index.php" title="RIMS Logo">
+                            <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
                                 <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo"
                                     title="RIMS Logo" class="img-fluid" style="max-height: 90px; object-fit: contain;">
                             </a>
@@ -215,7 +216,7 @@
 
                                         <!-- Home -->
                                         <li class="nav-item">
-                                            <a class="nav-link active" href="https://ismmconference.com/"
+                                            <a class="nav-link active" href="https://www.iphacon2027.com/"
                                                 target="_blank" title="Go To Home">
                                                 <i class="fas fa-home" aria-hidden="true"></i>
                                                 <span class="visually-hidden">Home</span>
@@ -301,8 +302,8 @@
                 <div class="auto-container">
                     <div class="main-box">
                         <div class="logo-box">
-                            <div class="logo"><a href="https://ismmconference.com/index.php" aria-label="ISMM 2027 Home"><img
-                                        src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo"
+                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="ISMM 2027 Home"><img
+                                        src="{{ asset('assets/img/logo/logo.png') }}" alt="ISMM 2027 Logo"
                                         title="ISMM 2027 Logo"></a>
                             </div>
                             <div class="upper-right">
@@ -320,7 +321,7 @@
             </div>
 
             <div class="mobile-header" role="complementary">
-                <div class="logo"><a href="https://ismmconference.com/index.php"><img src="{{ asset('shared/user/images/ismm_logo.png') }}"
+                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="{{ asset('shared/user/images/ismm_logo.png') }}"
                             alt="ISMM 2027 Logo" title="ISMM 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
@@ -338,8 +339,8 @@
                 <div class="menu-backdrop"></div>
                 <nav class="menu-box">
                     <div class="upper-box">
-                        <div class="nav-logo"><a href="https://ismmconference.com/index.php"><img
-                                    src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo"
+                        <div class="nav-logo"><a href="https://www.iphacon2027.com/index.php"><img
+                                    src="{{ asset('assets/img/logo/logo.png') }}" alt="ISMM 2027 Logo"
                                     title="ISMM 2027 Logo"></a></div>
                         <div class="close-btn" role="button" aria-label="Close Menu"><i
                                 class="icon flaticon-close"></i></div>
@@ -357,7 +358,7 @@
                             834002 <strong>Address</strong></li>
                         <li><i class="flaticon-alarm-clock-1"></i> Mon - Sat 9:00 - 18:00 <strong>Timing</strong></li>
                         <li><i class="flaticon-email-1"></i> <a
-                                href="mailto:ismm2027@ismmconference.com">ismm2027@ismmconference.com</a>
+                                href="mailto:iphacon2027@gmail.com">iphacon2027@gmail.com</a>
                             <strong>Mail to us</strong>
                         </li>
                     </ul>
@@ -426,146 +427,66 @@
 
             </section>
 
-            <footer class="main-footer style-three">
-                <!-- Widgets Section -->
-                <div class="widgets-section">
-                    <div class="auto-container">
-                        <div class="row">
-                            <!-- Big Column -->
-                            <div class="big-column col-xl-6 col-lg-12 col-md-12 col-sm-12">
-                                <div class="row">
-                                    <!-- Footer Column -->
-                                    <div class="footer-column col-xl-7 col-lg-6 col-md-6 col-sm-12">
-                                        <div class="footer-widget about-widget">
+      <footer class="footer-area">
+        <div class="footer-shape">
+            <img src="{{ asset('images/join_conf_img.png') }}" alt="">
+        </div>
+        <div class="footer-widget">
+            <div class="container">
+                <div class="row footer-widget-wrapper pt-50 pb-0">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="footer-widget-box about-us">
+                            <h4 class="footer-widget-title">IPHACON 2027</h4>
+                            <p class="mb-3">
+                                71<sup>st</sup> Annual National Conference of the Indian Public Health Association (IPHACON 2027)
+                            </p>
 
-                                            <div class="logo">
-
-                                                <a href="https://ismmconference.com/index.php"><img
-                                                        src="{{ asset('shared/user/images/ismm_logo_footer.png') }}"
-                                                        alt=""></a>
-
-                                            </div>
-
-                                            <div class="text">
-
-                                                <p>This event will bring developments in medical mycology to
-                                                    students,
-                                                    faculty and clinicians in India.</p>
-
-                                            </div>
-
-                                            <!--<ul class="social-icon-two">
-
-                                        <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-
-                                        <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-
-                                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-
-
-
-                                    </ul>-->
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Footer Column -->
-                                    <div class="footer-column col-xl-5 col-lg-6 col-md-6 col-sm-12">
-                                        <div class="footer-widget lnks-widget">
-                                            <h2 class="widget-title">Quick Links</h2>
-                                            <ul class="user-links">                                   
-                                    <li><a href="https://ismmconference.com/about.php">About ISMM 2027</a></li>
-                                    <li><a href="https://ismmconference.com/fee_structure.php">Fee Structure</a></li>
-									<li><a target="_blank" href="https://registration.ismmconference.com/">Online Registration</a></li>
-                                    <li><a href="https://ismmconference.com/around_ranchi.php" >In & Around Ranchi</a></li>
-                                    <li><a href="https://ismmconference.com/accommodation.php">Accommodation</a></li>
-                                    <li><a href="https://ismmconference.com/venue_rims.php">Venue & Travel Info</a></li> <li><a href="https://ismmconference.com/contact.php">Contact</a></li>
-                                </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Big Column -->
-                            <div class="big-column col-xl-6 col-lg-12 col-md-12 col-sm-12">
-                                <div class="row">
-                                    <!-- Footer Column -->
-                                    <div class="footer-column col-lg-6 col-md-6 col-sm-12">
-                                        <div class="footer-widget contact-widget">
-                                            <h2 class="widget-title">Contact Information</h2>
-                                            <div class="widget-content">
-                                                <ul class="contact-list-three">
-                                                    <li>
-                                                        <i class="icon flaticon-alarm-clock-1"></i>
-                                                        <div class="text">
-                                                            Monday - Saturday, 9am - 6pm <br>
-                                                            <strong>Operating Hours</strong>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <i class="icon flaticon-email-1"></i>
-                                                        <div class="text">
-                                                            <a
-                                                                href="mailto:ismm2027@ismmconference.com">ismm2027@ismmconference.com</a><br>
-                                                            <strong>Email Us</strong>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <i class="icon flaticon-location"></i>
-                                                        <div class="text">
-                                                            Ranchi, Jharkhand, India<br>
-                                                            <strong>Venue: RIMS, Bariatu, Ranchi</strong>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Footer Column -->
-                                    <div class="footer-column col-lg-6 col-md-6 col-sm-12">
-                                        <div class="footer-widget">
-                                            <h2 class="widget-title">Important Dates</h2>
-                                            <div class="widget-content">
-                                                <ul class="user-links1">
-
-                                                    <li><i class="fa fa-calendar"
-                                                            style="color:#cad90a; margin-right:6px;"></i>Pre-Conf.
-                                                        Workshop : 4<sup>th</sup> February 2027</li>
-                                                    <li><i class="fa fa-calendar"
-                                                            style="color:#cad90a; margin-right:6px;"></i>Conference
-                                                        Dates: 5<sup>th</sup>-7<sup>th</sup> February 2027</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <p>
+                                Theme: Synergizing AI and One Health: Precision Analytics for Zoonotic Control,
+                                Nutritional Equity and Environmental Resilience.
+                            </p>        
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Important Dates</h4>
+                            <ul class="footer-list">
+                                <li> <i class="fas fa-calendar-alt"></i> Abstract Opens - 01 Aug 2026 </li>
+                                <li> <i class="fas fa-calendar-alt"></i> Abstract Closes - 31 Oct 2026 </li>
+                                <li> <i class="fas fa-calendar-alt"></i> Early Bird Ends - 30 Dec 2026 </li>
+                                <li> <i class="fas fa-calendar-alt"></i> Registration Ends - 31 Jan 2027 </li>
+                                <li> <i class="fas fa-calendar-alt"></i> Workshop - 11 Mar 2027 </li>
+                                <li> <i class="fas fa-calendar-alt"></i> Conference - 12–14 Mar 2027 </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Conference Secretariat</h4>
+                            <ul class="footer-contact">
+                                <li> <i class="far fa-building"></i> Department of Community Medicine, Rajendra Institute of Medical Sciences (RIMS) </li>
+                                <li> <i class="far fa-map-marker-alt"></i> Bariatu, Ranchi, Jharkhand - 834009, India </li>
+                                <li> <a href="tel:+919097736688"> <i class="far fa-phone"></i> +91-9097736688 </a> </li>
+                                <li> <a href="mailto:iphacon2027@gmail.com"> <i class="far fa-envelope"></i> iphacon2027@gmail.com </a> </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-
-                <!-- Footer Bottom -->
-                <div class="footer-bottom">
-                    <div class="auto-container">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <div class="copyright-text">
-                                <p>Copyright © <?php echo date('Y'); ?> <a href="https://ismmconference.com/index.php">ISMM 2027</a> All Rights
-                                    Reserved.
-                                </p>
-                            </div>
-                            <div class="tech-partner">
-                                Technology Partner :
-                                <img src="{{ asset('shared/user/images/lg1.png') }}" style="width:50px; height:50px;"
-                                    alt="">
-                                <span style="font-size: 15px; color: #cad90a; font-family: 'Old Bookmark', serif;">
-                                    <b>COMPUTER Ed.</b>
-                                </span>
-                            </div>
-                        </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 align-self-center">
+                        <p class="copyright-text">
+                            &copy; Copyright <?php echo date("Y"); ?> <a href="{{ url('/') }}"> IPHACON 2027 </a> All Rights Reserved.
+                        </p>
                     </div>
+                   <div class="col-md-6 align-self-center text-md-end text-center"> <p class="copyright-text"> Technology Partner : <a aria-label="RIMS Ranchi - External site that opens in a new window" href="https://www.computered.in/" target="_blank" title="COMPUTER Ed." onclick="return confirm('You are being redirected to an external website. Please note that this website is not responsible for external websites content & privacy policies.');"> <img src="{{ asset('images/ced.png') }}" alt="COMPUTER Ed." style="width:30px;height:30px;vertical-align:middle;"> <span style="font-size:15px;color:#cad90a;font-family:old-bookmark;"> <b>COMPUTER Ed.</b> </span> </a> </p> </div>
                 </div>
-            </footer>
+            </div>
+        </div>
+    </footer>
 
             <!-- End Page Wrapper -->
         </main>

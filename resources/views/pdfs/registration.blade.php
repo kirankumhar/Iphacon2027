@@ -228,7 +228,7 @@
                 <h2 class="ismm-location mb-0">
                     04 - 07 February, 2027
                 </h2>
-                ismmconference.com
+                www.iphacon2027.com
             </div>
         </div>
     </div>
@@ -316,7 +316,7 @@
             @if (($registration->participate_in_cme ?? false) && $registration->delegate_type === 'Indian')
                 <tr>
                     <td>CME/Workshop Participation</td>
-                    <td class="right">₹1,500.00</td>
+                    <td class="right">₹1,000.00</td>
                     <td>INR</td>
                 </tr>
             @endif
@@ -362,7 +362,7 @@
     <div class="footer">
         <div class="foot-col foot-left">
             <div class="label">Conference Secretariat</div>
-            <div>ismmconference.com</div>
+            <div>www.iphacon2027.com</div>
         </div>
        <!-- <div class="foot-col sign">
             @if (file_exists(public_path('images/signature.png')))

@@ -156,7 +156,7 @@
                     value="1"
                     {{ old('participate_in_cme', $registration->participate_in_cme) == 1 ? 'checked' : '' }}>
                 <label class="form-check-label" for="cme_yes">
-                    <strong>Yes</strong> <span class="badge bg-info ms-1">₹1,500</span>
+                    <strong>Yes</strong> <span class="badge bg-info ms-1">₹1,000</span>
                 </label>
             </div>
             <div class="form-check form-check-inline">
@@ -373,7 +373,7 @@
             // Get CME fee
             var $cmeYes = $('#cme_yes');
             if ($cmeYes.length && $cmeYes.is(':checked')) {
-                var cmeFee = 1500;
+                var cmeFee = 1000;
                 total += cmeFee;
             }
 

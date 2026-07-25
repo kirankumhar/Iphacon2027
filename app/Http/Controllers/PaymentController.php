@@ -60,7 +60,7 @@ class PaymentController extends Controller
         $api_url = "https://payment1.atomtech.in/ots/aipay/auth";
         $user_email = auth()->user()->email;
         $user_contact_number = auth()->user()->mobile_number;
-        $return_url = "https://registration.ismmconference.com/api/response";
+        $return_url = "https://registration.iphacon2027.com/api/response";
 
         $payData = array(
             'login' => $login,
@@ -349,6 +349,65 @@ class PaymentController extends Controller
         }
     }
 
+
+    public function processPayment(Request $request, $registrationId)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)
+            ->where('id', $registrationId)
+            ->firstOrFail();
+
+        $request->validate([
+            'transaction_id' => 'required|string|max:100',
+            'payment_receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $receiptPath = $request->file('payment_receipt')->store(
+                'payment_receipts/' . $registration->id,
+                'public'
+            );
+
+            $totalAmount = $registration->calculateTotalAmount();
+
+            // Create payment record
+            $payment = new Payment([
+                'registration_id' => $registration->id,
+                'delegate_category_fee' => $registration->delegateCategory ? $registration->delegateCategory->indian_fee : 0,
+                'accompanying_persons_fee' => ($registration->accompanying_persons ?? 0) * 4000,
+                'cme_fee' => $registration->participate_in_cme ? 1000 : 0,
+                'total_amount' => $totalAmount,
+                'currency' => $registration->delegate_type === 'International' ? 'USD' : 'INR',
+                'transaction_id' => $request->transaction_id,
+                'payment_method' => 'QR_Code',
+                'payment_status' => 'Pending',
+                'payment_receipt_path' => $receiptPath,
+                'admin_verified' => false
+            ]);
+
+            $payment->save();
+
+            // Update registration status
+            if (empty($registration->registration_number)) {
+                $registration->registration_number = $registration->generateRegistrationNumber();
+            }
+            $registration->status = 'Payment Submitted';
+            $registration->step_completed = 4;
+            $registration->submitted_at = now();
+            $registration->save();
+
+            DB::commit();
+
+            return redirect()->route('registration.index')
+                ->with('success', 'Payment proof submitted successfully! Verification is under process.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to submit payment details: ' . $e->getMessage());
+        }
+    }
 
     public function success($registrationId)
     {

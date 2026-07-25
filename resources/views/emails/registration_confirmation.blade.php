@@ -298,7 +298,7 @@
                         @if(($registration->participate_in_cme ?? false) && $registration->delegate_type === 'Indian')
                         <tr class="row">
                           <td class="label">CME/Workshop</td>
-                          <td class="value">₹1,500.00 INR</td>
+                          <td class="value">₹1,000.00 INR</td>
                         </tr>
                         @endif
 
@@ -345,7 +345,7 @@
                   {{ config('app.name') }}
                 </div>
                 <div style="margin-bottom: 2px;">
-                  ismmconference.com
+                  www.iphacon2027.com
                 </div>
                 <div class="muted" style="margin-top: 8px;">
                   If you need help, reply to this email or contact support at {{ config('mail.from.address') }}.
@@ -353,7 +353,6 @@
               </td>
             </tr>
           </table>
-
         </td>
       </tr>
     </table>

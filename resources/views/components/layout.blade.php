@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <!-- Venue + Register -->
+            <!-- Venue -->
             <div class="col-lg-5 col-md-6 col-12">
                 <div class="conference-right"
                      aria-label="Conference Venue and Registration">
@@ -79,24 +79,6 @@
                         <span>
                             RIMS, Ranchi, Jharkhand, India
                         </span>
-
-                    </div>
-
-                    <div class="conference-action">
-
-                        <a href="{{ route('register') }}"
-                        class="register-btn"
-                        title="Register for IPHACON 2027 Conference"
-                        aria-label="Register Now for IPHACON 2027">
-                            <i class="far fa-user-plus"></i> Register
-                        </a>
-
-                        <a href="{{ route('login') }}"
-                        class="login-btn"
-                        title="Login to IPHACON 2027 Portal"
-                        aria-label="Login to IPHACON 2027 Portal">
-                            <i class="far fa-sign-in-alt"></i> Login
-                        </a>
 
                     </div>
 
@@ -154,265 +136,27 @@
 </div>
 
             <div class="collapse navbar-collapse" id="main_nav">
-                 <ul class="navbar-nav" role="menubar">
 
-                    <li class="nav-item" role="none">
-                        <a class="nav-link active"
-                           href="{{ url('/') }}"
-                           title="Home"
-                           aria-label="Home Page"
+                <ul class="navbar-nav ms-auto me-3 align-items-center" role="menubar">
+                    <li class="nav-item me-2" role="none">
+                        <a href="{{ route('register') }}"
+                           class="register-btn"
+                           title="Register for IPHACON 2027 Conference"
+                           aria-label="Register Now for IPHACON 2027"
                            role="menuitem">
-
-                            <i class="fas fa-home fa-1x"
-                               aria-hidden="true"
-                               title="Home Icon"></i>
+                            <i class="far fa-user-plus"></i> Register
                         </a>
-                    </li>
-
-                    <li class="nav-item dropdown" role="none">
-                        <a class="nav-link dropdown-toggle"
-                           href=""
-                           data-bs-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           title="About IPHACON 2027"
-                           role="menuitem">
-                            About
-                        </a>
-
-                        <ul class="dropdown-menu fade-down"
-                            aria-label="About Menu">
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="about.php"
-                                   title="About the Conference">
-                                    About the Conference
-                                </a>
-                            </li>
-
-                           <li class="dropdown-submenu">
-                                        <a class="dropdown-item dropdown-toggle" href="#">Committees</a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="national_gov_body.php">National Gov. Body</a></li>
-                                            <li><a class="dropdown-item" href="state_executive_body.php">State Executive Body</a></li>
-											  <li><a class="dropdown-item" href="organising_team.php">Organising Committee</a></li>
-                                        </ul>
-                                    </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="chairperson_message.php"
-                                   title="Chairperson's Message">
-                                    Chairperson's Message
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown" role="none">
-                        <a class="nav-link dropdown-toggle"
-                           href=""
-                           data-bs-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           title="Scientific Program"
-                           role="menuitem">
-                            Scientific Program
-                        </a>
-
-                        <ul class="dropdown-menu fade-down"
-                            aria-label="Scientific Program Menu">
-							
-							 <li>
-                                <a class="dropdown-item"
-                                   href="preconference_workshop.php"
-                                   title="Pre Conference Workshop">
-                                    Pre-Conference Workshop
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="conference_schedule.php"
-                                   title="Conference Schedule">
-                                    Conference Schedule
-                                </a>
-                            </li>
-
-                           
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="scientific_schedule.php"
-                                   title="Scientific Schedule">
-                                    Scientific Schedule
-                                </a>
-                            </li>
-							
-							 <li>
-                                <a class="dropdown-item"
-                                   href="scientific_quiz.php"
-                                   title="Quiz">
-                                    Quiz
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown" role="none">
-                        <a class="nav-link dropdown-toggle"
-                           href="#"
-                           data-bs-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           title="Registration Information"
-                           role="menuitem">
-                            Registration
-                        </a>
-
-                        <ul class="dropdown-menu fade-down"
-                            aria-label="Registration Menu">
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="registration_guidelines.php"
-                                   title="Registration Guidelines">
-                                    Registration Guidelines
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="registration_fee.php"
-                                   title="Registration Fee">
-                                    Registration Fee
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="{{ route('register') }}"
-                                   title="Online Registration"
-                                   aria-label="Online Registration">
-                                    Online Registration
-                                </a>
-                            </li>
-
-                             <li>
-                                <a target="_blank" class="dropdown-item"
-                                   href="pdf/brochure_iphacon_2027.pdf"
-                                   title="Download Brochure">
-                                    Download Brochure
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown" role="none">
-                        <a class="nav-link dropdown-toggle"
-                           href="#"
-                           data-bs-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           title="Call for Papers"
-                           role="menuitem">
-                            Call for Papers
-                        </a>
-
-                        <ul class="dropdown-menu fade-down"
-                            aria-label="Call for Papers Menu">                         
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="abstract_guidelines.php"
-                                   title="Abstract Submission Guidelines">
-                                    Abstract Guidelines
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="oral_ppp_guidelines.php"
-                                   title=" Oral & Poster Paper Guidelines">
-                                    Oral & Poster Presentation<br> Paper Guidelines
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="themes_sub.php"
-                                   title="Themes & Sub-Themes">
-                                    Themes & Sub-Themes
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="spcl_award_presentation.php"
-                                   title="Special Award Paper Presentation">
-                                    Special Award Paper <br>Presentation
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown" role="none">
-                        <a class="nav-link dropdown-toggle"
-                           href=""
-                           data-bs-toggle="dropdown"
-                           aria-haspopup="true"
-                           aria-expanded="false"
-                           title="Stay and Travel Information"
-                           role="menuitem">
-                            Stay &amp; Travel
-                        </a>
-
-                        <ul class="dropdown-menu fade-down"
-                            aria-label="Stay and Travel Menu">
-							
-							
-							 <li>
-                                <a class="dropdown-item"
-                                   href="stay_travel.php"
-                                   title="Venue and Travel Information">
-                                    Venue &amp; Travel Info
-                                </a>
-                            </li>                           
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="accomodation.php"
-                                   title="Accommodation Information">
-                                    Accommodation
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item"
-                                   href="places_visit.php"
-                                   title="  Places to visit">
-                                   Places to visit
-                                </a>
-                            </li>
-
-                        </ul>
                     </li>
 
                     <li class="nav-item" role="none">
-                        <a class="nav-link"
-                           href="contact.php"
-                           title="Contact Us"
-                           aria-label="Contact Information"
+                        <a href="{{ route('login') }}"
+                           class="login-btn"
+                           title="Login to IPHACON 2027 Portal"
+                           aria-label="Login to IPHACON 2027 Portal"
                            role="menuitem">
-                            Contact
+                            <i class="far fa-sign-in-alt"></i> Login
                         </a>
                     </li>
-
                 </ul>
 
                <div class="nav-right">

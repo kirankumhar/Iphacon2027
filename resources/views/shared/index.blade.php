@@ -180,7 +180,7 @@
 
                         <!-- Left Logo (ISMM Main) -->
                         <div class="col-lg-2 col-md-2 col-4 d-flex justify-content-center align-items-center mb-2">
-                            <a href="https://ismmconference.com/index.php" title="ISMM Logo Main">
+                            <a href="https://www.iphacon2027.com/index.php" title="ISMM Logo Main">
                                 <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}" alt="ISMM Main Logo" class="img-fluid header-logo">
                             </a>
                         </div>
@@ -189,7 +189,7 @@
                         <div
                             class="col-lg-8 col-md-8 col-12 d-flex flex-column flex-lg-row align-items-center justify-content-center text-center mb-2">
                             <div class="me-lg-3 mb-2 mb-lg-0">
-                                <a href="https://ismmconference.com/index.php" title="ISMM 2027">
+                                <a href="https://www.iphacon2027.com/index.php" title="ISMM 2027">
                                     <img src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo" class="img-fluid header-logo">
                                 </a>
                             </div>
@@ -205,7 +205,7 @@
 
                         <!-- Right Logo (RIMS) -->
                         <div class="col-lg-2 col-md-2 col-4 d-flex justify-content-center align-items-center mb-2">
-                            <a href="https://ismmconference.com/index.php" title="RIMS Logo">
+                            <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
                                 <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo" class="img-fluid header-logo">
                             </a>
                         </div>
@@ -233,12 +233,12 @@
 
                                 <div class="navbar-collapse collapse clearfix" id="navbarSupportedContent">
                                     <ul class="navigation clearfix" id="mainmenu">
-                                        <li><a class="nav-link active" href="https://ismmconference.com/" alt="Go To Home"
+                                        <li><a class="nav-link active" href="https://www.iphacon2027.com/" alt="Go To Home"
                                                 title="Go To Home"><i class="fas fa-home"
                                                     aria-hidden="true"></i><span
                                                     class="visually-hidden">Home</span></a></li>
 													<li class="nav-item">
-                                                    <a href="https://registration.ismmconference.com/login/"><button class="btn btn-pink d-flex align-items-center" style="background-color:#3236a9; color:#fff; border:none; padding:6px 14px; border-radius:8px;">
+                                                    <a href="https://registration.iphacon2027.com/login/"><button class="btn btn-pink d-flex align-items-center" style="background-color:#3236a9; color:#fff; border:none; padding:6px 14px; border-radius:8px;">
                                                     <i class="fas fa-sign-out-alt me-2"></i> Login
                                                 </button></a></li>
 													
@@ -251,7 +251,7 @@
 
                             <div class="outer-box clearfix">
                                 <div class="btn-box">
-                                    <a href="https://registration.ismmconference.com/" class="theme-btn btn-style-one" role="button"
+                                    <a href="https://registration.iphacon2027.com/" class="theme-btn btn-style-one" role="button"
                                         aria-label="Become Member"><span class="btn-title"><i
                                                 class="flaticon-chair"></i> Register Now</span></a>
                                 </div>
@@ -265,7 +265,7 @@
                 <div class="auto-container">
                     <div class="main-box">
                         <div class="logo-box">
-                            <div class="logo"><a href="https://ismmconference.com/index.php" aria-label="ISMM 2027 Home"><img
+                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="ISMM 2027 Home"><img
                                         src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo" title="ISMM 2027 Logo"></a>
                             </div>
                             <div class="upper-right">
@@ -283,7 +283,7 @@
             </div>
 
             <div class="mobile-header" role="complementary">
-                <div class="logo"><a href="https://ismmconference.com/index.php"><img src="shared/user/images/ismm_logo.png" alt="ISMM 2027 Logo"
+                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="shared/user/images/ismm_logo.png" alt="ISMM 2027 Logo"
                             title="ISMM 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
@@ -318,7 +318,7 @@
                             Ranchi - 834002 <strong>Address</strong></li>
                         <li><i class="flaticon-alarm-clock-1"></i> Mon - Sat 9:00 - 18:00 <strong>Timing</strong></li>
                         <li><i class="flaticon-email-1"></i> <a
-                                href="mailto:ismm2027@ismmconference.com">ismm2027@ismmconference.com</a> <strong>Mail
+                                href="mailto:iphacon2027@gmail.com">iphacon2027@gmail.com</a> <strong>Mail
                                 to us</strong></li>
                     </ul>
 
@@ -388,7 +388,7 @@
 
                                             <div class="logo">
 
-                                                <a href="https://ismmconference.com/index.php"><img
+                                                <a href="https://www.iphacon2027.com/index.php"><img
                                                         src="{{ asset('shared/user/images/ismm_logo_footer.png') }}"
                                                         alt=""></a>
 
@@ -426,7 +426,7 @@
                                                         <i class="icon flaticon-email-1"></i>
                                                         <div class="text">
                                                             <a
-                                                                href="mailto:ismm2027@ismmconference.com">ismm2027@ismmconference.com</a><br>
+                                                                href="mailto:iphacon2027@gmail.com">iphacon2027@gmail.com</a><br>
                                                             <strong>Email Us</strong>
                                                         </div>
                                                     </li>
@@ -470,7 +470,7 @@
                     <div class="auto-container">
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
                             <div class="copyright-text">
-                                <p>Copyright © <?php echo date('Y'); ?> <a href="https://ismmconference.com/index.php">ISMM 2027</a> All Rights
+                                <p>Copyright © <?php echo date('Y'); ?> <a href="https://www.iphacon2027.com/index.php">ISMM 2027</a> All Rights
                                     Reserved.
                                 </p>
                             </div>
