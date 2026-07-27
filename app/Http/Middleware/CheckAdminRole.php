@@ -15,7 +15,7 @@ class CheckAdminRole
 
         $admin = Auth::guard('admin')->user();
 
-        if (!in_array($admin->role, $roles)) {
+        if (!$admin || !in_array(strtolower((string)$admin->role), array_map('strtolower', $roles))) {
             abort(403, 'Access denied. Insufficient privileges.');
         }
 

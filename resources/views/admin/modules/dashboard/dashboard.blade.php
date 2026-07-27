@@ -1,107 +1,91 @@
 @extends('admin.layouts.main')
 
 @section('admin-content')
-    <div class="container-xxl flex-grow-1 mt-3">
-        <div class="row">
-            <div class="col-sm-6 col-lg-4">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="avatar flex-shrink-0 text-success">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-license">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />
-                                        <path d="M9 7l4 0" />
-                                        <path d="M9 11l4 0" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="font-weight-medium">
-                                    Indian Approved Delegates <br> <span
-                                        class="badge bg-primary text-primary-fg ms-auto">{{ $IndApprovedCount }}</span>
-                                </div>
-                                <div class="text-secondary">
-                                    <a href="{{ route('indian-approved-delegates') }}"
-                                        class="btn btn-outline-primary mt-4">Click
-                                        Here</a>
-                                </div>
-                            </div>
-                        </div>
+    <div class="container-xxl flex-grow-1 mt-4">
+        <!-- Welcome Hero Banner -->
+        <div class="card mb-4 overflow-hidden border-0 shadow-sm" style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 60%, #4BAA7D 100%); color: #FFFFFF; border-radius: 16px;">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div>
+                        <span class="badge mb-2 px-3 py-1.5 fs-7 fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 30px;">
+                            <i class="bx bx-shield-check me-1"></i> IPHACON 2027 Admin Portal
+                        </span>
+                        <h2 class="text-white fw-bold mb-1">Welcome back, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }}! 👋</h2>
+                        <p class="text-white-50 mb-0">Here is the latest registration activity overview for IPHACON 2027 Conference.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('indian-approved-delegates') }}" class="btn btn-light fw-bold text-primary shadow-sm" style="border-radius: 10px;">
+                            <i class="bx bx-list-check me-1"></i> View Registrations
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
+
+        <!-- Dashboard Stat Cards Grid -->
+        <div class="row g-3">
+            <!-- Indian Approved Delegates Card -->
             <div class="col-sm-6 col-lg-4">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="avatar flex-shrink-0 text-primary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-license">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />
-                                        <path d="M9 7l4 0" />
-                                        <path d="M9 11l4 0" />
-                                    </svg>
-                                </div>
+                <div class="card h-100 border-0 shadow-sm" style="background: #FFFFFF; border-radius: 16px; border-left: 5px solid #4BAA7D !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; background-color: #DCFFF0; color: #4BAA7D;">
+                                <i class="bx bx-user-check fs-2"></i>
                             </div>
-                            <div class="col">
-                                <div class="font-weight-medium">
-                                    International Payment Submitted <br>
-                                    <span class="badge bg-primary text-primary-fg ms-auto">{{ $appliedCount }}</span>
-                                </div>
-                                <div class="text-secondary">
-                                    <a href="{{ route('international-payment-submitted-delegates') }}"
-                                        class="btn btn-outline-primary mt-4">Click
-                                        Here</a>
-                                </div>
-                            </div>
+                            <span class="badge px-3 py-2 fs-6 fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px;">
+                                {{ $IndApprovedCount }}
+                            </span>
                         </div>
+                        <h6 class="text-muted fw-semibold mb-1 text-uppercase small" style="letter-spacing: 0.5px;">Indian Delegates</h6>
+                        <h5 class="fw-bold text-dark mb-3">Indian Approved</h5>
+                        <a href="{{ route('indian-approved-delegates') }}" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background-color: #DCFFF0; color: #4BAA7D; border: 1px solid #4BAA7D; border-radius: 8px;">
+                            <span>View Details</span>
+                            <i class="bx bx-right-arrow-alt fs-5"></i>
+                        </a>
                     </div>
                 </div>
             </div>
 
+            <!-- International Payment Submitted Card -->
             <div class="col-sm-6 col-lg-4">
-                <div class="card card-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="avatar flex-shrink-0 text-primary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-license">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M15 21h-9a3 3 0 0 1 -3 -3v-1h10v2a2 2 0 0 0 4 0v-14a2 2 0 1 1 2 2h-2m2 -4h-11a3 3 0 0 0 -3 3v11" />
-                                        <path d="M9 7l4 0" />
-                                        <path d="M9 11l4 0" />
-                                    </svg>
-                                </div>
+                <div class="card h-100 border-0 shadow-sm" style="background: #FFFFFF; border-radius: 16px; border-left: 5px solid #2D69FF !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; background-color: #E1F0FF; color: #2D69FF;">
+                                <i class="bx bx-credit-card-front fs-2"></i>
                             </div>
-                            <div class="col">
-                                <div class="font-weight-medium">
-                                    Approved International Delegate <br>
-                                    <span class="badge bg-primary text-primary-fg ms-auto">{{ $IntApprovedCount }}</span>
-                                </div>
-                                <div class="text-secondary">
-                                    <a href="{{ route('international-approved-delegates') }}"
-                                        class="btn btn-outline-primary mt-4">Click
-                                        Here</a>
-                                </div>
-                            </div>
+                            <span class="badge px-3 py-2 fs-6 fw-bold" style="background-color: #E1F0FF; color: #2D69FF; border-radius: 20px;">
+                                {{ $appliedCount }}
+                            </span>
                         </div>
+                        <h6 class="text-muted fw-semibold mb-1 text-uppercase small" style="letter-spacing: 0.5px;">International Delegates</h6>
+                        <h5 class="fw-bold text-dark mb-3">Payment Submitted</h5>
+                        <a href="{{ route('international-payment-submitted-delegates') }}" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background-color: #E1F0FF; color: #2D69FF; border: 1px solid #2D69FF; border-radius: 8px;">
+                            <span>View Details</span>
+                            <i class="bx bx-right-arrow-alt fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approved International Delegate Card -->
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm" style="background: #FFFFFF; border-radius: 16px; border-left: 5px solid #2D69FF !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; background-color: #E1F0FF; color: #2D69FF;">
+                                <i class="bx bx-globe fs-2"></i>
+                            </div>
+                            <span class="badge px-3 py-2 fs-6 fw-bold" style="background-color: #2D69FF; color: #FFFFFF; border-radius: 20px;">
+                                {{ $IntApprovedCount }}
+                            </span>
+                        </div>
+                        <h6 class="text-muted fw-semibold mb-1 text-uppercase small" style="letter-spacing: 0.5px;">International Delegates</h6>
+                        <h5 class="fw-bold text-dark mb-3">Approved International</h5>
+                        <a href="{{ route('international-approved-delegates') }}" class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1" style="background-color: #2D69FF; color: #FFFFFF; border: none; border-radius: 8px;">
+                            <span>View Details</span>
+                            <i class="bx bx-right-arrow-alt fs-5"></i>
+                        </a>
                     </div>
                 </div>
             </div>

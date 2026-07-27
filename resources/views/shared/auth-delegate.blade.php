@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="ISMM 2027: 16th National Biennial Conference at RIMS, Ranchi, Jharkhand.">
-    <meta name="author" content="Indian Society of Medical Mycologist">
+    <meta name="description" content="IPHACON 2027: 16th National Biennial Conference at RIMS, Ranchi, Jharkhand.">
+    <meta name="author" content="IPHACON 2027">
     <meta name="robots" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -14,28 +14,28 @@
     <meta name="format-detection" content="telephone=no">
 
     <!-- Favicons (must be inside head!) -->
-    <link rel="icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('assets/img/logo/favicon.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo/favicon.png') }}" type="image/png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://computered.co.in/ismm2027/">
+    <link rel="canonical" href="https://www.iphacon2027.com/">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ISMM 2027 | 16th National Biennial Conference">
-    <meta property="og:description" content="Join ISMM 2027 at RIMS, Ranchi for plenaries, workshops & networking.">
-    <meta property="og:url" content="https://ismm2027.com/">
-    <meta property="og:site_name" content="ISMM 2027">
+    <meta property="og:title" content="IPHACON 2027 | National Conference">
+    <meta property="og:description" content="Join IPHACON 2027 at RIMS, Ranchi for plenaries, workshops & networking.">
+    <meta property="og:url" content="https://www.iphacon2027.com/">
+    <meta property="og:site_name" content="IPHACON 2027">
 
     <!-- Twitter Card (image commented out) -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@ISMM_India">
-    <meta name="twitter:creator" content="@ISMM_India">
-    <meta name="twitter:title" content="ISMM 2027 | 16th National Biennial Conference">
-    <meta name="twitter:description" content="ISMM 2027 at RIMS, Ranchi—leading medical mycology conference.">
+    <meta name="twitter:site" content="@IPHACON2027">
+    <meta name="twitter:creator" content="@IPHACON2027">
+    <meta name="twitter:title" content="IPHACON 2027 | National Conference">
+    <meta name="twitter:description" content="IPHACON 2027 at RIMS, Ranchi—leading national conference.">
 
     <!-- Stylesheets -->
     <link href="{{ asset('shared/user/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -60,6 +60,48 @@
             max-height: 50px !important;
             width: auto;
             object-fit: contain;
+        }
+
+        /* Delegate Navigation Color Palette & Position Override */
+        .header-style-three .header-lower .main-menu:before {
+            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%) !important;
+            box-shadow: 0 4px 15px rgba(45, 105, 255, 0.2);
+            z-index: 0 !important;
+        }
+        .header-style-three .header-lower .main-menu:after {
+            background: #4BAA7D !important;
+            z-index: 0 !important;
+            bottom: -8px !important;
+        }
+
+        /* Ensure nav text renders cleanly ON TOP of background & underline pseudo-elements */
+        .header-style-three .header-lower .main-menu .navigation,
+        .header-style-three .header-lower .main-menu .navigation > li,
+        .header-style-three .header-lower .main-menu .navigation > li > a {
+            position: relative !important;
+            z-index: 10 !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+
+        /* Active link highlight and remove overlapping hover underline */
+        .header-style-three .header-lower .main-menu .navigation > li > a:hover,
+        .header-style-three .header-lower .main-menu .navigation > li.current > a,
+        .header-style-three .header-lower .main-menu .navigation > li > a.active {
+            color: #DCFFF0 !important;
+        }
+
+        .main-menu .navigation > li > a::before,
+        .main-menu .navigation > li > a::after,
+        .main-menu .navigation > li:hover > a::before,
+        .main-menu .navigation > li.current > a::before,
+        .header-style-three .header-lower .main-menu .navigation > li > a::before,
+        .header-style-three .header-lower .main-menu .navigation > li > a::after {
+            display: none !important;
+            content: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
         }
     </style>
 
@@ -161,24 +203,19 @@
                 <div class="auto-container">
                     <div class="row align-items-center text-center">
 
-                        <!-- Left Logo (ISMM) -->
+                        <!-- Left Logo (IPHACON) -->
                         <div
                             class="col-lg-3 col-md-3 col-12 mb-2 mb-md-2 d-flex justify-content-center align-items-center">
-                            <a href="https://www.iphacon2027.com/index.php" title="ISMM 2027">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
-                                    title="ISMM 2027 Logo" class="img-fluid"
+                            <a href="https://www.iphacon2027.com/index.php" title="IPHACON 2027">
+                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo"
+                                    title="IPHACON 2027 Logo" class="img-fluid"
                                     style="max-height: 90px; object-fit: contain;">
                             </a>
                         </div>
 
                         <!-- Center Title -->
                         <div class="col-lg-6 col-md-6 col-12 mb-2 mb-md-2 text-center event-heading">
-                            <!--<h3 class="ismm-title">ISMM 2027</h3>-->
-                            <!-- <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
-                                <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}"
-                                    alt="ISMM Logo Main Image" title="ISMM Logo Main Image" class="img-fluid"
-                                    style="max-height: 90px; object-fit: contain;">
-                            </a> -->
+
                         </div>
 
                         <!-- Right Logo (Jharkhand/RIMS) -->
@@ -215,13 +252,13 @@
                                     <ul class="navigation navbar-nav me-auto" id="mainmenu">
 
                                         <!-- Home -->
-                                        <li class="nav-item">
+                                        <!-- <li class="nav-item">
                                             <a class="nav-link active" href="https://www.iphacon2027.com/"
                                                 target="_blank" title="Go To Home">
                                                 <i class="fas fa-home" aria-hidden="true"></i>
                                                 <span class="visually-hidden">Home</span>
                                             </a>
-                                        </li>
+                                        </li> -->
 
                                         <!-- Dashboard -->
                                         <li class="nav-item">
@@ -240,11 +277,11 @@
                                         </li>
 
                                         <!-- Submit Abstract -->
-                                        <li class="nav-item">
+                                        <!-- <li class="nav-item">
                                             <a class="nav-link" href="#" title="Submit Abstract">
                                                 Submit Abstract
                                             </a>
-                                        </li>
+                                        </li> -->
 
                                         <!-- Paper Submission -->
                                         <li class="nav-item">
@@ -274,11 +311,10 @@
                                             <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-pink d-flex align-items-center"
-                                                    style="background-color:#e91e63; color:#fff; border:none; padding:6px 14px; border-radius:8px;">
+                                                <button type="submit" class="btn d-flex align-items-center"
+                                                    style="background-color: #4BAA7D; color: #ffffff; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(75, 170, 125, 0.3);">
                                                     <i class="fas fa-sign-out-alt me-2"></i> Logout
                                                 </button>
-
                                             </form>
                                         </li>
 
@@ -302,9 +338,9 @@
                 <div class="auto-container">
                     <div class="main-box">
                         <div class="logo-box">
-                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="ISMM 2027 Home"><img
-                                        src="{{ asset('assets/img/logo/logo.png') }}" alt="ISMM 2027 Logo"
-                                        title="ISMM 2027 Logo"></a>
+                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="Iphacon 2027 Home"><img
+                                        src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
+                                        title="Iphacon 2027 Logo"></a>
                             </div>
                             <div class="upper-right">
                                 <div class="search-box">
@@ -322,7 +358,7 @@
 
             <div class="mobile-header" role="complementary">
                 <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="{{ asset('shared/user/images/ismm_logo.png') }}"
-                            alt="ISMM 2027 Logo" title="ISMM 2027 Logo"></a></div>
+                            alt="Iphacon 2027 Logo" title="Iphacon 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
                         <div class="search-box">
@@ -340,8 +376,8 @@
                 <nav class="menu-box">
                     <div class="upper-box">
                         <div class="nav-logo"><a href="https://www.iphacon2027.com/index.php"><img
-                                    src="{{ asset('assets/img/logo/logo.png') }}" alt="ISMM 2027 Logo"
-                                    title="ISMM 2027 Logo"></a></div>
+                                    src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
+                                    title="Iphacon 2027 Logo"></a></div>
                         <div class="close-btn" role="button" aria-label="Close Menu"><i
                                 class="icon flaticon-close"></i></div>
                     </div>

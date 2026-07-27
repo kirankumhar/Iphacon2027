@@ -8,8 +8,8 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>BWBS - Admin Login</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/admin/assets/img/logo.png') }}" />
+    <title>IPHACON 2027 - Admin Login</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -65,12 +65,12 @@
                     <div class="app-brand justify-content-center py-5 my-4">
                         <a href="#" class="app-brand-link gap-2">
                             <span class="app-brand-logo">
-                                <img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="bwbs"
-                                    width="135px">
+                                <img src="{{ asset('assets/img/logo/iphacon_logo.png') }}" alt="IPHACON 2027 Logo"
+                                    width="155px">
                             </span>
                         </a>
                     </div>
-                    <h4 class="mb-2">Welcome to BWBS! 👋</h4>
+                    <h4 class="mb-2">Welcome to IPHACON 2027! 👋</h4>
                     @yield('content')
                 </div>
             </div>

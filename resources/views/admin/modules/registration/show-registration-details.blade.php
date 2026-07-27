@@ -52,7 +52,7 @@
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small text-uppercase">Type</label>
-                            <p class="fw-bold">{{ $delegate->delegateCategory->category_name }}</p>
+                            <p class="fw-bold">{{ $delegate->delegateCategory->category_name ?? 'Pending Selection' }}</p>
                         </div>
                         <div class="col-sm-6">
                             <label class="text-muted small text-uppercase">Address - City & State</label>
@@ -72,7 +72,7 @@
                         @if($delegate->dietary_preference)
                         <div class="col-sm-6">
                             <label class="text-muted small text-uppercase">Dietary Preference</label>
-                            <p class="fw-bold">{{ $delegate->delegateCategory->dietary_preference }}</p>
+                            <p class="fw-bold">{{ $delegate->dietary_preference }}</p>
                         </div>
                         @endif
 

@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="ISMM 2027: 16th National Biennial Conference at RIMS, Ranchi, Jharkhand.">
-    <meta name="author" content="Indian Society of Medical Mycologist">
+    <meta name="description" content="IPHACON 2027: 16th National Biennial Conference at RIMS, Ranchi, Jharkhand.">
+    <meta name="author" content="IPHACON 2027">
     <meta name="robots" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -22,20 +22,20 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://computered.co.in/ismm2027/">
+    <link rel="canonical" href="https://www.iphacon2027.com/">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ISMM 2027 | 16th National Biennial Conference">
-    <meta property="og:description" content="Join ISMM 2027 at RIMS, Ranchi for plenaries, workshops & networking.">
-    <meta property="og:url" content="https://ismm2027.com/">
-    <meta property="og:site_name" content="ISMM 2027">
+    <meta property="og:title" content="IPHACON 2027 | National Conference">
+    <meta property="og:description" content="Join IPHACON 2027 at RIMS, Ranchi for plenaries, workshops & networking.">
+    <meta property="og:url" content="https://iphacon2027.com">
+    <meta property="og:site_name" content="IPHACON 2027">
 
     <!-- Twitter Card (image commented out) -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@ISMM_India">
-    <meta name="twitter:creator" content="@ISMM_India">
-    <meta name="twitter:title" content="ISMM 2027 | 16th National Biennial Conference">
-    <meta name="twitter:description" content="ISMM 2027 at RIMS, Ranchi—leading medical mycology conference.">
+    <meta name="twitter:site" content="@IPHACON2027">
+    <meta name="twitter:creator" content="@IPHACON2027">
+    <meta name="twitter:title" content="IPHACON 2027 | National Conference">
+    <meta name="twitter:description" content="IPHACON 2027 at RIMS, Ranchi—leading national conference.">
 
     <!-- Stylesheets -->
     <link href="{{ asset('shared/user/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -59,6 +59,19 @@
             max-height: 50px !important;
             width: auto;
             object-fit: contain;
+        }
+
+        .main-menu .navigation > li > a::before,
+        .main-menu .navigation > li > a::after,
+        .main-menu .navigation > li:hover > a::before,
+        .main-menu .navigation > li.current > a::before,
+        .header-style-three .header-lower .main-menu .navigation > li > a::before,
+        .header-style-three .header-lower .main-menu .navigation > li > a::after {
+            display: none !important;
+            content: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
         }
     </style>
 
@@ -178,14 +191,14 @@
                 <div class="auto-container">
                     <div class="row align-items-center text-center text-lg-start">
 
-                        <!-- Left Logo (ISMM Main) -->
+                        <!-- Left Logo (iphacon Main) -->
                         <div class="col-lg-2 col-md-2 col-4 d-flex justify-content-center align-items-center mb-2">
                             <a href="https://www.iphacon2027.com/index.php" title="ISMM Logo Main">
                                 <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}" alt="ISMM Main Logo" class="img-fluid header-logo">
                             </a>
                         </div>
 
-                        <!-- Center Block: ISMM 2027 Logo + Title -->
+                        <!-- Center Block: iphacon 2027 Logo + Title -->
                         <div
                             class="col-lg-8 col-md-8 col-12 d-flex flex-column flex-lg-row align-items-center justify-content-center text-center mb-2">
                             <div class="me-lg-3 mb-2 mb-lg-0">
@@ -195,7 +208,7 @@
                             </div>
                             <div>
                                 <h1 class="ismm-subtitle mb-0">
-                                    16<sup>th</sup> National Biennial Conference of ISMM 2027, Ranchi
+                                    IPHACON 2027 National Conference, Ranchi
                                 </h1>
                                 <p class="ismm-location mb-0">
                                     04–07 February, 2027
@@ -301,8 +314,8 @@
                 <div class="menu-backdrop"></div>
                 <nav class="menu-box">
                     <div class="upper-box">
-                        <div class="nav-logo"><a href=""><img src="shared/user/images/ismm_logo.png" alt="ISMM 2027 Logo"
-                                    title="ISMM 2027 Logo"></a></div>
+                        <div class="nav-logo"><a href=""><img src="shared/user/images/ismm_logo.png" alt="iphacon 2027 Logo"
+                                    title="iphacon 2027 Logo"></a></div>
                         <div class="close-btn" role="button" aria-label="Close Menu"><i
                                 class="icon flaticon-close"></i></div>
                     </div>
@@ -339,8 +352,8 @@
             <!--Page Title-->
             <section class="page-title">
                 <img src="{{ asset('shared/user/images/slider_in/about_banner') }}.jpg"
-                    alt="ISMM 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
-                    title="ISMM 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
+                    alt="Iphacon 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
+                    title="Iphacon 2027, 16<sup>th</sup> National Biennial Conference of the Indian Society of Medical Mycologist, RIMS, Ranchi, Jharkhand, India"
                     style="width:100%; height:auto;">
                 <div class="anim-icons full-width">
                     <span class="icon icon-bull-eye"></span>
@@ -470,7 +483,7 @@
                     <div class="auto-container">
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
                             <div class="copyright-text">
-                                <p>Copyright © <?php echo date('Y'); ?> <a href="https://www.iphacon2027.com/index.php">ISMM 2027</a> All Rights
+                                <p>Copyright © <?php echo date('Y'); ?> <a href="https://www.iphacon2027.com/index.php">IPHACON 2027</a> All Rights
                                     Reserved.
                                 </p>
                             </div>

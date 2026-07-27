@@ -8,11 +8,11 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>ISSM-2027 - Dashboard</title>
+    <title>IPHACON 2027 - Dashboard</title>
 
-    <meta name="description" content="ISSM-2027" />
+    <meta name="description" content="IPHACON 2027" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/admin/assets/img/logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,9 +39,130 @@
     <script src="{{ asset('assets/admin/assets/js/config.js') }}"></script>
 
     <link rel="stylesheet" type="text/css" href='{{ asset('assets/loader.css') }}'>
+
+    <!-- Custom IPHACON Palette Theme (Alice Blue, Ultramarine Blue, Frosted Mint, Green Field) -->
+    <style>
+        :root {
+            --alice-blue: #E1F0FF;
+            --ultramarine-blue: #2D69FF;
+            --frosted-mint: #DCFFF0;
+            --green-field: #4BAA7D;
+        }
+
+        body {
+            background-color: #E1F0FF !important;
+            background: linear-gradient(135deg, #E1F0FF 0%, #F0F6FF 60%, #DCFFF0 100%) !important;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        #layout-menu.bg-menu-theme {
+            background-color: #FFFFFF !important;
+            box-shadow: 0 0 25px rgba(45, 105, 255, 0.08) !important;
+            border-right: 1px solid rgba(45, 105, 255, 0.12) !important;
+        }
+
+        .bg-menu-theme .menu-link {
+            color: #1e293b !important;
+            border-radius: 8px !important;
+            margin: 2px 10px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .bg-menu-theme .menu-link:hover {
+            background-color: #DCFFF0 !important;
+            color: #2D69FF !important;
+        }
+
+        .bg-menu-theme .menu-item.active > .menu-link {
+            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(45, 105, 255, 0.35) !important;
+            font-weight: 600 !important;
+        }
+
+        .bg-menu-theme .menu-item.active > .menu-link i,
+        .bg-menu-theme .menu-item.active > .menu-link div {
+            color: #FFFFFF !important;
+        }
+
+        .bg-menu-theme .menu-link i {
+            color: #2D69FF !important;
+        }
+
+        .bg-menu-theme .menu-header span {
+            color: #2D69FF !important;
+            font-weight: 700 !important;
+        }
+
+        /* Navbar Styling */
+        #layout-navbar.bg-navbar-theme {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 4px 20px rgba(45, 105, 255, 0.08) !important;
+            border-bottom: 3px solid #2D69FF !important;
+            border-radius: 14px !important;
+        }
+
+        /* Cards & Buttons */
+        .card {
+            background-color: #FFFFFF !important;
+            border: 1px solid rgba(45, 105, 255, 0.12) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 4px 18px rgba(45, 105, 255, 0.06) !important;
+        }
+
+        .btn-primary {
+            background-color: #2D69FF !important;
+            border-color: #2D69FF !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 12px rgba(45, 105, 255, 0.3) !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #1A52E0 !important;
+            border-color: #1A52E0 !important;
+        }
+
+        .btn-outline-primary {
+            border-color: #2D69FF !important;
+            color: #2D69FF !important;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #2D69FF !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-success {
+            background-color: #4BAA7D !important;
+            border-color: #4BAA7D !important;
+            color: #FFFFFF !important;
+        }
+
+        .badge.bg-primary {
+            background-color: #2D69FF !important;
+            color: #FFFFFF !important;
+        }
+
+        .badge.bg-success {
+            background-color: #4BAA7D !important;
+            color: #FFFFFF !important;
+        }
+
+        /* Footer */
+        footer.content-footer {
+            background-color: #FFFFFF !important;
+            border-top: 1px solid rgba(45, 105, 255, 0.12) !important;
+        }
+
+        footer.content-footer a {
+            color: #2D69FF !important;
+        }
+    </style>
 </head>
 
-<body style="background: linear-gradient(to bottom, #013069 0%, #013069 65%, #df0673 100%);">
+<body>
     <div class="d-none" id="loader">
         <div class="loader-container">
             <div class="cube">
@@ -73,9 +194,9 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme pb-3">
                 <div class="app-brand mt-3">
-                    <a href="" class="app-brand-link text-center">
-                        <span class="app-brand-logo">
-                            <img src="{{ asset('assets/admin/assets/img/logo.png') }}" width="155">
+                    <a href="{{ route('admin.dashboard') }}" class="app-brand-link text-center w-100 px-2">
+                        <span class="app-brand-logo w-100">
+                            <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo" style="max-width: 155px; height: auto;">
                         </span>
                     </a>
 
@@ -106,14 +227,14 @@
                             <!-- For larger screens -->
                             <div class="nav-item d-none d-md-flex">
                                 Welcome, <strong
-                                    class="mx-1">ISSM-2027 Admin</strong>
-                                to ISSM-2027 Panel
+                                    class="mx-1">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong>
+                                to IPHACON 2027 Panel
                             </div>
 
                             <!-- For mobile screens -->
                             <div class="nav-item d-flex d-md-none">
                                 Welcome, <strong
-                                    class="mx-1">ISSM-2027 Admin</strong> to ISSM-2027 Panel.
+                                    class="mx-1">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong> to IPHACON 2027 Panel.
                             </div>
                         </div>
 
@@ -124,7 +245,7 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ !empty(auth()->user()->adminDetails->profile_pic) ? asset(auth()->user()->adminDetails->profile_pic) : asset('assets/admin/assets/img/logo.png') }}" alt
+                                        <img src="{{ asset('assets/img/logo/favicon.png') }}" alt
                                             class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
@@ -134,15 +255,15 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ !empty(auth()->user()->adminDetails->profile_pic) ? asset(auth()->user()->adminDetails->profile_pic) : asset('assets/admin/assets/img/logo.png') }}"
+                                                        <img src="{{ asset('assets/img/logo/favicon.png') }}"
                                                             alt class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <span
-                                                        class="fw-medium d-block">ISSM-2027 Admin</span>
+                                                        class="fw-medium d-block">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</span>
                                                     <small
-                                                        class="text-muted">{{ strtoupper(auth('admin')->user()->role) }}</small>
+                                                        class="text-muted">{{ strtoupper(auth('admin')->user()->role ?? 'ADMIN') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -190,7 +311,7 @@
                                 Copyright ® 2010-
                                 <script>
                                     document.write(new Date().getFullYear());
-                                </script>| ISSM-2027 , Technology Partner <img
+                                </script>| IPHACON 2027 , Technology Partner <img
                                     src="{{ asset('assets/admin/assets/img/insta-logo.png') }}" width="30px"
                                     alt="ced"> <b><a href="https://www.computered.in/" target="_blank"
                                         class="footer-link fw-medium">COMPUTER Ed</a></b>. All rights reserved.

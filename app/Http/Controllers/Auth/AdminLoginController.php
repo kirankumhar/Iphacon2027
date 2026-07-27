@@ -17,7 +17,7 @@ class AdminLoginController extends Controller
         return view('auth.admin-login');
     }
 
-      public function login(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
@@ -25,11 +25,11 @@ class AdminLoginController extends Controller
             'captcha' => 'required|captcha'
         ], [
             'captcha.captcha' => 'Invalid CAPTCHA. Please try again.',
-            'username.required' => 'Username is required.',
+            'username.required' => 'Username or Email is required.',
             'password.required' => 'Password is required.'
         ]);
 
-        $username = $request->input('username');
+        $username = trim($request->input('username'));
         $password = $request->input('password');
         $remember = $request->has('remember');
 
@@ -45,7 +45,7 @@ class AdminLoginController extends Controller
             ])->withInput($request->except('password'));
         }
 
-        // Debug: Check if account is active
+        // Check if account is active
         if (!$admin->is_active) {
             Log::warning('Admin login failed: Account inactive', ['username' => $username]);
             return back()->withErrors([
@@ -53,7 +53,7 @@ class AdminLoginController extends Controller
             ])->withInput($request->except('password'));
         }
 
-        // Debug: Verify password
+        // Verify password against stored password_hash
         if (!Hash::check($password, $admin->password_hash)) {
             Log::warning('Admin login failed: Invalid password', ['username' => $username]);
             return back()->withErrors([
@@ -61,10 +61,10 @@ class AdminLoginController extends Controller
             ])->withInput($request->except('password'));
         }
 
-        // Manual login since Auth::attempt() is not working
+        // Log the admin user in
         Auth::guard('admin')->login($admin, $remember);
 
-        // Update last login
+        // Update last login timestamp
         $admin->update([
             'last_login' => now()
         ]);
@@ -76,15 +76,8 @@ class AdminLoginController extends Controller
             'role' => $admin->role
         ]);
 
-        // Redirect based on role
-        $redirectRoute = match($admin->role) {
-            'Super Admin' => 'admin.dashboard',
-            'Admin' => 'admin.dashboard',
-            'Moderator' => 'admin.dashboard',
-            default => 'admin.dashboard'
-        };
-
-        return redirect()->route($redirectRoute)->with('success', 'Welcome back, ' . $admin->full_name . '!');
+        return redirect()->intended(route('admin.dashboard'))
+            ->with('success', 'Welcome back, ' . ($admin->full_name ?? $admin->username) . '!');
     }
 
     public function logout(Request $request)

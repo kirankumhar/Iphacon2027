@@ -34,55 +34,53 @@ class AdminUser extends Authenticatable
         'last_login' => 'datetime',
     ];
 
-    // Override the default password column name
+    /**
+     * Override the default password column name for Auth
+     */
     public function getAuthPassword()
     {
         return $this->password_hash;
     }
 
-    // Override the default username column
-    public function getAuthIdentifierName()
-    {
-        return 'username';
-    }
-
-	 /**
-     * Get the username (identifier) value
+    /**
+     * Check if admin has specific role (case-insensitive)
      */
-    public function getAuthIdentifier()
-    {
-        return $this->username;
-    }
-
-    // Check if admin has specific role
     public function hasRole($role)
     {
-        return $this->role === $role;
+        return strcasecmp((string)$this->role, (string)$role) === 0;
     }
 
-    // Check if admin is super admin
+    /**
+     * Check if admin is super admin (case-insensitive)
+     */
     public function isSuperAdmin()
     {
-        return $this->role === 'Super Admin';
+        return strcasecmp((string)$this->role, 'Super Admin') === 0;
     }
 
-    // Check if admin is admin
+    /**
+     * Check if admin is admin (case-insensitive)
+     */
     public function isAdmin()
     {
-        return in_array($this->role, ['Admin', 'Super Admin']);
+        return in_array(strtolower((string)$this->role), ['admin', 'super admin']);
     }
 
-    // Check if admin is moderator
+    /**
+     * Check if admin is moderator (case-insensitive)
+     */
     public function isModerator()
     {
-        return $this->role === 'Moderator';
+        return strcasecmp((string)$this->role, 'Moderator') === 0;
     }
 
-	   /**
+    /**
      * Mutator to hash password when setting
      */
     public function setPasswordHashAttribute($value)
     {
+        if (empty($value)) return;
+
         // Only hash if it's not already hashed
         if (Hash::needsRehash($value)) {
             $this->attributes['password_hash'] = Hash::make($value);
@@ -91,20 +89,24 @@ class AdminUser extends Authenticatable
         }
     }
 
-	   /**
+    /**
      * Get all permissions for this admin's role
      */
     public function permissions()
     {
-        if (!Schema::hasTable('admin_permissions') || !Schema::hasTable('admin_role_permissions')) {
+        try {
+            if (!Schema::hasTable('admin_permissions') || !Schema::hasTable('admin_role_permissions')) {
+                return [];
+            }
+
+            return DB::table('admin_permissions')
+                ->join('admin_role_permissions', 'admin_permissions.id', '=', 'admin_role_permissions.permission_id')
+                ->where('admin_role_permissions.role', $this->role)
+                ->pluck('admin_permissions.slug')
+                ->toArray();
+        } catch (\Throwable $e) {
             return [];
         }
-
-        return DB::table('admin_permissions')
-            ->join('admin_role_permissions', 'admin_permissions.id', '=', 'admin_role_permissions.permission_id')
-            ->where('admin_role_permissions.role', $this->role)
-            ->pluck('admin_permissions.slug')
-            ->toArray();
     }
 
     /**

@@ -16,33 +16,39 @@ class DelegateCategorySeeder extends Seeder
 
         $categories = [
             [
-                'category_name' => 'ISMM Member',
-                'indian_fee' => 7000.00,
+                'category_name' => 'IPHA Member',
+                'indian_fee' => 8850.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
-                'category_name' => 'Non-ISMM Member',
-                'indian_fee' => 8000.00,
+                'category_name' => 'Non-IPHA Member',
+                'indian_fee' => 17700.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
-                'category_name' => 'Young ISAM Members, PG/Ph.D Students',
-                'indian_fee' => 6000.00,
+                'category_name' => 'PG/PhD/MPH Student (Member)',
+                'indian_fee' => 7080.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
-                'category_name' => 'Industry Professional',
-                'indian_fee' => 9000.00,
-                'foreign_fee' => 200.00,
+                'category_name' => 'PG/PhD/MPH Student (Non-Member)',
+                'indian_fee' => 9440.00,
+                'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
-                'category_name' => 'Accompanying Person',
-                'indian_fee' => 3000.00,
+                'category_name' => 'Co-Delegate / Accompanying Person',
+                'indian_fee' => 5900.00,
                 'foreign_fee' => 100.00,
+                'is_active' => true,
+            ],
+            [
+                'category_name' => 'Foreign Delegates',
+                'indian_fee' => 56275.00,
+                'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
         ];

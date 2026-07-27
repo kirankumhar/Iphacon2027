@@ -3,66 +3,69 @@
     $inner_title = '';
 @endphp
 @section('delegate-content')
-<div class="container">
+<div class="container py-3">
     <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                <div class="card-header d-flex justify-content-between align-items-center py-4"
-                     style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 15px 15px 0 0;">
-                    <h3 class="text-white mb-0 fw-bold">
-                        <i class="fas fa-clipboard-list me-2"></i>My Registrations
-                    </h3>
+        <div class="col-lg-11 col-xl-10">
+            <div class="card shadow-md border-0" style="border-radius: 16px; overflow: hidden; background: #ffffff;">
+                <div class="card-header d-flex justify-content-between align-items-center py-3 px-4"
+                     style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 3px solid #2D69FF;">
+                    <div class="d-flex align-items-center gap-2.5">
+                        <i class="fas fa-clipboard-list text-primary fs-5"></i>
+                        <h5 class="text-white mb-0 fw-bold" style="letter-spacing: 0.5px;">My Registrations</h5>
+                    </div>
                     @if($registrations->isEmpty())
-                        <a href="{{ route('registration.create') }}" class="btn btn-light btn-sm">
+                        <a href="{{ route('registration.create') }}" class="btn btn-primary btn-sm px-3 fw-semibold" style="border-radius: 8px;">
                             <i class="fas fa-plus me-1"></i>New Registration
                         </a>
                     @endif
                 </div>
 
-                <div class="card-body p-5">
+                <div class="card-body p-3 p-md-4">
                     @if($registrations->isEmpty())
-                        <div class="text-center py-5">
-                            <i class="fas fa-clipboard-list fa-5x text-muted mb-3"></i>
-                            <h4 class="text-muted">No Registrations Found</h4>
-                            <p class="text-muted">You haven't registered for the conference yet.</p>
-                            <a href="{{ route('registration.create') }}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus me-2"></i>Start Registration
+                        <div class="text-center py-4 px-3 my-2" style="background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; background: #E1F0FF; color: #2D69FF;">
+                                <i class="fas fa-clipboard-list fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">No Registrations Found</h5>
+                            <p class="text-muted small mb-3">You haven't registered for the conference yet.</p>
+                            <a href="{{ route('registration.create') }}" class="btn btn-primary px-4 py-2 fw-semibold" style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%); border: none; border-radius: 10px;">
+                                <i class="fas fa-plus me-1.5"></i>Start Registration Now
                             </a>
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Registration No.</th>
-                                        <th>Delegate Category</th>
-                                        <th>Status</th>
-                                        <th>Submitted Date</th>
-                                        <th>Actions</th>
+                                        <th class="fw-bold">Registration No.</th>
+                                        <th class="fw-bold">Delegate Category</th>
+                                        <th class="fw-bold">Status</th>
+                                        <th class="fw-bold">Submitted Date</th>
+                                        <th class="fw-bold text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($registrations as $registration)
                                         <tr>
-                                            <td>{{ $registration->registration_number }}</td>
-                                            <td>{{ $registration->delegateCategory->category_name }}</td>
+                                            <td class="fw-semibold text-dark">{{ $registration->registration_number }}</td>
+                                            <td><span class="badge bg-light text-dark border px-2.5 py-1.5">{{ $registration->delegateCategory->category_name ?? 'Pending Selection' }}</span></td>
                                             <td>
-                                                <span class="badge bg-{{ $registration->status == 'Approved' ? 'success' : ($registration->status == 'Rejected' ? 'danger' : 'warning') }}">
+                                                <span class="badge px-3 py-1.5 fw-semibold" style="background-color: {{ $registration->status == 'Approved' ? '#DCFFF0' : ($registration->status == 'Rejected' ? '#ffe2e2' : '#E1F0FF') }}; color: {{ $registration->status == 'Approved' ? '#4BAA7D' : ($registration->status == 'Rejected' ? '#dc2626' : '#2D69FF') }}; border-radius: 20px;">
                                                     {{ $registration->status }}
                                                 </span>
                                             </td>
-                                            <td>{{ $registration->submitted_at ? $registration->submitted_at->format('d M, Y') : 'Not Submitted Yet' }}</td>
-                                            <td>
-                                                <a href="{{ route('registration.show', $registration->id) }}" class="btn btn-sm btn-info">
-                                                    <i class="fas fa-eye"></i> View
+                                            <td class="text-muted small">{{ $registration->submitted_at ? $registration->submitted_at->format('d M, Y') : 'Not Submitted Yet' }}</td>
+                                            <td class="text-end">
+                                                <a href="{{ route('registration.show', $registration->id) }}" class="btn btn-sm btn-outline-primary px-3 py-1 fw-semibold me-1" style="border-radius: 6px;">
+                                                    <i class="fas fa-eye me-1"></i>View
                                                 </a>
                                                 @if($registration->status == 'Draft')
-                                                    <a href="{{ route('registration.create') }}" class="btn btn-sm btn-warning">
-                                                        <i class="fas fa-edit"></i> Edit
+                                                    <a href="{{ route('registration.create') }}" class="btn btn-sm btn-primary px-3 py-1 fw-semibold" style="background: #2D69FF; border: none; border-radius: 6px;">
+                                                        <i class="fas fa-edit me-1"></i>Edit
                                                     </a>
                                                 @elseif($registration->status == 'Approved' || $registration->status == 'Payment Submitted')
-                                                    <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-sm btn-warning">
-                                                        <i class="fas fa-download"></i> Receipt
+                                                    <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-sm btn-success px-3 py-1 fw-semibold" style="border-radius: 6px;">
+                                                        <i class="fas fa-download me-1"></i>Receipt
                                                     </a>
                                                 @endif
                                             </td>

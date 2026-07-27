@@ -3,78 +3,197 @@
     $inner_title = '';
 @endphp
 @section('delegate-content')
-    <div class="container">
+    <div class="container py-3">
         <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                    <!-- Progress Bar -->
-                    <div class="card-header py-4"
-                        style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 15px 15px 0 0;">
-                        <h3 class="text-white text-center mb-3 fw-bold">
-                            <i class="fas fa-edit me-2"></i>Conference Registration
-                        </h3>
+            <div class="col-lg-11 col-xl-10">
+                <div class="card wizard-card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
+                    
+                    <!-- Stepper Custom CSS -->
+                    <style>
+                        .wizard-header {
+                            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                            padding: 24px 28px;
+                            border-bottom: 3px solid #2D69FF;
+                        }
+                        .stepper-container {
+                            position: relative;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            max-width: 750px;
+                            margin: 16px auto 4px auto;
+                        }
+                        .stepper-line-bg {
+                            position: absolute;
+                            top: 20px;
+                            left: 10%;
+                            right: 10%;
+                            height: 3px;
+                            background: #334155;
+                            z-index: 1;
+                        }
+                        .stepper-line-fill {
+                            position: absolute;
+                            top: 20px;
+                            left: 10%;
+                            height: 3px;
+                            background: linear-gradient(90deg, #4BAA7D 0%, #2D69FF 100%);
+                            z-index: 1;
+                            transition: width 0.4s ease;
+                        }
+                        .step-node {
+                            position: relative;
+                            z-index: 2;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            text-decoration: none !important;
+                        }
+                        .step-circle {
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            background: #1e293b;
+                            color: #94a3b8;
+                            border: 2px solid #334155;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-weight: 700;
+                            font-size: 0.95rem;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                        }
+                        .step-node.completed .step-circle {
+                            background: #4BAA7D;
+                            border-color: #4BAA7D;
+                            color: #ffffff;
+                        }
+                        .step-node.active .step-circle {
+                            background: #2D69FF;
+                            border-color: #ffffff;
+                            color: #ffffff;
+                            box-shadow: 0 0 0 5px rgba(45, 105, 255, 0.35);
+                            transform: scale(1.1);
+                        }
+                        .step-label {
+                            margin-top: 8px;
+                            font-size: 0.78rem;
+                            font-weight: 600;
+                            color: #94a3b8;
+                            text-align: center;
+                            white-space: nowrap;
+                        }
+                        .step-node.active .step-label {
+                            color: #ffffff;
+                            font-weight: 700;
+                        }
+                        .step-node.completed .step-label {
+                            color: #DCFFF0;
+                        }
+                        .compact-form-body {
+                            padding: 28px 32px;
+                        }
+                        @media (max-width: 576px) {
+                            .compact-form-body {
+                                padding: 18px 16px;
+                            }
+                            .step-label {
+                                font-size: 0.7rem;
+                            }
+                            .step-circle {
+                                width: 34px;
+                                height: 34px;
+                                font-size: 0.85rem;
+                            }
+                            .stepper-line-bg, .stepper-line-fill {
+                                top: 17px;
+                            }
+                        }
+                    </style>
 
-                        <div class="progress" style="height: 25px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ ($step / 4) * 100 }}%"
-                                aria-valuenow="{{ $step }}" aria-valuemin="0" aria-valuemax="4">
-                                Step {{ $step }} of 4
-                            </div>
+                    <!-- Modern Stepper Header -->
+                    <div class="wizard-header text-white">
+                        <div class="text-center mb-2">
+                            <h4 class="text-white mb-1 fw-bold" style="letter-spacing: 0.5px;">
+                                <i class="fas fa-edit me-2 text-primary"></i>IPHACON 2027 Registration Portal
+                            </h4>
+                            <small class="text-white-50 fs-7">Complete all 4 steps to finalize your conference registration</small>
                         </div>
 
-                        <div class="row text-center mt-3">
-                            <div class="col-3">
-                                <small class="text-white {{ $step >= 1 ? 'fw-bold' : '' }}">
-                                    <i class="fas fa-user {{ $step >= 1 ? 'text-warning' : '' }}"></i> Personal Info
-                                </small>
+                        <!-- Progress Stepper Component -->
+                        <div class="stepper-container px-2">
+                            <div class="stepper-line-bg"></div>
+                            @php
+                                $fillPercentage = match($step) {
+                                    1 => '0%',
+                                    2 => '27%',
+                                    3 => '54%',
+                                    4 => '80%',
+                                    default => '0%'
+                                };
+                            @endphp
+                            <div class="stepper-line-fill" style="width: {{ $fillPercentage }};"></div>
+
+                            <!-- Step 1 Node -->
+                            <div class="step-node {{ $step > 1 ? 'completed' : ($step == 1 ? 'active' : '') }}">
+                                <div class="step-circle">
+                                    @if($step > 1) <i class="fas fa-check fs-6"></i> @else 1 @endif
+                                </div>
+                                <span class="step-label"><i class="fas fa-user me-1"></i> Personal Info</span>
                             </div>
-                            <div class="col-3">
-                                <small class="text-white {{ $step >= 2 ? 'fw-bold' : '' }}">
-                                    <i class="fas fa-clipboard-list {{ $step >= 2 ? 'text-warning' : '' }}"></i>
-                                    Registration
-                                </small>
+
+                            <!-- Step 2 Node -->
+                            <div class="step-node {{ $step > 2 ? 'completed' : ($step == 2 ? 'active' : '') }}">
+                                <div class="step-circle">
+                                    @if($step > 2) <i class="fas fa-check fs-6"></i> @else 2 @endif
+                                </div>
+                                <span class="step-label"><i class="fas fa-clipboard-list me-1"></i> Registration</span>
                             </div>
-                            <div class="col-3">
-                                <small class="text-white {{ $step >= 3 ? 'fw-bold' : '' }}">
-                                    <i class="fas fa-eye {{ $step >= 3 ? 'text-warning' : '' }}"></i> Preview
-                                </small>
+
+                            <!-- Step 3 Node -->
+                            <div class="step-node {{ $step > 3 ? 'completed' : ($step == 3 ? 'active' : '') }}">
+                                <div class="step-circle">
+                                    @if($step > 3) <i class="fas fa-check fs-6"></i> @else 3 @endif
+                                </div>
+                                <span class="step-label"><i class="fas fa-eye me-1"></i> Preview</span>
                             </div>
-                            <div class="col-3">
-                                <small class="text-white {{ $step >= 4 ? 'fw-bold' : '' }}">
-                                    <i class="fas fa-credit-card {{ $step >= 4 ? 'text-warning' : '' }}"></i> Payment
-                                </small>
+
+                            <!-- Step 4 Node -->
+                            <div class="step-node {{ $step == 4 ? 'active' : '' }}">
+                                <div class="step-circle">4</div>
+                                <span class="step-label"><i class="fas fa-credit-card me-1"></i> Payment</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-body p-5">
+                    <!-- Form Body -->
+                    <div class="card-body compact-form-body">
                         <form id="wizardForm" method="POST" action="{{ route('registration.store-step', $step) }}"
                             enctype="multipart/form-data">
                             @csrf
 
-
-                            <!-- Error Summary -->
+                            <!-- Error Summary Alert -->
                             @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                                    <strong><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following
-                                        errors:</strong>
-                                    <ul class="mb-0 mt-2">
+                                <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 small mb-4" role="alert" style="border-radius: 10px;">
+                                    <strong><i class="fas fa-exclamation-triangle me-2"></i>Please resolve the following inputs:</strong>
+                                    <ul class="mb-0 mt-1.5 ps-3">
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </ul>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close py-2.5" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
 
                             @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                                <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 small mb-4" role="alert" style="border-radius: 10px;">
                                     <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
+                                    <button type="button" class="btn-close py-2.5" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
 
+                            <!-- Step Partial View Include -->
                             @if ($step == 1)
                                 @include('registration.steps.step1')
                             @elseif($step == 2)
@@ -85,9 +204,9 @@
                                 @include('registration.steps.step4')
                             @endif
 
-                            <!-- Navigation Buttons -->
-                            <div class="row mt-5">
-                                <div class="col-md-6">
+                            <!-- Compact Navigation Action Bar -->
+                            <div class="d-flex align-items-center justify-content-between pt-4 mt-4 border-top flex-wrap gap-2">
+                                <div>
                                     @php
                                         $stepData = json_encode([
                                             'step' => $step - 1,
@@ -95,30 +214,28 @@
                                         ]);
 
                                         $encryptedToken = Crypt::encryptString($stepData);
-
                                     @endphp
 
                                     @if ($step > 1)
                                         <a href="{{ route('registration.wizard', ['token' => $encryptedToken]) }}"
-                                            class="btn btn-outline-secondary btn-lg px-4">
-                                            <i class="fas fa-arrow-left me-2"></i>Previous
+                                            class="btn btn-outline-secondary px-4 py-2 fw-semibold" style="border-radius: 10px;">
+                                            <i class="fas fa-arrow-left me-2"></i>Previous Step
                                         </a>
                                     @endif
                                 </div>
-                                <div class="col-md-6 text-end">
-
+                                <div class="d-flex align-items-center gap-2.5">
                                     @if ($step < 4)
-                                        <button type="button" class="btn btn-info btn-lg px-4 me-2" onclick="saveDraft()">
-                                            <i class="fas fa-save me-2"></i>Save Draft
+                                        <button type="button" class="btn btn-outline-primary px-3.5 py-2 fw-semibold" onclick="saveDraft()" style="border-radius: 10px;">
+                                            <i class="fas fa-save me-1.5"></i>Save Draft
                                         </button>
 
-                                        <button type="submit" class="btn btn-primary btn-lg px-4"
-                                            style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border: none;">
-                                            <i class="fas fa-arrow-right me-2"></i>Next
+                                        <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm"
+                                            style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%); border: none; border-radius: 10px;">
+                                            Next Step <i class="fas fa-arrow-right ms-2"></i>
                                         </button>
                                     @else
-                                        <button type="submit" class="btn btn-success btn-lg px-4">
-                                            <i class="fas fa-check me-2"></i>Complete Registration
+                                        <button type="submit" class="btn btn-success px-4 py-2.5 fw-bold shadow-sm" style="border-radius: 10px;">
+                                            <i class="fas fa-check-circle me-2"></i>Complete Registration
                                         </button>
                                     @endif
                                 </div>
