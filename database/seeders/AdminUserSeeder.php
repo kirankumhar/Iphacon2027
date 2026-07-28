@@ -12,7 +12,7 @@ class AdminUserSeeder extends Seeder
     {
         AdminUser::create([
             'username' => 'superadmin',
-            'email' => 'superadmin@ismm.com',
+            'email' => 'superadmin@iphacon2027.com',
             'password_hash' => Hash::make('12345678'),
             'full_name' => 'Super Administrator',
             'role' => 'Super Admin',
@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
 
         AdminUser::create([
             'username' => 'admin',
-            'email' => 'admin@ismm.com',
+            'email' => 'admin@iphacon2027.com',
             'password_hash' => Hash::make('12345678'),
             'full_name' => 'System Administrator',
             'role' => 'Admin',
@@ -30,7 +30,7 @@ class AdminUserSeeder extends Seeder
 
         AdminUser::create([
             'username' => 'moderator',
-            'email' => 'moderator@ismm.com',
+            'email' => 'moderator@iphacon2027.com',
             'password_hash' => Hash::make('12345678'),
             'full_name' => 'Content Moderator',
             'role' => 'Moderator',
