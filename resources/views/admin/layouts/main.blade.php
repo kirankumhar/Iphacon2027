@@ -55,29 +55,77 @@
             min-height: 100vh;
         }
 
-        /* Sidebar Styling */
+        /* Modern Gradient Sidebar Styling */
         #layout-menu.bg-menu-theme {
-            background-color: #FFFFFF !important;
-            box-shadow: 0 0 25px rgba(45, 105, 255, 0.08) !important;
-            border-right: 1px solid rgba(45, 105, 255, 0.12) !important;
+            background: linear-gradient(180deg, #0F172A 0%, #1E293B 60%, #0F172A 100%) !important;
+            box-shadow: 4px 0 25px rgba(15, 23, 42, 0.2) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            overflow-x: hidden !important;
+        }
+
+        .bg-menu-theme .menu-inner-shadow {
+            display: none !important;
+        }
+
+        .bg-menu-theme .menu-inner {
+            background: transparent !important;
+        }
+
+        .bg-menu-theme .app-brand {
+            background: #FFFFFF !important;
+            margin: 12px auto !important;
+            padding: 8px 12px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+            width: calc(100% - 24px) !important;
+            box-sizing: border-box !important;
+            height: auto !important;
+            min-height: unset !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+        }
+
+        .bg-menu-theme .app-brand .app-brand-link {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .bg-menu-theme .app-brand img {
+            max-width: 135px !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 46px !important;
+            object-fit: contain !important;
         }
 
         .bg-menu-theme .menu-link {
-            color: #1e293b !important;
-            border-radius: 8px !important;
-            margin: 2px 10px !important;
-            transition: all 0.2s ease !important;
+            color: #94A3B8 !important;
+            border-radius: 10px !important;
+            margin: 3px 12px !important;
+            padding: 0.65rem 1rem !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
         .bg-menu-theme .menu-link:hover {
-            background-color: #DCFFF0 !important;
-            color: #2D69FF !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #38BDF8 !important;
+            transform: translateX(4px);
+        }
+
+        .bg-menu-theme .menu-link:hover i {
+            color: #38BDF8 !important;
         }
 
         .bg-menu-theme .menu-item.active > .menu-link {
-            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%) !important;
+            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 50%, #4BAA7D 100%) !important;
             color: #FFFFFF !important;
-            box-shadow: 0 4px 14px rgba(45, 105, 255, 0.35) !important;
+            box-shadow: 0 4px 18px rgba(45, 105, 255, 0.45) !important;
             font-weight: 600 !important;
         }
 
@@ -87,21 +135,80 @@
         }
 
         .bg-menu-theme .menu-link i {
-            color: #2D69FF !important;
+            color: #64748B !important;
+            font-size: 1.25rem !important;
+            transition: color 0.2s ease;
         }
 
-        .bg-menu-theme .menu-header span {
-            color: #2D69FF !important;
+        .bg-menu-theme .menu-header {
+            margin-top: 1.35rem !important;
+            margin-bottom: 0.4rem !important;
+        }
+
+        .bg-menu-theme .menu-header span,
+        .bg-menu-theme .menu-header .menu-header-text {
+            color: #38BDF8 !important;
             font-weight: 700 !important;
+            font-size: 0.725rem !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+            opacity: 0.9;
         }
 
         /* Navbar Styling */
         #layout-navbar.bg-navbar-theme {
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px) !important;
-            box-shadow: 0 4px 20px rgba(45, 105, 255, 0.08) !important;
-            border-bottom: 3px solid #2D69FF !important;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+            backdrop-filter: blur(12px) !important;
+            box-shadow: 0 4px 20px rgba(45, 105, 255, 0.1) !important;
+            border: 1px solid rgba(45, 105, 255, 0.15) !important;
+            border-left: 5px solid #2D69FF !important;
             border-radius: 14px !important;
+        }
+
+        .navbar-welcome-badge {
+            background: linear-gradient(135deg, rgba(45, 105, 255, 0.08) 0%, rgba(220, 255, 240, 0.5) 100%) !important;
+            border: 1px solid rgba(45, 105, 255, 0.18) !important;
+            padding: 6px 16px !important;
+            border-radius: 30px !important;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .navbar-dropdown .avatar {
+            border: 2px solid #2D69FF !important;
+            border-radius: 50% !important;
+            padding: 2px !important;
+            background: #FFFFFF !important;
+            box-shadow: 0 2px 10px rgba(45, 105, 255, 0.25) !important;
+            transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+        }
+
+        .navbar-dropdown .avatar:hover {
+            transform: scale(1.08) !important;
+            box-shadow: 0 4px 15px rgba(45, 105, 255, 0.4) !important;
+        }
+
+        .layout-navbar .dropdown-menu {
+            border-radius: 14px !important;
+            border: 1px solid rgba(45, 105, 255, 0.15) !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
+            padding: 8px !important;
+        }
+
+        .layout-navbar .dropdown-item {
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .layout-navbar .dropdown-item:hover {
+            background-color: #DCFFF0 !important;
+            color: #2D69FF !important;
+        }
+
+        .layout-navbar .dropdown-item.text-danger:hover {
+            background-color: #FEE2E2 !important;
+            color: #DC2626 !important;
         }
 
         /* Cards & Buttons */
@@ -166,23 +273,12 @@
     <div class="d-none" id="loader">
         <div class="loader-container">
             <div class="cube">
-                <div class="face front"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo">
-                </div>
-                <div class="face back"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo">
-                </div>
-                <div class="face right"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo">
-                </div>
-                <div class="face left"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo">
-                </div>
-                <div class="face top"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo">
-                </div>
-                <div class="face bottom"><img src="{{ asset('assets/admin/assets/img/logo.png') }}"
-                        alt="Logo"></div>
+                <div class="face front"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
+                <div class="face back"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
+                <div class="face right"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
+                <div class="face left"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
+                <div class="face top"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
+                <div class="face bottom"><img src="{{ asset('assets/admin/assets/img/logo.png') }}" alt="Logo"></div>
             </div>
         </div>
         <br>
@@ -217,7 +313,7 @@
                 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                     id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <a class="nav-item nav-link px-0 me-xl-4 text-primary" href="javascript:void(0)">
                             <i class="bx bx-menu bx-sm"></i>
                         </a>
                     </div>
@@ -226,33 +322,43 @@
                         <div class="navbar-nav align-items-center">
                             <!-- For larger screens -->
                             <div class="nav-item d-none d-md-flex">
-                                Welcome, <strong
-                                    class="mx-1">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong>
-                                to IPHACON 2027 Panel
+                                <div class="navbar-welcome-badge d-flex align-items-center gap-2">
+                                    <span class="badge bg-primary text-white rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                        <i class="bx bx-user fs-7"></i>
+                                    </span>
+                                    <span class="text-dark fs-7">
+                                        Welcome, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong>
+                                    </span>
+                                    <span class="badge bg-success bg-opacity-15 text-success px-2 py-0.5 rounded-pill fw-bold fs-tiny">
+                                        IPHACON 2027 Panel
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- For mobile screens -->
                             <div class="nav-item d-flex d-md-none">
-                                Welcome, <strong
-                                    class="mx-1">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong> to IPHACON 2027 Panel.
+                                <div class="navbar-welcome-badge d-flex align-items-center gap-1.5 py-1 px-2.5">
+                                    <span class="text-dark fs-7">
+                                        Welcome, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'Admin' }}</strong>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
+                                <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ asset('assets/img/logo/favicon.png') }}" alt
+                                        <img src="{{ asset('assets/img/logo/favicon.png') }}" alt="User Avatar"
                                             class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="d-flex">
+                                        <a class="dropdown-item" href="javascript:void(0);">
+                                            <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
                                                         <img src="{{ asset('assets/img/logo/favicon.png') }}"
@@ -260,40 +366,31 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span
-                                                        class="fw-medium d-block">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</span>
-                                                    <small
-                                                        class="text-muted">{{ strtoupper(auth('admin')->user()->role ?? 'ADMIN') }}</small>
+                                                    <span class="fw-bold text-dark d-block mb-0">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</span>
+                                                    <span class="badge bg-label-primary fs-tiny fw-bold text-uppercase">{{ auth('admin')->user()->role ?? 'ADMIN' }}</span>
                                                 </div>
                                             </div>
                                         </a>
                                     </li>
                                     <li>
-                                        <div class="dropdown-divider"></div>
+                                        <div class="dropdown-divider my-1"></div>
                                     </li>
-                                    {{-- <li>
-                                        <a class="dropdown-item" href="{{ route('profile.my-profile') }}">
-                                            <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li> --}}
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('admin.profile.change-password') }}">
-                                            <i class="bx bx-cog me-2"></i>
-                                            <span class="align-middle">Change Password</span>
+                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.profile.change-password') }}">
+                                            <i class="bx bx-cog me-2 text-primary fs-5"></i>
+                                            <span>Change Password</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <div class="dropdown-divider"></div>
+                                        <div class="dropdown-divider my-1"></div>
                                     </li>
                                     <form method="POST" action="{{ route('admin.logout') }}">
                                         @csrf
                                         <li>
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bx bx-power-off me-2"></i>
-                                                <span class="align-middle">Log Out</span>
+                                            <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                                                <i class="bx bx-power-off me-2 fs-5"></i>
+                                                <span>Log Out</span>
                                             </button>
-
                                         </li>
                                     </form>
                                 </ul>

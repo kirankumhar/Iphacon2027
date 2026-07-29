@@ -3,18 +3,20 @@
 @section('admin-content')
     <div class="container-xxl flex-grow-1 mt-4">
         <!-- Welcome Hero Banner -->
-        <div class="card mb-4 overflow-hidden border-0 shadow-sm" style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 60%, #4BAA7D 100%); color: #FFFFFF; border-radius: 16px;">
-            <div class="card-body p-3 p-md-4">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="card mb-3 overflow-hidden border-0 shadow-sm" style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 60%, #4BAA7D 100%); color: #FFFFFF; border-radius: 12px;">
+            <div class="card-body py-3 px-3 px-md-4">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div>
-                        <span class="badge mb-2 px-3 py-1.5 fs-7 fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 30px;">
-                            <i class="bx bx-shield-check me-1"></i> IPHACON 2027 Admin Portal
-                        </span>
-                        <h2 class="text-white fw-bold mb-1">Welcome back, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }}! 👋</h2>
-                        <p class="text-white-50 mb-0">Here is the latest registration activity overview for IPHACON 2027 Conference.</p>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge px-2.5 py-1 fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px; font-size: 0.75rem;">
+                                <i class="bx bx-shield-check me-1"></i> IPHACON 2027 Admin Portal
+                            </span>
+                        </div>
+                        <h4 class="text-white fw-bold mb-1 fs-5">Welcome back, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }}! 👋</h4>
+                        <p class="text-white-50 mb-0 small" style="font-size: 0.825rem;">Here is the latest registration activity overview for IPHACON 2027 Conference.</p>
                     </div>
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('indian-approved-delegates') }}" class="btn btn-light fw-bold text-primary shadow-sm" style="border-radius: 10px;">
+                    <div>
+                        <a href="{{ route('indian-approved-delegates') }}" class="btn btn-sm btn-light fw-bold text-primary shadow-sm px-3 py-1.5" style="border-radius: 8px;">
                             <i class="bx bx-list-check me-1"></i> View Registrations
                         </a>
                     </div>

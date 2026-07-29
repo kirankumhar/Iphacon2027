@@ -1,119 +1,97 @@
-<ul class="menu-inner py-1">
+<ul class="menu-inner py-2">
     @if (auth('admin')->user()->role == 'superadmin')
-    <li class="menu-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
-        <a href="{{ route('superadmin.dashboard') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Dashboards">Dashboards</div>
-        </a>
-    </li>
+        <li class="menu-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('superadmin.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-shield-quarter"></i>
+                <div data-i18n="Superadmin Dashboard">Superadmin Dashboard</div>
+            </a>
+        </li>
 
-    <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Admin &amp; Roles</span>
-    </li>
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Admin &amp; Roles</span>
+        </li>
 
-    <li class="menu-item {{ request()->routeIs('admins.create') ? 'active' : '' }}">
-        <a href="{{ route('admins.create') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-            <div data-i18n="CR">Create Admin</div>
-            <div class="badge bg-label-danger fs-tiny rounded-pill ms-auto">New</div>
-        </a>
-    </li>
+        <li class="menu-item {{ request()->routeIs('admins.create') ? 'active' : '' }}">
+            <a href="{{ route('admins.create') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user-plus"></i>
+                <div data-i18n="Create Admin">Create Admin</div>
+            </a>
+        </li>
 
-    <li class="menu-item {{ request()->routeIs('admins.view-admins') ? 'active' : '' }}">
-        <a href="{{ route('admins.view-admins') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-            <div data-i18n="CR">View Admin</div>
-            <div class="badge bg-label-danger fs-tiny rounded-pill ms-auto">New</div>
-        </a>
-    </li>
+        <li class="menu-item {{ request()->routeIs('admins.view-admins') ? 'active' : '' }}">
+            <a href="{{ route('admins.view-admins') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-group"></i>
+                <div data-i18n="View Admins">View Admins</div>
+            </a>
+        </li>
     @endif
+
+    <!-- Main Navigation Header -->
+    <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Overview</span>
+    </li>
 
     <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <a href="{{ route('admin.dashboard') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Dashboards">Dashboards</div>
+            <i class="menu-icon tf-icons bx bx-grid-alt"></i>
+            <div data-i18n="Dashboard">Dashboard</div>
         </a>
     </li>
 
+    <!-- International Delegates Header -->
     <li class="menu-header small text-uppercase">
-        <span style="color: #0ba3fc !important;">International Delegates</span>
+        <span class="menu-header-text">International Delegates</span>
     </li>
-
-    <!-- <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
-        <a href="{{ route('international-payment-submitted-delegates') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="international-payment-submitted-delegates">Payment Submitted</div>
-        </a>
-    </li>
-
-    <li class="menu-item {{ request()->routeIs('international-approved-delegates') ? 'active' : '' }}">
-        <a href="{{ route('international-approved-delegates') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="international-approved-delegates">Approved Delegates</div>
-        </a>
-    </li>
-
-    <li class="menu-item {{ request()->routeIs('international-rejected-delegates') ? 'active' : '' }}">
-        <a href="{{ route('international-rejected-delegates') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="international-rejected-delegates">Rejected Delegates</div>
-        </a>
-    </li>
-
-    <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
-        <a href="{{ route('international-reverted-delegates') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="international-reverted-delegates">Reverted Delegates</div>
-        </a>
-    </li> -->
 
     <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
         <a href="{{ route('international-payment-submitted-delegates') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-credit-card-front"></i>
-            <div data-i18n="international-payment-submitted-delegates">Payment Submitted</div>
+            <div data-i18n="Payment Submitted">Payment Submitted</div>
         </a>
     </li>
 
     <li class="menu-item {{ request()->routeIs('international-approved-delegates') ? 'active' : '' }}">
         <a href="{{ route('international-approved-delegates') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-user-check"></i>
-            <div data-i18n="international-approved-delegates">Approved Delegates</div>
+            <div data-i18n="Approved Delegates">Approved Delegates</div>
         </a>
     </li>
 
     <li class="menu-item {{ request()->routeIs('international-rejected-delegates') ? 'active' : '' }}">
         <a href="{{ route('international-rejected-delegates') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-user-x"></i>
-            <div data-i18n="international-rejected-delegates">Rejected Delegates</div>
+            <div data-i18n="Rejected Delegates">Rejected Delegates</div>
         </a>
     </li>
 
     <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
         <a href="{{ route('international-reverted-delegates') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-undo"></i>
-            <div data-i18n="international-reverted-delegates">Reverted Delegates</div>
+            <div data-i18n="Reverted Delegates">Reverted Delegates</div>
         </a>
     </li>
 
+    <!-- Indian Delegates Header -->
     <li class="menu-header small text-uppercase">
-        <span style="color: #0ba3fc !important;">Indian Delegates</span>
+        <span class="menu-header-text">Indian Delegates</span>
     </li>
 
     <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
-    <a href="{{ route('indian-approved-delegates') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-money"></i>
-        <div data-i18n="indian-approved-delegates">Paid Registrations</div>
-    </a>
-</li>
-
-    <li class="menu-header small text-uppercase">
-        <span style="color: #0ba3fc !important;">Deleted Registration</span>
+        <a href="{{ route('indian-approved-delegates') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-badge-check"></i>
+            <div data-i18n="Paid Registrations">Paid Registrations</div>
+        </a>
     </li>
-  <li class="menu-item {{ request()->routeIs('deleted-registration') ? 'active' : '' }}">
-    <a href="{{ route('deleted-delegates') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-trash"></i>
-        <div data-i18n="Deleted Application">Deleted Application</div>
-    </a>
-</li>
 
+    <!-- Trash Header -->
+    <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Trash &amp; Archives</span>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('deleted-delegates') || request()->routeIs('deleted-registration') ? 'active' : '' }}">
+        <a href="{{ route('deleted-delegates') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-trash-alt"></i>
+            <div data-i18n="Deleted Applications">Deleted Applications</div>
+        </a>
+    </li>
 </ul>
