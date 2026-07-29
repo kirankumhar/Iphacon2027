@@ -19,6 +19,13 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\LogController;
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/storage-link', function() {
+    Artisan::call('storage:link');
+    return 'Storage link created successfully!';
+});
+
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
