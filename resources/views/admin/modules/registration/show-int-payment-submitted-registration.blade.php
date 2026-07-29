@@ -2,7 +2,7 @@
 
 @section('admin-content')
     <div class="container-xxl flex-grow-1 ">
-        <h6 class="py-3 mb-4"><span class="invert-text-white">International Delegates/Payment Submitted </span>
+        <h6 class="py-3 mb-4"><span class="invert-text-white">International Delegates/Payment Submitted</span>
         </h6>
 
         <div class="card mb-4">
