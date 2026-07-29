@@ -20,7 +20,7 @@
                                 <div class="d-inline-flex align-items-center justify-content-center mb-1 px-3 py-1 rounded-pill header-badge-pill extra-small fw-semibold">
                                     <i class="fas fa-award text-warning me-1.5"></i> <span>71<sup>st</sup> Annual National Conference</span>
                                 </div>
-                                <h5 class="text-white fw-bold mb-0.5 tracking-wide">Delegate Registration 2027</h5>
+                                <h5 class="text-white fw-bold mb-0.5 tracking-wide">Delegate Registration</h5>
                                 <p class="text-white-80 mb-0 extra-small">
                                     <i class="fas fa-map-marker-alt me-1 text-danger-light"></i> IPHACON 2027 • RIMS, Ranchi
                                 </p>
