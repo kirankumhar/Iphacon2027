@@ -4,7 +4,7 @@
     <div class="container-xxl flex-grow-1 mt-4">
         <!-- Welcome Hero Banner -->
         <div class="card mb-4 overflow-hidden border-0 shadow-sm" style="background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 60%, #4BAA7D 100%); color: #FFFFFF; border-radius: 16px;">
-            <div class="card-body p-4 p-md-5">
+            <div class="card-body p-3 p-md-4">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
                         <span class="badge mb-2 px-3 py-1.5 fs-7 fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 30px;">
