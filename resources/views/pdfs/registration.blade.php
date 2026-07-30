@@ -202,13 +202,13 @@
         <!-- Logos row (Left - Center - Right) -->
         <div class="logo-row">
             <div class="logo-cell">
-                @if (file_exists(public_path('shared/user/images/ismm_logo_main.png')))
-                    <img src="{{ public_path('shared/user/images/ismm_logo_main.png') }}" class="logo" alt="Left Logo">
+                @if (file_exists(public_path('shared/user/images/rimslogo.png')))
+                    <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="logo" alt="Left Logo">
                 @endif
             </div>
             <div class="logo-cell">
-                @if (file_exists(public_path('shared/user/images/ismm_logo.png')))
-                    <img src="{{ public_path('shared/user/images/ismm_logo.png') }}" class="logo" alt="Center Logo">
+                @if (file_exists(public_path('shared/user/images/iphacon_logo.png')))
+                    <img src="{{ public_path('shared/user/images/iphacon_logo.png') }}" class="logo" alt="Center Logo">
                 @endif
             </div>
             <div class="logo-cell">
@@ -223,7 +223,8 @@
             <div class="brand-title">{{ config('app.name') }}</div>
             <div class="brand-meta">
                 <h1 class="ismm-subtitle mb-0">
-                    16<sup>th</sup> National Biennial Conference of ISMM 2027, Ranchi
+                    71<sup>st</sup> Annual National Conference of the Indian Public Health Association, IPHACON 2027, Ranchi
+                    <!-- 16<sup>th</sup> National Biennial Conference of IPHACON 2027, Ranchi -->
                 </h1>
                 <h2 class="ismm-location mb-0">
                     04 - 07 February, 2027

@@ -100,7 +100,7 @@ class AdminRegistrationController extends Controller
 
     public function internationalPaymentSubmittedDelegates()
     {
-        // $users = Registration::paginate(20);
+        // $users = Registration::paginate(20); 
         // return view('admin.users.index', compact('registration'));
 
         return view('admin.modules.registration.show-int-payment-submitted-registration');

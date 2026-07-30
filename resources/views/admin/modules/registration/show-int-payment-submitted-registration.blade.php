@@ -41,7 +41,6 @@
                                 <th>Photo/Regn. No</th>
                                 <th>Delegate Category</th>
                                 <th>Name</th>
-                                <th>DOB</th>
                                 <th>Transaction ID/ Receipt</th>
                                 <th>Action</th>
                             </tr>

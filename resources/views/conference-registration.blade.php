@@ -156,7 +156,7 @@
                                             </span>
                                             <input type="email" class="form-control border-start-0 custom-input @error('email') is-invalid @enderror"
                                                 id="email" name="email" value="{{ old('email') }}" required
-                                                placeholder="e.g. doctor@hospital.com">
+                                                placeholder="e.g. doctor@example.com">
                                         </div>
                                         @error('email')
                                             <div class="invalid-feedback d-block extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>

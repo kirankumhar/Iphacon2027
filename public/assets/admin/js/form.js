@@ -74,13 +74,6 @@ $(document).ready(function () {
                     }
                 },
                 {
-                    data: 'date_of_birth',
-                    name: 'date_of_birth',
-                    render: function (data, type, row) {
-                        return formatDate(data);
-                    }
-                },
-                {
                     data: 'transaction_id',
                     name: 'transaction_id', render: function (data, type, row) {
                         if (row.payment_receipt_path !== null) {

@@ -19,12 +19,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\LogController;
 
-use Illuminate\Support\Facades\Artisan;
+// use Illuminate\Support\Facades\Artisan;
 
-Route::get('/storage-link', function() {
-    Artisan::call('storage:link');
-    return 'Storage link created successfully!';
-});
+// Route::get('/storage-link', function() {
+//     Artisan::call('storage:link');
+//     return 'Storage link created successfully!';
+// });
 
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -113,7 +113,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('payment/success/{registration}', [App\Http\Controllers\PaymentController::class, 'success'])
         ->name('payment.success');
 
-
     //  Route::post('response', [App\Http\Controllers\PaymentController::class, 'response'])->name('response');
 
 
@@ -193,44 +192,5 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('{id}', [AdminController::class, 'update'])->name('admin.admins.update');
         Route::delete('{id}', [AdminController::class, 'destroy'])->name('admin.admins.destroy');
     });
-
-    // Content Management - Admin, Moderator, Super Admin
-    // Route::middleware('admin:content.view')->prefix('content')->group(function () {
-    //     Route::get('/', [ContentController::class, 'index'])->name('admin.content.index');
-    //     Route::get('{id}', [ContentController::class, 'show'])->name('admin.content.show');
-    // });
-
-    // Route::middleware('admin:content.create')->group(function () {
-    //     Route::get('content/create', [ContentController::class, 'create'])->name('admin.content.create');
-    //     Route::post('content', [ContentController::class, 'store'])->name('admin.content.store');
-    // });
-
-    // Route::middleware('admin:content.edit')->group(function () {
-    //     Route::get('content/{id}/edit', [ContentController::class, 'edit'])->name('admin.content.edit');
-    //     Route::put('content/{id}', [ContentController::class, 'update'])->name('admin.content.update');
-    // });
-
-    // Reports - Admin & Super Admin
-    // Route::middleware('admin:reports.view')->prefix('reports')->group(function () {
-    //     Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
-    //     Route::get('users', [ReportController::class, 'users'])->name('admin.reports.users');
-    //     Route::get('content', [ReportController::class, 'content'])->name('admin.reports.content');
-    // });
-
-    // Route::middleware('admin:reports.export')->group(function () {
-    //     Route::get('reports/export', [ReportController::class, 'export'])->name('admin.reports.export');
-    // });
-
-    // // Settings - Super Admin Only
-    // Route::middleware('admin.role:Super Admin')->prefix('settings')->group(function () {
-    //     Route::get('/', [SettingsController::class, 'index'])->name('admin.settings.index');
-    //     Route::put('/', [SettingsController::class, 'update'])->name('admin.settings.update');
-    // });
-
-    // // Logs - Super Admin Only
-    // Route::middleware('admin.role:Super Admin')->prefix('logs')->group(function () {
-    //     Route::get('/', [LogController::class, 'index'])->name('admin.logs.index');
-    //     Route::delete('{id}', [LogController::class, 'destroy'])->name('admin.logs.destroy');
-    // });
 });
 
