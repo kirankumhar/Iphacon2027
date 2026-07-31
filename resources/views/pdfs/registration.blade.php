@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Registration Cum Receipt - {{ $registration->registration_number }}</title>
+    <title>Registration Acknowledgement - {{ $registration->registration_number }}</title>
     <style>
         @page {
             margin: 20mm 14mm;
@@ -234,7 +234,7 @@
         </div>
     </div>
 
-    <div class="doc-title">Registration Confirmation Cum Receipt</div>
+    <div class="doc-title">Registration Confirmation & Acknowledgement</div>
 
     <!-- Info Grid -->
     <div class="info-grid">

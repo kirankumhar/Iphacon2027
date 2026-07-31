@@ -40,7 +40,7 @@
 
                             @if($registration->status == 'Approved' || $registration->status == 'Payment Submitted')
                                 <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-success btn-sm px-3 py-2 fw-semibold shadow-sm" style="border-radius: 8px;">
-                                    <i class="fas fa-file-download me-1.5"></i>Receipt
+                                    <i class="fas fa-file-download me-1.5"></i>Download Acknowledgement
                                 </a>
                             @elseif($registration->status == 'Draft')
                                 <a href="{{ route('registration.create') }}" class="btn btn-warning btn-sm px-3 py-2 fw-semibold shadow-sm" style="border-radius: 8px;">

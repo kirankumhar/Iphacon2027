@@ -135,7 +135,7 @@
                     <a href="{{ route('download.receipt', $delegate->registration_number) }}"
                         target="_blank"
                         class="btn btn-danger w-100 mb-2">
-                        <i class="bx bxs-file-pdf me-2"></i>Download Receipt
+                        <i class="bx bxs-file-pdf me-2"></i>Download Acknowledgement
                     </a>
                     <!-- <button class="btn btn-label-secondary w-100">
                         <i class="bx bx-printer me-2"></i>Print Details

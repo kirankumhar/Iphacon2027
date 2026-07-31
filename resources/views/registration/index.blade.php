@@ -65,7 +65,7 @@
                                                     </a>
                                                 @elseif($registration->status == 'Approved' || $registration->status == 'Payment Submitted')
                                                     <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-sm btn-success px-3 py-1 fw-semibold" style="border-radius: 6px;">
-                                                        <i class="fas fa-download me-1"></i>Receipt
+                                                        <i class="fas fa-download me-1"></i>Download Acknowledgement
                                                     </a>
                                                 @endif
                                             </td>
