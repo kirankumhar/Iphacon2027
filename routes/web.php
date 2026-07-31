@@ -140,7 +140,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         ->name('admin.dashboard');
 
     Route::get('/profile/change-password', [DashboardController::class, 'getChangePassword'])->name('admin.profile.change-password');
-
     Route::post('/update-password', [DashboardController::class, 'updatePassword'])->name('admin.user.update.password');
 
     // User Management - Admin & Super Admin
@@ -162,14 +161,9 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::middleware('admin:users.delete')->group(function () {
         Route::delete('users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
-
     Route::post('/view_registrations/{type}', [AdminRegistrationController::class, 'getRegistrations']);
-
-    Route::get('/download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
-     ->name('download.receipt');
-
-     Route::get('/show-registration-details/{registration_number}', [AdminRegistrationController::class, 'viewRegistrationDetails'])
-     ->name('show-registration-details');
+    Route::get('/download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])->name('download.receipt');
+    Route::get('/show-registration-details/{registration_number}', [AdminRegistrationController::class, 'viewRegistrationDetails'])->name('show-registration-details');
 
     Route::get('/international-payment-submitted-delegates', [AdminRegistrationController::class, 'internationalPaymentSubmittedDelegates'])->name('international-payment-submitted-delegates');
     Route::get('/indian-approved-delegates', [AdminRegistrationController::class, 'approvedIndDelegates'])->name('indian-approved-delegates');

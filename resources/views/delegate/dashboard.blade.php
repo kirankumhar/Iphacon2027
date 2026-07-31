@@ -1,4 +1,4 @@
-<x-layout>
+<x-delegate.layout>
     <x-slot:title>Delegate Dashboard | IPHACON 2027</x-slot:title>
 
     <div class="container py-3">
@@ -163,4 +163,4 @@
             box-shadow: 0 10px 24px rgba(46, 49, 146, 0.12) !important;
         }
     </style>
-</x-layout>
+</x-delegate.layout>
