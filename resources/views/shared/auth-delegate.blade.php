@@ -444,52 +444,6 @@
         </main>
 
       <footer class="footer-area">
-        <div class="footer-shape">
-            <img src="{{ asset('images/join_conf_img.png') }}" alt="">
-        </div>
-        <div class="footer-widget">
-            <div class="container">
-                <div class="row footer-widget-wrapper pt-50 pb-0">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="footer-widget-box about-us">
-                            <h4 class="footer-widget-title">IPHACON 2027</h4>
-                            <p class="mb-3">
-                                71<sup>st</sup> Annual National Conference of the Indian Public Health Association (IPHACON 2027)
-                            </p>
-
-                            <p>
-                                Theme: Synergizing AI and One Health: Precision Analytics for Zoonotic Control,
-                                Nutritional Equity and Environmental Resilience.
-                            </p>        
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="footer-widget-box list">
-                            <h4 class="footer-widget-title">Important Dates</h4>
-                            <ul class="footer-list">
-                                <li> <i class="fas fa-calendar-alt"></i> Abstract Opens - 01 Aug 2026 </li>
-                                <li> <i class="fas fa-calendar-alt"></i> Abstract Closes - 31 Oct 2026 </li>
-                                <li> <i class="fas fa-calendar-alt"></i> Early Bird Ends - 30 Dec 2026 </li>
-                                <li> <i class="fas fa-calendar-alt"></i> Registration Ends - 31 Jan 2027 </li>
-                                <li> <i class="fas fa-calendar-alt"></i> Workshop - 11 Mar 2027 </li>
-                                <li> <i class="fas fa-calendar-alt"></i> Conference - 12–14 Mar 2027 </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="footer-widget-box list">
-                            <h4 class="footer-widget-title">Conference Secretariat</h4>
-                            <ul class="footer-contact">
-                                <li> <i class="far fa-building"></i> Department of Community Medicine, Rajendra Institute of Medical Sciences (RIMS) </li>
-                                <li> <i class="far fa-map-marker-alt"></i> Bariatu, Ranchi, Jharkhand - 834009, India </li>
-                                <li> <a href="tel:+919097736688"> <i class="far fa-phone"></i> +91-9097736688 </a> </li>
-                                <li> <a href="mailto:iphacon2027@gmail.com"> <i class="far fa-envelope"></i> iphacon2027@gmail.com </a> </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="container">
             <div class="copyright">
                 <div class="row">
@@ -505,7 +459,6 @@
     </footer>
 
             <!-- End Page Wrapper -->
-        </main>
     </div>
     <!--Scroll to top-->
     <div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-up"></span></div>

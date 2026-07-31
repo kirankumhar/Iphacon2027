@@ -7410,3 +7410,30 @@ border:1px solid #b9dfff;
 .designation-badge.secretary{
     background:#8A1538;
 }
+
+/* Sticky Footer Fix */
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1 0 auto;
+}
+
+main, .main, #main-content, .about-section-two {
+    flex: 1 0 auto;
+}
+
+.footer-area, .main-footer, footer {
+    margin-top: auto !important;
+}
