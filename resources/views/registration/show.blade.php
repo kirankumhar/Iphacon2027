@@ -262,29 +262,46 @@
                         <div class="card-body px-4 pt-1 pb-4">
                             @php
                                 $currencySymbol = $registration->delegate_type == 'International' ? '$' : '₹';
+                                $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
+                                $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
+                                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                                $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
+                                $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $cmeFee + $accFee) : $registration->calculateTotalAmount());
                             @endphp
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
-                                <span class="text-muted">Delegate Registration Fee</span>
+                                <span class="text-muted">Delegate Registration Fee (Excl. GST)</span>
                                 <span class="fw-semibold text-dark">
-                                    {{ $currencySymbol }} {{ number_format($registration->delegate_fee ?: ($registration->delegateCategory->indian_fee ?? 0), 2) }}
+                                    {{ $currencySymbol }} {{ number_format($delFee, 2) }}
                                 </span>
                             </div>
+                            @if($registration->participate_in_cme)
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
                                 <span class="text-muted">CME / Workshop Fee</span>
                                 <span class="fw-semibold text-dark">
-                                    {{ $currencySymbol }} {{ number_format($registration->cme_fee ?? 0, 2) }}
+                                    ₹{{ number_format($cmeFee, 2) }}
                                 </span>
                             </div>
+                            @endif
+                            @if(($registration->accompanying_persons ?? 0) > 0)
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
-                                <span class="text-muted">Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }})</span>
+                                <span class="text-muted">Accompanying Persons Fee ({{ $registration->accompanying_persons }})</span>
                                 <span class="fw-semibold text-dark">
-                                    {{ $currencySymbol }} {{ number_format($registration->accompanying_fee ?? 0, 2) }}
+                                    ₹{{ number_format($accFee, 2) }}
                                 </span>
                             </div>
+                            @endif
+                            @if($registration->delegate_type != 'International')
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                                <span class="text-muted">GST Amount (18%)</span>
+                                <span class="fw-semibold text-dark">
+                                    {{ $currencySymbol }} {{ number_format($gstAmt, 2) }}
+                                </span>
+                            </div>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center py-3 bg-light rounded-3 px-3 my-3">
-                                <span class="fw-bold text-dark fs-6">Total Amount</span>
+                                <span class="fw-bold text-dark fs-6">Total Amount (Incl. GST)</span>
                                 <span class="fw-bold text-primary fs-5">
-                                    {{ $currencySymbol }} {{ number_format($registration->total_amount ?? 0, 2) }}
+                                    {{ $currencySymbol }} {{ number_format($totalAmt, 2) }}
                                 </span>
                             </div>
 

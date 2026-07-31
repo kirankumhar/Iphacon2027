@@ -146,7 +146,7 @@ class RegistrationController extends Controller
             $registration->refresh();
 
             if ($isDraft) {
-                $registration->total_amount = $registration->calculateTotalAmount();
+                $registration->updateAmounts();
                 $registration->save();
             }
 
@@ -367,9 +367,9 @@ class RegistrationController extends Controller
 
         $registration->update($updateData);
 
-        // Calculate and save total amount
+        // Calculate and save total amount, delegate fee, and gst amount
         if (!$isDraft) {
-            $registration->total_amount = $registration->calculateTotalAmount();
+            $registration->updateAmounts();
             $registration->save();
         }
     }
@@ -427,7 +427,7 @@ class RegistrationController extends Controller
 
         if (!$isDraft) {
             $registration->step_completed = 3;
-            $registration->total_amount = $registration->calculateTotalAmount();
+            $registration->updateAmounts();
         }
 
         $registration->save();
@@ -457,6 +457,7 @@ class RegistrationController extends Controller
                     'delegate_category_fee' => 175.00,
                     'accompanying_persons_fee' => 0.00,
                     'cme_fee' => 0.00,
+                    'gst_amount' => 0.00,
                     'total_amount' => 175.00,
                     'currency' => 'USD',
                     'transaction_id' => $request->transaction_id,

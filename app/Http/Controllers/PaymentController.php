@@ -234,16 +234,26 @@ class PaymentController extends Controller
                 ])->where('id', $jsonData['payInstrument']['extras']['udf1'])
                     ->latest('created_at')->first();
 
+                $payAmount = (float) ($jsonData['payInstrument']['payDetails']['amount'] ?? 0);
+                if ($delegate && $delegate->delegate_type === 'International') {
+                    $delFee = $payAmount;
+                    $gstAmt = 0.00;
+                } else {
+                    $delFee = round($payAmount / 1.18, 2);
+                    $gstAmt = round($payAmount - $delFee, 2);
+                }
+
                 $payment = new Payment([
                     'registration_id' => $jsonData['payInstrument']['extras']['udf1'],
-                    'delegate_category_fee' => 0.00,
+                    'delegate_category_fee' => $delFee,
                     'accompanying_persons_fee' => 0.00,
                     'cme_fee' => 0.00,
-                    'total_amount' => $jsonData['payInstrument']['payDetails']['amount'],
+                    'gst_amount' => $gstAmt,
+                    'total_amount' => $payAmount,
                     'currency' => 'INR',
-                    'transaction_id' => $jsonData['payInstrument']['payModeSpecificData']['bankDetails']['bankTxnId'],
+                    'transaction_id' => $jsonData['payInstrument']['payModeSpecificData']['bankDetails']['bankTxnId'] ?? null,
                     // 'gateway_response' => $jsonData,
-                    'gateway_transaction_id' => $jsonData['payInstrument']['merchDetails']['merchTxnId'],
+                    'gateway_transaction_id' => $jsonData['payInstrument']['merchDetails']['merchTxnId'] ?? null,
                     'payment_method' => 'Gateway',
                     'payment_status' => 'Success',
                 ]);
@@ -271,12 +281,11 @@ class PaymentController extends Controller
 
                 \Illuminate\Support\Facades\Storage::disk('public')->put($path, $pdf->output());
 
+                $delegate->updateAmounts();
                 $delegate->update([
-                    'id' => $delegate->id,
                     'status' => "Approved",
                     'registration_pdf_path' => $path,
                     'registration_number' => $registrationNo,
-                    'total_amount' => $jsonData['payInstrument']['payDetails']['amount'],
                 ]);
 
                 try {
@@ -371,13 +380,21 @@ class PaymentController extends Controller
             );
 
             $totalAmount = $registration->calculateTotalAmount();
+            if ($registration->delegate_type === 'International') {
+                $delegateCategoryFee = $totalAmount;
+                $gstAmount = 0.00;
+            } else {
+                $delegateCategoryFee = round($totalAmount / 1.18, 2);
+                $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
+            }
 
             // Create payment record
             $payment = new Payment([
                 'registration_id' => $registration->id,
-                'delegate_category_fee' => $registration->delegateCategory ? $registration->delegateCategory->indian_fee : 0,
+                'delegate_category_fee' => $delegateCategoryFee,
                 'accompanying_persons_fee' => ($registration->accompanying_persons ?? 0) * 4000,
                 'cme_fee' => $registration->participate_in_cme ? 1000 : 0,
+                'gst_amount' => $gstAmount,
                 'total_amount' => $totalAmount,
                 'currency' => $registration->delegate_type === 'International' ? 'USD' : 'INR',
                 'transaction_id' => $request->transaction_id,

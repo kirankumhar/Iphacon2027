@@ -177,28 +177,39 @@
                     </div>
                 </div>
             @else
+                @php
+                    $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                    $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
+                    $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
+                    $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
+                    $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
+                @endphp
                 <table class="table">
                     <tr>
-                        <td><strong>Delegate Category:</strong></td>
-                        <td class="text-end">₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}
-                        </td>
+                        <td><strong>Delegate Category Fee (Excl. GST):</strong></td>
+                        <td class="text-end">₹{{ number_format($delFee, 2) }}</td>
                     </tr>
-                    @if ($registration->accompanying_persons > 0)
-                        <tr>
-                            <td><strong>Accompanying Persons:</strong></td>
-                            <td class="text-end">₹{{ number_format($registration->accompanying_persons * 4000) }}</td>
-                        </tr>
-                    @endif
                     @if ($registration->participate_in_cme)
                         <tr>
-                            <td><strong>CME/Workshop Participation:</strong></td>
-                            <td class="text-end">₹1,000</td>
+                            <td><strong>CME / Workshop Participation:</strong></td>
+                            <td class="text-end">₹{{ number_format($cmeFee, 2) }}</td>
                         </tr>
                     @endif
+                    @if (($registration->accompanying_persons ?? 0) > 0)
+                        <tr>
+                            <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }}):</strong></td>
+                            <td class="text-end">₹{{ number_format($accFee, 2) }}</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td><strong>GST Amount (18%):</strong></td>
+                        <td class="text-end">₹{{ number_format($gstAmt, 2) }}</td>
+                    </tr>
                     <tr class="table-success">
-                        <td><strong>Total Amount:</strong></td>
+                        <td><strong>Total Amount (Incl. GST):</strong></td>
                         <td class="text-end">
-                            <strong>₹{{ number_format($registration->calculateTotalAmount()) }}</strong>
+                            <strong>₹{{ number_format($totalAmt, 2) }}</strong>
                         </td>
                     </tr>
                 </table>

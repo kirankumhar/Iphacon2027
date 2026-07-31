@@ -294,47 +294,53 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Delegate Category Fee</td>
-                <td class="right">
-                    @if ($registration->delegate_type === 'International')
-                        ${{ number_format($registration->latestPayment->delegate_category_fee ?? 175, 2) }}
-                    @else
-                        ₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}
-                    @endif
-                </td>
-                <td>{{ $registration->delegate_type === 'International' ? 'USD' : 'INR' }}</td>
-            </tr>
-
-            @if (($registration->accompanying_persons ?? 0) > 0 && $registration->delegate_type === 'Indian')
-                <tr>
-                    <td>Accompanying Persons ({{ $registration->accompanying_persons }})</td>
-                    <td class="right">₹{{ number_format(($registration->accompanying_persons ?? 0) * 4000) }}</td>
-                    <td>INR</td>
-                </tr>
-            @endif
-
-            @if (($registration->participate_in_cme ?? false) && $registration->delegate_type === 'Indian')
-                <tr>
-                    <td>CME/Workshop Participation</td>
-                    <td class="right">₹1,000.00</td>
-                    <td>INR</td>
-                </tr>
-            @endif
-
             @if ($registration->delegate_type === 'International')
                 <tr>
-                    <td><strong>Total</strong></td>
-                    <td class="right">
-                        <strong>${{ number_format($registration->latestPayment->total_amount ?? 175, 2) }}</strong>
-                    </td>
+                    <td>Delegate Category Fee</td>
+                    <td class="right">${{ number_format($registration->delegate_fee ?: 175, 2) }}</td>
+                    <td>USD</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Amount</strong></td>
+                    <td class="right"><strong>${{ number_format($registration->total_amount ?: 175, 2) }}</strong></td>
                     <td>USD</td>
                 </tr>
             @else
+                @php
+                    $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                    $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
+                    $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
+                    $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
+                    $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
+                @endphp
                 <tr>
-                    <td><strong>Total</strong></td>
-                    <td class="right"><strong>₹{{ number_format($registration->calculateTotalAmount()) }}.00</strong>
-                    </td>
+                    <td>Delegate Category Fee (Excl. GST)</td>
+                    <td class="right">₹{{ number_format($delFee, 2) }}</td>
+                    <td>INR</td>
+                </tr>
+                @if ($registration->participate_in_cme)
+                    <tr>
+                        <td>CME / Workshop Participation</td>
+                        <td class="right">₹{{ number_format($cmeFee, 2) }}</td>
+                        <td>INR</td>
+                    </tr>
+                @endif
+                @if (($registration->accompanying_persons ?? 0) > 0)
+                    <tr>
+                        <td>Accompanying Persons ({{ $registration->accompanying_persons }})</td>
+                        <td class="right">₹{{ number_format($accFee, 2) }}</td>
+                        <td>INR</td>
+                    </tr>
+                @endif
+                <tr>
+                    <td>GST Amount (18%)</td>
+                    <td class="right">₹{{ number_format($gstAmt, 2) }}</td>
+                    <td>INR</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Amount (Incl. GST)</strong></td>
+                    <td class="right"><strong>₹{{ number_format($totalAmt, 2) }}</strong></td>
                     <td>INR</td>
                 </tr>
             @endif

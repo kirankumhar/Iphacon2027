@@ -29,6 +29,7 @@ class Registration extends Model
         'delegate_type',
         'delegate_category_id',
         'delegate_fee',
+        'gst_amount',
         'accompanying_persons',
         'accompanying_fee',
         'participate_in_cme',
@@ -56,6 +57,7 @@ class Registration extends Model
 
     protected $casts = [
         'delegate_fee' => 'decimal:2',
+        'gst_amount' => 'decimal:2',
         'accompanying_fee' => 'decimal:2',
         'cme_fee' => 'decimal:2',
         'total_amount' => 'decimal:2',
@@ -126,11 +128,35 @@ class Registration extends Model
         return $total;
     }
 
+    public function updateAmounts()
+    {
+        if ($this->delegate_type === 'International') {
+            $this->delegate_fee = 175.00;
+            $this->cme_fee = 0.00;
+            $this->accompanying_fee = 0.00;
+            $this->gst_amount = 0.00;
+            $this->total_amount = 175.00;
+            return;
+        }
+
+        $categoryGross = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
+        $categoryBase = round($categoryGross / 1.18, 2);
+        $categoryGst = round($categoryGross - $categoryBase, 2);
+
+        $cmeFee = $this->participate_in_cme ? 1000.00 : 0.00;
+        $accompanyingFee = ($this->accompanying_persons ?? 0) * 4000.00;
+
+        $this->delegate_fee = $categoryBase;
+        $this->cme_fee = $cmeFee;
+        $this->accompanying_fee = $accompanyingFee;
+        $this->gst_amount = $categoryGst;
+        $this->total_amount = $categoryGross + $cmeFee + $accompanyingFee;
+    }
+
     public function updateStepAndCalculateTotal($step)
     {
-        // $this->step_completed = max($this->step_completed, $step);
-        $this->step_completed =  $step;
-        $this->total_amount = $this->calculateTotalAmount();
+        $this->step_completed = $step;
+        $this->updateAmounts();
         $this->save();
     }
 

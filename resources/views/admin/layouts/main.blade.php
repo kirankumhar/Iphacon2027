@@ -213,10 +213,26 @@
 
         /* Cards & Buttons */
         .card {
-            background-color: #FFFFFF !important;
-            border: 1px solid rgba(45, 105, 255, 0.12) !important;
-            border-radius: 14px !important;
-            box-shadow: 0 4px 18px rgba(45, 105, 255, 0.06) !important;
+            background-color: #FFFFFF;
+            border: 1px solid rgba(45, 105, 255, 0.12);
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(45, 105, 255, 0.06);
+        }
+
+        .card.bg-primary {
+            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%) !important;
+            color: #FFFFFF !important;
+        }
+
+        .card.bg-primary h4,
+        .card.bg-primary small,
+        .card.bg-primary div {
+            color: #FFFFFF !important;
+        }
+
+        .invert-text-white {
+            color: #1e293b !important;
+            font-weight: 600;
         }
 
         .btn-primary {
