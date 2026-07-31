@@ -143,7 +143,7 @@
             <div class="col-md-6">
                 <!-- Membership Information -->
                 @if ($registration->is_ismm_member)
-                    <p><strong>ISMM Member:</strong> Yes ({{ $registration->ismm_membership_no }})</p>
+                    <p><strong>IPHACON Member:</strong> Yes ({{ $registration->ismm_membership_no }})</p>
                 @endif
                 @if ($registration->is_isham_member)
                     <p><strong>ISHAM Member:</strong> Yes ({{ $registration->isham_membership_no }})</p>

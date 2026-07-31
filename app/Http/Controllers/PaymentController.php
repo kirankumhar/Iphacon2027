@@ -282,7 +282,7 @@ class PaymentController extends Controller
                 try {
                     Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
                         $message->to($delegate->user->email)
-                            ->subject('ISMM : Delegate Registration Confirmation')
+                            ->subject('Iphacon : Delegate Registration Confirmation')
                             ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 
                         // Attach the PDF file
@@ -295,8 +295,8 @@ class PaymentController extends Controller
                     });
 
                     Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
-                        $message->to("ismm2027@gmail.com")
-                            ->subject('ISMM : Delegate Registration Confirmation')
+                        $message->to("iphacon2027@gmail.com")
+                            ->subject('IPHACON : Delegate Registration Confirmation')
                             ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 
                         // Attach the PDF file

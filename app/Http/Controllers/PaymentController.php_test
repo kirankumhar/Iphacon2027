@@ -57,7 +57,7 @@ class PaymentController extends Controller
         $api_url = "https://payment1.atomtech.in/ots/aipay/auth";
         $user_email = auth()->user()->email;
         $user_contact_number = auth()->user()->mobile_number;
-        $return_url = "http://registration.ismmconference.com/response";
+        $return_url = "http://registration.iphacon20227.com/response";
 
         $payData = array(
             'login' => $login,
@@ -303,7 +303,7 @@ class PaymentController extends Controller
                 try {
                     Mail::send('emails.registration_confirmation', ['delegate' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
                         $message->to($delegate->user->email)
-                            ->subject('ISMM : Delegate Registration Confirmation')
+                            ->subject('Iphacon : Delegate Registration Confirmation')
                             ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 
                         // Attach the PDF file

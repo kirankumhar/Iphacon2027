@@ -124,7 +124,7 @@
             <!-- ISMM Membership (Category ID 2) -->
             <div class="mt-3 p-3.5 rounded bg-light border" id="ismm_membership_row" style="display: none; border-left: 4px solid #2D69FF !important;">
                 <label for="ismm_membership_no" class="form-label fw-bold text-dark mb-1.5">
-                    <i class="fas fa-id-card text-primary me-1.5"></i>ISMM Membership Number <span class="text-danger">*</span>
+                    <i class="fas fa-id-card text-primary me-1.5"></i>IPHACON Membership Number <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
                     <span class="input-group-text bg-white text-muted px-3">
@@ -135,7 +135,7 @@
                         value="{{ old('ismm_membership_no', $registration->membership_no) }}"
                         placeholder="Enter your ISMM Membership Number">
                 </div>
-                <small class="text-muted mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Verification required for ISMM Members discount.</small>
+                <small class="text-muted mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Verification required for IPHACON Members discount.</small>
                 @error('ismm_membership_no')
                     <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
                 @enderror

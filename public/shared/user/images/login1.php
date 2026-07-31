@@ -149,7 +149,7 @@
 
                 <div class="col-12 col-md-6 col-lg-6 position-relative text-center">
                     <div class="company-name">
-                        ISMM <span class="accent">Conference</span>
+                        IPHACON <span class="accent">Conference</span>
                     </div>
 
                     <img src="<?php echo base_url('public/frontend/assets/img/login.png');?>"

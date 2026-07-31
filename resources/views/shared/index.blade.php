@@ -193,8 +193,8 @@
 
                         <!-- Left Logo (iphacon Main) -->
                         <div class="col-lg-2 col-md-2 col-4 d-flex justify-content-center align-items-center mb-2">
-                            <a href="https://www.iphacon2027.com/index.php" title="ISMM Logo Main">
-                                <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}" alt="ISMM Main Logo" class="img-fluid header-logo">
+                            <a href="https://www.iphacon2027.com/index.php" title="IPHACON Logo Main">
+                                <img src="{{ asset('shared/user/images/ismm_logo_main.png') }}" alt="IPHACON Main Logo" class="img-fluid header-logo">
                             </a>
                         </div>
 
@@ -202,8 +202,8 @@
                         <div
                             class="col-lg-8 col-md-8 col-12 d-flex flex-column flex-lg-row align-items-center justify-content-center text-center mb-2">
                             <div class="me-lg-3 mb-2 mb-lg-0">
-                                <a href="https://www.iphacon2027.com/index.php" title="ISMM 2027">
-                                    <img src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo" class="img-fluid header-logo">
+                                <a href="https://www.iphacon2027.com/index.php" title="IPHACON 2027">
+                                    <img src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="IPHACON 2027 Logo" class="img-fluid header-logo">
                                 </a>
                             </div>
                             <div>
@@ -278,8 +278,8 @@
                 <div class="auto-container">
                     <div class="main-box">
                         <div class="logo-box">
-                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="ISMM 2027 Home"><img
-                                        src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="ISMM 2027 Logo" title="ISMM 2027 Logo"></a>
+                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="IPHACON 2027 Home"><img
+                                        src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="IPHACON 2027 Logo" title="IPHACON 2027 Logo"></a>
                             </div>
                             <div class="upper-right">
                                 <div class="search-box">
@@ -297,7 +297,7 @@
 
             <div class="mobile-header" role="complementary">
                 <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="shared/user/images/ismm_logo.png" alt="ISMM 2027 Logo"
-                            title="ISMM 2027 Logo"></a></div>
+                            title="IPHACON 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
                         <div class="search-box">

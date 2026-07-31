@@ -330,10 +330,10 @@ class RegistrationController extends Controller
         }
 
         $messages = [
-            'ismm_membership_no.required_if' => 'ISMM Membership Number is required for ISMM Member category.',
+            'ismm_membership_no.required_if' => 'Iphacon Membership Number is required for IPHACON Member category.',
             'young_isam_membership_no.required_if' => 'Young ISAM Membership Number is required for Young ISAM Members category.',
             'delegate_category_id.required' => 'Please select your delegate category.',
-            'ismm_membership_no.max' => 'ISMM Membership Number cannot exceed 50 characters.',
+            'ismm_membership_no.max' => 'IPHACON Membership Number cannot exceed 50 characters.',
             'young_isam_membership_no.max' => 'Young ISAM Membership Number cannot exceed 50 characters.',
         ];
 
