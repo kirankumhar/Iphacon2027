@@ -202,12 +202,14 @@ $(document).ready(function () {
     });
 
 
-    // Initialize for failed records table
-    initializeStudentTable('#studentListTable', '#searchButton');
-
-    $('#searchButton').on('click', function () {
+    // Initialize for failed records table if present
+    if ($('#studentListTable').length) {
         initializeStudentTable('#studentListTable', '#searchButton');
-    });
+
+        $('#searchButton').on('click', function () {
+            initializeStudentTable('#studentListTable', '#searchButton');
+        });
+    }
 
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -229,32 +231,35 @@ $(document).ready(function () {
         return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
     }
 
-    // DataTable Initialize
-    const deletedListTable = $('#deletedListTable').DataTable({});
+    // DataTable Initialize if deletedListTable is present
+    if ($('#deletedListTable').length) {
+        const deletedListTable = $('#deletedListTable').DataTable({});
 
-    $('#searchDeletedButton').on('click', function () {
-        const course_type = $('#course_type option:selected').val();
-        const course_name = $('#course_name option:selected').text();
-        const pass_state = $('#pass_state').val();
+        $('#searchDeletedButton').on('click', function () {
+            const course_type = $('#course_type option:selected').val();
+            const course_name = $('#course_name option:selected').text();
+            const pass_state = $('#pass_state').val();
 
-        deletedListTable.columns().search('');
+            deletedListTable.columns().search('');
 
-        if (course_type) {
-            deletedListTable.column(3).search(course_type);
-        }
+            if (course_type) {
+                deletedListTable.column(3).search(course_type);
+            }
 
-        if (course_name && course_name != 'Select Course Name') {
-            deletedListTable.column(4).search(course_name);
-        }
+            if (course_name && course_name != 'Select Course Name') {
+                deletedListTable.column(4).search(course_name);
+            }
 
-        if (pass_state && pass_state != 'Select Academic Session') {
-            deletedListTable.column(5).search(pass_state);
-        }
+            if (pass_state && pass_state != 'Select Academic Session') {
+                deletedListTable.column(5).search(pass_state);
+            }
 
-        deletedListTable.draw();
-    });
+            deletedListTable.draw();
+        });
 
-    $('#resetDeletedButton').on('click', function () {
-        location.reload();
-    });
+        $('#resetDeletedButton').on('click', function () {
+            location.reload();
+        });
+    }
 });
+
