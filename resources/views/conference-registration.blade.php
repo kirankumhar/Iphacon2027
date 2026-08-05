@@ -4,7 +4,7 @@
     <div class="registration-page-wrapper py-3 py-md-4">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="col-12 col-md-10 col-lg-8 col-xl-7">
 
                     <!-- Compact Registration Card -->
                     <div class="card registration-card shadow-lg border-0 overflow-hidden">
@@ -300,6 +300,8 @@
         .registration-card {
             border-radius: 16px !important;
             box-shadow: 0 15px 35px -10px rgba(30, 37, 94, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
+            max-width: 850px;
+            margin: 0 auto;
         }
 
         .card-accent-bar {
