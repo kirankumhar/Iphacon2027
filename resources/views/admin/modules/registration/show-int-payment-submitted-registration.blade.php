@@ -252,29 +252,34 @@
             modal.show();
         }
 
-        // Initialize DataTable if plugin is present
+        // Initialize DataTable if plugin is present and table has valid data rows
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof $ !== 'undefined' && $.fn && $.fn.DataTable) {
-                if (!$.fn.DataTable.isDataTable('#customSimpleTable')) {
-                    $('#customSimpleTable').DataTable({
-                        responsive: true,
-                        pageLength: 10,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Search delegates..."
-                        },
-                        drawCallback: function(settings) {
-                            var api = this.api();
-                            var pageInfo = api.page.info();
-                            var wrapper = $(api.table().container());
-                            // Hide pagination if total items fit within a single page
-                            if (pageInfo.pages <= 1) {
-                                wrapper.find('.dataTables_paginate').hide();
-                            } else {
-                                wrapper.find('.dataTables_paginate').show();
+                $.fn.dataTable.ext.errMode = 'none'; // Suppress browser alert popups
+                var $table = $('#customSimpleTable');
+                if ($table.length && $table.find('tbody tr:first td').length > 1) {
+                    if (!$.fn.DataTable.isDataTable('#customSimpleTable')) {
+                        $table.DataTable({
+                            responsive: true,
+                            pageLength: 10,
+                            order: [],
+                            language: {
+                                search: "_INPUT_",
+                                searchPlaceholder: "Search delegates..."
+                            },
+                            drawCallback: function(settings) {
+                                var api = this.api();
+                                var pageInfo = api.page.info();
+                                var wrapper = $(api.table().container());
+                                // Hide pagination if total items fit within a single page
+                                if (pageInfo.pages <= 1) {
+                                    wrapper.find('.dataTables_paginate').hide();
+                                } else {
+                                    wrapper.find('.dataTables_paginate').show();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });

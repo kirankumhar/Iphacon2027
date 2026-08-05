@@ -14,13 +14,29 @@ class DashboardController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        $appliedCount = Registration::where('status', 'Payment Submitted')->where('is_deleted', '0')
+        $appliedCount = Registration::where('status', 'Payment Submitted')
+            ->where('is_deleted', '0')
             ->count();
 
-        $IndApprovedCount = Registration::where('status', 'Approved')->where('delegate_type', 'Indian')->where('is_deleted', '0')
+        $IndApprovedCount = Registration::where('status', 'Approved')
+            ->where(function ($q) {
+                $q->where('delegate_type', 'Indian')
+                  ->orWhereHas('user', function ($uq) {
+                      $uq->where('delegate_type', 'Indian');
+                  })
+                  ->orWhereNull('delegate_type');
+            })
+            ->where('is_deleted', '0')
             ->count();
 
-        $IntApprovedCount = Registration::where('status', 'Approved')->where('delegate_type', 'International')->where('is_deleted', '0')
+        $IntApprovedCount = Registration::where('status', 'Approved')
+            ->where(function ($q) {
+                $q->where('delegate_type', 'International')
+                  ->orWhereHas('user', function ($uq) {
+                      $uq->where('delegate_type', 'International');
+                  });
+            })
+            ->where('is_deleted', '0')
             ->count();
 
         $data = [

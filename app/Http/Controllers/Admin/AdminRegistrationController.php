@@ -36,23 +36,49 @@ class AdminRegistrationController extends Controller
 
         switch ($type) {
             case 'ind-paid':
-                $query->where('status', 'Approved');
-                $totalRecords = Registration::where('status', 'Approved')->where('is_deleted', '0')->count();
+                $query->where('registrations.status', 'Approved')
+                    ->where(function ($q) {
+                        $q->where('registrations.delegate_type', 'Indian')
+                          ->orWhere('users.delegate_type', 'Indian')
+                          ->orWhereNull('registrations.delegate_type');
+                    });
+                $totalRecords = Registration::where('status', 'Approved')
+                    ->where(function ($q) {
+                        $q->where('delegate_type', 'Indian')
+                          ->orWhereHas('user', function ($uq) {
+                              $uq->where('delegate_type', 'Indian');
+                          })
+                          ->orWhereNull('delegate_type');
+                    })
+                    ->where('is_deleted', '0')
+                    ->count();
                 break;
             case 'approved':
-                $query->where('status', 'Approved')->where('users.delegate_type', 'International');
-                $totalRecords = Registration::where('status', 'Approved')->where('users.delegate_type', 'International')->where('is_deleted', '0')->join('users', 'users.id', '=', 'registrations.user_id')->count();
+                $query->where('registrations.status', 'Approved')
+                    ->where(function ($q) {
+                        $q->where('registrations.delegate_type', 'International')
+                          ->orWhere('users.delegate_type', 'International');
+                    });
+                $totalRecords = Registration::where('status', 'Approved')
+                    ->where(function ($q) {
+                        $q->where('delegate_type', 'International')
+                          ->orWhereHas('user', function ($uq) {
+                              $uq->where('delegate_type', 'International');
+                          });
+                    })
+                    ->where('is_deleted', '0')
+                    ->count();
                 break;
             case 'reject':
-                $query->where('status', 'Rejected');
+                $query->where('registrations.status', 'Rejected');
                 $totalRecords = Registration::where('status', 'Rejected')->where('is_deleted', '0')->count();
                 break;
             case 'revert':
-                $query->where('status', 'Draft')->where('step_completed', 4)->where('reverted_at', '<>', null);
+                $query->where('registrations.status', 'Draft')->where('step_completed', 4)->where('reverted_at', '<>', null);
                 $totalRecords = Registration::where('status', 'Rejected')->where('is_deleted', '0')->count();
                 break;
             case 'pending':
-                $query->where('status', 'Payment Submitted');
+                $query->where('registrations.status', 'Payment Submitted');
                 $totalRecords = Registration::where('status', 'Payment Submitted')->where('is_deleted', '0')->count();
                 break;
             default:
