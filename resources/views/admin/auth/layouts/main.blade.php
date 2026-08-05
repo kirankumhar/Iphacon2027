@@ -53,15 +53,15 @@
     </div>
     <div class="authentication-wrapper bg-dark py-0">
         <div class="authentication-inner row m-0">
-            <div class="d-lg-flex col-lg-7 col-xl-8 align-items-center px-5 bg-light">
+            <div class="d-lg-flex col-lg-6 col-xl-7 align-items-center px-5 bg-light">
                 <div class="w-100 d-flex justify-content-center">
                     <img src="{{ asset('assets/admin/assets/img/logo.png') }}" class="img-fluid" alt="Login image"
                         width="700" data-app-dark-img="illustrations/boy-with-rocket-dark.png"
                         data-app-light-img="illustrations/boy-with-rocket-light.png">
                 </div>
             </div>
-            <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center bg-light p-sm-12 p-6">
-                <div class="w-px-400 mx-auto mt-12 px-2">
+            <div class="d-flex col-12 col-lg-6 col-xl-5 align-items-center bg-light p-sm-12 p-6">
+                <div class="w-px-500 mx-auto mt-12 px-2">
                     <div class="app-brand justify-content-center py-5 my-4">
                         <a href="#" class="app-brand-link gap-2">
                             <span class="app-brand-logo">

@@ -3,8 +3,8 @@
 
     <div class="container py-4 py-md-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-9 col-lg-7 col-xl-5">
-                <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 16px; background: #ffffff;">
+            <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 16px; background: #ffffff; max-width: 650px; margin: 0 auto;">
                     <!-- Admin Header -->
                     <div class="card-header text-center py-4 px-4 border-0 text-white"
                         style="background: linear-gradient(135deg, #0f172a, #1e293b, #334155);">
@@ -118,29 +118,7 @@
                                 </div>
                             </div>
 
-                            <!-- Role Badges Display -->
-                            <div class="mb-4">
-                                <div class="row g-2 text-center">
-                                    <div class="col-4">
-                                        <div class="p-2 rounded bg-danger bg-opacity-10 border border-danger border-opacity-20">
-                                            <i class="fas fa-crown text-danger mb-1 fs-6"></i>
-                                            <span class="d-block fw-bold text-danger" style="font-size: 0.75rem;">Super Admin</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="p-2 rounded bg-primary bg-opacity-10 border border-primary border-opacity-20">
-                                            <i class="fas fa-user-tie text-primary mb-1 fs-6"></i>
-                                            <span class="d-block fw-bold text-primary" style="font-size: 0.75rem;">Admin</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="p-2 rounded bg-info bg-opacity-10 border border-info border-opacity-20">
-                                            <i class="fas fa-user-check text-info mb-1 fs-6"></i>
-                                            <span class="d-block fw-bold text-info" style="font-size: 0.75rem;">Moderator</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
 
                             <!-- Remember Me -->
                             <div class="mb-4">
