@@ -4,7 +4,7 @@
     <div class="login-page-wrapper py-4 py-md-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
 
                     <!-- Compact Login Card -->
                     <div class="card login-card shadow-lg border-0 overflow-hidden">
@@ -212,6 +212,8 @@
         .login-card {
             border-radius: 16px !important;
             box-shadow: 0 15px 35px -10px rgba(30, 37, 94, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
+            max-width: 650px;
+            margin: 0 auto;
         }
 
         .card-accent-bar {
