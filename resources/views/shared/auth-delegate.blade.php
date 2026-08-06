@@ -344,8 +344,7 @@
                             </div>
                             <div class="upper-right">
                                 <div class="search-box">
-                                    <button class="search-btn mobile-search-btn" aria-label="Open Search"><i
-                                            class="flaticon-search-2"></i></button>
+                                    <button class="search-btn mobile-search-btn" aria-label="Open Search"></button>
                                 </div>
                                 <a href="#nav-mobile" class="mobile-nav-toggler navbar-trigger"
                                     aria-label="Toggle Mobile Navigation"><i class="flaticon-menu"></i></a>
@@ -357,13 +356,12 @@
             </div>
 
             <div class="mobile-header" role="complementary">
-                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="{{ asset('shared/user/images/ismm_logo.png') }}"
+                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="{{ asset('assets/img/logo/logo.png') }}"
                             alt="Iphacon 2027 Logo" title="Iphacon 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
                         <div class="search-box">
-                            <button class="search-btn mobile-search-btn" aria-label="Open Search"><i
-                                    class="flaticon-search-2"></i></button>
+                            <button class="search-btn mobile-search-btn" aria-label="Open Search"></button>
                         </div>
                         <a href="#nav-mobile" class="mobile-nav-toggler navbar-trigger"
                             aria-label="Toggle Navigation"><i class="flaticon-menu"></i></a>

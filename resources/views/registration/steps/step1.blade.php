@@ -4,7 +4,7 @@
     .form-section {
         background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
         overflow: hidden;
         border: 1px solid #e2e8f0;
     }
@@ -14,13 +14,13 @@
         color: white;
         padding: 16px 24px;
         margin: -1.5rem -1.5rem 1.5rem -1.5rem;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
     }
 
     .form-label {
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
         font-size: 0.84rem;
         letter-spacing: 0.2px;
     }
@@ -29,7 +29,7 @@
     .form-select {
         border: 1.5px solid #cbd5e1;
         border-radius: 10px;
-        padding: 8px 13px;
+        padding: 8.5px 14px;
         font-size: 0.88rem;
         color: #0f172a;
         background-color: #f8fafc;
@@ -43,10 +43,19 @@
         box-shadow: 0 0 0 3px rgba(45, 105, 255, 0.14);
     }
 
+    .input-group-text {
+        border: 1.5px solid #cbd5e1;
+        background-color: #e2e8f0;
+        color: #334155;
+        font-weight: 600;
+        font-size: 0.88rem;
+        border-radius: 10px 0 0 10px;
+    }
+
     .photo-upload-area {
         border: 2px dashed #93c5fd;
-        border-radius: 14px;
-        padding: 16px 12px;
+        border-radius: 12px;
+        padding: 10px 8px;
         text-align: center;
         transition: all 0.2s ease;
         cursor: pointer;
@@ -60,18 +69,18 @@
     }
 
     .photo-preview {
-        width: 104px;
-        height: 104px;
+        width: 72px;
+        height: 72px;
         object-fit: cover;
         border-radius: 50%;
-        border: 3px solid #ffffff;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+        border: 2px solid #ffffff;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
         cursor: pointer;
         transition: transform 0.2s ease;
     }
 
     .photo-preview:hover {
-        transform: scale(1.05);
+        transform: scale(1.04);
     }
 
     .document-preview {
@@ -86,16 +95,11 @@
         background: #ffffff;
     }
 
-    .document-preview:hover {
-        transform: scale(1.02);
-        border-color: #2D69FF;
-    }
-
     .upload-btn {
         background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%);
         border: none;
         color: white !important;
-        padding: 7px 18px;
+        padding: 8px 20px;
         border-radius: 20px;
         font-weight: 600;
         font-size: 0.84rem;
@@ -136,8 +140,11 @@
     <!-- Left Column - Main Form -->
     <div class="col-lg-8">
         <div class="form-section p-4">
-            <div class="section-header">
-                <h5 class="mb-0 text-white fw-bold"><i class="fas fa-user me-2"></i>Step 1: Personal Information</h5>
+            <div class="section-header d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-user-circle me-2"></i>Step 1: Personal & Contact Information</h5>
+                    <small class="text-white-50 extra-small">Please ensure all identity details match your government ID proof</small>
+                </div>
             </div>
 
             <!-- Prefix and Full Name -->
@@ -147,7 +154,7 @@
                 </label>
                 <div class="input-group">
                     <select class="form-select flex-grow-0 @error('prefix') is-invalid @enderror" id="prefix" name="prefix"
-                        required style="width: 105px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                        required style="width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
                         <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.</option>
                         <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.</option>
                         <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.</option>
@@ -202,7 +209,7 @@
                 </div>
             </div>
 
-            <!-- Mobile Number & Dietary Preference -->
+            <!-- Mobile Number, WhatsApp Number & Dietary Preference -->
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group mb-3">
@@ -210,10 +217,10 @@
                             <i class="fas fa-phone form-icon"></i>Mobile Number<span class="required-star">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text px-2.5">{{ $user->mobile_country_code }}</span>
+                            <span class="input-group-text">{{ $user->mobile_country_code }}</span>
                             <input type="tel" class="form-control @error('mobile_number') is-invalid @enderror" id="mobile_number" name="mobile_number"
                                 value="{{ old('mobile_number', $user->mobile_number) }}" required maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
-                                placeholder="Enter mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                placeholder="Mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         @error('mobile_number')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -226,10 +233,10 @@
                             <i class="fab fa-whatsapp text-success me-1"></i>WhatsApp Number<span class="required-star text-danger">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text px-2.5">{{ $user->mobile_country_code }}</span>
+                            <span class="input-group-text">{{ $user->mobile_country_code }}</span>
                             <input type="tel" class="form-control @error('whatsapp_number') is-invalid @enderror" id="whatsapp_number" name="whatsapp_number"
                                 value="{{ old('whatsapp_number', $registration->whatsapp_number ?: $user->mobile_number) }}" required maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
-                                placeholder="Enter WhatsApp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                placeholder="WhatsApp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         @error('whatsapp_number')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -272,7 +279,7 @@
                 @enderror
             </div>
 
-            <!-- Country, State, City -->
+            <!-- Country, State, City, PIN Code -->
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group mb-3">
@@ -290,7 +297,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label for="state_id" class="form-label">
                             <i class="fas fa-map form-icon"></i>State<span class="required-star">*</span>
@@ -348,45 +355,45 @@
         </div>
     </div>
 
-    <!-- Right Column - Photo & Documents -->
+    <!-- Right Column - Photo & Government ID Upload -->
     <div class="col-lg-4">
         <!-- Profile Photo Section -->
-        <div class="sidebar-section mb-4">
-            <h5 class="text-primary mb-3">
-                <i class="fas fa-camera me-2"></i>Profile Photo <span class="text-danger">*</span>
-            </h5>
+        <div class="sidebar-section p-3 mb-3">
+            <h6 class="fw-bold text-dark mb-2 extra-small">
+                <i class="fas fa-camera text-primary me-1.5"></i>Profile Photo <span class="required-star">*</span>
+            </h6>
 
             <div class="text-center">
-                <div class="photo-upload-area mb-3" onclick="handlePhotoAreaClick(event)">
-                    <img id="photoPreview" class="photo-preview mb-2"
+                <div class="photo-upload-area py-2 px-2" onclick="handlePhotoAreaClick(event)">
+                    <img id="photoPreview" class="photo-preview mb-1.5"
                         src="{{ $registration->photo_path ? asset('storage/' . $registration->photo_path) : asset('images/default-avatar.svg') }}"
                         alt="Profile photo" onclick="openPhotoModal(event)"
                         onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';">
                     <div>
-                        <button type="button" class="btn upload-btn btn-sm">
+                        <button type="button" class="btn upload-btn btn-sm py-1 px-3 extra-small">
                             <i class="fas fa-camera me-1"></i>Choose Photo
                         </button>
                     </div>
-                    <small class="text-muted d-block mt-2">JPG/JPEG/PNG only, max 500KB</small>
+                    <small class="text-muted extra-small d-block mt-1">JPG/PNG • Max 500KB</small>
                 </div>
                 <input type="file" id="photo" name="photo"
                     style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png"
                     {{ $registration->photo_path ? '' : 'required' }}>
                 @error('photo')
-                <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
+                <div class="text-danger extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
         </div>
 
         <!-- Government ID Section -->
         <div class="sidebar-section">
-            <h5 class="text-primary mb-3">
-                <i class="fas fa-id-card me-2"></i>Government ID Proof
-            </h5>
+            <h6 class="fw-bold text-dark mb-3">
+                <i class="fas fa-id-card text-primary me-2"></i>Government ID Proof
+            </h6>
 
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label for="id_proof_type" class="form-label">
-                    ID Type<span class="required-star">*</span>
+                    ID Document Type<span class="required-star">*</span>
                 </label>
                 <select class="form-select @error('id_proof_type') is-invalid @enderror" id="id_proof_type"
                     name="id_proof_type" required onchange="updateIdProofValidation()">
@@ -399,15 +406,14 @@
                     <option value="">Select ID Type</option>
                     <option value="Aadhaar"
                         {{ old('id_proof_type', $registration->id_proof_type) == 'Aadhaar' ? 'selected' : '' }}>
-                        Aadhaar
+                        Aadhaar Card
                     </option>
                     <option value="PAN"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'PAN' ? 'selected' : '' }}>PAN
+                        {{ old('id_proof_type', $registration->id_proof_type) == 'PAN' ? 'selected' : '' }}>PAN Card
                     </option>
                     <option value="Voter-ID"
                         {{ old('id_proof_type', $registration->id_proof_type) == 'Voter-ID' ? 'selected' : '' }}>
-                        Voter
-                        ID</option>
+                        Voter ID</option>
                     <option value="Driving License"
                         {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
                         Driving License</option>
@@ -422,7 +428,7 @@
                 <label for="id_proof_number" class="form-label" id="id_proof_number_label">
                     ID Proof Number <span class="required-star text-danger">*</span>
                 </label>
-                <input type="text" class="form-control custom-input @error('id_proof_number') is-invalid @enderror"
+                <input type="text" class="form-control @error('id_proof_number') is-invalid @enderror"
                     id="id_proof_number" name="id_proof_number"
                     value="{{ old('id_proof_number', $registration->id_proof_number) }}"
                     placeholder="Enter Aadhaar / PAN / ID Number" required>
@@ -431,10 +437,9 @@
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="id_proof_document" class="form-label fw-semibold" style="color:#2D69FF;">
-                    <i class="fas fa-file-shield me-1"></i>Upload Document <span
-                        class="required-star text-danger">*</span>
+            <div class="form-group mb-0">
+                <label for="id_proof_document" class="form-label fw-bold text-dark">
+                    <i class="fas fa-file-shield text-primary me-1"></i>Upload ID Document <span class="required-star text-danger">*</span>
                 </label>
 
                 <div class="text-center">
@@ -458,7 +463,7 @@
                             <div id="pdfChip"
                                 class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light border shadow-sm {{ ($hasDoc && $isPdf) ? '' : 'd-none'}}">
                                 <i class="fas fa-file-pdf text-danger"></i>
-                                <span class="fw-semibold">PDF Uploaded</span>
+                                <span class="fw-semibold">PDF Document Uploaded</span>
                             </div>
                         </div>
 
@@ -479,24 +484,23 @@
                             </button>
                         </div>
 
-                    <small class="text-muted d-block mt-3">
-                        Allowed: JPG/JPEG/PDF • Max size: 2,500KB • Clear, readable document only
-                    </small>
+                        <small class="text-muted extra-small d-block mt-3">
+                            JPG, JPEG or PDF • Max size: 2,500KB • Clear, readable document only
+                        </small>
+                    </div>
+                    <!-- File input positioned off-screen but still focusable -->
+                    <input type="file" id="id_proof_document" name="id_proof_document"
+                        style="position: absolute; left: -9999px; opacity: 0;"
+                        accept="image/jpeg,image/jpg,application/pdf"
+                        {{ $registration->id_proof_document_path ? '' : 'required' }}>
+                    @error('id_proof_document')
+                    <div class="text-danger extra-small mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
-                <!-- File input positioned off-screen but still focusable -->
-                <input type="file" id="id_proof_document" name="id_proof_document"
-                    style="position: absolute; left: -9999px; opacity: 0;"
-                    accept="image/jpeg,image/jpg,application/pdf"
-                    {{ $registration->id_proof_document_path ? '' : 'required' }}>
-                @error('id_proof_document')
-                <div class="text-danger small mt-2">{{ $message }}</div>
-                @enderror
             </div>
         </div>
     </div>
 </div>
-</div>
-
 
 <!-- Photo Modal -->
 <div class="modal fade" id="photoModal" tabindex="-1">
@@ -539,229 +543,102 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        updateIdProofValidation();
+
         // Photo upload listener
         const photoInput = document.getElementById("photo");
         const photoPreview = document.getElementById("photoPreview");
-        const modalPhotoPreview = document.getElementById("modalPhotoPreview");
 
         if (photoInput) {
             photoInput.addEventListener("change", function() {
                 const file = this.files[0];
                 if (!file) return;
 
-                // Size check (500KB)
                 if (file.size > 500 * 1024) {
-                    if (typeof Swal !== "undefined") {
-                        Swal.fire("File Too Large", "Profile photo size must be less than 500KB!", "error");
-                    } else {
-                        alert("Profile photo size must be less than 500KB!");
-                    }
-                    this.value = "";
-                    return;
-                }
-
-                // Type check
-                if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
-                    if (typeof Swal !== "undefined") {
-                        Swal.fire("Invalid File Type", "Only JPG, JPEG, or PNG images are allowed!", "error");
-                    } else {
-                        alert("Only JPG, JPEG, or PNG images are allowed!");
-                    }
+                    alert("Profile photo size must be less than 500KB!");
                     this.value = "";
                     return;
                 }
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    if (photoPreview) {
-                        photoPreview.src = e.target.result;
-                    }
-                    if (modalPhotoPreview) {
-                        modalPhotoPreview.src = e.target.result;
-                    }
+                    if (photoPreview) photoPreview.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
-
-                if (typeof Swal !== "undefined") {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Photo Selected",
-                        text: "Profile photo selected successfully!",
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                }
             });
         }
 
-        // Government ID Document Listener
-        const idProofInput = document.getElementById("id_proof_document");
-        const previewContainer = document.getElementById("documentPreviewContainer");
-        const uploadPrompt = document.getElementById("uploadPrompt");
-
-        const existingPath = previewContainer?.dataset.docPath || "";
-        const existingIsPdf = previewContainer?.dataset.isPdf === "true";
-
-        const imgPreview = document.getElementById("idProofPreview");
+        // ID Proof document listener
+        const docInput = document.getElementById("id_proof_document");
+        const idProofPreview = document.getElementById("idProofPreview");
         const pdfChip = document.getElementById("pdfChip");
+        const uploadPrompt = document.getElementById("uploadPrompt");
+        const docActionsPrompt = document.getElementById("docActionsPrompt");
+        const container = document.getElementById("documentPreviewContainer");
 
-        const modalImg = document.getElementById("modalDocumentPreview");
-        const modalPdf = document.getElementById("modalPdfPreview");
-
-        if (existingPath) {
-            if (existingIsPdf) {
-                if (modalPdf) {
-                    modalPdf.src = existingPath;
-                    modalPdf.classList.remove("d-none");
-                }
-            } else {
-                if (modalImg) {
-                    modalImg.src = existingPath;
-                    modalImg.classList.remove("d-none");
-                }
-            }
-        }
-
-        function resetPreview() {
-            if (imgPreview) imgPreview.classList.add("d-none");
-            if (pdfChip) pdfChip.classList.add("d-none");
-
-            if (modalImg) {
-                modalImg.src = "";
-                modalImg.classList.add("d-none");
-            }
-            if (modalPdf) {
-                modalPdf.src = "";
-                modalPdf.classList.add("d-none");
-            }
-        }
-
-        if (imgPreview && imgPreview.src) {
-            if (modalImg) {
-                modalImg.src = imgPreview.src;
-                modalImg.classList.remove("d-none");
-            }
-        } else if (pdfChip) {
-            if (modalPdf) {
-                modalPdf.src = "{{ $docPath ?? '' }}";
-                modalPdf.classList.remove("d-none");
-            }
-        }
-
-        if (idProofInput) {
-            idProofInput.addEventListener("change", function() {
+        if (docInput) {
+            docInput.addEventListener("change", function() {
                 const file = this.files[0];
                 if (!file) return;
 
-                // Size check (2.5MB)
                 if (file.size > 2500 * 1024) {
-                    if (typeof Swal !== "undefined") {
-                        Swal.fire("File Too Large", "Max size 2.5MB!", "error");
-                    } else {
-                        alert("Max size 2.5MB!");
-                    }
+                    alert("Document size must be less than 2,500KB (2.5MB)!");
                     this.value = "";
                     return;
                 }
 
-                // Type check
-                if (!["image/jpeg", "image/jpg", "application/pdf"].includes(file.type)) {
-                    if (typeof Swal !== "undefined") {
-                        Swal.fire("Invalid File Type", "Only JPG/JPEG/PDF allowed!", "error");
-                    } else {
-                        alert("Only JPG/JPEG/PDF allowed!");
-                    }
-                    this.value = "";
-                    return;
-                }
+                const isPdf = file.type === "application/pdf" || file.name.endsWith(".pdf");
 
-                resetPreview();
-                if (previewContainer) previewContainer.style.display = "block";
-                const uploadPrompt = document.getElementById("uploadPrompt");
-                const docActionsPrompt = document.getElementById("docActionsPrompt");
+                if (container) container.style.display = "block";
                 if (uploadPrompt) uploadPrompt.style.display = "none";
                 if (docActionsPrompt) docActionsPrompt.style.display = "flex";
 
-                if (file.type === "application/pdf") {
-                    const fileURL = URL.createObjectURL(file);
-
+                if (isPdf) {
+                    if (idProofPreview) idProofPreview.classList.add("d-none");
                     if (pdfChip) pdfChip.classList.remove("d-none");
-                    else if (previewContainer) {
-                        const newChip = document.createElement("div");
-                        newChip.id = "pdfChip";
-                        newChip.className =
-                            "d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light border shadow-sm";
-                        newChip.innerHTML =
-                            `<i class="fas fa-file-pdf text-danger"></i><span class="fw-semibold">PDF Uploaded</span>`;
-                        previewContainer.appendChild(newChip);
+                    if (container) {
+                        container.setAttribute("data-is-pdf", "true");
+                        container.setAttribute("data-doc-path", URL.createObjectURL(file));
                     }
-
-                    if (modalPdf) {
-                        modalPdf.src = fileURL;
-                        modalPdf.classList.remove("d-none");
-                    }
-
                 } else {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        if (imgPreview) {
-                            imgPreview.src = e.target.result;
-                            imgPreview.classList.remove("d-none");
-                        }
-
-                        if (modalImg) {
-                            modalImg.src = e.target.result;
-                            modalImg.classList.remove("d-none");
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-
-                if (typeof Swal !== "undefined") {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Uploaded",
-                        text: "Document uploaded successfully!",
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    if (pdfChip) pdfChip.classList.add("d-none");
+                    if (idProofPreview) {
+                        idProofPreview.classList.remove("d-none");
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            idProofPreview.src = e.target.result;
+                            if (container) {
+                                container.setAttribute("data-is-pdf", "false");
+                                container.setAttribute("data-doc-path", e.target.result);
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 }
             });
         }
     });
 
-    // Handle upload area click
-    function handleUploadAreaClick(event) {
-        if (!event.target.classList.contains("document-preview")) {
-            const docInput = document.getElementById("id_proof_document");
-            if (docInput) docInput.click();
-        }
-    }
-
-    // Open document modal
-    function openDocumentModal(event) {
-        event.stopPropagation();
-        const docModal = document.getElementById("documentModal");
-        if (docModal) {
-            new bootstrap.Modal(docModal, {
-                backdrop: false
-            }).show();
-        }
-    }
-
-    // Handle photo area click
     function handlePhotoAreaClick(event) {
-        if (!event.target.classList.contains('photo-preview')) {
-            const photoInput = document.getElementById('photo');
-            if (photoInput) photoInput.click();
+        if (event.target.id === 'photoPreview' || event.target.closest('#photoPreview')) {
+            openPhotoModal(event);
+            return;
         }
+        document.getElementById('photo').click();
     }
 
-    // Open photo modal
+    function handleUploadAreaClick(event) {
+        if (event.target.closest('#docActionsPrompt') || event.target.id === 'idProofPreview') {
+            return;
+        }
+        document.getElementById('id_proof_document').click();
+    }
+
     function openPhotoModal(event) {
-        event.stopPropagation();
+        if (event) event.stopPropagation();
         const photoPreview = document.getElementById('photoPreview');
         const modalPhoto = document.getElementById('modalPhotoPreview');
         if (photoPreview && modalPhoto && photoPreview.src) {
@@ -769,13 +646,41 @@
         }
         const photoModal = document.getElementById('photoModal');
         if (photoModal) {
-            new bootstrap.Modal(photoModal, {
-                backdrop: false
-            }).show();
+            new bootstrap.Modal(photoModal).show();
         }
     }
 
-    // Dynamic ID Proof Validation & Placeholder Label
+    function openDocumentModal(event) {
+        if (event) event.stopPropagation();
+        const container = document.getElementById('documentPreviewContainer');
+        if (!container) return;
+
+        const docPath = container.getAttribute('data-doc-path');
+        const isPdf = container.getAttribute('data-is-pdf') === 'true';
+
+        const modalImg = document.getElementById('modalDocumentPreview');
+        const modalPdf = document.getElementById('modalPdfPreview');
+
+        if (isPdf) {
+            if (modalImg) modalImg.classList.add('d-none');
+            if (modalPdf) {
+                modalPdf.src = docPath;
+                modalPdf.classList.remove('d-none');
+            }
+        } else {
+            if (modalPdf) modalPdf.classList.add('d-none');
+            if (modalImg) {
+                modalImg.src = docPath;
+                modalImg.classList.remove('d-none');
+            }
+        }
+
+        const documentModal = document.getElementById('documentModal');
+        if (documentModal) {
+            new bootstrap.Modal(documentModal).show();
+        }
+    }
+
     function updateIdProofValidation() {
         const typeSelect = document.getElementById('id_proof_type');
         const numberInput = document.getElementById('id_proof_number');
@@ -788,7 +693,7 @@
             numberInput.placeholder = 'Enter 12-digit Aadhaar Number';
         } else if (selectedType === 'PAN') {
             if (label) label.innerHTML = 'PAN Card Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter 10-character PAN Number (e.g. ABCDE1234F)';
+            numberInput.placeholder = 'Enter 10-character PAN Number';
         } else if (selectedType === 'Passport') {
             if (label) label.innerHTML = 'Passport Number <span class="required-star text-danger">*</span>';
             numberInput.placeholder = 'Enter Passport Number';
@@ -800,12 +705,7 @@
             numberInput.placeholder = 'Enter Driving License Number';
         } else {
             if (label) label.innerHTML = 'ID Proof Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter Aadhaar / PAN / ID Number';
+            numberInput.placeholder = 'Enter ID Proof Number';
         }
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        updateIdProofValidation();
-    });
 </script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
