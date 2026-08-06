@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Artisan;
 
 
 
-// Serve storage files directly to resolve 403 Forbidden symlink errors
-Route::get('/storage/{path}', function ($path) {
+// Universal File & Storage Server Routes (Bypasses cPanel Apache 403 Forbidden errors)
+$serveFileHandler = function ($path) {
     $filePath = storage_path('app/public/' . $path);
     if (!file_exists($filePath)) {
         $filePath = storage_path('app/' . $path);
@@ -40,7 +40,24 @@ Route::get('/storage/{path}', function ($path) {
         'Content-Type' => $mimeType,
         'Cache-Control' => 'public, max-age=86400',
     ]);
-})->where('path', '.*')->name('storage.file');
+};
+
+Route::get('/file/{path}', $serveFileHandler)->where('path', '.*')->name('file.serve');
+Route::get('/storage/{path}', $serveFileHandler)->where('path', '.*')->name('storage.file');
+
+Route::get('/unlink-storage', function () {
+    $target = public_path('storage');
+
+    if (is_link($target)) {
+        @unlink($target);
+        return 'Storage symlink successfully unlinked!';
+    } elseif (is_dir($target)) {
+        @rename($target, public_path('storage_old_' . time()));
+        return 'Physical storage folder renamed successfully!';
+    }
+
+    return 'No symlink found at ' . $target;
+});
 
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
