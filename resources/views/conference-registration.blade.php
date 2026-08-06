@@ -4,7 +4,7 @@
     <div class="registration-page-wrapper py-3 py-md-4">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+                <div class="col-12 col-md-11 col-lg-10 col-xl-10">
 
                     <!-- Compact Registration Card -->
                     <div class="card registration-card shadow-lg border-0 overflow-hidden">
@@ -17,9 +17,9 @@
                             <div class="header-bg-glow"></div>
                             
                             <div class="position-relative z-1">
-                                <div class="d-inline-flex align-items-center justify-content-center mb-1 px-3 py-1 rounded-pill header-badge-pill extra-small fw-semibold">
+                                <!-- <div class="d-inline-flex align-items-center justify-content-center mb-1 px-3 py-1 rounded-pill header-badge-pill extra-small fw-semibold">
                                     <i class="fas fa-award text-warning me-1.5"></i> <span>71<sup>st</sup> Annual National Conference</span>
-                                </div>
+                                </div> -->
                                 <h5 class="text-white fw-bold mb-0.5 tracking-wide">Delegate Registration</h5>
                                 <p class="text-white-80 mb-0 extra-small">
                                     <i class="fas fa-map-marker-alt me-1 text-danger-light"></i> IPHACON 2027 • RIMS, Ranchi
@@ -75,7 +75,7 @@
                                                     for="indian" id="card-indian">
                                                     <input class="form-check-input d-none" type="radio" name="delegate_type"
                                                         id="indian" value="Indian"
-                                                        {{ old('delegate_type') == 'Indian' ? 'checked' : '' }} required>
+                                                        {{ old('delegate_type', 'Indian') == 'Indian' ? 'checked' : '' }} required>
                                                     
                                                     <div class="card-radio-icon rounded-circle d-flex align-items-center justify-content-center me-2 bg-success-subtle text-success">
                                                         <i class="fas fa-flag extra-small"></i>
@@ -134,7 +134,7 @@
                                                 <option value="">Select Country</option>
                                                 @foreach ($countries as $country)
                                                     <option value="{{ $country->id }}"
-                                                        {{ old('country_id') == $country->id ? 'selected' : '' }}>
+                                                        {{ (old('country_id') == $country->id || (!old('country_id') && old('delegate_type', 'Indian') == 'Indian' && (strtolower(trim($country->country_name)) == 'india' || str_contains(strtolower($country->country_name), 'india')))) ? 'selected' : '' }}>
                                                         {{ $country->country_name }}
                                                     </option>
                                                 @endforeach
@@ -174,12 +174,39 @@
                                             </span>
                                             <input type="password"
                                                 class="form-control border-start-0 border-end-0 custom-input @error('password') is-invalid @enderror"
-                                                id="password" name="password" required placeholder="Min 8 chars">
+                                                id="password" name="password" required minlength="8" placeholder="Min 8 characters">
                                             <button class="btn btn-light border border-start-0 text-muted px-2.5 toggle-pw-btn" type="button"
                                                 onclick="togglePassword()" title="Toggle visibility">
                                                 <i class="fas fa-eye extra-small" id="toggleIcon"></i>
                                             </button>
                                         </div>
+
+                                        <!-- Password Strength Indicator & Requirement Badges -->
+                                        <div id="pw-strength-wrapper" class="mt-1.5 d-none">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <span id="pw-strength-text" class="extra-small fw-bold text-muted" style="font-size: 0.72rem;"></span>
+                                                <span id="pw-length-badge" class="extra-small text-muted" style="font-size: 0.7rem;"></span>
+                                            </div>
+                                            <div class="progress" style="height: 5px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                                <div id="pw-strength-bar" class="progress-bar transition-all" role="progressbar" style="width: 0%; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                                            </div>
+
+                                            <div class="d-flex flex-wrap gap-1 mt-1.5" style="font-size: 0.68rem;">
+                                                <span id="req-length" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
+                                                    <i class="far fa-circle me-1 opacity-50"></i>8+ Chars
+                                                </span>
+                                                <span id="req-uppercase" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
+                                                    <i class="far fa-circle me-1 opacity-50"></i>Uppercase
+                                                </span>
+                                                <span id="req-number" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
+                                                    <i class="far fa-circle me-1 opacity-50"></i>Number
+                                                </span>
+                                                <span id="req-symbol" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
+                                                    <i class="far fa-circle me-1 opacity-50"></i>Symbol
+                                                </span>
+                                            </div>
+                                        </div>
+
                                         @error('password')
                                             <div class="invalid-feedback d-block extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                                         @enderror
@@ -197,7 +224,7 @@
                                             <input type="password"
                                                 class="form-control border-start-0 custom-input @error('password_confirmation') is-invalid @enderror"
                                                 id="password_confirmation" name="password_confirmation" required
-                                                placeholder="Repeat password">
+                                                placeholder="Re-enter password">
                                         </div>
                                         <div id="pw-match-feedback" class="extra-small mt-1 d-none"></div>
                                         @error('password_confirmation')
@@ -300,7 +327,7 @@
         .registration-card {
             border-radius: 16px !important;
             box-shadow: 0 15px 35px -10px rgba(30, 37, 94, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
-            max-width: 850px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -553,37 +580,124 @@
                 });
             }
 
-            // Initial active state check
+            function handleCountryDropdown() {
+                if (!countrySelect) return;
+                const selectedRadio = document.querySelector('input[name="delegate_type"]:checked');
+                const isIndian = !selectedRadio || selectedRadio.value === 'Indian';
+
+                if (isIndian) {
+                    // Auto-select India
+                    for (let option of countrySelect.options) {
+                        const txt = option.text.trim().toLowerCase();
+                        if (txt === 'india' || txt.startsWith('india') || txt.includes('india')) {
+                            option.selected = true;
+                            countrySelect.value = option.value;
+                            break;
+                        }
+                    }
+                    // Lock the country dropdown for Indian delegates
+                    countrySelect.style.pointerEvents = 'none';
+                    countrySelect.style.backgroundColor = '#e2e8f0';
+                    countrySelect.style.color = '#475569';
+                    countrySelect.style.cursor = 'not-allowed';
+                    countrySelect.setAttribute('tabindex', '-1');
+                    countrySelect.title = 'Locked: India is auto-selected for Indian delegates';
+                } else {
+                    // Unlock the country dropdown for International delegates
+                    countrySelect.style.pointerEvents = 'auto';
+                    countrySelect.style.backgroundColor = '#ffffff';
+                    countrySelect.style.color = '';
+                    countrySelect.style.cursor = 'pointer';
+                    countrySelect.removeAttribute('tabindex');
+                    countrySelect.title = 'Select your country of origin';
+                }
+            }
+
+            // Initial active state & country dropdown check
             updateCardState();
+            handleCountryDropdown();
 
             delegateRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
                     updateCardState();
-
-                    if (this.value === 'Indian') {
-                        // Auto-select India
-                        for (let option of countrySelect.options) {
-                            if (option.text.trim().toLowerCase() === 'india' || option.text.includes('India')) {
-                                option.selected = true;
-                                break;
-                            }
-                        }
-                        countrySelect.style.backgroundColor = '#f1f5f9';
-                        countrySelect.style.color = '#334155';
-                        countrySelect.title = 'Auto-selected for Indian delegates';
-                    } else {
-                        countrySelect.selectedIndex = 0;
-                        countrySelect.style.backgroundColor = '';
-                        countrySelect.style.color = '';
-                        countrySelect.title = '';
-                    }
+                    handleCountryDropdown();
                 });
             });
 
-            // Live Password Match Checker
+            // Live Password Match & Strength Checker
             const passwordInput = document.getElementById('password');
             const confirmInput = document.getElementById('password_confirmation');
             const matchFeedback = document.getElementById('pw-match-feedback');
+
+            function updateReqBadge(badgeEl, isMet, label) {
+                if (!badgeEl) return;
+                if (isMet) {
+                    badgeEl.className = 'badge bg-success-subtle text-success border border-success-subtle fw-medium transition-all py-1 px-1.5';
+                    badgeEl.innerHTML = '<i class="fas fa-check-circle me-1 text-success"></i>' + label;
+                } else {
+                    badgeEl.className = 'badge bg-light text-secondary border fw-normal transition-all py-1 px-1.5';
+                    badgeEl.innerHTML = '<i class="far fa-circle me-1 opacity-50"></i>' + label;
+                }
+            }
+
+            function checkPasswordStrength(val) {
+                const wrapper = document.getElementById('pw-strength-wrapper');
+                const bar = document.getElementById('pw-strength-bar');
+                const text = document.getElementById('pw-strength-text');
+                const lengthBadge = document.getElementById('pw-length-badge');
+
+                const reqLength = document.getElementById('req-length');
+                const reqUpper = document.getElementById('req-uppercase');
+                const reqNumber = document.getElementById('req-number');
+                const reqSymbol = document.getElementById('req-symbol');
+
+                if (!val || val.length === 0) {
+                    if (wrapper) wrapper.classList.add('d-none');
+                    return;
+                }
+
+                if (wrapper) wrapper.classList.remove('d-none');
+
+                const hasMinLen = val.length >= 8;
+                const hasUpper = /[A-Z]/.test(val);
+                const hasNum = /\d/.test(val);
+                const hasSym = /[^a-zA-Z0-9]/.test(val);
+
+                updateReqBadge(reqLength, hasMinLen, '8+ Chars');
+                updateReqBadge(reqUpper, hasUpper, 'Uppercase');
+                updateReqBadge(reqNumber, hasNum, 'Number');
+                updateReqBadge(reqSymbol, hasSym, 'Symbol');
+
+                let passedCount = (hasMinLen ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNum ? 1 : 0) + (hasSym ? 1 : 0);
+                if (val.length >= 12) passedCount++;
+
+                if (lengthBadge) {
+                    lengthBadge.textContent = val.length + '/8 min';
+                    lengthBadge.className = hasMinLen ? 'extra-small text-success fw-bold' : 'extra-small text-danger fw-medium';
+                }
+
+                if (!hasMinLen) {
+                    bar.style.width = Math.min((val.length / 8) * 25, 25) + '%';
+                    bar.style.backgroundColor = '#dc3545';
+                    text.className = 'extra-small fw-bold text-danger';
+                    text.innerHTML = '<i class="fas fa-times-circle me-1"></i> Too Short (Min 8)';
+                } else if (passedCount <= 2) {
+                    bar.style.width = '45%';
+                    bar.style.backgroundColor = '#ffc107';
+                    text.className = 'extra-small fw-bold text-warning';
+                    text.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Weak Strength';
+                } else if (passedCount === 3) {
+                    bar.style.width = '75%';
+                    bar.style.backgroundColor = '#0dcaf0';
+                    text.className = 'extra-small fw-bold text-info';
+                    text.innerHTML = '<i class="fas fa-shield-alt me-1"></i> Good Strength';
+                } else {
+                    bar.style.width = '100%';
+                    bar.style.backgroundColor = '#198754';
+                    text.className = 'extra-small fw-bold text-success';
+                    text.innerHTML = '<i class="fas fa-check-circle me-1"></i> Strong Password';
+                }
+            }
 
             function checkPasswordMatch() {
                 if (!confirmInput || !passwordInput || !matchFeedback) return;
@@ -608,9 +722,15 @@
                 }
             }
 
-            if (confirmInput && passwordInput) {
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    checkPasswordStrength(this.value);
+                    checkPasswordMatch();
+                });
+            }
+
+            if (confirmInput) {
                 confirmInput.addEventListener('input', checkPasswordMatch);
-                passwordInput.addEventListener('input', checkPasswordMatch);
             }
 
             // Auto-focus next field on Enter key

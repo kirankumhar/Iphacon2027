@@ -1,40 +1,30 @@
 <?php
-// app/Notifications/CustomVerifyEmail.php
 
 namespace App\Notifications;
 
-use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailBase;
+use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
 
-class CustomVerifyEmail extends VerifyEmailBase
+class CustomVerifyEmail extends Notification
 {
-    public function toMail($notifiable)
+    public function via($notifiable)
     {
-        $verificationUrl = $this->verificationUrl($notifiable);
-
-        return (new MailMessage)
-            ->subject('Verify Your Email Address - Conference Registration')
-            ->greeting('Hello ' . $notifiable->full_name . '!')
-            ->line('Welcome to the Conference Registration System.')
-            ->line('Please click the button below to verify your email address and activate your account.')
-            ->action('Verify Email Address', $verificationUrl)
-            ->line('This verification link will expire in 24 hours.')
-            ->line('If you did not create an account, no further action is required.')
-            ->salutation('Best regards, Conference Team');
+        return ['mail'];
     }
 
-    protected function verificationUrl($notifiable)
+    public function toMail($notifiable)
     {
-        return URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
-            ]
-        );
+        $otp = $notifiable->otp;
+
+        return (new MailMessage)
+            ->subject('Email Verification OTP - IPHACON 2027')
+            ->greeting('Hello ' . ($notifiable->full_name ?? 'Delegate') . '!')
+            ->line('Welcome to IPHACON 2027 Conference Registration.')
+            ->line('Your One-Time Password (OTP) for email verification is:')
+            ->line('### **' . $otp . '**')
+            ->line('This OTP is valid for 15 minutes.')
+            ->line('Please enter this code on the verification page to complete your registration.')
+            ->line('If you did not request this OTP, no further action is required.')
+            ->salutation('Best regards, IPHACON 2027 Organizing Committee');
     }
 }

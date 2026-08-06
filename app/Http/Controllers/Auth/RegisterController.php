@@ -52,16 +52,17 @@ class RegisterController extends Controller
                 $user = User::create($userData);
             }
 
-            // Generate verification token and send email (gracefully handling mail server timeouts)
+            // Generate OTP and send email
             try {
-                $user->generateVerificationToken();
+                $user->generateOtp();
                 $user->notify(new CustomVerifyEmail());
             } catch (\Exception $mailEx) {
                 \Illuminate\Support\Facades\Log::warning('Verification email sending failed: ' . $mailEx->getMessage());
             }
 
             return redirect()->route('verification.notice')
-                ->with('success', 'Registration successful! Please check your email for verification link.');
+                ->with('success', 'Registration successful! A 6-digit OTP has been sent to your email address.')
+                ->with('email', $user->email);
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Registration Exception: ' . $e->getMessage(), [
@@ -106,26 +107,39 @@ class RegisterController extends Controller
         ];
     }
 
-    public function showVerificationNotice()
+    public function showVerificationNotice(Request $request)
     {
         return view('auth.verify-email');
     }
 
-    public function verify(Request $request)
+    public function verifyOtp(Request $request)
     {
-        $user = User::find($request->route('id'));
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|numeric|digits:6',
+        ], [
+            'otp.required' => 'Please enter the 6-digit OTP sent to your email.',
+            'otp.digits' => 'OTP must be exactly 6 digits.',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return redirect()->route('login')
-                ->withErrors(['verification' => 'Invalid verification link.']);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No user account found with this email address.'], 404);
+            }
+            return back()->withErrors(['email' => 'No user account found with this email address.'])->withInput();
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->route('dashboard')
-                ->with('success', 'Your email is already verified. Welcome back!');
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Email is already verified.', 'redirect' => route('login')]);
+            }
+            return redirect()->route('login')
+                ->with('success', 'Your email is already verified. Please login to continue.');
         }
 
-        if (hash_equals($request->route('hash'), sha1($user->getEmailForVerification()))) {
+        if ($user->isOtpValid($request->otp)) {
             $user->markEmailAsVerified();
 
             // Log the user in
@@ -139,12 +153,25 @@ class RegisterController extends Controller
 
             event(new Registered($user));
 
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Email verified successfully! Redirecting...',
+                    'redirect' => route('login')
+                ]);
+            }
+
             return redirect()->route('login')
-                ->with('success', 'Email verified successfully! Login with your credentials.');
+                ->with('success', 'Email verified successfully! You can now sign in to your account.');
         }
 
-        return redirect()->route('login')
-            ->withErrors(['verification' => 'Invalid verification link.']);
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP code. Please try again.'], 422);
+        }
+
+        return back()->withErrors([
+            'otp' => 'Invalid or expired OTP code. Please enter the correct OTP or request a new one.'
+        ])->withInput();
     }
 
     public function resendVerification(Request $request)
@@ -156,25 +183,24 @@ class RegisterController extends Controller
         if (!$user) {
             return back()->withErrors([
                 'email' => 'No user found with this email address.'
-            ]);
+            ])->withInput();
         }
 
         if ($user->hasVerifiedEmail()) {
             return back()->withErrors([
                 'email' => 'This email is already verified.'
-            ]);
+            ])->withInput();
         }
 
-        // Check if verification was sent recently (prevent spam)
-        if ($user->verification_sent_at && $user->verification_sent_at->diffInMinutes(now()) < 2) {
-            return back()->withErrors([
-                'email' => 'Verification email was sent recently. Please 2 minutes wait before requesting another.'
-            ]);
+        // Generate new OTP and send notification
+        try {
+            $user->generateOtp();
+            $user->notify(new CustomVerifyEmail());
+        } catch (\Exception $mailEx) {
+            \Illuminate\Support\Facades\Log::warning('Resend OTP email failed: ' . $mailEx->getMessage());
         }
 
-        $user->generateVerificationToken();
-        $user->notify(new CustomVerifyEmail());
-
-        return back()->with('success', 'Verification email sent successfully!');
+        return back()->with('success', 'A new 6-digit OTP has been sent to your email address!')
+            ->withInput(['email' => $request->email]);
     }
 }

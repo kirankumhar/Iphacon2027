@@ -74,7 +74,7 @@
                                         id="country_id" name="country_id" required>
                                     <option value="">Select Country</option>
                                     @foreach($countries as $country)
-                                        <option value="{{ $country->id }}" {{ old('country_id') == $country->id ? 'selected' : '' }}>
+                                        <option value="{{ $country->id }}" {{ (old('country_id') == $country->id || (!old('country_id') && str_contains(strtolower($country->country_name), 'india'))) ? 'selected' : '' }}>
                                             {{ $country->country_name }}
                                         </option>
                                     @endforeach

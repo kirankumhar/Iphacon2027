@@ -55,12 +55,11 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset'])
 
 // Email verification routes
 Route::get('email/verify', [RegisterController::class, 'showVerificationNotice'])
-    // ->middleware('auth')
     ->name('verification.notice');
 
-Route::get('email/verify/{id}/{hash}', [RegisterController::class, 'verify'])
-    ->middleware(['signed'])
-    ->name('verification.verify');
+Route::post('email/verify-otp', [RegisterController::class, 'verifyOtp'])
+    ->middleware(['throttle:10,1'])
+    ->name('verification.verify-otp');
 
 Route::post('email/verification-notification', [RegisterController::class, 'resendVerification'])
     ->middleware(['throttle:6,1'])

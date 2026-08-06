@@ -29,6 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'consent',
         'verification_token',
         'verification_sent_at',
+        'otp',
+        'otp_expires_at',
         'last_login',
         'last_ip'
     ];
@@ -42,6 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'verification_sent_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
         'date_of_birth' => 'date',
         'consent' => 'boolean',
         'last_login' => 'datetime',
@@ -55,6 +58,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    // Generate OTP for email verification
+    public function generateOtp()
+    {
+        $this->otp = (string) rand(100000, 999999);
+        $this->otp_expires_at = now()->addMinutes(15);
+        $this->save();
+
+        return $this->otp;
+    }
+
+    // Check if OTP is valid
+    public function isOtpValid($inputOtp)
+    {
+        if (!$this->otp || !$this->otp_expires_at) {
+            return false;
+        }
+
+        return (string) $this->otp === (string) trim($inputOtp) && $this->otp_expires_at->isFuture();
     }
 
     // Generate verification token
@@ -84,6 +107,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => now(),
             'verification_token' => null,
             'verification_sent_at' => null,
+            'otp' => null,
+            'otp_expires_at' => null,
         ])->save();
     }
 

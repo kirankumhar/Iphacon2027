@@ -8,8 +8,9 @@
     <!-- Browser Compatibility -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- Responsive Viewport -->
+    <!-- Responsive Viewport & CSRF Token -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="Official website of the 71st Annual National Conference of the Indian Public Health Association (IPHACON 2027).">
@@ -34,7 +35,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
-    <title>{{ $title ?? 'Online Registration | 71st Annual National Conference of the Indian Public Health Association (IPHACON 2027) | Ranchi | Jharkhand' }}</title>
+    <title>@yield('title', $title ?? 'Online Registration | 71st Annual National Conference of the Indian Public Health Association (IPHACON 2027) | Ranchi | Jharkhand')</title>
 </head>
 
 <body class="home-3">
@@ -208,7 +209,7 @@
             <div class="site-breadcrumb">
                 <img src="{{ asset('assets/img/htop_img/mast_iphacon2027_online-reg.jpg') }}" alt="Online Registration" title="Online Registration" class="breadcrumb-banner-img">
                 <div class="breadcrumb-content">
-                    <h5 class="breadcrumb-title">Online Registration</h5>
+                    <h5 class="breadcrumb-title">@yield('inner-title', $inner_title ?? ($title ?? 'Online Registration'))</h5>
                 </div>
             </div>
 
