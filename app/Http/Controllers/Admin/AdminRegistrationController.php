@@ -81,6 +81,10 @@ class AdminRegistrationController extends Controller
                 $query->where('registrations.status', 'Payment Submitted');
                 $totalRecords = Registration::where('status', 'Payment Submitted')->where('is_deleted', '0')->count();
                 break;
+            case 'incomplete':
+                $query->where('registrations.status', 'Draft');
+                $totalRecords = Registration::where('status', 'Draft')->where('is_deleted', '0')->count();
+                break;
             default:
                 return response()->json(['error' => 'Invalid route type'], 400);
         }
@@ -137,12 +141,42 @@ class AdminRegistrationController extends Controller
 
     public function approvedIndDelegates()
     {
-        return view('admin.modules.registration.show-ind-approved-registration');
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where('status', 'Approved')
+            ->where(function ($q) {
+                $q->where('delegate_type', 'Indian')
+                  ->orWhereHas('user', function ($uq) {
+                      $uq->where('delegate_type', 'Indian');
+                  })
+                  ->orWhereNull('delegate_type');
+            })
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-ind-approved-registration', compact('registrations'));
+    }
+
+    public function indianIncompleteDelegates()
+    {
+        return view('admin.modules.registration.show-ind-incomplete-registration');
     }
 
     public function internationalApprovedDelegates()
     {
-        return view('admin.modules.registration.show-int-approved-registration');
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where('status', 'Approved')
+            ->where(function ($q) {
+                $q->where('delegate_type', 'International')
+                  ->orWhereHas('user', function ($uq) {
+                      $uq->where('delegate_type', 'International');
+                  });
+            })
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-int-approved-registration', compact('registrations'));
     }
 
     public function internationalRejectedDelegates()

@@ -21,14 +21,14 @@
                         <span class="badge bg-success fs-5 px-3 py-2">Total Amount: $175.00</span>
                     </div>
 
-                    <div class="mb-4">
-                        <div class="border rounded p-3" style="background: #f8f9fa;">
-                            <img src="{{ asset('images/qr_code.jpg') }}" alt="Payment QR Code"
-                                class="img-fluid border rounded shadow-sm" style="max-width: 200px; height: auto;">
+                        <div class="border rounded p-3 text-center" style="background: #f8f9fa;">
+                            <img src="{{ asset('images/iphacon_qrcode.jpeg') }}" 
+                                 onerror="this.onerror=null; this.src='{{ asset('public/images/iphacon_qrcode.jpeg') }}';"
+                                 alt="Payment QR Code"
+                                 class="img-fluid border rounded shadow-sm" style="max-width: 220px; height: auto;">
                             <p class="mt-3 mb-0"><strong><i class="fas fa-qrcode me-1"></i>Scan QR Code to Pay
                                     $175.00</strong></p>
                         </div>
-                    </div>
 
                     <div class="alert alert-warning text-start">
                         <i class="fas fa-exclamation-triangle me-2"></i>
@@ -144,30 +144,39 @@
                     <h5 class="mb-0 text-center"><i class="fas fa-rupee-sign me-2"></i>Payment Summary</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    @php
+                        $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                        $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                        $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                        $subtotalBase = $catBase + $cmeBase + $accBase;
+                        $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                        $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                    @endphp
+                    <table class="table table-bordered mb-0">
                         <tr>
-                            <td><strong>Delegate Category</strong></td>
-                            <td class="text-end">₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}
-                            </td>
+                            <td><strong>Delegate Category (Base Price)</strong></td>
+                            <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
                         </tr>
-                        @if ($registration->accompanying_persons > 0)
-                            <tr>
-                                <td><strong>Accompanying Person ({{ $registration->accompanying_persons }})</strong>
-                                </td>
-                                <td class="text-end">₹{{ number_format($registration->accompanying_persons * 4000) }}
-                                </td>
-                            </tr>
-                        @endif
                         @if ($registration->participate_in_cme)
                             <tr>
-                                <td><strong>Participating in CME</strong></td>
-                                <td class="text-end">₹1,000</td>
+                                <td><strong>CME / Workshop Participation</strong></td>
+                                <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
                             </tr>
                         @endif
+                        @if (($registration->accompanying_persons ?? 0) > 0)
+                            <tr>
+                                <td><strong>Accompanying Person ({{ $registration->accompanying_persons }})</strong></td>
+                                <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
+                            </tr>
+                        @endif
+                        <tr>
+                            <td><strong>GST Amount (18%)</strong></td>
+                            <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                        </tr>
                         <tr class="table-success">
-                            <td><strong>Total Amount</strong></td>
+                            <td><strong>Total Amount Payable</strong></td>
                             <td class="text-end">
-                                <strong>₹{{ number_format($registration->calculateTotalAmount()) }}</strong>
+                                <strong class="fs-5">₹{{ number_format($totalAmt, 2) }}</strong>
                             </td>
                         </tr>
                     </table>

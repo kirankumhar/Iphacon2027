@@ -228,6 +228,7 @@ class RegistrationController extends Controller
             'whatsapp_number' => 'nullable|string|max:20',
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
             'id_proof_type' => $isDraft ? 'nullable|string' : 'required|string',
+            'id_proof_number' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
             'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : ($isDraft ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : 'required|file|mimes:jpg,jpeg,pdf|max:2500')
         ];
 
@@ -236,6 +237,7 @@ class RegistrationController extends Controller
             'photo.image' => 'Profile photo must be a valid image file.',
             'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
             'photo.max' => 'Profile photo must not exceed 500KB.',
+            'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
         ];
 
         $request->validate($rules, $messages);
@@ -282,6 +284,8 @@ class RegistrationController extends Controller
             $updateData['dietary_preference'] = $request->dietary_preference;
         if ($request->filled('id_proof_type'))
             $updateData['id_proof_type'] = $request->id_proof_type;
+        if ($request->filled('id_proof_number'))
+            $updateData['id_proof_number'] = $request->id_proof_number;
 
         if ($request->hasFile('photo')) {
             $updateData['photo_path'] = $request->file('photo')->store('photos', 'public');
@@ -383,22 +387,19 @@ class RegistrationController extends Controller
 
     public function generateRegistrationNumber()
     {
-        $randomBlock = function () {
-            return strtoupper(Str::random(4));
-        };
+        do {
+            $part1 = strtoupper(Str::random(4));
+            $part2 = strtoupper(Str::random(4));
+            $part3 = strtoupper(Str::random(4));
+            $number = "{$part1}-{$part2}-{$part3}";
+        } while (Registration::where('registration_number', $number)->exists());
 
-        $registrationNumber = $randomBlock() . '-' . $randomBlock() . '-' . $randomBlock();
-
-        return $registrationNumber;
+        return $number;
     }
 
     public function generateUniqueRegistrationNumber()
     {
-        do {
-            $number = $this->generateRegistrationNumber();
-        } while (Registration::where('registration_number', $number)->exists());
-
-        return $number;
+        return $this->generateRegistrationNumber();
     }
 
     private function validateAndStoreStep3(Request $request, Registration $registration, $isDraft = false)

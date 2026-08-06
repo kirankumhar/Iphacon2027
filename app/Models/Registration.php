@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Registration extends Model
 {
@@ -110,22 +111,12 @@ class Registration extends Model
             return 175.00; // Fixed amount for foreign delegates
         }
 
-        $total = 0;
+        $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
+        $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
+        $cmeBase = $this->participate_in_cme ? 1000.00 : 0.00;
 
-        // Add delegate category fee
-        if ($this->delegateCategory) {
-            $total += $this->delegateCategory->indian_fee;
-        }
-
-        // Add accompanying persons fee (4000 per person)
-        $total += ($this->accompanying_persons ?? 0) * 4000;
-
-        // Add CME fee if participating
-        if ($this->participate_in_cme) {
-            $total += 1000;
-        }
-
-        return $total;
+        $subtotal = $categoryBase + $accompanyingBase + $cmeBase;
+        return round($subtotal * 1.18, 2);
     }
 
     public function updateAmounts()
@@ -139,18 +130,19 @@ class Registration extends Model
             return;
         }
 
-        $categoryGross = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
-        $categoryBase = round($categoryGross / 1.18, 2);
-        $categoryGst = round($categoryGross - $categoryBase, 2);
+        $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
+        $cmeBase = $this->participate_in_cme ? 1000.00 : 0.00;
+        $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
 
-        $cmeFee = $this->participate_in_cme ? 1000.00 : 0.00;
-        $accompanyingFee = ($this->accompanying_persons ?? 0) * 4000.00;
+        $subtotalBase = $categoryBase + $cmeBase + $accompanyingBase;
+        $gstAmount = round($subtotalBase * 0.18, 2);
+        $totalAmount = round($subtotalBase + $gstAmount, 2);
 
         $this->delegate_fee = $categoryBase;
-        $this->cme_fee = $cmeFee;
-        $this->accompanying_fee = $accompanyingFee;
-        $this->gst_amount = $categoryGst;
-        $this->total_amount = $categoryGross + $cmeFee + $accompanyingFee;
+        $this->cme_fee = $cmeBase;
+        $this->accompanying_fee = $accompanyingBase;
+        $this->gst_amount = $gstAmount;
+        $this->total_amount = $totalAmount;
     }
 
     public function updateStepAndCalculateTotal($step)
@@ -162,22 +154,13 @@ class Registration extends Model
 
     public function generateRegistrationNumber(): string
     {
-        $year  = now()->format('y');   // 26
-        $month = now()->format('m');   // 04
-        $prefix = $year . $month;      // 2604
+        do {
+            $part1 = strtoupper(Str::random(4));
+            $part2 = strtoupper(Str::random(4));
+            $part3 = strtoupper(Str::random(4));
+            $number = "{$part1}-{$part2}-{$part3}";
+        } while (static::where('registration_number', $number)->exists());
 
-        $last = static::where('registration_number', 'like', $prefix . '%')
-            ->orderBy('registration_number', 'desc')
-            ->lockForUpdate()
-            ->first();
-
-        if ($last) {
-            $lastSeq = (int) substr($last->registration_number, 4);
-            $nextSeq = $lastSeq + 1;
-        } else {
-            $nextSeq = 1119;
-        }
-
-        return $prefix . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+        return $number;
     }
 }

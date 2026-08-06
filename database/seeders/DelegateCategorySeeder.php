@@ -17,37 +17,37 @@ class DelegateCategorySeeder extends Seeder
         $categories = [
             [
                 'category_name' => 'IPHA Member',
-                'indian_fee' => 8850.00,
+                'indian_fee' => 7500.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
                 'category_name' => 'Non-IPHA Member',
-                'indian_fee' => 17700.00,
+                'indian_fee' => 15500.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
                 'category_name' => 'PG/PhD/MPH Student (Member)',
-                'indian_fee' => 7080.00,
+                'indian_fee' => 6000.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
                 'category_name' => 'PG/PhD/MPH Student (Non-Member)',
-                'indian_fee' => 9440.00,
+                'indian_fee' => 8000.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],
             [
                 'category_name' => 'Co-Delegate / Accompanying Person',
-                'indian_fee' => 5900.00,
+                'indian_fee' => 5000.00,
                 'foreign_fee' => 100.00,
                 'is_active' => true,
             ],
             [
                 'category_name' => 'Foreign Delegates',
-                'indian_fee' => 56275.00,
+                'indian_fee' => 45000.00,
                 'foreign_fee' => 175.00,
                 'is_active' => true,
             ],

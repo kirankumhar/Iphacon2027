@@ -411,8 +411,18 @@
                         Passport</option>
                     @endif
                 </select>
-                @error('id_proof_type')
-                <div class="invalid-feedback">{{ $message }}</div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="id_proof_number" class="form-label" id="id_proof_number_label">
+                    ID Proof Number <span class="required-star text-danger">*</span>
+                </label>
+                <input type="text" class="form-control custom-input @error('id_proof_number') is-invalid @enderror"
+                    id="id_proof_number" name="id_proof_number"
+                    value="{{ old('id_proof_number', $registration->id_proof_number) }}"
+                    placeholder="Enter Aadhaar / PAN / ID Number" required>
+                @error('id_proof_number')
+                <div class="invalid-feedback d-block extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
 
@@ -753,5 +763,38 @@
             }).show();
         }
     }
+
+    // Dynamic ID Proof Validation & Placeholder Label
+    function updateIdProofValidation() {
+        const typeSelect = document.getElementById('id_proof_type');
+        const numberInput = document.getElementById('id_proof_number');
+        const label = document.getElementById('id_proof_number_label');
+        if (!typeSelect || !numberInput) return;
+
+        const selectedType = typeSelect.value;
+        if (selectedType === 'Aadhaar') {
+            if (label) label.innerHTML = 'Aadhaar Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter 12-digit Aadhaar Number';
+        } else if (selectedType === 'PAN') {
+            if (label) label.innerHTML = 'PAN Card Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter 10-character PAN Number (e.g. ABCDE1234F)';
+        } else if (selectedType === 'Passport') {
+            if (label) label.innerHTML = 'Passport Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter Passport Number';
+        } else if (selectedType === 'Voter-ID') {
+            if (label) label.innerHTML = 'Voter ID Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter Voter ID Number';
+        } else if (selectedType === 'Driving License') {
+            if (label) label.innerHTML = 'Driving License Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter Driving License Number';
+        } else {
+            if (label) label.innerHTML = 'ID Proof Number <span class="required-star text-danger">*</span>';
+            numberInput.placeholder = 'Enter Aadhaar / PAN / ID Number';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateIdProofValidation();
+    });
 </script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

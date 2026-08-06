@@ -65,7 +65,9 @@
 
                                         <!-- QR Code Image -->
                                         <div class="p-3 bg-light rounded-3 border d-inline-block shadow-sm my-2">
-                                            <img src="{{ asset('images/qr_code.jpg') }}" alt="Payment QR Code" class="img-fluid rounded" style="max-width: 220px; height: auto;">
+                                            <img src="{{ asset('images/iphacon_qrcode.jpeg') }}" 
+                                                 onerror="this.onerror=null; this.src='{{ asset('public/images/iphacon_qrcode.jpeg') }}';" 
+                                                 alt="Payment QR Code" class="img-fluid rounded" style="max-width: 220px; height: auto;">
                                         </div>
 
                                         <p class="mt-2 mb-1 fw-bold text-dark fs-6">
@@ -82,26 +84,38 @@
                                                         <td class="text-end fw-bold">$175.00</td>
                                                     </tr>
                                                 @else
+                                                    @php
+                                                        $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                                                        $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                                                        $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                                                        $subtotalBase = $catBase + $cmeBase + $accBase;
+                                                        $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                                                        $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                                                    @endphp
                                                     <tr>
-                                                        <td><strong>Delegate Category</strong></td>
-                                                        <td class="text-end">
-                                                            ₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}
-                                                        </td>
+                                                        <td><strong>Delegate Category (Base Price)</strong></td>
+                                                        <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
                                                     </tr>
-                                                    @if (($registration->accompanying_persons ?? 0) > 0)
-                                                        <tr>
-                                                            <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }})</strong></td>
-                                                            <td class="text-end">
-                                                                ₹{{ number_format($registration->accompanying_persons * 4000) }}
-                                                            </td>
-                                                        </tr>
-                                                    @endif
                                                     @if ($registration->participate_in_cme)
                                                         <tr>
                                                             <td><strong>CME/Workshop Participation</strong></td>
-                                                            <td class="text-end">₹1,000</td>
+                                                            <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
                                                         </tr>
                                                     @endif
+                                                    @if (($registration->accompanying_persons ?? 0) > 0)
+                                                        <tr>
+                                                            <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }})</strong></td>
+                                                            <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
+                                                        </tr>
+                                                    @endif
+                                                    <tr>
+                                                        <td><strong>GST Amount (18%)</strong></td>
+                                                        <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                                                    </tr>
+                                                    <tr class="table-success fw-bold">
+                                                        <td><strong>Total Amount Payable</strong></td>
+                                                        <td class="text-end">₹{{ number_format($totalAmt, 2) }}</td>
+                                                    </tr>
                                                 @endif
                                             </table>
                                         </div>

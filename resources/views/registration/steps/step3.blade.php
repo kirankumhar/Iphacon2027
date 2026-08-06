@@ -116,14 +116,14 @@
                             <td>{{ $registration->membership_no ?? 'N/A' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Category Fee:</strong></td>
-                            <td>₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }}</td>
+                            <td><strong>Category Base Fee:</strong></td>
+                            <td>₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }} (Base)</td>
                         </tr>
                         @if ($registration->accompanying_persons > 0)
                             <tr>
                                 <td><strong>Accompanying Persons:</strong></td>
                                 <td>{{ $registration->accompanying_persons }}
-                                    (₹{{ number_format($registration->accompanying_persons * 4000) }})</td>
+                                    (₹{{ number_format($registration->accompanying_persons * 5000) }})</td>
                             </tr>
                         @endif
                         @if ($registration->participate_in_cme)
@@ -160,7 +160,7 @@
     <!-- Fee Summary -->
     <div class="card mb-4">
         <div class="card-header bg-warning text-dark">
-            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Fee Summary</h5>
+            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Fee Summary & Breakdown</h5>
         </div>
         <div class="card-body">
             @if ($registration->delegate_type == 'Foreign')
@@ -171,45 +171,46 @@
                         </p>
                     </div>
                     <div class="col-md-6 text-center">
-                        <img src="{{ asset('images/qr-code-usd.png') }}" alt="Payment QR Code" class="img-fluid"
-                            style="max-width: 200px;">
+                        <img src="{{ asset('images/iphacon_qrcode.jpeg') }}" 
+                             onerror="this.onerror=null; this.src='{{ asset('public/images/iphacon_qrcode.jpeg') }}';"
+                             alt="Payment QR Code" class="img-fluid" style="max-width: 200px;">
                         <p class="mt-2"><small>Scan to pay $175.00</small></p>
                     </div>
                 </div>
             @else
                 @php
-                    $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                    $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
-                    $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
-                    $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
-                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
-                    $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
+                    $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                    $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                    $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                    $subtotalBase = $catBase + $cmeBase + $accBase;
+                    $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                    $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
                 @endphp
-                <table class="table">
+                <table class="table mb-0">
                     <tr>
-                        <td><strong>Delegate Category Fee (Excl. GST):</strong></td>
-                        <td class="text-end">₹{{ number_format($delFee, 2) }}</td>
+                        <td><strong>Delegate Category (Base Price):</strong></td>
+                        <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
                     </tr>
                     @if ($registration->participate_in_cme)
                         <tr>
                             <td><strong>CME / Workshop Participation:</strong></td>
-                            <td class="text-end">₹{{ number_format($cmeFee, 2) }}</td>
+                            <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
                         </tr>
                     @endif
                     @if (($registration->accompanying_persons ?? 0) > 0)
                         <tr>
                             <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }}):</strong></td>
-                            <td class="text-end">₹{{ number_format($accFee, 2) }}</td>
+                            <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
                         </tr>
                     @endif
                     <tr>
                         <td><strong>GST Amount (18%):</strong></td>
-                        <td class="text-end">₹{{ number_format($gstAmt, 2) }}</td>
+                        <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>
                     </tr>
                     <tr class="table-success">
-                        <td><strong>Total Amount (Incl. GST):</strong></td>
+                        <td><strong>Total Payable Amount (Incl. GST):</strong></td>
                         <td class="text-end">
-                            <strong>₹{{ number_format($totalAmt, 2) }}</strong>
+                            <strong class="fs-5">₹{{ number_format($totalAmt, 2) }}</strong>
                         </td>
                     </tr>
                 </table>

@@ -166,6 +166,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
     Route::get('/international-payment-submitted-delegates', [AdminRegistrationController::class, 'internationalPaymentSubmittedDelegates'])->name('international-payment-submitted-delegates');
     Route::get('/indian-approved-delegates', [AdminRegistrationController::class, 'approvedIndDelegates'])->name('indian-approved-delegates');
+    Route::get('/indian-incomplete-delegates', [AdminRegistrationController::class, 'indianIncompleteDelegates'])->name('indian-incomplete-delegates');
     Route::get('/international-approved-delegates', [AdminRegistrationController::class, 'internationalApprovedDelegates'])->name('international-approved-delegates');
     Route::get('/deleted-delegates', [AdminRegistrationController::class, 'deletedRegistration'])->name('deleted-delegates');
     Route::get('/international-rejected-delegates', [AdminRegistrationController::class, 'internationalRejectedDelegates'])->name('international-rejected-delegates');
