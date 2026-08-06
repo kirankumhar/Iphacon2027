@@ -197,7 +197,7 @@
 
             <!-- Mobile Number & Dietary Preference -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label class="form-label">
                             <i class="fas fa-phone form-icon"></i>Mobile Number<span class="required-star">*</span>
@@ -213,7 +213,23 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="whatsapp_number" class="form-label">
+                            <i class="fab fa-whatsapp text-success me-1"></i>WhatsApp Number<span class="required-star text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text px-2.5">{{ $user->mobile_country_code }}</span>
+                            <input type="tel" class="form-control @error('whatsapp_number') is-invalid @enderror" id="whatsapp_number" name="whatsapp_number"
+                                value="{{ old('whatsapp_number', $registration->whatsapp_number ?: $user->mobile_number) }}" required maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
+                                placeholder="Enter WhatsApp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                        @error('whatsapp_number')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="dietary_preference" class="form-label">
                             <i class="fas fa-utensils form-icon"></i>Dietary Preference<span class="required-star">*</span>

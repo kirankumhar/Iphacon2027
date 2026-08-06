@@ -225,7 +225,7 @@ class RegistrationController extends Controller
             'city' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
             'pin_code' => $isDraft ? 'nullable|string|max:20' : 'required|string|max:20',
             'whatsapp_country_code' => 'nullable|string',
-            'whatsapp_number' => 'nullable|string|max:20',
+            'whatsapp_number' => $isDraft ? 'nullable|string|max:20' : 'required|string|max:20',
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
             'id_proof_type' => $isDraft ? 'nullable|string' : 'required|string',
             'id_proof_number' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
@@ -238,6 +238,7 @@ class RegistrationController extends Controller
             'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
             'photo.max' => 'Profile photo must not exceed 500KB.',
             'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
+            'whatsapp_number.required' => 'Please enter your WhatsApp number.',
         ];
 
         $request->validate($rules, $messages);

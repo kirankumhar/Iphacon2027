@@ -21,44 +21,6 @@ use App\Http\Controllers\Admin\LogController;
 
 use Illuminate\Support\Facades\Artisan;
 
-
-
-// Universal File & Storage Server Routes (Bypasses cPanel Apache 403 Forbidden errors)
-$serveFileHandler = function ($path) {
-    $filePath = storage_path('app/public/' . $path);
-    if (!file_exists($filePath)) {
-        $filePath = storage_path('app/' . $path);
-    }
-
-    if (!file_exists($filePath) || is_dir($filePath)) {
-        abort(404);
-    }
-
-    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
-
-    return response()->file($filePath, [
-        'Content-Type' => $mimeType,
-        'Cache-Control' => 'public, max-age=86400',
-    ]);
-};
-
-Route::get('/file/{path}', $serveFileHandler)->where('path', '.*')->name('file.serve');
-Route::get('/storage/{path}', $serveFileHandler)->where('path', '.*')->name('storage.file');
-
-Route::get('/unlink-storage', function () {
-    $target = public_path('storage');
-
-    if (is_link($target)) {
-        @unlink($target);
-        return 'Storage symlink successfully unlinked!';
-    } elseif (is_dir($target)) {
-        @rename($target, public_path('storage_old_' . time()));
-        return 'Physical storage folder renamed successfully!';
-    }
-
-    return 'No symlink found at ' . $target;
-});
-
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
