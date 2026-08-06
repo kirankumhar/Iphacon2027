@@ -6,193 +6,172 @@
   <meta name="x-apple-disable-message-reformatting">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Registration Confirmation</title>
+  <title>IPHACON 2027 Registration Confirmation</title>
 
   <style>
-    /* Base Resets */
-    body,
-    table,
-    td,
-    a {
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif !important;
+    body, table, td, a {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+      -webkit-font-smoothing: antialiased;
     }
-
     img {
       border: 0;
       outline: none;
       text-decoration: none;
       display: block;
     }
-
     table {
       border-collapse: collapse !important;
     }
-
     a {
       text-decoration: none;
     }
-
-    /* Layout */
     .wrapper {
       width: 100%;
-      background: #f4f6f8;
-      padding: 24px 0;
+      background-color: #f1f5f9;
+      padding: 30px 0;
     }
-
     .container {
       width: 100%;
-      max-width: 640px;
+      max-width: 620px;
       margin: 0 auto;
       background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .brand-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2D69FF 100%);
+      color: #ffffff;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin: 0 0 4px 0;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+    .brand-sub {
+      font-size: 12.5px;
+      color: #93c5fd;
+      margin: 0;
+      font-weight: 600;
+    }
+    .hero {
+      padding: 28px 30px 10px;
+      text-align: center;
+    }
+    .hero h2 {
+      font-size: 22px;
+      margin: 0 0 8px;
+      color: #0f172a;
+      font-weight: 800;
+    }
+    .hero p {
+      font-size: 14px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .card {
+      margin: 18px 24px;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(27, 39, 51, 0.08);
+      background: #ffffff;
     }
-
-    /* Header */
-    .brand-header {
-      background: linear-gradient(135deg, #2e3192, #4a5bcc);
-      color: #ffffff;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .brand-logo {
-      height: 48px;
-      margin: 0 auto 10px;
-    }
-
-    .brand-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .brand-sub {
-      font-size: 12px;
-      opacity: 0.85;
-      margin: 4px 0 0;
-    }
-
-    /* Hero */
-    .hero {
-      padding: 18px 24px 0;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 20px;
-      margin: 6px 0 2px;
-      color: #111827;
-    }
-
-    .hero p {
-      font-size: 13px;
-      color: #6b7280;
-      margin: 4px 0 0;
-    }
-
-    /* Card */
-    .card {
-      margin: 16px 24px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
     .card-header {
       background: #f8fafc;
-      padding: 10px 14px;
+      padding: 12px 18px;
       font-weight: 700;
-      color: #111827;
-      font-size: 13px;
+      color: #2D69FF;
+      font-size: 13.5px;
+      border-bottom: 1px solid #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-
     .card-body {
-      padding: 14px;
+      padding: 16px 18px;
     }
-
-    /* Definition rows */
-    .row {
+    .info-table {
       width: 100%;
     }
-
-    .row td {
-      padding: 6px 0;
+    .info-table td {
+      padding: 8px 0;
       vertical-align: top;
-      font-size: 13px;
+      font-size: 13.5px;
+      border-bottom: 1px solid #f1f5f9;
     }
-
+    .info-table tr:last-child td {
+      border-bottom: none;
+    }
     .label {
-      color: #6b7280;
-      width: 42%;
+      color: #64748b;
+      width: 45%;
+      font-weight: 500;
     }
-
     .value {
-      color: #111827;
-      font-weight: 600;
-      width: 58%;
+      color: #0f172a;
+      font-weight: 700;
+      width: 55%;
+      text-align: right;
     }
-
-    /* Divider */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 11.5px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-success {
+      background: #DCFFF0;
+      color: #15803d;
+    }
+    .badge-pending {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .badge-reg {
+      background: #E1F0FF;
+      color: #2D69FF;
+      font-family: monospace;
+      font-size: 13px;
+      padding: 4px 10px;
+    }
     .divider {
       height: 1px;
-      background: #e5e7eb;
-      margin: 16px 24px;
+      background: #e2e8f0;
+      margin: 20px 24px;
     }
-
-    /* Button */
     .btn {
       display: inline-block;
-      padding: 12px 18px;
-      background: #2e3192;
-      color: #ffffff;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%);
+      color: #ffffff !important;
       border-radius: 8px;
       font-weight: 700;
       font-size: 14px;
+      box-shadow: 0 4px 12px rgba(45, 105, 255, 0.25);
     }
-
-    .btn:hover {
-      background: #25286f;
-    }
-
-    /* Footer */
     .footer {
       text-align: center;
-      color: #6b7280;
+      color: #94a3b8;
       font-size: 12px;
-      padding: 18px 24px 28px;
+      padding: 20px 24px 30px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
     }
-
-    .muted {
-      color: #6b7280;
-      font-size: 12px;
-    }
-
-    /* Status badge */
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      font-size: 12px;
-      border-radius: 9999px;
-      font-weight: 700;
-    }
-
-    .badge-success {
-      background: #ecfdf5;
-      color: #059669;
-      border: 1px solid #a7f3d0;
-    }
-
-    .badge-pending {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
+    .footer strong {
+      color: #475569;
     }
   </style>
 </head>
 
-<body style="margin:0; padding:0; background:#f4f6f8;">
+<body style="margin:0; padding:0; background-color:#f1f5f9;">
   <div class="wrapper">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
       <tr>
@@ -202,62 +181,62 @@
             <!-- Brand Header -->
             <tr>
               <td class="brand-header">
-                @if(file_exists(public_path('shared/user/images/ismm_logo.png')))
-                <img class="brand-logo" src="{{ asset('shared/user/images/ismm_logo.png') }}" alt="Brand">
-                @endif
-                <p class="brand-title">{{ config('app.name') }}</p>
+                <p class="brand-title">{{ config('app.name', 'IPHACON 2027') }}</p>
+                <p class="brand-sub">71st National Annual Conference of Indian Public Health Association</p>
               </td>
             </tr>
 
-            <!-- Hero -->
+            <!-- Hero Section -->
             <tr>
               <td class="hero">
-                <h1>Registration Confirmed</h1>
-                <p>Hello {{ $registration->user->prefix }} {{ $registration->user->full_name }}, thank you for registering.</p>
+                <h2>Registration Confirmed!</h2>
+                <p>Dear <strong>{{ $registration->user->prefix }} {{ $registration->user->full_name }}</strong>, thank you for completing your conference registration.</p>
               </td>
             </tr>
 
-            <!-- Core Details -->
+            <!-- Core Registration Details Card -->
             <tr>
               <td>
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td class="card-header">Registration Summary</td>
+                    <td class="card-header">📋 Registration Summary</td>
                   </tr>
                   <tr>
                     <td class="card-body">
-                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                        <tr class="row">
+                      <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
+                        <tr>
                           <td class="label">Registration No.</td>
-                          <td class="value">{{ $registration->registration_number ?? '—' }}</td>
-                        </tr>
-                        <tr class="row">
-                          <td class="label">Delegate Type</td>
-                          <td class="value">{{ $registration->delegate_type ?? '—' }}</td>
-                        </tr>
-                        <tr class="row">
-                          <td class="label">Category</td>
-                          <td class="value">{{ $registration->delegateCategory->category_name ?? '—' }}</td>
-                        </tr>
-                        <tr class="row">
-                          <td class="label">Country</td>
-                          <td class="value">{{ $registration->country->country_name ?? '—' }}</td>
-                        </tr>
-                        <tr class="row">
-                          <td class="label">Payment Status</td>
                           <td class="value">
-                            @php $pstatus = $registration->latestPayment->payment_status ?? 'Pending'; @endphp
-                            @if(strtolower($pstatus) === 'success')
-                            <span class="badge badge-success">PAID</span>
+                            <span class="badge badge-reg">{{ $registration->registration_number ?? 'Pending' }}</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="label">Delegate Type</td>
+                          <td class="value">{{ $registration->delegate_type ?? 'Indian' }} Delegate</td>
+                        </tr>
+                        <tr>
+                          <td class="label">Selected Category</td>
+                          <td class="value">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                          <td class="label">Country / State</td>
+                          <td class="value">{{ $registration->country->country_name ?? 'India' }}</td>
+                        </tr>
+                        <tr>
+                          <td class="label">Registration Status</td>
+                          <td class="value">
+                            @php $status = $registration->status ?? 'Payment Submitted'; @endphp
+                            @if(strtolower($status) === 'approved')
+                              <span class="badge badge-success">✓ APPROVED</span>
                             @else
-                            <span class="badge badge-pending">{{ strtoupper($pstatus) }}</span>
+                              <span class="badge badge-pending">⏳ {{ strtoupper($status) }}</span>
                             @endif
                           </td>
                         </tr>
                         @if($registration->latestPayment?->transaction_id)
-                        <tr class="row">
-                          <td class="label">Transaction ID</td>
-                          <td class="value">{{ $registration->latestPayment->transaction_id }}</td>
+                        <tr>
+                          <td class="label">Transaction Reference</td>
+                          <td class="value"><span style="font-family: monospace;">{{ $registration->latestPayment->transaction_id }}</span></td>
                         </tr>
                         @endif
                       </table>
@@ -267,51 +246,61 @@
               </td>
             </tr>
 
-            <!-- Amounts -->
+            <!-- Financial Breakdown Card -->
             <tr>
               <td>
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td class="card-header">Fee Details</td>
+                    <td class="card-header">💳 Financial Breakdown</td>
                   </tr>
                   <tr>
                     <td class="card-body">
-                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                        <tr class="row">
-                          <td class="label">Delegate Fee</td>
-                          <td class="value">
-                            @if ($registration->delegate_type === 'International')
-                            ${{ number_format($registration->latestPayment->delegate_category_fee ?? 175, 2) }} USD
-                            @else
-                            ₹{{ number_format($registration->delegateCategory->indian_fee ?? 0) }} INR
-                            @endif
-                          </td>
-                        </tr>
+                      <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
+                        @php
+                          $isForeign = ($registration->delegate_type === 'International');
+                          $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                          $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                          $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                          $subtotalBase = $catBase + $cmeBase + $accBase;
+                          $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                          $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                        @endphp
 
-                        @if(($registration->accompanying_persons ?? 0) > 0 && $registration->delegate_type === 'Indian')
-                        <tr class="row">
-                          <td class="label">Accompanying Persons</td>
-                          <td class="value">₹{{ number_format(($registration->accompanying_persons ?? 0) * 4000) }} INR</td>
-                        </tr>
+                        @if ($isForeign)
+                          <tr>
+                            <td class="label">Foreign Delegate Package</td>
+                            <td class="value">$175.00 USD</td>
+                          </tr>
+                          <tr>
+                            <td class="label" style="font-weight: 700; color: #0f172a;">Total Paid Amount</td>
+                            <td class="value" style="color: #15803d; font-size: 16px;">$175.00 USD</td>
+                          </tr>
+                        @else
+                          <tr>
+                            <td class="label">Delegate Category (Base Price)</td>
+                            <td class="value">₹{{ number_format($catBase, 2) }}</td>
+                          </tr>
+                          @if ($registration->participate_in_cme)
+                          <tr>
+                            <td class="label">CME Workshop Fee</td>
+                            <td class="value">₹{{ number_format($cmeBase, 2) }}</td>
+                          </tr>
+                          @endif
+                          @if (($registration->accompanying_persons ?? 0) > 0)
+                          <tr>
+                            <td class="label">Accompanying Persons ({{ $registration->accompanying_persons }})</td>
+                            <td class="value">₹{{ number_format($accBase, 2) }}</td>
+                          </tr>
+                          @endif
+                          <tr>
+                            <td class="label">GST Amount (18%)</td>
+                            <td class="value" style="color: #d97706;">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                          </tr>
+                          <tr style="background: #f8fafc;">
+                            <td class="label" style="font-weight: 700; color: #0f172a; padding: 10px 0;">Total Amount (Incl. GST)</td>
+                            <td class="value" style="color: #15803d; font-size: 16px; padding: 10px 0;">₹{{ number_format($totalAmt, 2) }} INR</td>
+                          </tr>
                         @endif
-
-                        @if(($registration->participate_in_cme ?? false) && $registration->delegate_type === 'Indian')
-                        <tr class="row">
-                          <td class="label">CME/Workshop</td>
-                          <td class="value">₹1,000.00 INR</td>
-                        </tr>
-                        @endif
-
-                        <tr class="row">
-                          <td class="label">Total</td>
-                          <td class="value">
-                            @if ($registration->delegate_type === 'International')
-                            ${{ number_format($registration->latestPayment->total_amount ?? 175, 2) }} USD
-                            @else
-                            ₹{{ number_format($registration->calculateTotalAmount()) }}.00 INR
-                            @endif
-                          </td>
-                        </tr>
                       </table>
                     </td>
                   </tr>
@@ -319,40 +308,43 @@
               </td>
             </tr>
 
-            <!-- Receipt note -->
+            <!-- Notice & PDF Attachment Banner -->
             <tr>
-              <td class="divider"></td>
+              <td style="padding: 0 24px; text-align: center;">
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                  <p style="color: #166534; font-size: 13.5px; margin: 0; font-weight: 600;">
+                    📄 Your official Registration Acknowledgement PDF is attached to this email.
+                  </p>
+                </div>
+              </td>
             </tr>
+
+            <!-- Action Button -->
             <tr>
-              <td style="padding: 0 24px;">
-                @php $paid = strtolower($registration->latestPayment->payment_status ?? 'pending') === 'success'; @endphp
-                @if($paid)
-                <p class="muted" style="margin: 0;">
-                  A PDF copy of your Registration Confirmation cum Payment Receipt is attached to this email.
-                </p>
-                @else
-                <p class="muted" style="margin: 0;">
-                  Your payment is currently pending/under verification. Once verified, the receipt PDF will be available for download.
-                </p>
-                @endif
+              <td align="center" style="padding: 0 24px 24px;">
+                <a href="{{ url('/login') }}" class="btn" target="_blank">Access Delegate Portal</a>
               </td>
             </tr>
 
             <!-- Footer -->
             <tr>
               <td class="footer">
-                <div style="margin-bottom: 6px;">
-                  {{ config('app.name') }}
+                <div style="margin-bottom: 4px;">
+                  <strong>{{ config('app.name', 'IPHACON 2027') }}</strong>
                 </div>
-                <div style="margin-bottom: 2px;">
-                  www.iphacon2027.com
+                <div style="margin-bottom: 8px;">
+                  71st National Annual Conference of Indian Public Health Association
                 </div>
-                <div class="muted" style="margin-top: 8px;">
-                  If you need help, reply to this email or contact support at {{ config('mail.from.address') }}.
+                <div>
+                  Website: <a href="https://www.iphacon2027.com" target="_blank" style="color: #2D69FF; text-decoration: underline;">www.iphacon2027.com</a>
+                </div>
+                <div style="margin-top: 12px; font-size: 11px; color: #94a3b8;">
+                  If you have any questions, please contact conference support at <strong>{{ config('mail.from.address') }}</strong>.
                 </div>
               </td>
             </tr>
           </table>
+
         </td>
       </tr>
     </table>
