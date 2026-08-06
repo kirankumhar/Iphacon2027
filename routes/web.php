@@ -21,33 +21,26 @@ use App\Http\Controllers\Admin\LogController;
 
 use Illuminate\Support\Facades\Artisan;
 
-Route::get('/run-storage-link', function () {
-    Artisan::call('storage:link');
-    return 'The [public/storage] directory has been linked.';
-});
-Route::get('/unlink-storage', function () {
-    $target = public_path('storage');
 
-    if (is_link($target)) {
-        unlink($target);
-        return 'Storage symlink successfully removed!';
+
+// Serve storage files directly to resolve 403 Forbidden symlink errors
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        $filePath = storage_path('app/' . $path);
     }
 
-    return 'No symbolic link found at ' . $target;
-});
-
-Route::get('/clear-cache', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('cache:clear');
-        \Illuminate\Support\Facades\Artisan::call('config:clear');
-        \Illuminate\Support\Facades\Artisan::call('route:clear');
-        \Illuminate\Support\Facades\Artisan::call('view:clear');
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        return 'All caches (config, route, view, application) have been cleared successfully!';
-    } catch (\Exception $e) {
-        return 'Error clearing cache: ' . $e->getMessage();
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        abort(404);
     }
-});
+
+    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+
+    return response()->file($filePath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*')->name('storage.file');
 
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
