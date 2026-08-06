@@ -19,12 +19,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\LogController;
 
-// use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan;
 
-// Route::get('/storage-link', function() {
-//     Artisan::call('storage:link');
-//     return 'Storage link created successfully!';
-// });
+Route::get('/run-storage-link', function () {
+    Artisan::call('storage:link');
+    return 'The [public/storage] directory has been linked.';
+});
 
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
