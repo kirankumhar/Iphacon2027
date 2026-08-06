@@ -219,7 +219,7 @@ class RegistrationController extends Controller
             'gender' => 'nullable|in:Male,Female',
             'dob' => 'nullable|date|before:-18 years',
             'mobile_number' => 'nullable|string|max:18',
-            'photo' => 'nullable|image|mimes:jpg,jpeg|max:500',
+            'photo' => $registration->photo_path !== null ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : 'required|image|mimes:jpg,jpeg,png|max:500'),
             'address' => $isDraft ? 'nullable|string|max:500' : 'required|string|max:500',
             'state_id' => auth()->user()->delegate_type == 'Indian' ? ($isDraft ? 'nullable|integer' : 'required|integer') : ($isDraft ? 'nullable|string|max:50' : 'required|string|max:50'),
             'city' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
@@ -231,7 +231,14 @@ class RegistrationController extends Controller
             'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : ($isDraft ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : 'required|file|mimes:jpg,jpeg,pdf|max:2500')
         ];
 
-        $request->validate($rules);
+        $messages = [
+            'photo.required' => 'Please upload your profile photo to proceed.',
+            'photo.image' => 'Profile photo must be a valid image file.',
+            'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
+            'photo.max' => 'Profile photo must not exceed 500KB.',
+        ];
+
+        $request->validate($rules, $messages);
 
         // Update user information
         $user = $registration->user;

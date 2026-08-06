@@ -348,8 +348,7 @@
         <!-- Profile Photo Section -->
         <div class="sidebar-section mb-4">
             <h5 class="text-primary mb-3">
-                <i class="fas fa-camera me-2"></i>Profile Photo
-                <small class="text-muted">(Optional)</small>
+                <i class="fas fa-camera me-2"></i>Profile Photo <span class="text-danger">*</span>
             </h5>
 
             <div class="text-center">
@@ -366,9 +365,10 @@
                     <small class="text-muted d-block mt-2">JPG/JPEG/PNG only, max 500KB</small>
                 </div>
                 <input type="file" id="photo" name="photo"
-                    style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png">
+                    style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png"
+                    {{ $registration->photo_path ? '' : 'required' }}>
                 @error('photo')
-                <div class="text-danger small">{{ $message }}</div>
+                <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
         </div>
