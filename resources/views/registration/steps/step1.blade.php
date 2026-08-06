@@ -2,81 +2,88 @@
 
 <style>
     .form-section {
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 4px 18px rgba(45, 105, 255, 0.06);
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
         overflow: hidden;
         border: 1px solid #e2e8f0;
     }
 
     .section-header {
-        background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2D69FF 100%);
         color: white;
-        padding: 14px 20px;
-        margin: -1.5rem -1.5rem 1.25rem -1.5rem;
+        padding: 16px 24px;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
     }
 
     .form-label {
-        font-weight: 600;
+        font-weight: 700;
         color: #1e293b;
-        margin-bottom: 4px;
-        font-size: 0.85rem;
+        margin-bottom: 5px;
+        font-size: 0.84rem;
+        letter-spacing: 0.2px;
     }
 
     .form-control,
     .form-select {
         border: 1.5px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 7px 12px;
+        border-radius: 10px;
+        padding: 8px 13px;
         font-size: 0.88rem;
-        transition: all 0.2s ease;
+        color: #0f172a;
+        background-color: #f8fafc;
+        transition: all 0.2s ease-in-out;
     }
 
     .form-control:focus,
     .form-select:focus {
+        background-color: #ffffff;
         border-color: #2D69FF;
-        box-shadow: 0 0 0 0.2rem rgba(45, 105, 255, 0.15);
+        box-shadow: 0 0 0 3px rgba(45, 105, 255, 0.14);
     }
 
     .photo-upload-area {
-        border: 2px dashed #cbd5e1;
-        border-radius: 12px;
-        padding: 14px;
+        border: 2px dashed #93c5fd;
+        border-radius: 14px;
+        padding: 16px 12px;
         text-align: center;
         transition: all 0.2s ease;
         cursor: pointer;
-        background: #f8fafc;
+        background: #f0f9ff;
     }
 
     .photo-upload-area:hover {
         border-color: #2D69FF;
-        background: #E1F0FF;
+        background: #e0f2fe;
+        box-shadow: 0 4px 12px rgba(45, 105, 255, 0.08);
     }
 
     .photo-preview {
-        width: 100px;
-        height: 100px;
+        width: 104px;
+        height: 104px;
         object-fit: cover;
         border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 3px solid #ffffff;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
         cursor: pointer;
         transition: transform 0.2s ease;
     }
 
     .photo-preview:hover {
-        transform: scale(1.04);
+        transform: scale(1.05);
     }
 
     .document-preview {
         width: 100%;
-        max-width: 180px;
+        max-width: 190px;
         height: 120px;
-        object-fit: cover;
-        border-radius: 8px;
+        object-fit: contain;
+        border-radius: 10px;
         border: 2px solid #cbd5e1;
         cursor: pointer;
         transition: transform 0.2s ease;
+        background: #ffffff;
     }
 
     .document-preview:hover {
@@ -87,36 +94,36 @@
     .upload-btn {
         background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%);
         border: none;
-        color: white;
-        padding: 7px 16px;
+        color: white !important;
+        padding: 7px 18px;
         border-radius: 20px;
-        font-weight: 500;
-        font-size: 0.85rem;
+        font-weight: 600;
+        font-size: 0.84rem;
         transition: all 0.2s ease;
+        box-shadow: 0 3px 10px rgba(45, 105, 255, 0.2);
     }
 
     .upload-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(45, 105, 255, 0.3);
+        box-shadow: 0 5px 15px rgba(45, 105, 255, 0.3);
     }
 
     .sidebar-section {
-        background: #f8fafc;
+        background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 18px;
-        height: fit-content;
-        position: sticky;
-        top: 20px;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
     }
 
     .form-group {
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .required-star {
-        color: #dc3545;
+        color: #ef4444;
         font-weight: bold;
+        margin-left: 2px;
     }
 
     .form-icon {
@@ -310,7 +317,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label for="city" class="form-label">
                             <i class="fas fa-city form-icon"></i>City<span class="required-star">*</span>
@@ -323,11 +330,7 @@
                         @enderror
                     </div>
                 </div>
-            </div>
-
-            <!-- PIN Code and WhatsApp -->
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label for="pin_code" class="form-label">
                             <i class="fas fa-map-pin form-icon"></i>PIN/Zip Code<span class="required-star">*</span>
@@ -339,20 +342,6 @@
                         @error('pin_code')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="form-group mb-3">
-                        <label class="form-label">
-                            <i class="fab fa-whatsapp form-icon"></i>WhatsApp Number <small class="text-muted">(Optional)</small>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text px-2.5">{{ $user->mobile_country_code }}</span>
-                            <input type="tel" class="form-control" name="whatsapp_number"
-                                value="{{ old('whatsapp_number', $registration->whatsapp_number) }}"
-                                placeholder="WhatsApp Number" maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        </div>
                     </div>
                 </div>
             </div>
@@ -486,11 +475,7 @@
                             <button type="button"
                                 class="btn btn-success d-flex align-items-center gap-2 px-4 py-2 shadow-sm rounded-pill"
                                 title="Preview Document" onclick="openDocumentModal(event)">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-
-                            <button type="button" class="btn upload-btn btn-sm">
-                                <i class="fas fa-upload me-1"></i>Replace Document
+                                <i class="fas fa-eye"></i> View Document
                             </button>
                         </div>
 
@@ -516,13 +501,18 @@
 <!-- Photo Modal -->
 <div class="modal fade" id="photoModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-user me-2"></i>Profile Photo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title text-white mb-0"><i class="fas fa-user me-2"></i>Profile Photo Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <img id="modalPhotoPreview" class="img-fluid rounded" alt="Profile Photo">
+            <div class="modal-body text-center p-3">
+                <img id="modalPhotoPreview" class="img-fluid rounded shadow-sm" alt="Profile Photo">
+            </div>
+            <div class="modal-footer bg-light py-2">
+                <button type="button" class="btn btn-secondary btn-sm px-4 rounded-pill" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1.5"></i>Close
+                </button>
             </div>
         </div>
     </div>
@@ -531,14 +521,19 @@
 <!-- Document Modal -->
 <div class="modal fade" id="documentModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-id-card me-2"></i>Government ID Document</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title text-white mb-0"><i class="fas fa-id-card me-2"></i>Government ID Document Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <img id="modalDocumentPreview" class="img-fluid d-none" alt="Modal Preview">
-                <embed id="modalPdfPreview" class="w-100 d-none" style="height:500px;" type="application/pdf">
+            <div class="modal-body text-center p-3">
+                <img id="modalDocumentPreview" class="img-fluid d-none rounded shadow-sm" alt="Modal Preview">
+                <embed id="modalPdfPreview" class="w-100 d-none rounded" style="height:500px;" type="application/pdf">
+            </div>
+            <div class="modal-footer bg-light py-2">
+                <button type="button" class="btn btn-secondary btn-sm px-4 rounded-pill" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1.5"></i>Close
+                </button>
             </div>
         </div>
     </div>
