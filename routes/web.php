@@ -25,6 +25,16 @@ Route::get('/run-storage-link', function () {
     Artisan::call('storage:link');
     return 'The [public/storage] directory has been linked.';
 });
+Route::get('/unlink-storage', function () {
+    $target = public_path('storage');
+
+    if (is_link($target)) {
+        unlink($target);
+        return 'Storage symlink successfully removed!';
+    }
+
+    return 'No symbolic link found at ' . $target;
+});
 
 Route::get('/clear-cache', function () {
     try {
