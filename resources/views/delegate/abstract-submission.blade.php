@@ -144,7 +144,7 @@
                     @endif
                     <div>
                         <span class="badge bg-white text-primary fw-bold mb-1 px-3 py-1.5 rounded-pill shadow-xs" style="font-size: 0.78rem;">
-                            <i class="fas fa-award me-1"></i> ISMM 2027 Scientific Portal
+                            <i class="fas fa-award me-1"></i> IPHACON 2027 Scientific Portal
                         </span>
                         <h2 class="fw-bold mb-1 text-white" style="font-size: 1.55rem;">
                             Abstract Submission
@@ -368,10 +368,19 @@
                     <input type="text" class="form-control" name="other_category_text" id="other_category_text" placeholder="Specify your category">
                 </div>
 
-                <!-- Theme Input Field -->
+                <!-- Theme Dropdown Field -->
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark small">Conference Theme <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="conference_theme" required placeholder="Enter conference theme">
+                    <select class="form-select" name="conference_theme" id="conference_theme" required>
+                        <option value="" disabled selected>Select Conference Theme</option>
+                        <option value="Antifungal agents including pharmacokinetics, pharmacodnamics and therapeutic drug monitoring">Antifungal agents including pharmacokinetics, pharmacodnamics and therapeutic drug monitoring</option>
+                        <option value="Antifungal susceptibility and resistance">Antifungal susceptibility and resistance</option>
+                        <option value="Management of fungal diseases">Management of fungal diseases</option>
+                        <option value="Cutaneous/superficial and subcutaneous fungal infections">Cutaneous/superficial and subcutaneous fungal infections</option>
+                        <option value="Diagnostic Mycology">Diagnostic Mycology</option>
+                        <option value="Epidemiology">Epidemiology</option>
+                        <option value="Infection control, prevention and antifungal stewardship">Infection control, prevention and antifungal stewardship</option>
+                    </select>
                 </div>
             </div>
         </div>

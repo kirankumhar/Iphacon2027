@@ -277,11 +277,11 @@
                                         </li>
 
                                         <!-- Submit Abstract -->
-                                        <!-- <li class="nav-item">
-                                            <a class="nav-link" href="#" title="Submit Abstract">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('abstract.create') }}" title="Submit Abstract">
                                                 Submit Abstract
                                             </a>
-                                        </li> -->
+                                        </li>
 
                                         <!-- Paper Submission -->
                                         <li class="nav-item">
@@ -382,9 +382,6 @@
 
                     <ul class="navigation clearfix"></ul>
 
-                    <!--<div class="text-center">
-              <a href="#" class="theme-btn" role="button">Become Member</a>
-            </div>-->
 
                     <ul class="contact-list-one">
                         <li><i class="flaticon-location"></i> Rajendra Institute of Medical Sciences RIMS, Bariatu,
@@ -397,11 +394,6 @@
                         </li>
                     </ul>
 
-                    <!--<ul class="social-links" aria-label="Social Media Links">
-              <li><a href="#" aria-label="Facebook"><span class="fab fa-facebook-f"></span></a></li>
-              <li><a href="#" aria-label="Twitter"><span class="fab fa-twitter"></span></a></li>
-              <li><a href="#" aria-label="LinkedIn"><span class="fab fa-linkedin-in"></span></a></li>
-            </ul>-->
                 </nav>
             </div>
 
@@ -456,7 +448,7 @@
         </div>
     </footer>
 
-            <!-- End Page Wrapper -->
+
     </div>
     <!--Scroll to top-->
     <div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-up"></span></div>
@@ -473,15 +465,7 @@
     <script src="{{ asset('shared/user/js/script.js') }}"></script>
     <!-- Color Setting -->
     <script src="{{ asset('shared/user/js/color-settings.js') }}"></script>
-    <script>
-        // setTimeout(function() {
-        //     const alerts = document.querySelectorAll('.alert');
-        //     alerts.forEach(function(alert) {
-        //         const bsAlert = new bootstrap.Alert(alert);
-        //         bsAlert.close();
-        //     });
-        // }, 5000);
-    </script>
+
 </body>
 
 </html>

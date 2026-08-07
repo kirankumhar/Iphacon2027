@@ -176,6 +176,13 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/approved-regis', [AdminRegistrationController::class, 'approvedRegis'])->name('student-approved-regis');
     Route::post('/delete-regis', [AdminRegistrationController::class, 'deleteRegis'])->name('student-regis-delete');
 
+    // Abstract Submissions Management
+    Route::get('/abstracts', [AdminAbstractController::class, 'index'])->name('admin.abstracts.index');
+    Route::post('/abstracts/data', [AdminAbstractController::class, 'getAbstracts'])->name('admin.abstracts.data');
+    Route::get('/abstracts/{id}', [AdminAbstractController::class, 'show'])->name('admin.abstracts.show');
+    Route::post('/abstracts/{id}/status', [AdminAbstractController::class, 'updateStatus'])->name('admin.abstracts.update-status');
+
+
     // Admin Management - Super Admin Only
     Route::middleware('admin.role:Super Admin')->prefix('admins')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('admin.admins.index');
