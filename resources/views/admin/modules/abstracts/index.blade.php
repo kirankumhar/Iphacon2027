@@ -223,7 +223,9 @@ $(document).ready(function() {
                 name: 'created_at',
                 render: function(data) {
                     if (!data) return '-';
-                    return new Date(data).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                    var dStr = (typeof data === 'object' && data.date) ? data.date : data;
+                    var d = new Date(dStr);
+                    return isNaN(d.getTime()) ? '-' : d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 }
             },
             { 
