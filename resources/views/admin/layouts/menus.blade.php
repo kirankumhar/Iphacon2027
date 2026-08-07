@@ -145,9 +145,8 @@
 
     <li class="menu-item {{ request()->routeIs('admin.cme-delegates') ? 'active' : '' }}">
         <a href="{{ Route::has('admin.cme-delegates') ? route('admin.cme-delegates') : '#' }}" class="menu-link">
-            <i class="menu-icon tf-icons fas fa-graduation-cap text-info"></i>
+            <i class="menu-icon tf-icons bx bx-book-reader text-info"></i>
             <div>CME Workshop Participants</div>
-            <span class="badge bg-label-info rounded-pill ms-auto" style="font-size: 0.65rem;">CME</span>
         </a>
     </li>
 
