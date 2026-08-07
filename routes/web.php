@@ -194,3 +194,27 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 });
 
+// Mail Preview Routes
+Route::get('/preview-registration-email', function () {
+    $registration = \App\Models\Registration::with(['user', 'delegateCategory', 'country', 'state', 'latestPayment'])
+        ->has('user')
+        ->first();
+        
+    if (!$registration) {
+        $registration = \App\Models\Registration::with(['user', 'delegateCategory', 'country', 'state', 'latestPayment'])->first();
+    }
+
+    if (!$registration) {
+        return "No registration record found in database to preview.";
+    }
+
+    return view('emails.registration_confirmation', compact('registration'));
+})->name('preview.email');
+
+Route::get('/preview-otp-email', function () {
+    $user = \App\Models\User::first() ?? (object)['full_name' => 'Dr. Kiran Kumar'];
+    $otp = '849205';
+    return view('emails.otp_verification', compact('user', 'otp'));
+})->name('preview.otp.email');
+
+

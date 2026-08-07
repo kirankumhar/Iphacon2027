@@ -1,383 +1,442 @@
-{{-- resources/views/registration/receipt.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Registration Acknowledgement - {{ $registration->registration_number }}</title>
+    <title>IPHACON Registration Acknowledgement Receipt - {{ $registration->registration_number }}</title>
     <style>
         @page {
-            margin: 20mm 14mm;
+            margin: 10mm 10mm 10mm 10mm;
         }
 
         body {
-            font-family: DejaVu Sans, sans-serif;
-            color: #222;
-            font-size: 12px;
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #1E293B;
+            font-size: 11px;
+            line-height: 1.4;
+            background: #FFFFFF;
         }
 
-        /* Header band */
+        /* Container Border */
+        .pdf-box {
+            border: 2px solid #0288D1;
+            padding: 16px 18px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        /* Top Header Band */
         .header-wrap {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #0288D1;
+            padding-bottom: 10px;
         }
 
-        .logo-row {
+        .logo-table {
             width: 100%;
-            display: table;
             border-collapse: collapse;
+            margin-bottom: 8px;
         }
 
-        .logo-cell {
-            display: table-cell;
+        .logo-cell-left {
+            width: 30%;
+            text-align: left;
             vertical-align: middle;
-            text-align: center;
-            width: 33.33%;
-            padding: 4px 0;
         }
 
-        .logo {
-            height: 60px;
-            /* adjust as needed */
+        .logo-cell-center {
+            width: 40%;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .logo-cell-right {
+            width: 30%;
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        .header-logo {
+            max-height: 65px;
+            width: auto;
         }
 
         .brand-block {
             text-align: center;
-            margin-top: 8px;
-            line-height: 1.4;
+            margin-top: 4px;
         }
 
         .brand-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
-        .brand-meta {
-            font-size: 11.5px;
-            color: #555;
-        }
-
-        /* Title strip */
-        .doc-title {
-            text-align: center;
             font-size: 14px;
-            font-weight: 700;
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            background: #f7f7f9;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        /* Info Cards (two rows) */
-        .info-grid {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 12px;
-        }
-
-        .row {
-            display: table;
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            margin: 0 0 8px 0;
-        }
-
-        .col {
-            display: table-cell;
-            vertical-align: top;
-            padding-right: 10px;
-        }
-
-        .col:last-child {
-            padding-right: 0;
-        }
-
-        .label {
-            color: #6b7280;
-            font-size: 11px;
+            font-weight: bold;
+            color: #01579B;
+            text-transform: uppercase;
             margin-bottom: 2px;
         }
 
-        .value {
-            font-weight: 600;
+        .brand-subtitle {
+            font-size: 11.5px;
+            font-weight: bold;
+            color: #0288D1;
+            margin-bottom: 2px;
         }
 
-        /* Table */
-        table {
+        .brand-meta {
+            font-size: 9.5px;
+            color: #475569;
+        }
+
+        /* Document Title Badge - Solid Color for Dompdf Compatibility */
+        .doc-title-badge {
+            text-align: center;
+            background-color: #0288D1;
+            color: #FFFFFF !important;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 7px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            width: 100%;
+        }
+
+        /* Info Grid Table */
+        .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 6px;
+            margin-bottom: 12px;
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .info-table td {
+            padding: 6px 8px;
+            vertical-align: top;
+            border-bottom: 1px solid #E2E8F0;
+            border-right: 1px solid #E2E8F0;
         }
 
-        th {
-            background: #f3f4f6;
-            text-align: left;
+        .info-table td:last-child {
+            border-right: none;
         }
 
-        .right {
-            text-align: right;
+        .info-table tr:last-child td {
+            border-bottom: none;
         }
 
-        .muted {
-            color: #666;
+        .info-label {
+            font-size: 9px;
+            color: #64748B;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
         }
 
-        /* Totals table (right aligned small table) */
-        .totals {
-            margin-top: 10px;
+        .info-value {
+            font-size: 10.5px;
+            font-weight: bold;
+            color: #0F172A;
         }
 
-        .totals table {
-            width: 50%;
-            margin-left: auto;
-        }
-
-        /* Footer area */
-        .footer {
-            margin-top: 16px;
-            display: table;
+        /* Financial Breakdown Table */
+        .items-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 12px;
         }
 
-        .foot-col {
-            display: table-cell;
-            vertical-align: bottom;
-            width: 50%;
+        .items-table th {
+            background-color: #0288D1;
+            color: #FFFFFF !important;
+            font-weight: bold;
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 7px 8px;
+            border: 1px solid #0288D1;
         }
 
-        .foot-left .label {
-            font-weight: 600;
+        .items-table td {
+            padding: 7px 8px;
+            border: 1px solid #CBD5E1;
+            font-size: 10px;
         }
 
-        .sign {
-            text-align: right;
+        .items-table tr:nth-child(even) {
+            background-color: #F8FAFC;
         }
 
-        .signature {
-            height: 50px;
+        .total-row td {
+            background-color: #E0F2FE !important;
+            color: #01579B;
+            font-weight: bold;
+            font-size: 11px;
+            border-top: 2px solid #0288D1 !important;
         }
 
         /* Watermark */
         .watermark {
-            position: fixed;
+            position: absolute;
             top: 40%;
-            left: 18%;
-            opacity: 0.06;
-            font-size: 80px;
-            transform: rotate(-20deg);
+            left: 15%;
+            opacity: 0.08;
+            font-size: 70px;
+            font-weight: bold;
+            color: #0288D1;
+            transform: rotate(-25deg);
+            z-index: 0;
         }
 
-        /* Small helpers */
-        .sp-6 {
-            height: 6px;
+        /* Footer */
+        .footer-wrap {
+            border-top: 1px solid #CBD5E1;
+            padding-top: 8px;
+            margin-top: 8px;
         }
 
-        .sp-10 {
-            height: 10px;
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .center {
+        .footer-left {
+            font-size: 9px;
+            color: #64748B;
+            vertical-align: bottom;
+        }
+
+        .footer-right {
+            text-align: right;
+            vertical-align: bottom;
+        }
+
+        .stamp-box {
+            display: inline-block;
+            border: 1px dashed #0288D1;
+            padding: 5px 12px;
+            border-radius: 4px;
+            background-color: #F0F9FF;
             text-align: center;
+        }
+
+        .stamp-title {
+            font-size: 8.5px;
+            font-weight: bold;
+            color: #01579B;
+            text-transform: uppercase;
+        }
+
+        .status-paid {
+            color: #16A34A;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #D97706;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    @if (($registration->latestPayment->payment_status ?? '') === 'Success')
-        <div class="watermark">PAID</div>
-    @endif
 
-    <div class="header-wrap">
-        <!-- Logos row (Left - Center - Right) -->
-        <div class="logo-row">
-            <div class="logo-cell">
-                @if (file_exists(public_path('shared/user/images/rimslogo.png')))
-                    <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="logo" alt="Left Logo">
-                @endif
-            </div>
-            <div class="logo-cell">
-                @if (file_exists(public_path('shared/user/images/iphacon_logo.png')))
-                    <img src="{{ public_path('shared/user/images/iphacon_logo.png') }}" class="logo" alt="Center Logo">
-                @endif
-            </div>
-            <div class="logo-cell">
-                @if (file_exists(public_path('shared/user/images/rimslogo.png')))
-                    <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="logo" alt="Right Logo">
-                @endif
+    <div class="pdf-box">
+
+        {{-- Watermark --}}
+        @if (($registration->latestPayment->payment_status ?? '') === 'Success' || $registration->status === 'Approved')
+            <div class="watermark">PAID RECEIPT</div>
+        @endif
+
+        {{-- Top Header Wrap --}}
+        <div class="header-wrap">
+            <table class="logo-table">
+                <tr>
+                    {{-- Left Logo (IPHACON Main Logo) --}}
+                    <td class="logo-cell-left">
+                        @if (file_exists(public_path('assets/img/logo/logo.png')))
+                            <img src="{{ public_path('assets/img/logo/logo.png') }}" class="header-logo" alt="IPHACON 2027">
+                        @elseif (file_exists(public_path('shared/user/images/rimslogo.png')))
+                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo" alt="RIMS Logo">
+                        @endif
+                    </td>
+
+                    {{-- Center Logo (IPHA Emblem Logo) --}}
+                    <td class="logo-cell-center">
+                        @if (file_exists(public_path('assets/img/logo/ipha_logo.png')))
+                            <img src="{{ public_path('assets/img/logo/ipha_logo.png') }}" class="header-logo" alt="IPHA Emblem">
+                        @elseif (file_exists(public_path('shared/user/images/iphacon_logo.png')))
+                            <img src="{{ public_path('shared/user/images/iphacon_logo.png') }}" class="header-logo" alt="IPHA Logo">
+                        @endif
+                    </td>
+
+                    {{-- Right Logo (RIMS Ranchi Logo) --}}
+                    <td class="logo-cell-right">
+                        @if (file_exists(public_path('shared/user/images/rimslogo.png')))
+                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo" alt="RIMS Logo">
+                        @elseif (file_exists(public_path('assets/img/logo/iphacon_logo.png')))
+                            <img src="{{ public_path('assets/img/logo/iphacon_logo.png') }}" class="header-logo" alt="IPHACON Logo">
+                        @endif
+                    </td>
+                </tr>
+            </table>
+
+            {{-- Organization Meta --}}
+            <div class="brand-block">
+                <div class="brand-title">71<sup>st</sup> Annual National Conference of IPHA</div>
+                <div class="brand-subtitle">IPHACON 2027 | RANCHI, JHARKHAND</div>
+                <div class="brand-meta">
+                    <strong>Dates:</strong> 12<sup>th</sup> - 14<sup>th</sup> March 2027 &nbsp;|&nbsp; <strong>Venue:</strong> Rajendra Institute of Medical Sciences (RIMS), Ranchi &nbsp;|&nbsp; <strong>Web:</strong> www.iphacon2027.com
+                </div>
             </div>
         </div>
 
-        <!-- Organization info centered -->
-        <div class="brand-block">
-            <div class="brand-title">{{ config('app.name') }}</div>
-            <div class="brand-meta">
-                <h1 class="ismm-subtitle mb-0">
-                    71<sup>st</sup> Annual National Conference of the Indian Public Health Association, IPHACON 2027, Ranchi
-                    <!-- 16<sup>th</sup> National Biennial Conference of IPHACON 2027, Ranchi -->
-                </h1>
-                <h2 class="ismm-location mb-0">
-                    04 - 07 February, 2027
-                </h2>
-                www.iphacon2027.com
-            </div>
-        </div>
-    </div>
-
-    <div class="doc-title">Registration Confirmation & Acknowledgement</div>
-
-    <!-- Info Grid -->
-    <div class="info-grid">
-        <div class="row">
-            <div class="col">
-                <div class="label">Registration No.</div>
-                <div class="value">{{ $registration->registration_number }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Date</div>
-                <div class="value">{{ now()->format('d M Y') }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Payment Status</div>
-                <div class="value">{{ $registration->latestPayment->payment_status ?? 'Pending' }}</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <div class="label">Delegate Name</div>
-                <div class="value">{{ $registration->user->prefix }} {{ $registration->user->full_name }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Email</div>
-                <div class="value">{{ $registration->user->email }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Delegate Type</div>
-                <div class="value">{{ $registration->delegate_type }}</div>
-            </div>
-        </div>
-
-        <div class="row" style="margin-bottom:0;">
-            <div class="col">
-                <div class="label">Category</div>
-                <div class="value">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Country</div>
-                <div class="value">{{ $registration->country->country_name ?? 'N/A' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Transaction ID</div>
-                <div class="value">{{ $registration->latestPayment->transaction_id ?? 'N/A' }}</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Items Table -->
-    <table>
-        <thead>
+        {{-- Document Title Badge - Fixed for Dompdf --}}
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
             <tr>
-                <th>Description</th>
-                <th class="right">Amount</th>
-                <th>Currency</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($registration->delegate_type === 'International')
-                <tr>
-                    <td>Delegate Category Fee</td>
-                    <td class="right">${{ number_format($registration->delegate_fee ?: 175, 2) }}</td>
-                    <td>USD</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Amount</strong></td>
-                    <td class="right"><strong>${{ number_format($registration->total_amount ?: 175, 2) }}</strong></td>
-                    <td>USD</td>
-                </tr>
-            @else
-                @php
-                    $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                    $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
-                    $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
-                    $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
-                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
-                    $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
-                @endphp
-                <tr>
-                    <td>Delegate Category Fee (Excl. GST)</td>
-                    <td class="right">₹{{ number_format($delFee, 2) }}</td>
-                    <td>INR</td>
-                </tr>
-                @if ($registration->participate_in_cme)
-                    <tr>
-                        <td>CME / Workshop Participation</td>
-                        <td class="right">₹{{ number_format($cmeFee, 2) }}</td>
-                        <td>INR</td>
-                    </tr>
-                @endif
-                @if (($registration->accompanying_persons ?? 0) > 0)
-                    <tr>
-                        <td>Accompanying Persons ({{ $registration->accompanying_persons }})</td>
-                        <td class="right">₹{{ number_format($accFee, 2) }}</td>
-                        <td>INR</td>
-                    </tr>
-                @endif
-                <tr>
-                    <td>GST Amount (18%)</td>
-                    <td class="right">₹{{ number_format($gstAmt, 2) }}</td>
-                    <td>INR</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Amount (Incl. GST)</strong></td>
-                    <td class="right"><strong>₹{{ number_format($totalAmt, 2) }}</strong></td>
-                    <td>INR</td>
-                </tr>
-            @endif
-        </tbody>
-    </table>
-
-    <!-- Totals / Payment summary -->
-    <div class="totals">
-        <table>
-            <tr>
-                <th style="width:65%;">Payment Method</th>
-                <td class="right">{{ $registration->latestPayment->payment_method ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Payment Status</th>
-                <td class="right">{{ $registration->latestPayment->payment_status ?? 'Pending' }}</td>
+                <td style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 12px; padding: 8px; text-align: center; text-transform: uppercase;">
+                    IPHACON Registration Acknowledgement Receipt
+                </td>
             </tr>
         </table>
-    </div>
 
-    <div class="sp-6"></div>
-    <div class="muted">Note: This is a computer-generated document and does not require a physical signature. Please
-        keep this receipt for your records.</div>
+        {{-- Info Grid Table --}}
+        <table class="info-table">
+            <tr>
+                <td style="width: 33%;">
+                    <div class="info-label">Registration Number</div>
+                    <div class="info-value" style="color: #0288D1;">{{ $registration->registration_number }}</div>
+                </td>
+                <td style="width: 33%;">
+                    <div class="info-label">Receipt Issue Date</div>
+                    <div class="info-value">{{ now()->format('d M Y') }}</div>
+                </td>
+                <td style="width: 34%;">
+                    <div class="info-label">Payment Status</div>
+                    <div class="info-value">
+                        @if(($registration->latestPayment->payment_status ?? '') === 'Success' || $registration->status === 'Approved')
+                            <span class="status-paid">SUCCESSFUL</span>
+                        @else
+                            <span class="status-pending">{{ strtoupper($registration->status ?? 'PENDING') }}</span>
+                        @endif
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="info-label">Delegate Name</div>
+                    <div class="info-value">{{ $registration->user->prefix }} {{ $registration->user->full_name }}</div>
+                </td>
+                <td>
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">{{ $registration->user->email }}</div>
+                </td>
+                <td>
+                    <div class="info-label">Mobile Number</div>
+                    <div class="info-value">{{ $registration->user->mobile_country_code }} {{ $registration->user->mobile_number }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="info-label">Delegate Category</div>
+                    <div class="info-value">{{ $registration->delegate_type }} - {{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
+                </td>
+                <td>
+                    <div class="info-label">Country & State</div>
+                    <div class="info-value">{{ $registration->country->country_name ?? 'India' }}, {{ $registration->state->state_name ?? $registration->other_state ?? 'N/A' }}</div>
+                </td>
+                <td>
+                    <div class="info-label">Transaction ID / Reference</div>
+                    <div class="info-value">{{ $registration->latestPayment->transaction_id ?? 'N/A' }}</div>
+                </td>
+            </tr>
+        </table>
 
-    <!-- Footer -->
-    <div class="footer">
-        <div class="foot-col foot-left">
-            <div class="label">Conference Secretariat</div>
-            <div>www.iphacon2027.com</div>
+        {{-- Financial Items Table --}}
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 55%; text-align: left;">Fee Description</th>
+                    <th style="width: 25%; text-align: right;">Amount</th>
+                    <th style="width: 20%; text-align: center;">Currency</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ($registration->delegate_type === 'International')
+                    <tr>
+                        <td>Delegate Category Registration Fee</td>
+                        <td style="text-align: right;">${{ number_format($registration->delegate_fee ?: 175, 2) }}</td>
+                        <td style="text-align: center;">USD</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>TOTAL AMOUNT PAID</strong></td>
+                        <td style="text-align: right;"><strong>${{ number_format($registration->total_amount ?: 175, 2) }}</strong></td>
+                        <td style="text-align: center;"><strong>USD</strong></td>
+                    </tr>
+                @else
+                    @php
+                        $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                        $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
+                        $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
+                        $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                        $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
+                        $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
+                    @endphp
+                    <tr>
+                        <td>Delegate Registration Fee (Excl. GST)</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    @if ($registration->participate_in_cme)
+                        <tr>
+                            <td>CME / Workshop Participation Fee</td>
+                            <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
+                            <td style="text-align: center;">INR</td>
+                        </tr>
+                    @endif
+                    @if (($registration->accompanying_persons ?? 0) > 0)
+                        <tr>
+                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons }} Person(s))</td>
+                            <td style="text-align: right;">&#8377;{{ number_format($accFee, 2) }}</td>
+                            <td style="text-align: center;">INR</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td>GST Amount (18%)</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($gstAmt, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>TOTAL AMOUNT PAID (INCL. GST)</strong></td>
+                        <td style="text-align: right;"><strong>&#8377;{{ number_format($totalAmt, 2) }}</strong></td>
+                        <td style="text-align: center;"><strong>INR</strong></td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+
+        {{-- Footer Section --}}
+        <div class="footer-wrap">
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-left">
+                        <strong>IPHACON 2027 Organizing Committee</strong><br>
+                        Department of Community Medicine, RIMS, Ranchi, Jharkhand<br>
+                        Email: info@iphacon2027.com &nbsp;|&nbsp; Web: www.iphacon2027.com<br>
+                        <span style="font-size: 8px; color: #94A3B8; margin-top: 3px; display: block;">* Computer-generated official receipt. No physical signature required.</span>
+                    </td>
+                    <td class="footer-right">
+                        <div class="stamp-box">
+                            <div class="stamp-title">IPHACON 2027 VERIFIED</div>
+                            <div style="font-size: 8.5px; color: #16A34A; font-weight: bold; margin-top: 2px;">OFFICIAL RECEIPT</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
-       <!-- <div class="foot-col sign">
-            @if (file_exists(public_path('images/signature.png')))
-                <img src="{{ public_path('images/signature.png') }}" alt="Signature" class="signature">
-            @endif
-            <div class="label">Authorized Signatory</div>
-        </div> -->
+
     </div>
+
 </body>
 
 </html>
