@@ -115,12 +115,7 @@
         </a>
     </li>
 
-    <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
-        <a href="{{ Route::has('international-payment-submitted-delegates') ? route('international-payment-submitted-delegates') : '#' }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-credit-card-front text-info"></i>
-            <div>Foreign Payment Submitted</div>
-        </a>
-    </li>
+   
 
     <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
         <a href="{{ Route::has('indian-approved-delegates') ? route('indian-approved-delegates') : '#' }}" class="menu-link">
