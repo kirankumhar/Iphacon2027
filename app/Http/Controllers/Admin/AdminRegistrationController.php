@@ -143,6 +143,12 @@ class AdminRegistrationController extends Controller
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
             ->where('status', 'Payment Submitted')
+            ->where(function ($q) {
+                $q->where('delegate_type', 'International')
+                  ->orWhereHas('user', function ($uq) {
+                      $uq->where('delegate_type', 'International');
+                  });
+            })
             ->where('is_deleted', '0')
             ->latest()
             ->get();
