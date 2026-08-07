@@ -64,6 +64,14 @@
                         </div>
                     </div>
 
+                    <!-- Spam / Junk Folder Notice Box -->
+                    <div class="p-2.5 px-3 mb-3 rounded-3 border text-start d-flex align-items-start gap-2.5" style="background-color: #F0F9FF; border-color: #BAE6FD !important;">
+                        <i class="fas fa-info-circle text-primary mt-0.5" style="font-size: 0.9rem;"></i>
+                        <div style="font-size: 0.78rem; line-height: 1.4; color: #0369A1;">
+                            <strong>Note:</strong> If you do not receive the email in your primary Inbox, please check your <strong>Spam or Junk Mail folder</strong>.
+                        </div>
+                    </div>
+
                     <!-- OTP Submit Form -->
                     <form method="POST" action="{{ route('verification.verify-otp') }}" id="otpForm">
                         @csrf
