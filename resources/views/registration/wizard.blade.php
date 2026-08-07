@@ -11,33 +11,33 @@
                     <!-- Stepper Custom CSS -->
                     <style>
                         .wizard-header {
-                            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-                            padding: 24px 28px;
-                            border-bottom: 3px solid #2D69FF;
+                            background: linear-gradient(135deg, #0288D1 0%, #01579B 60%, #00897B 100%);
+                            padding: 14px 20px;
+                            border-bottom: 3px solid #FF6B00;
                         }
                         .stepper-container {
                             position: relative;
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
-                            max-width: 750px;
-                            margin: 16px auto 4px auto;
+                            max-width: 680px;
+                            margin: 10px auto 2px auto;
                         }
                         .stepper-line-bg {
                             position: absolute;
-                            top: 20px;
+                            top: 16px;
                             left: 10%;
                             right: 10%;
                             height: 3px;
-                            background: #334155;
+                            background: rgba(255, 255, 255, 0.25);
                             z-index: 1;
                         }
                         .stepper-line-fill {
                             position: absolute;
-                            top: 20px;
+                            top: 16px;
                             left: 10%;
                             height: 3px;
-                            background: linear-gradient(90deg, #4BAA7D 0%, #2D69FF 100%);
+                            background: #FF6B00;
                             z-index: 1;
                             transition: width 0.4s ease;
                         }
@@ -50,37 +50,36 @@
                             text-decoration: none !important;
                         }
                         .step-circle {
-                            width: 40px;
-                            height: 40px;
+                            width: 32px;
+                            height: 32px;
                             border-radius: 50%;
-                            background: #1e293b;
-                            color: #94a3b8;
-                            border: 2px solid #334155;
+                            background: rgba(255, 255, 255, 0.2);
+                            color: #ffffff;
+                            border: 2px solid rgba(255, 255, 255, 0.5);
                             display: flex;
                             align-items: center;
                             justify-content: center;
                             font-weight: 700;
-                            font-size: 0.95rem;
+                            font-size: 0.85rem;
                             transition: all 0.3s ease;
-                            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
                         }
                         .step-node.completed .step-circle {
                             background: #4BAA7D;
-                            border-color: #4BAA7D;
+                            border-color: #ffffff;
                             color: #ffffff;
                         }
                         .step-node.active .step-circle {
-                            background: #2D69FF;
+                            background: #FF6B00;
                             border-color: #ffffff;
                             color: #ffffff;
-                            box-shadow: 0 0 0 5px rgba(45, 105, 255, 0.35);
-                            transform: scale(1.1);
+                            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.35);
+                            transform: scale(1.08);
                         }
                         .step-label {
-                            margin-top: 8px;
-                            font-size: 0.78rem;
+                            margin-top: 4px;
+                            font-size: 0.72rem;
                             font-weight: 600;
-                            color: #94a3b8;
+                            color: rgba(255, 255, 255, 0.85);
                             text-align: center;
                             white-space: nowrap;
                         }
@@ -89,36 +88,35 @@
                             font-weight: 700;
                         }
                         .step-node.completed .step-label {
-                            color: #DCFFF0;
+                            color: #E0F2FE;
                         }
                         .compact-form-body {
-                            padding: 28px 32px;
+                            padding: 22px 28px;
                         }
                         @media (max-width: 576px) {
                             .compact-form-body {
-                                padding: 18px 16px;
+                                padding: 16px 14px;
                             }
                             .step-label {
-                                font-size: 0.7rem;
+                                font-size: 0.68rem;
                             }
                             .step-circle {
-                                width: 34px;
-                                height: 34px;
-                                font-size: 0.85rem;
+                                width: 28px;
+                                height: 28px;
+                                font-size: 0.78rem;
                             }
                             .stepper-line-bg, .stepper-line-fill {
-                                top: 17px;
+                                top: 14px;
                             }
                         }
                     </style>
 
                     <!-- Modern Stepper Header -->
                     <div class="wizard-header text-white">
-                        <div class="text-center mb-2">
-                            <h4 class="text-white mb-1 fw-bold" style="letter-spacing: 0.5px;">
-                                <i class="fas fa-edit me-2 text-primary"></i>IPHACON 2027 Registration Portal
-                            </h4>
-                            <small class="text-white-50 fs-7">Complete all 4 steps to finalize your conference registration</small>
+                        <div class="text-center mb-1">
+                            <h5 class="text-white mb-0.5 fw-bold" style="letter-spacing: 0.3px; font-size: 1.15rem;">
+                                <i class="fas fa-edit me-1.5 text-warning"></i>IPHACON 2027 Registration Portal
+                            </h5>
                         </div>
 
                         <!-- Progress Stepper Component -->
