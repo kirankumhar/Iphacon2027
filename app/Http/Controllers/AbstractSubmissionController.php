@@ -16,7 +16,12 @@ class AbstractSubmissionController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $registration = Registration::where('user_id', $user->id)->first();
+        if ($user) {
+            $user->load('country');
+        }
+        $registration = Registration::where('user_id', $user->id)
+            ->with(['country', 'state', 'delegateCategory'])
+            ->first();
         
         $abstract = AbstractSubmission::where('user_id', $user->id)->first();
 

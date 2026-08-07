@@ -220,61 +220,61 @@
                 <!-- Full Name -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_name" value="{{ $user->prefix ?? '' }} {{ $user->full_name }}" required placeholder="e.g. Dr. Kieran Kumar">
+                    <input type="text" class="form-control" name="presenting_author_name" value="{{ old('presenting_author_name', $abstract->presenting_author_name ?? trim(($user->prefix ?? '') . ' ' . $user->full_name)) }}" required placeholder="e.g. Dr. Kieran Kumar">
                 </div>
 
                 <!-- Designation -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Designation <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_designation" required placeholder="e.g. Associate Professor / Scholar">
+                    <input type="text" class="form-control" name="presenting_author_designation" value="{{ old('presenting_author_designation', $abstract->presenting_author_designation ?? ($registration->designation ?? $registration->delegateCategory?->category_name ?? 'Delegate')) }}" required placeholder="e.g. Associate Professor / Scholar">
                 </div>
 
                 <!-- Department -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Department <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_department" required placeholder="e.g. Department of Microbiology">
+                    <input type="text" class="form-control" name="presenting_author_department" value="{{ old('presenting_author_department', $abstract->presenting_author_department ?? ($registration->department ?? '')) }}" required placeholder="e.g. Department of Community Medicine">
                 </div>
 
                 <!-- Institution -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Institution / Organization <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_institution" required placeholder="e.g. RIMS, Ranchi">
+                    <input type="text" class="form-control" name="presenting_author_institution" value="{{ old('presenting_author_institution', $abstract->presenting_author_institution ?? ($registration->institution ?? $registration->college ?? '')) }}" required placeholder="e.g. RIMS, Ranchi">
                 </div>
 
                 <!-- City -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">City <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_city" required placeholder="e.g. Ranchi">
+                    <input type="text" class="form-control" name="presenting_author_city" value="{{ old('presenting_author_city', $abstract->presenting_author_city ?? ($registration->city ?? '')) }}" required placeholder="e.g. Ranchi">
                 </div>
 
                 <!-- State -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">State <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_state" required placeholder="e.g. Jharkhand">
+                    <input type="text" class="form-control" name="presenting_author_state" value="{{ old('presenting_author_state', $abstract->presenting_author_state ?? ($registration->state?->state_name ?? $registration->other_state ?? '')) }}" required placeholder="e.g. Jharkhand">
                 </div>
 
                 <!-- Country -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Country <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_country" value="{{ $user->country?->country_name ?? 'India' }}" required placeholder="e.g. India">
+                    <input type="text" class="form-control" name="presenting_author_country" value="{{ old('presenting_author_country', $abstract->presenting_author_country ?? ($registration->country?->country_name ?? $user->country?->country_name ?? 'India')) }}" required placeholder="e.g. India">
                 </div>
 
                 <!-- Email Address -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" name="presenting_author_email" value="{{ $user->email }}" required placeholder="email@domain.com">
+                    <input type="email" class="form-control" name="presenting_author_email" value="{{ old('presenting_author_email', $abstract->presenting_author_email ?? $user->email) }}" required placeholder="email@domain.com">
                 </div>
 
                 <!-- Mobile Number -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Mobile Number <span class="text-danger">*</span></label>
-                    <input type="tel" class="form-control" name="presenting_author_mobile" value="{{ $user->mobile_country_code }} {{ $user->mobile_number }}" required placeholder="+91 9876543210">
+                    <input type="tel" class="form-control" name="presenting_author_mobile" value="{{ old('presenting_author_mobile', $abstract->presenting_author_mobile ?? trim(($user->mobile_country_code ?? '+91') . ' ' . $user->mobile_number)) }}" required placeholder="+91 9876543210">
                 </div>
 
                 <!-- Medical Council Registration Number (optional) -->
                 <div class="col-md-12">
                     <label class="form-label fw-bold text-dark small">Medical Council Registration Number <span class="text-muted fw-normal">(Optional)</span></label>
-                    <input type="text" class="form-control" name="medical_council_reg_no" placeholder="Enter Medical Council Reg No if applicable">
+                    <input type="text" class="form-control" name="medical_council_reg_no" value="{{ old('medical_council_reg_no', $abstract->medical_council_reg_no ?? '') }}" placeholder="Enter Medical Council Reg No if applicable">
                 </div>
             </div>
 
