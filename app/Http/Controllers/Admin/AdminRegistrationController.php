@@ -206,6 +206,37 @@ class AdminRegistrationController extends Controller
         return view('admin.modules.registration.show-int-reverted-registration');
     }
 
+    public function cmeDelegates()
+    {
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where('participate_in_cme', 1)
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-cme-registration', compact('registrations'));
+    }
+
+    public function paidPayments()
+    {
+        $payments = \App\Models\Payment::with(['registration.user'])
+            ->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed'])
+            ->latest()
+            ->get();
+
+        return view('admin.modules.payments.paid-payments', compact('payments'));
+    }
+
+    public function failedPayments()
+    {
+        $payments = \App\Models\Payment::with(['registration.user'])
+            ->whereIn('payment_status', ['Failed', 'Failure', 'Rejected', 'CANCELLED'])
+            ->latest()
+            ->get();
+
+        return view('admin.modules.payments.failed-payments', compact('payments'));
+    }
+
     public function deletedRegistration(Request $request)
     {
         $deletedStuList = Registration::where('is_deleted', '1')->get();

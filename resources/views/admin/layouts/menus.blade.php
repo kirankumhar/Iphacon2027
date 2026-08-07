@@ -116,6 +116,13 @@
         </a>
     </li>
 
+    <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
+        <a href="{{ Route::has('international-payment-submitted-delegates') ? route('international-payment-submitted-delegates') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-credit-card-front text-info"></i>
+            <div>Foreign Payment Submitted</div>
+        </a>
+    </li>
+
     <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
         <a href="{{ Route::has('indian-approved-delegates') ? route('indian-approved-delegates') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>
@@ -145,8 +152,29 @@
         </a>
     </li>
 
+    <li class="menu-item {{ request()->routeIs('international-rejected-delegates') ? 'active' : '' }}">
+        <a href="{{ Route::has('international-rejected-delegates') ? route('international-rejected-delegates') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-x-circle text-danger"></i>
+            <div>Rejected Registrations</div>
+        </a>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
+        <a href="{{ Route::has('international-reverted-delegates') ? route('international-reverted-delegates') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-undo text-secondary"></i>
+            <div>Reverted Registrations</div>
+        </a>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('deleted-delegates') ? 'active' : '' }}">
+        <a href="{{ Route::has('deleted-delegates') ? route('deleted-delegates') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-trash text-muted"></i>
+            <div>Deleted Registrations</div>
+        </a>
+    </li>
+
     <li class="menu-header">
-        <span class="menu-header-text">Scientific & Abstracts</span>
+        <span class="menu-header-text">Scientific &amp; Abstracts</span>
     </li>
 
     <li class="menu-item {{ request()->routeIs('admin.abstracts.*') ? 'active' : '' }}">
@@ -171,13 +199,6 @@
         <a href="{{ Route::has('failed-payments') ? route('failed-payments') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-x-circle text-danger"></i>
             <div>Failed Payments</div>
-        </a>
-    </li>
-    
-    <li class="menu-item">
-        <a href="#" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-undo text-warning"></i>
-            <div>Refund</div>
         </a>
     </li>
 </ul>
