@@ -39,12 +39,21 @@ class DashboardController extends Controller
             ->where('is_deleted', '0')
             ->count();
 
+        $abstractCount = \App\Models\AbstractSubmission::count();
+        $recentRegistrations = Registration::with(['user', 'delegateCategory'])
+            ->where('is_deleted', '0')
+            ->latest()
+            ->take(5)
+            ->get();
+
         $data = [
             'admin' => $admin,
             'stats' => $this->getStatsBasedOnRole($admin),
             'appliedCount' => $appliedCount,
             'IndApprovedCount' => $IndApprovedCount,
-            'IntApprovedCount' => $IntApprovedCount
+            'IntApprovedCount' => $IntApprovedCount,
+            'abstractCount' => $abstractCount,
+            'recentRegistrations' => $recentRegistrations,
         ];
 
         return view('admin.modules.dashboard.dashboard', $data);

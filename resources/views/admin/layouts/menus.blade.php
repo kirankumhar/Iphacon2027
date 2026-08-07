@@ -184,7 +184,7 @@
             </div>
             <div class="overflow-hidden">
                 <span class="fw-bold text-dark d-block text-truncate" style="font-size: 0.8rem; line-height: 1.2;">
-                    {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username ?? 'ISSM Admin' }}
+                    {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username ?? 'IPHACON Admin' }}
                 </span>
                 <small class="text-primary fw-bold" style="font-size: 0.65rem; letter-spacing: 0.3px;">
                     {{ strtoupper(auth('admin')->user()->role ?? 'SUPERADMIN') }}
