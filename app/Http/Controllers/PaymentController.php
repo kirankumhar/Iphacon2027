@@ -142,49 +142,64 @@ class PaymentController extends Controller
         $encData = $this->encrypt($jsondata, $data['encKey'], $data['encKey']);
 
         $curl = curl_init();
-        curl_setopt_array($curl, array(
+        $curlOpts = array(
             CURLOPT_URL => $data['payUrl'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
+            CURLOPT_TIMEOUT => 30,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_SSL_VERIFYPEER => 1,
-            CURLOPT_CAINFO => dirname(__FILE__) . '/cacert.pem', //added in Controllers folder
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS => "encData=" . $encData . "&merchId=" . $data['login'],
             CURLOPT_HTTPHEADER => array(
                 "Content-Type: application/x-www-form-urlencoded"
             ),
-        ));
+        );
+
+        $caPath = dirname(__FILE__) . '/cacert.pem';
+        if (file_exists($caPath)) {
+            $curlOpts[CURLOPT_CAINFO] = $caPath;
+            $curlOpts[CURLOPT_SSL_VERIFYHOST] = 2;
+            $curlOpts[CURLOPT_SSL_VERIFYPEER] = true;
+        }
+
+        curl_setopt_array($curl, $curlOpts);
         $atomTokenId = null;
         $response = curl_exec($curl);
 
-        // return response()->json(['success' => true, 'msg' => $response]);
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            \Log::error("Atom Payment cURL Error: " . $error_msg);
+            curl_close($curl);
+            return null;
+        }
+        curl_close($curl);
+
+        if (!$response) {
+            \Log::error("Atom Payment Empty Response");
+            return null;
+        }
 
         $getresp = explode("&", $response);
+        if (!isset($getresp[1])) {
+            \Log::error("Atom Payment Invalid Response Format: " . $response);
+            return null;
+        }
 
         $encresp = substr($getresp[1], strpos($getresp[1], "=") + 1);
         $decData = $this->decrypt($encresp, $data['decKey'], $data['decKey']);
-        if (curl_errno($curl)) {
-            $error_msg = curl_error($curl);
-            echo "error = " . $error_msg;
-        }
-        if (isset($error_msg)) {
-            echo "error = " . $error_msg;
-        }
-        curl_close($curl);
+        
         $res = json_decode($decData, true);
-        if ($res) {
-            if ($res['responseDetails']['txnStatusCode'] == 'OTS0000') {
-                $atomTokenId = $res['atomTokenId'];
-            } else {
-                echo "Error getting data";
-                $atomTokenId = null;
-            }
+        if ($res && isset($res['responseDetails']['txnStatusCode']) && $res['responseDetails']['txnStatusCode'] == 'OTS0000') {
+            $atomTokenId = $res['atomTokenId'] ?? null;
+        } else {
+            \Log::error("Atom Payment Auth Failed: " . ($decData ?? 'No decData'));
+            $atomTokenId = null;
         }
+
         return $atomTokenId;
     }
 
