@@ -71,7 +71,10 @@ Route::get('captcha/{config?}', '\Mews\Captcha\CaptchaController@getCaptcha')->n
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
     Route::get('dashboard', function () {
-        return view('delegate.dashboard');
+        $user = Auth::user();
+        $registration = \App\Models\Registration::where('user_id', $user->id)->first();
+        $abstract = \App\Models\AbstractSubmission::where('user_id', $user->id)->first();
+        return view('delegate.dashboard', compact('registration', 'abstract'));
     })->name('dashboard');
 
     // Profile routes
