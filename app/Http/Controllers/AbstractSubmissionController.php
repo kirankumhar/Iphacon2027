@@ -161,10 +161,16 @@ class AbstractSubmissionController extends Controller
 
         $abstract = AbstractSubmission::where('user_id', $user->id)->first();
 
+        $dataToSave['acknowledgement_id'] = AbstractSubmission::generateAcknowledgementId(
+            $request->presentation_mode,
+            $registration?->registration_number,
+            $user->id,
+            $abstract?->id
+        );
+
         if ($abstract) {
             $abstract->update($dataToSave);
         } else {
-            $dataToSave['acknowledgement_id'] = AbstractSubmission::generateAcknowledgementId();
             $abstract = AbstractSubmission::create($dataToSave);
         }
 

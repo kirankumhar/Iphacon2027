@@ -66,13 +66,28 @@ class AbstractSubmission extends Model
     }
 
     /**
-     * Helper to generate unique acknowledgement ID (e.g. ABS-2027-8942)
+     * Helper to generate unique acknowledgement ID based on presentation mode & registration number.
+     * e.g. Oral Presentation -> IPHA-OP-{registration_number}
+     *      Poster Presentation -> IPHA-PP-{registration_number}
      */
-    public static function generateAcknowledgementId()
+    public static function generateAcknowledgementId($presentationMode = null, $registrationNumber = null, $userId = null, $ignoreId = null)
     {
-        do {
-            $code = 'ABS-2027-' . rand(1000, 9999);
-        } while (static::where('acknowledgement_id', $code)->exists());
+        $prefix = 'IPHA-ABS-';
+        if ($presentationMode === 'Oral Presentation') {
+            $prefix = 'IPHA-OP-';
+        } elseif ($presentationMode === 'Poster Presentation') {
+            $prefix = 'IPHA-PP-';
+        }
+
+        $suffix = $registrationNumber ?: ($userId ? 'USR-' . $userId : rand(1000, 9999));
+        $code = $prefix . $suffix;
+
+        $baseCode = $code;
+        $counter = 1;
+        while (static::where('acknowledgement_id', $code)->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+            $code = $baseCode . '-' . $counter;
+            $counter++;
+        }
 
         return $code;
     }
