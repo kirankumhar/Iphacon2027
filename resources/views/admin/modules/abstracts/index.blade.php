@@ -156,7 +156,7 @@
                         <tr>
                             <th class="ps-4">Ack ID</th>
                             <th>Author Info</th>
-                            <th>Abstract Title</th>
+                            
                             <th>Mode & Theme</th>
                             <th>Status</th>
                             <th>Submitted Date</th>
@@ -177,15 +177,7 @@
                                         <small class="text-muted extra-small">{{ $item->presenting_author_email }}</small>
                                     </div>
                                 </td>
-                                <td>
-                                    @if($item->abstract_title)
-                                        <span class="text-truncate d-inline-block fw-semibold text-dark" style="max-width: 280px;" title="{{ $item->abstract_title }}">
-                                            {{ $item->abstract_title }}
-                                        </span>
-                                    @else
-                                        <span class="text-muted fst-italic">Untitled Abstract</span>
-                                    @endif
-                                </td>
+                                
                                 <td>
                                     <div>
                                         <span class="badge bg-label-info text-info border border-info border-opacity-25 px-2.5 py-1 rounded-2" style="font-size: 0.75rem;">
