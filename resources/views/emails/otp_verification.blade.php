@@ -133,6 +133,18 @@
 </head>
 
 <body style="margin:0; padding:0; background-color:#f0f4f8;">
+  @php
+      $getLogoSrc = function($relPath) {
+          $fullPath = public_path($relPath);
+          if (file_exists($fullPath)) {
+              $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+              $mime = ($ext === 'png') ? 'image/png' : (($ext === 'jpg' || $ext === 'jpeg') ? 'image/jpeg' : 'image/png');
+              return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
+          }
+          return asset($relPath);
+      };
+  @endphp
+
   <div class="wrapper">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
       <tr>
@@ -147,29 +159,17 @@
                   <tr>
                     {{-- Left Logo --}}
                     <td align="left" width="33%">
-                      @if(isset($message) && file_exists(public_path('assets/img/logo/logo.png')))
-                        <img src="{{ $message->embed(public_path('assets/img/logo/logo.png')) }}" alt="IPHACON 2027" height="55" style="max-height: 55px; width: auto;" />
-                      @else
-                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027" height="55" style="max-height: 55px; width: auto;" />
-                      @endif
+                      <img src="{{ $getLogoSrc('assets/img/logo/logo.png') }}" alt="IPHACON 2027" height="55" style="max-height: 55px; width: auto; border: 0;" />
                     </td>
 
                     {{-- Center Logo --}}
                     <td align="center" width="34%">
-                      @if(isset($message) && file_exists(public_path('assets/img/logo/ipha_logo.png')))
-                        <img src="{{ $message->embed(public_path('assets/img/logo/ipha_logo.png')) }}" alt="IPHA Logo" height="55" style="max-height: 55px; width: auto;" />
-                      @else
-                        <img src="{{ asset('assets/img/logo/ipha_logo.png') }}" alt="IPHA Logo" height="55" style="max-height: 55px; width: auto;" />
-                      @endif
+                      <img src="{{ $getLogoSrc('assets/img/logo/ipha_logo.png') }}" alt="IPHA Logo" height="55" style="max-height: 55px; width: auto; border: 0;" />
                     </td>
 
                     {{-- Right Logo --}}
                     <td align="right" width="33%">
-                      @if(isset($message) && file_exists(public_path('assets/img/logo/rimslogo.png')))
-                        <img src="{{ $message->embed(public_path('assets/img/logo/rimslogo.png')) }}" alt="RIMS Logo" height="55" style="max-height: 55px; width: auto;" />
-                      @else
-                        <img src="{{ asset('assets/img/logo/rimslogo.png') }}" alt="RIMS Logo" height="55" style="max-height: 55px; width: auto;" />
-                      @endif
+                      <img src="{{ $getLogoSrc('assets/img/logo/rimslogo.png') }}" alt="RIMS Logo" height="55" style="max-height: 55px; width: auto; border: 0;" />
                     </td>
                   </tr>
                 </table>
