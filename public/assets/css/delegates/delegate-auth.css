@@ -1,0 +1,210 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.input-group-text {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(46, 49, 146, 0.25);
+    border-color: #2e3192;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Floating animation */
+@keyframes floating {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+/* Background animations */
+.bg-animated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    z-index: -1;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+.sticky-header .logo img {
+    max-height: 50px !important;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Top Header Styling with Bright Light Gradient */
+.main-header.header-style-two .header-lower {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 50%, #E8F5E9 100%) !important;
+    border-bottom: 3px solid #0288D1;
+    padding: 12px 0 !important;
+    box-shadow: 0 4px 15px rgba(2, 136, 209, 0.06);
+}
+
+.header-title-box {
+    background: #FFFFFF;
+    border: 1px solid rgba(2, 136, 209, 0.2);
+    border-radius: 16px;
+    padding: 10px 24px;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(2, 136, 209, 0.08);
+}
+
+.header-conf-badge {
+    background: #E0F2FE;
+    color: #0288D1 !important;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    padding: 3px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.header-conf-title {
+    color: #01579B !important;
+    font-weight: 800 !important;
+    font-size: 1.25rem !important;
+    letter-spacing: -0.3px;
+    margin: 0;
+}
+
+.header-conf-sub {
+    color: #0288D1 !important;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+}
+
+/* Delegate Navigation Styling - Clean Direct Background */
+.header-style-three .header-lower .main-menu {
+    background: linear-gradient(135deg, #0288D1 0%, #1A52E0 50%, #4BAA7D 100%) !important;
+    border-radius: 8px !important;
+    padding: 4px 16px !important;
+    box-shadow: 0 4px 15px rgba(2, 136, 209, 0.15) !important;
+    position: relative;
+}
+
+/* Hide & Remove any pink/magenta pseudo element shapes from template */
+.header-style-three .header-lower .main-menu::before,
+.header-style-three .header-lower .main-menu::after,
+.header-style-three .header-lower .main-box::before,
+.header-style-three .header-lower .main-box::after,
+.header-style-three .header-lower .nav-outer::before,
+.header-style-three .header-lower .nav-outer::after,
+.main-header .main-menu::before,
+.main-header .main-menu::after,
+.main-menu::before,
+.main-menu::after {
+    display: none !important;
+    content: none !important;
+    background: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Ensure nav text renders cleanly */
+.header-style-three .header-lower .main-menu .navigation,
+.header-style-three .header-lower .main-menu .navigation > li,
+.header-style-three .header-lower .main-menu .navigation > li > a {
+    position: relative !important;
+    z-index: 10 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Active link highlight */
+.header-style-three .header-lower .main-menu .navigation > li > a:hover,
+.header-style-three .header-lower .main-menu .navigation > li.current > a,
+.header-style-three .header-lower .main-menu .navigation > li > a.active {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+}
+
+/* Logout Button Capsule Styling */
+.nav-logout-btn {
+    background: linear-gradient(135deg, #FF6B00 0%, #FF8800 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    padding: 7px 20px !important;
+    border-radius: 25px !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.35) !important;
+    transition: all 0.25s ease-in-out !important;
+}
+.nav-logout-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 18px rgba(255, 107, 0, 0.5) !important;
+    color: #FFFFFF !important;
+}
+
+.main-menu .navigation > li > a::before,
+.main-menu .navigation > li > a::after,
+.main-menu .navigation > li:hover > a::before,
+.main-menu .navigation > li.current > a::before,
+.header-style-three .header-lower .main-menu .navigation > li > a::before,
+.header-style-three .header-lower .main-menu .navigation > li > a::after {
+    display: none !important;
+    content: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}

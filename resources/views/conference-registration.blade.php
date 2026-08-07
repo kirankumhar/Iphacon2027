@@ -5,7 +5,6 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-11 col-lg-10 col-xl-10">
-
                     <!-- Compact Registration Card -->
                     <div class="card registration-card shadow-lg border-0 overflow-hidden">
                         
@@ -302,13 +301,10 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </form>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
