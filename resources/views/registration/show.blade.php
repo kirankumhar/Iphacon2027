@@ -1,5 +1,6 @@
 @extends('shared.auth-delegate')
 @section('title', 'Registration Details')
+
 @section('delegate-content')
 <div class="container py-4">
     <div class="row justify-content-center">

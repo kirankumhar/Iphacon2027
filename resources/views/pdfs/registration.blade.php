@@ -325,15 +325,15 @@
             <tr>
                 <td>
                     <div class="info-label">Delegate Name</div>
-                    <div class="info-value">{{ $registration->user->prefix }} {{ $registration->user->full_name }}</div>
+                    <div class="info-value">{{ $registration->user?->prefix }} {{ $registration->user?->full_name ?? ($registration->full_name ?? 'N/A') }}</div>
                 </td>
                 <td>
                     <div class="info-label">Email Address</div>
-                    <div class="info-value">{{ $registration->user->email }}</div>
+                    <div class="info-value">{{ $registration->user?->email ?? 'N/A' }}</div>
                 </td>
                 <td>
                     <div class="info-label">Mobile Number</div>
-                    <div class="info-value">{{ $registration->user->mobile_country_code }} {{ $registration->user->mobile_number }}</div>
+                    <div class="info-value">{{ $registration->user?->mobile_country_code }} {{ $registration->user?->mobile_number ?? 'N/A' }}</div>
                 </td>
             </tr>
             <tr>

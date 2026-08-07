@@ -1,4 +1,4 @@
-@extends('shared.auth-delegate.blade')
+@extends('shared.auth-delegate')
 @php
     $inner_title = '';
 @endphp

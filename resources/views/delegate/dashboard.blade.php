@@ -15,7 +15,7 @@
                                 <i class="fas fa-check-circle me-1"></i>Verified Account
                             </span>
                         </div>
-                        <h4 class="fw-bold mb-1" style="letter-spacing: -0.3px;">
+                        <h4 class="fw-bold mt-1" style="letter-spacing: -0.3px;">
                             Welcome, {{ Auth::user()->prefix ?? '' }} {{ Auth::user()->full_name ?? 'Delegate' }}!
                         </h4>
                         <p class="text-white-50 mb-0" style="font-size: 0.85rem;">
@@ -165,70 +165,95 @@
 
         <!-- Detailed Submitted Abstract Card (If Abstract Exists) -->
         @if ($abstract)
-            <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 14px; border-left: 4px solid #FF6B00 !important; box-shadow: 0 4px 16px rgba(255, 107, 0, 0.06) !important;">
-                <div class="card-header bg-white py-2.5 px-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle text-warning p-1.5 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; color: #FF6B00 !important; background: #FFF3E0;">
-                            <i class="fas fa-file-invoice fs-6"></i>
+            <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden" style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
+                <!-- Top Accent Line -->
+                <div style="height: 4px; background: linear-gradient(90deg, #FF6B00 0%, #FF8800 50%, #0d47a1 100%);"></div>
+
+                <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2.5">
+                        <div class="rounded-circle text-warning p-2 d-flex align-items-center justify-content-center shadow-xs" style="width: 38px; height: 38px; color: #FF6B00 !important; background: #FFF3E0;">
+
                         </div>
                         <div>
-                            <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;"><i class="fas fa-clipboard-check text-primary me-1"></i>Submitted Abstract</h6>
-                            <small class="text-muted extra-small" style="font-size: 0.75rem;">ID: <strong class="text-primary font-monospace ms-0.5">{{ $abstract->acknowledgement_id ?? 'Draft' }}</strong></small>
+                            <h6 class="fw-bold text-dark mb-0" style="font-size: 0.98rem; letter-spacing: -0.2px;">
+                                Submitted Abstract Details
+                            </h6>
+                            <small class="text-muted extra-small" style="font-size: 0.76rem;">
+                                Acknowledgement ID: <strong class="text-primary font-monospace ms-1 fs-6">{{ $abstract->acknowledgement_id ?? ($registration?->registration_number ? ($abstract->presentation_mode === 'Poster Presentation' ? 'IPHA-PP-' : 'IPHA-OP-') . $registration->registration_number : 'Draft') }}</strong>
+                            </small>
                         </div>
                     </div>
                     <div>
                         @if ($abstract->status === 'Submitted' || !empty($abstract->acknowledgement_id))
-                            <span class="badge bg-success text-white px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.72rem; background-color: #10B981 !important;">
+                            <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold shadow-xs" style="font-size: 0.74rem; background-color: #10B981 !important;">
                                 <i class="fas fa-check-circle me-1"></i>SUBMITTED
                             </span>
                         @else
-                            <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.72rem;">
-                                <i class="fas fa-edit me-1"></i>DRAFT
+                            <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold shadow-xs" style="font-size: 0.74rem;">
+                                <i class="fas fa-edit me-1"></i>DRAFT SAVED
                             </span>
                         @endif
                     </div>
                 </div>
 
-                <div class="card-body p-3">
-                    <h6 class="fw-bold text-primary mb-2" style="letter-spacing: -0.2px; font-size: 1.05rem;">
+                <div class="card-body p-3.5">
+                    <h5 class="fw-bold text-primary mb-3" style="letter-spacing: -0.3px; font-size: 1.1rem; line-height: 1.35;">
                         {{ $abstract->abstract_title ?: 'Untitled Abstract' }}
-                    </h6>
+                    </h5>
 
-                    <div class="row g-2 mb-2.5">
-                        <div class="col-md-4">
-                            <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">Mode</span>
-                            <span class="badge bg-light border text-dark fw-bold px-2.5 py-1 rounded-2" style="font-size: 0.78rem;">
-                                <i class="fas fa-microphone-alt text-primary me-1"></i>{{ $abstract->presentation_mode ?? 'Not Specified' }}
-                            </span>
+                    <div class="row g-2.5 mb-3">
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-microphone-alt text-primary" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presentation Mode</span>
+                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presentation_mode ?? 'Not Specified' }}</strong>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">Category</span>
-                            <span class="badge bg-light border text-dark fw-bold px-2.5 py-1 rounded-2" style="font-size: 0.78rem;">
-                                <i class="fas fa-user-tag text-info me-1"></i>{{ $abstract->presenter_category ?? 'N/A' }}
-                            </span>
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-info p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user-tag text-info" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenter Category</span>
+                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presenter_category ?? 'N/A' }}</strong>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">Author</span>
-                            <span class="fw-bold text-dark extra-small" style="font-size: 0.8rem;">
-                                <i class="fas fa-user text-secondary me-1"></i>{{ $abstract->presenting_author_name }}
-                            </span>
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-warning p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px; color: #FF6B00 !important;">
+                                    <i class="fas fa-user" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenting Author</span>
+                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presenting_author_name }}</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     @if(!empty($abstract->conference_theme))
-                        <div class="mb-2.5 p-2 bg-light rounded-2 border">
-                            <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Theme:</span>
-                            <span class="fw-bold text-dark extra-small" style="font-size: 0.78rem;"><i class="fas fa-tag text-warning me-1"></i>{{ $abstract->conference_theme }}</span>
+                        <div class="mb-3 p-2.5 bg-light rounded-3 border d-flex align-items-center gap-2">
+                            <i class="fas fa-tag text-warning flex-shrink-0" style="font-size: 0.9rem;"></i>
+                            <div class="overflow-hidden">
+                                <span class="text-muted extra-small d-block" style="font-size: 0.68rem;">Conference Theme</span>
+                                <strong class="text-dark extra-small d-block text-truncate" style="font-size: 0.8rem;">{{ $abstract->conference_theme }}</strong>
+                            </div>
                         </div>
                     @endif
 
                     @if(!empty($abstract->keywords))
-                        <div class="mb-2.5">
-                            <div class="d-flex gap-1 flex-wrap align-items-center">
-                                <span class="text-muted extra-small me-1" style="font-size: 0.72rem;">Keywords:</span>
+                        <div class="mb-3">
+                            <div class="d-flex gap-1.5 flex-wrap align-items-center">
+                                <span class="text-muted extra-small me-1" style="font-size: 0.74rem;">Keywords:</span>
                                 @foreach(explode(',', $abstract->keywords) as $kw)
                                     @if(trim($kw))
-                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-0.5 rounded-2" style="font-size: 0.72rem;">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2" style="font-size: 0.74rem;">
                                             #{{ trim($kw) }}
                                         </span>
                                     @endif
@@ -237,12 +262,12 @@
                         </div>
                     @endif
 
-                    <div class="d-flex justify-content-between align-items-center pt-2.5 border-top flex-wrap gap-2">
-                        <span class="text-muted extra-small" style="font-size: 0.75rem;">
-                            <i class="far fa-clock me-1"></i>Date: {{ $abstract->updated_at ? $abstract->updated_at->format('d M Y, h:i A') : 'N/A' }}
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top flex-wrap gap-2">
+                        <span class="text-muted extra-small" style="font-size: 0.78rem;">
+                            <i class="far fa-clock me-1 text-primary"></i>Submission Date: {{ $abstract->updated_at ? $abstract->updated_at->format('d M Y, h:i A') : 'N/A' }}
                         </span>
-                        <a href="{{ route('abstract.create') }}" class="btn btn-sm btn-primary btn-capsule px-3 py-1 shadow-xs" style="background: linear-gradient(135deg, #013069, #0d47a1); border: none; font-size: 0.8rem;">
-                            <i class="fas fa-external-link-alt me-1"></i>View Abstract Details
+                        <a href="{{ route('abstract.create') }}" class="btn btn-sm btn-primary btn-capsule px-3.5 py-1.5 shadow-xs" style="background: linear-gradient(135deg, #013069, #0d47a1); border: none; font-size: 0.82rem;">
+                            <i class="fas fa-external-link-alt me-1.5"></i>View Abstract Details
                         </a>
                     </div>
                 </div>
