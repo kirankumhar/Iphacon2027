@@ -3,8 +3,8 @@
 
     <div class="container py-3">
         <!-- Welcome Hero Banner -->
-        <div class="card border-0 shadow-sm overflow-hidden mb-3.5" style="border-radius: 14px; background: linear-gradient(135deg, #013069 0%, #0d47a1 60%, #1565c0 100%);">
-            <div class="card-body py-3 px-3 px-md-4 text-white position-relative">
+        <div class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 14px; background: linear-gradient(135deg, #013069 0%, #0d47a1 60%, #1565c0 100%); margin-bottom: 1.85rem !important;">
+            <div class="card-body py-3.5 px-3 px-md-4 text-white position-relative">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
                         <div class="d-flex align-items-center gap-2 mb-1">
@@ -39,21 +39,21 @@
 
         <!-- Session & Alert Messages -->
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 mb-3 small fw-semibold" role="alert" style="border-radius: 10px;">
+            <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold" role="alert" style="border-radius: 10px;">
                 <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
                 <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-3 small fw-semibold" role="alert" style="border-radius: 10px;">
+            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold" role="alert" style="border-radius: 10px;">
                 <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
                 <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-3 small" role="alert" style="border-radius: 10px;">
+            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small" role="alert" style="border-radius: 10px;">
                 <i class="fas fa-exclamation-triangle me-2"></i><strong>Attention Required:</strong>
                 <ul class="mb-0 mt-1 ps-3">
                     @foreach ($errors->all() as $error)
@@ -65,7 +65,7 @@
         @endif
 
         <!-- Quick Action Cards Grid (4 Columns) -->
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4 pt-1">
             <!-- 1. Conference Registration Card -->
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm dashboard-card position-relative overflow-hidden" style="border-radius: 14px; border-top: 4px solid #0d47a1 !important;">
