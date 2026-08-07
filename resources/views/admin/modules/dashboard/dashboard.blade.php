@@ -11,11 +11,8 @@
                             <span class="badge px-3 py-1 fw-bold shadow-xs" style="background-color: #DCFFF0; color: #065F46; border-radius: 20px; font-size: 0.73rem;">
                                 <i class="bx bx-shield-check me-1"></i> IPHACON 2027 Admin Portal
                             </span>
-                            <span class="badge bg-white bg-opacity-20 text-white px-2.5 py-1 rounded-pill fw-semibold" style="font-size: 0.73rem;">
-                                <i class="bx bx-radio-circle-marked text-success me-1"></i> System Operational
-                            </span>
                         </div>
-                        <h4 class="text-white fw-bold mb-1 fs-4" style="letter-spacing: -0.3px;">
+                        <h4 class="text-white fw-bold mt-1 fs-4" style="letter-spacing: -0.3px;">
                             Welcome back, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }}! 👋
                         </h4>
                         <p class="text-white-50 mb-0 small" style="font-size: 0.85rem;">

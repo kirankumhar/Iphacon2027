@@ -279,34 +279,34 @@
             </div>
 
             <!-- Admin Registration Action Control Card -->
-            <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px; border-left: 4px solid #28a745 !important;">
-                <div class="card-header bg-light py-3">
-                    <h6 class="mb-0 fw-bold text-dark"><i class="bx bx-slider-alt me-1.5 text-success"></i>Admin Registration Action</h6>
+            <div class="card shadow-sm border-0 mb-3" style="border-radius: 10px; border-left: 3px solid #28a745 !important;">
+                <div class="card-header bg-light py-2 px-3">
+                    <h6 class="mb-0 fw-bold text-dark extra-small"><i class="bx bx-slider-alt me-1.5 text-success"></i>Admin Registration Action</h6>
                 </div>
-                <div class="card-body p-3.5">
+                <div class="card-body p-2.5">
                     <div class="d-grid gap-2">
                         @if($delegate->status !== 'Approved')
                         <form action="{{ route('student-approved-regis') }}" method="POST" class="d-grid m-0">
                             @csrf
                             <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
-                            <button type="submit" class="btn btn-success fw-bold py-2 rounded-3 shadow-xs" onclick="return confirm('Are you sure you want to approve this registration?')">
-                                <i class="bx bx-check-circle me-1.5 fs-5"></i> Approve Registration
+                            <button type="submit" class="btn btn-sm btn-success fw-bold py-1.5 rounded-2 shadow-xs" style="font-size: 0.8rem;" onclick="return confirm('Are you sure you want to approve this registration?')">
+                                <i class="bx bx-check-circle me-1"></i> Approve Registration
                             </button>
                         </form>
                         @else
-                        <div class="alert alert-success p-2 px-3 mb-2 rounded-3 extra-small fw-bold text-center">
+                        <div class="alert alert-success p-1.5 px-2 mb-1 rounded-2 extra-small fw-bold text-center" style="font-size: 0.76rem;">
                             <i class="bx bx-check-double me-1"></i> Registration Status: Approved
                         </div>
                         @endif
 
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-warning text-dark fw-bold w-50 py-2 rounded-3 shadow-xs" 
+                            <button type="button" class="btn btn-sm btn-warning text-dark fw-bold w-50 py-1.5 rounded-2 shadow-xs" style="font-size: 0.78rem;" 
                                 data-bs-toggle="modal" data-bs-target="#revertModal">
-                                <i class="bx bx-undo me-1 fs-5"></i> Revert
+                                <i class="bx bx-undo me-1"></i> Revert
                             </button>
-                            <button type="button" class="btn btn-outline-danger fw-bold w-50 py-2 rounded-3" 
+                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold w-50 py-1.5 rounded-2" style="font-size: 0.78rem;" 
                                 data-bs-toggle="modal" data-bs-target="#rejectModal">
-                                <i class="bx bx-x-circle me-1 fs-5"></i> Reject
+                                <i class="bx bx-x-circle me-1"></i> Reject
                             </button>
                         </div>
                     </div>
@@ -314,19 +314,20 @@
             </div>
 
             <!-- Download & Document Actions Card -->
-            <div class="card shadow-sm border-0" style="border-radius: 12px;">
-                <div class="card-body p-3.5">
-                    <h6 class="fw-bold text-dark mb-2.5"><i class="bx bx-download me-1.5 text-primary"></i>Documents & Downloads</h6>
-                    
+            <div class="card shadow-sm border-0 mb-3" style="border-radius: 10px;">
+                <div class="card-header bg-light py-2 px-3">
+                    <h6 class="mb-0 fw-bold text-dark extra-small"><i class="bx bx-download me-1.5 text-primary"></i>Documents & Downloads</h6>
+                </div>
+                <div class="card-body p-2.5">
                     @if($delegate->registration_number)
                     <a href="{{ route('download.receipt', $delegate->registration_number) }}"
                         target="_blank"
-                        class="btn btn-primary w-100 py-2 fw-bold mb-2 rounded-3 shadow-xs">
-                        <i class="bx bxs-file-pdf me-2"></i>Download Acknowledgement PDF
+                        class="btn btn-sm btn-primary w-100 py-1.5 fw-bold rounded-2 shadow-xs" style="font-size: 0.8rem;">
+                        <i class="bx bxs-file-pdf me-1.5"></i>Download Acknowledgement PDF
                     </a>
                     @else
-                    <button class="btn btn-secondary w-100 py-2 fw-bold mb-2 rounded-3" disabled>
-                        <i class="bx bxs-file-pdf me-2"></i>PDF Receipt (Pending Reg No)
+                    <button class="btn btn-sm btn-secondary w-100 py-1.5 fw-bold rounded-2" style="font-size: 0.8rem;" disabled>
+                        <i class="bx bxs-file-pdf me-1.5"></i>PDF Receipt (Pending Reg No)
                     </button>
                     @endif
                 </div>
