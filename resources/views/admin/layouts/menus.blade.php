@@ -108,6 +108,14 @@
         <span class="menu-header-text">Registration</span>
     </li>
 
+    <li class="menu-item {{ request()->routeIs('submitted-delegates') ? 'active' : '' }}">
+        <a href="{{ Route::has('submitted-delegates') ? route('submitted-delegates') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-paper-plane text-warning"></i>
+            <div>Submitted Delegates</div>
+            <span class="badge bg-label-warning rounded-pill ms-auto" style="font-size: 0.65rem;">Pending</span>
+        </a>
+    </li>
+
     <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
         <a href="{{ Route::has('indian-approved-delegates') ? route('indian-approved-delegates') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-check-shield text-success"></i>

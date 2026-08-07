@@ -166,6 +166,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])->name('download.receipt');
     Route::get('/show-registration-details/{registration_number}', [AdminRegistrationController::class, 'viewRegistrationDetails'])->name('show-registration-details');
 
+    Route::get('/submitted-delegates', [AdminRegistrationController::class, 'submittedDelegates'])->name('submitted-delegates');
     Route::get('/international-payment-submitted-delegates', [AdminRegistrationController::class, 'internationalPaymentSubmittedDelegates'])->name('international-payment-submitted-delegates');
     Route::get('/indian-approved-delegates', [AdminRegistrationController::class, 'approvedIndDelegates'])->name('indian-approved-delegates');
     Route::get('/indian-incomplete-delegates', [AdminRegistrationController::class, 'indianIncompleteDelegates'])->name('indian-incomplete-delegates');

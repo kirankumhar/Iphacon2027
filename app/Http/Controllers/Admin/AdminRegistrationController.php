@@ -128,6 +128,17 @@ class AdminRegistrationController extends Controller
         ]);
     }
 
+    public function submittedDelegates()
+    {
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->whereIn('status', ['Payment Submitted', 'Submitted'])
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-submitted-registration', compact('registrations'));
+    }
+
     public function internationalPaymentSubmittedDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
