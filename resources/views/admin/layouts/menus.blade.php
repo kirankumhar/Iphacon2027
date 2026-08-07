@@ -112,7 +112,6 @@
         <a href="{{ Route::has('submitted-delegates') ? route('submitted-delegates') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-paper-plane text-warning"></i>
             <div>Submitted Delegates</div>
-            <span class="badge bg-label-warning rounded-pill ms-auto" style="font-size: 0.65rem;">Pending</span>
         </a>
     </li>
 
