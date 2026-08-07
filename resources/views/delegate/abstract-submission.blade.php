@@ -126,6 +126,15 @@
         background: #e8f2ff;
         box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.2);
     }
+    .modal {
+        z-index: 1060 !important;
+    }
+    .modal-backdrop {
+        z-index: 1050 !important;
+    }
+    .modal-dialog {
+        z-index: 1065 !important;
+    }
 </style>
 
 <div class="container-fluid px-0">
@@ -534,7 +543,7 @@
                     <i class="fas fa-check-circle fa-3x"></i>
                 </div>
                 <h4 class="fw-bold text-dark mb-1">Abstract Submitted Successfully!</h4>
-                <p class="text-secondary small mb-3">Your abstract has been registered for ISMM 2027 review.</p>
+                <p class="text-secondary small mb-3">Your abstract has been registered for IPHACON 2027 review.</p>
 
                 <div class="bg-light p-3 rounded-3 border mb-3 text-start">
                     <div class="text-muted small uppercase fw-bold mb-1">Acknowledgement ID</div>
@@ -711,7 +720,11 @@
         `;
 
         document.getElementById('modalPreviewContent').innerHTML = html;
-        const modal = new bootstrap.Modal(document.getElementById('abstractPreviewModal'));
+        const modalEl = document.getElementById('abstractPreviewModal');
+        if (modalEl && modalEl.parentNode !== document.body) {
+            document.body.appendChild(modalEl);
+        }
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
     }
 
@@ -799,7 +812,11 @@
         .then(data => {
             if (data.success) {
                 document.getElementById('ackIDDisplay').innerText = data.acknowledgement_id || 'ABS-2027-SUCCESS';
-                const modal = new bootstrap.Modal(document.getElementById('acknowledgementModal'));
+                const modalEl = document.getElementById('acknowledgementModal');
+                if (modalEl && modalEl.parentNode !== document.body) {
+                    document.body.appendChild(modalEl);
+                }
+                const modal = new bootstrap.Modal(modalEl);
                 modal.show();
             } else {
                 if (data.errors) {
