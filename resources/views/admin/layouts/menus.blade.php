@@ -69,7 +69,7 @@
 </style>
 
 <ul class="menu-inner py-2 flex-grow-1">
-    @if (auth('admin')->user()->role == 'superadmin')
+    @if (optional(auth('admin')->user())->role == 'superadmin')
     <li class="menu-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
         <a href="{{ Route::has('superadmin.dashboard') ? route('superadmin.dashboard') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-grid-alt"></i>

@@ -11,7 +11,7 @@ class AdminAbstractController extends Controller
     /**
      * Display the abstracts list page.
      */
-    public function index()
+    public function index(Request $request)
     {
         $totalAbstracts = AbstractSubmission::count();
         $submittedCount = AbstractSubmission::where('status', 'Submitted')->count();
@@ -20,13 +20,37 @@ class AdminAbstractController extends Controller
         $oralCount = AbstractSubmission::where('presentation_mode', 'Oral Presentation')->count();
         $posterCount = AbstractSubmission::where('presentation_mode', 'Poster Presentation')->count();
 
+        $query = AbstractSubmission::with(['user', 'registration']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('presentation_mode')) {
+            $query->where('presentation_mode', $request->presentation_mode);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('acknowledgement_id', 'like', "%{$search}%")
+                  ->orWhere('presenting_author_name', 'like', "%{$search}%")
+                  ->orWhere('abstract_title', 'like', "%{$search}%")
+                  ->orWhere('conference_theme', 'like', "%{$search}%")
+                  ->orWhere('presenting_author_email', 'like', "%{$search}%");
+            });
+        }
+
+        $abstracts = $query->orderBy('id', 'desc')->paginate(20);
+
         return view('admin.modules.abstracts.index', compact(
             'totalAbstracts',
             'submittedCount',
             'acceptedCount',
             'rejectedCount',
             'oralCount',
-            'posterCount'
+            'posterCount',
+            'abstracts'
         ));
     }
 
