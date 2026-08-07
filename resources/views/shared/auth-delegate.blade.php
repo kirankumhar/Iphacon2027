@@ -62,16 +62,61 @@
             object-fit: contain;
         }
 
-        /* Delegate Navigation Color Palette & Position Override */
+        /* Top Header Styling with Bright Light Gradient */
+        .main-header.header-style-two .header-lower {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 50%, #E8F5E9 100%) !important;
+            border-bottom: 3px solid #0288D1;
+            padding: 12px 0 !important;
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.06);
+        }
+
+        .header-title-box {
+            background: #FFFFFF;
+            border: 1px solid rgba(2, 136, 209, 0.2);
+            border-radius: 16px;
+            padding: 10px 24px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.08);
+        }
+
+        .header-conf-badge {
+            background: #E0F2FE;
+            color: #0288D1 !important;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+            padding: 3px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .header-conf-title {
+            color: #01579B !important;
+            font-weight: 800 !important;
+            font-size: 1.25rem !important;
+            letter-spacing: -0.3px;
+            margin: 0;
+        }
+
+        .header-conf-sub {
+            color: #0288D1 !important;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+        }
+
+        /* Delegate Navigation Light Modern Palette */
         .header-style-three .header-lower .main-menu:before {
-            background: linear-gradient(135deg, #2D69FF 0%, #1A52E0 100%) !important;
-            box-shadow: 0 4px 15px rgba(45, 105, 255, 0.2);
+            background: linear-gradient(135deg, #0288D1 0%, #1A52E0 50%, #4BAA7D 100%) !important;
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.2);
             z-index: 0 !important;
         }
         .header-style-three .header-lower .main-menu:after {
             background: #4BAA7D !important;
+            height: 3px !important;
             z-index: 0 !important;
-            bottom: -8px !important;
+            bottom: -3px !important;
         }
 
         /* Ensure nav text renders cleanly ON TOP of background & underline pseudo-elements */
@@ -82,13 +127,18 @@
             z-index: 10 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            letter-spacing: 0.3px;
+            transition: all 0.25s ease-in-out;
         }
 
         /* Active link highlight and remove overlapping hover underline */
         .header-style-three .header-lower .main-menu .navigation > li > a:hover,
         .header-style-three .header-lower .main-menu .navigation > li.current > a,
         .header-style-three .header-lower .main-menu .navigation > li > a.active {
-            color: #DCFFF0 !important;
+            color: #FFFFFF !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 6px !important;
         }
 
         .main-menu .navigation > li > a::before,
@@ -215,7 +265,15 @@
 
                         <!-- Center Title -->
                         <div class="col-lg-6 col-md-6 col-12 mb-2 mb-md-2 text-center event-heading">
-
+                            <div class="header-title-box">
+                                <span class="header-conf-badge">
+                                    <i class="fas fa-calendar-check me-1"></i> 12th - 14th March 2027 | RIMS, Ranchi
+                                </span>
+                                <h4 class="header-conf-title">
+                                    71st Annual National Conference of IPHA
+                                </h4>
+                                <div class="header-conf-sub">IPHACON 2027 DELEGATE PORTAL</div>
+                            </div>
                         </div>
 
                         <!-- Right Logo (Jharkhand/RIMS) -->
