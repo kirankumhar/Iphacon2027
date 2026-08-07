@@ -133,7 +133,7 @@
                     <input type="text" class="form-control extra-small py-1.5 @error('ismm_membership_no') is-invalid @enderror"
                         id="ismm_membership_no" name="ismm_membership_no"
                         value="{{ old('ismm_membership_no', $registration->membership_no) }}"
-                        placeholder="Enter your ISMM Membership Number">
+                        placeholder="Enter your IPHACON Membership Number">
                 </div>
                 <small class="text-muted extra-small mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Required for IPHACON Member discount.</small>
                 @error('ismm_membership_no')
