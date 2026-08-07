@@ -106,20 +106,36 @@
             letter-spacing: 1px;
         }
 
-        /* Delegate Navigation Light Modern Palette */
-        .header-style-three .header-lower .main-menu:before {
+        /* Delegate Navigation Styling - Clean Direct Background */
+        .header-style-three .header-lower .main-menu {
             background: linear-gradient(135deg, #0288D1 0%, #1A52E0 50%, #4BAA7D 100%) !important;
-            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.2);
-            z-index: 0 !important;
-        }
-        .header-style-three .header-lower .main-menu:after {
-            background: #4BAA7D !important;
-            height: 3px !important;
-            z-index: 0 !important;
-            bottom: -3px !important;
+            border-radius: 8px !important;
+            padding: 4px 16px !important;
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.15) !important;
+            position: relative;
         }
 
-        /* Ensure nav text renders cleanly ON TOP of background & underline pseudo-elements */
+        /* Hide & Remove any pink/magenta pseudo element shapes from template */
+        .header-style-three .header-lower .main-menu::before,
+        .header-style-three .header-lower .main-menu::after,
+        .header-style-three .header-lower .main-box::before,
+        .header-style-three .header-lower .main-box::after,
+        .header-style-three .header-lower .nav-outer::before,
+        .header-style-three .header-lower .nav-outer::after,
+        .main-header .main-menu::before,
+        .main-header .main-menu::after,
+        .main-menu::before,
+        .main-menu::after {
+            display: none !important;
+            content: none !important;
+            background: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+
+        /* Ensure nav text renders cleanly */
         .header-style-three .header-lower .main-menu .navigation,
         .header-style-three .header-lower .main-menu .navigation > li,
         .header-style-three .header-lower .main-menu .navigation > li > a {
@@ -132,13 +148,31 @@
             transition: all 0.25s ease-in-out;
         }
 
-        /* Active link highlight and remove overlapping hover underline */
+        /* Active link highlight */
         .header-style-three .header-lower .main-menu .navigation > li > a:hover,
         .header-style-three .header-lower .main-menu .navigation > li.current > a,
         .header-style-three .header-lower .main-menu .navigation > li > a.active {
             color: #FFFFFF !important;
             background: rgba(255, 255, 255, 0.2) !important;
             border-radius: 6px !important;
+        }
+
+        /* Logout Button Capsule Styling */
+        .nav-logout-btn {
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8800 100%) !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            padding: 7px 20px !important;
+            border-radius: 25px !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.35) !important;
+            transition: all 0.25s ease-in-out !important;
+        }
+        .nav-logout-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 18px rgba(255, 107, 0, 0.5) !important;
+            color: #FFFFFF !important;
         }
 
         .main-menu .navigation > li > a::before,
@@ -246,6 +280,29 @@
 <body>
 
     <div class="page-wrapper">
+        <!-- Thin Conference Topbar -->
+        <div class="header-top conference-topbar text-white py-2" style="background: linear-gradient(90deg, #01579B 0%, #00897B 100%); font-size: 0.82rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.15);">
+            <div class="auto-container px-3">
+                <div class="row align-items-center justify-content-between">
+                    <!-- Conference Title -->
+                    <div class="col-md-7 col-12 text-center text-md-start mb-1 mb-md-0">
+                        <span class="d-inline-flex align-items-center gap-2">
+                            <i class="fas fa-stethoscope text-warning"></i>
+                            <span>71<sup>st</sup> Annual National Conference of the Indian Public Health Association (IPHACON 2027)</span>
+                        </span>
+                    </div>
+
+                    <!-- Venue & Dates -->
+                    <div class="col-md-5 col-12 text-center text-md-end">
+                        <span class="d-inline-flex align-items-center gap-3">
+                            <span><i class="fas fa-calendar-alt text-warning me-1"></i>12 - 14 March 2027</span>
+                            <span><i class="fas fa-map-marker-alt text-warning me-1"></i>RIMS, Ranchi, Jharkhand</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <header class="main-header header-style-two">
 
             <!-- End Header Top -->
@@ -254,17 +311,14 @@
                     <div class="row align-items-center text-center">
 
                         <!-- Left Logo (IPHACON) -->
-                        <div
-                            class="col-lg-3 col-md-3 col-12 mb-2 mb-md-2 d-flex justify-content-center align-items-center">
+                        <div class="col-lg-3 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-start align-items-center">
                             <a href="https://www.iphacon2027.com/index.php" title="IPHACON 2027">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo"
-                                    title="IPHACON 2027 Logo" class="img-fluid"
-                                    style="max-height: 90px; object-fit: contain;">
+                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo" title="IPHACON 2027 Logo" class="img-fluid" style="max-height: 80px; object-fit: contain;">
                             </a>
                         </div>
 
                         <!-- Center Title -->
-                        <div class="col-lg-6 col-md-6 col-12 mb-2 mb-md-2 text-center event-heading">
+                        <div class="col-lg-5 col-md-6 col-12 mb-2 mb-lg-0 text-center event-heading">
                             <div class="header-title-box">
                                 <span class="header-conf-badge">
                                     <i class="fas fa-calendar-check me-1"></i> 12th - 14th March 2027 | RIMS, Ranchi
@@ -276,12 +330,13 @@
                             </div>
                         </div>
 
-                        <!-- Right Logo (Jharkhand/RIMS) -->
-                        <div
-                            class="col-lg-3 col-md-3 col-12 mb-2 mb-md-2 d-flex justify-content-center align-items-center">
+                        <!-- Right Logos (IPHA & RIMS) -->
+                        <div class="col-lg-4 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-end align-items-center gap-3">
+                            <a href="https://www.iphacon2027.com/index.php" title="IPHA Logo">
+                                <img src="{{ asset('assets/img/logo/iphacon_logo.png') }}" alt="IPHA Logo" title="IPHA Logo" class="img-fluid" style="max-height: 75px; width: auto; object-fit: contain;">
+                            </a>
                             <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
-                                <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo"
-                                    title="RIMS Logo" class="img-fluid" style="max-height: 90px; object-fit: contain;">
+                                <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo" title="RIMS Logo" class="img-fluid" style="max-height: 75px; width: auto; object-fit: contain;">
                             </a>
                         </div>
 
@@ -307,7 +362,7 @@
                                 </div>
 
                                 <div class="collapse navbar-collapse clearfix" id="navbarSupportedContent">
-                                    <ul class="navigation navbar-nav me-auto" id="mainmenu">
+                                    <ul class="navigation navbar-nav w-100 align-items-center" id="mainmenu">
 
                                         <!-- Home -->
                                         <!-- <li class="nav-item">
@@ -364,14 +419,13 @@
                                             </ul>
                                         </li>
 
-                                        <!-- Logout -->
-                                        <li class="nav-item">
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                class="d-inline">
+                                        <!-- Logout (Pushed to Right End) -->
+                                        <li class="nav-item ms-auto my-1">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="btn d-flex align-items-center"
-                                                    style="background-color: #4BAA7D; color: #ffffff; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(75, 170, 125, 0.3);">
-                                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                                <button type="submit" class="btn nav-logout-btn d-inline-flex align-items-center gap-2" title="Logout from Delegate Portal">
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                    <span>Logout</span>
                                                 </button>
                                             </form>
                                         </li>
