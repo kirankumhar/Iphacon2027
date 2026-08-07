@@ -176,7 +176,20 @@ class AdminRegistrationController extends Controller
 
     public function indianIncompleteDelegates()
     {
-        return view('admin.modules.registration.show-ind-incomplete-registration');
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where(function ($q) {
+                $q->where('status', 'Draft')
+                  ->orWhere('step_completed', '<', 4)
+                  ->orWhereNull('status');
+            })
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        $registeredUserIds = Registration::where('is_deleted', '0')->pluck('user_id')->toArray();
+        $usersWithoutReg = \App\Models\User::whereNotIn('id', $registeredUserIds)->latest()->get();
+
+        return view('admin.modules.registration.show-ind-incomplete-registration', compact('registrations', 'usersWithoutReg'));
     }
 
     public function internationalApprovedDelegates()
