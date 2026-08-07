@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AbstractSubmissionController;
 // ****** Admin ********
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\LogController;
-
+use App\Http\Controllers\Admin\AdminAbstractController;
 use Illuminate\Support\Facades\Artisan;
 
 // Delegate Authentication Routes
@@ -80,6 +80,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
     Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    // Abstract Submission routes
+    Route::get('abstract-submission', [AbstractSubmissionController::class, 'create'])->name('abstract.create');
+    Route::post('abstract-submission', [AbstractSubmissionController::class, 'store'])->name('abstract.store');
 
     // 🔥 REGISTRATION ROUTES
     Route::get('registration', [RegistrationController::class, 'index'])->name('registration.index');
