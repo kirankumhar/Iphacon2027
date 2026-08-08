@@ -16,13 +16,13 @@
                             </span>
                         </div>
                         <h4 class="fw-bold mt-1" style="letter-spacing: -0.3px;">
-                            Welcome, {{ Auth::user()->prefix ?? '' }} {{ Auth::user()->full_name ?? 'Delegate' }}!
+                            Welcome, {{ Auth::user()->full_name ?? 'Delegate' }}!
                         </h4>
                         <p class="text-white-50 mb-0" style="font-size: 0.85rem;">
                             71st Annual National Conference of IPHA • IPHACON 2027 • RIMS, Ranchi
                         </p>
                     </div>
-                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <!-- <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                         @if(!$registration)
                             <a href="{{ route('registration.create') }}" class="btn btn-warning btn-sm fw-bold px-3.5 py-2 shadow-sm btn-capsule" style="background: #FF6B00; border: none; color: #ffffff; font-size: 0.85rem;">
                                 <i class="fas fa-paper-plane me-1.5"></i>Register Now
@@ -32,7 +32,7 @@
                                 <i class="fas fa-file-alt me-1.5"></i>Submit / View Abstract
                             </a>
                         @endif
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
