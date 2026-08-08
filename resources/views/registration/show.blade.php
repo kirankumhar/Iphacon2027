@@ -329,7 +329,7 @@
                             {{-- Payment Information --}}
                             @if($registration->payments && $registration->payments->count() > 0)
                                 <div class="mt-3">
-                                    <h6 class="fw-bold text-dark mb-2 small">Payment Details</h6>
+                                    <h6 class="fw-bold text-dark mb-2 small">Main Registration Payment Details</h6>
                                     @foreach($registration->payments as $payment)
                                         <div class="p-3 bg-light rounded-3 mb-2 small" style="border: 1px solid #E2E8F0;">
                                             <div class="d-flex justify-content-between mb-1">
@@ -338,7 +338,9 @@
                                             </div>
                                             <div class="d-flex justify-content-between mb-1">
                                                 <span class="text-muted">Payment Status:</span>
-                                                <span class="badge bg-success-subtle text-success px-2.5 py-1 rounded-pill fw-bold">{{ $payment->payment_status ?? 'Pending' }}</span>
+                                                <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1 rounded-pill fw-bold">
+                                                    {{ $payment->payment_status === 'Approved' || $registration->status === 'Approved' ? 'Approved' : 'Pending for Verification' }}
+                                                </span>
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <span class="text-muted">Payment Method:</span>
@@ -353,6 +355,58 @@
                                             @endif
                                         </div>
                                     @endforeach
+                                </div>
+                            @endif
+
+                            {{-- Dedicated CME Workshop Payment Details --}}
+                            @php
+                                $cmeApp = $registration->cmeApplication;
+                            @endphp
+                            @if($cmeApp)
+                                <div class="mt-4 pt-3 border-top border-light">
+                                    <div class="d-flex align-items-center justify-content-between mb-2.5">
+                                        <h6 class="fw-bold text-dark mb-0 small d-flex align-items-center gap-1.5">
+                                            <i class="fas fa-stethoscope text-success"></i> CME Workshop Payment Details
+                                        </h6>
+                                        @php
+                                            $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
+                                            $cmeStatusText = 'Pending for Verification';
+                                            if ($cmeApp->status === 'Approved') {
+                                                $cmeBadgeClass = 'bg-success-subtle text-success border-success';
+                                                $cmeStatusText = 'Approved';
+                                            } elseif ($cmeApp->status === 'Rejected') {
+                                                $cmeBadgeClass = 'bg-danger-subtle text-danger border-danger';
+                                                $cmeStatusText = 'Rejected';
+                                            } elseif ($cmeApp->status === 'Pending Payment') {
+                                                $cmeBadgeClass = 'bg-info-subtle text-info border-info';
+                                                $cmeStatusText = 'Payment Pending';
+                                            }
+                                        @endphp
+                                        <span class="badge {{ $cmeBadgeClass }} border px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
+                                            {{ $cmeStatusText }}
+                                        </span>
+                                    </div>
+                                    <div class="p-3 bg-light rounded-3 small" style="border: 1px dashed #10B981;">
+                                        <div class="d-flex justify-content-between mb-1.5">
+                                            <span class="text-muted">CME Fee + 18% GST:</span>
+                                            <span class="fw-bold text-success">₹2,360.00</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1.5">
+                                            <span class="text-muted">Transaction ID / UTR:</span>
+                                            <span class="fw-bold text-dark">{{ $cmeApp->transaction_id ?: 'N/A' }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1.5">
+                                            <span class="text-muted">Submitted Date:</span>
+                                            <span class="fw-semibold text-dark">{{ $cmeApp->submitted_at ? $cmeApp->submitted_at->format('d M, Y h:i A') : 'N/A' }}</span>
+                                        </div>
+                                        @if($cmeApp->payment_receipt_path)
+                                            <div class="mt-2 text-end">
+                                                <a href="{{ asset('storage/' . $cmeApp->payment_receipt_path) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1" style="font-size: 0.75rem;">
+                                                    <i class="fas fa-file-invoice me-1"></i>View CME Payment Receipt
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             @endif
                         </div>
