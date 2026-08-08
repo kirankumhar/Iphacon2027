@@ -241,6 +241,27 @@ class RegistrationController extends Controller
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
         ];
 
+        // Specific validation for ID Proof Number based on ID Proof Type
+        if ($request->filled('id_proof_type') && ($request->filled('id_proof_number') || !$isDraft)) {
+            $idType = $request->id_proof_type;
+            if ($idType === 'Aadhaar') {
+                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[0-9]{12}$/'];
+                $messages['id_proof_number.regex'] = 'Aadhaar number must be exactly 12 digits.';
+            } elseif ($idType === 'PAN') {
+                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$/'];
+                $messages['id_proof_number.regex'] = 'PAN number must be 10 characters in standard format (e.g. ABCDE1234F).';
+            } elseif ($idType === 'Voter-ID') {
+                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[A-Za-z0-9]{8,12}$/'];
+                $messages['id_proof_number.regex'] = 'Voter ID number must be 8-12 alphanumeric characters.';
+            } elseif ($idType === 'Passport') {
+                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[A-Za-z0-9]{6,12}$/'];
+                $messages['id_proof_number.regex'] = 'Passport number must be 6-12 alphanumeric characters.';
+            } elseif ($idType === 'Driving License') {
+                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[A-Za-z0-9\/-]{8,20}$/'];
+                $messages['id_proof_number.regex'] = 'Driving License number must be 8-20 alphanumeric characters.';
+            }
+        }
+
         $request->validate($rules, $messages);
 
         // Update user information
