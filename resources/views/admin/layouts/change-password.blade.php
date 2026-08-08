@@ -44,7 +44,7 @@
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                         <small class="form-text text-muted">
                             Password must be at least 8 characters long and include uppercase, lowercase, number, and
-                            special character.
+                            special character (!, @, #, $).
                         </small>
                     </div>
 

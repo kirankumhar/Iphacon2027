@@ -185,8 +185,8 @@
             <!-- Hero Section -->
             <tr>
               <td class="hero">
-                <h2>Registration Confirmed!</h2>
-                <p>Dear <strong>{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? 'Delegate' }}</strong>, thank you for completing your registration for IPHACON 2027.</p>
+                <h2>Delegate Registration Confirmation</h2>
+                <p>Dear <strong>{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? 'Delegate' }}</strong>, you are succesfully registered as IPHACON 2027 Delegate.</p>
               </td>
             </tr>
 

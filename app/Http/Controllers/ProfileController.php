@@ -83,8 +83,18 @@ class ProfileController extends Controller
                 'confirmed',
                 Password::min(6)
                     ->mixedCase()
-                    ->numbers()
-                    ->symbols()
+                    ->numbers(),
+                function ($attribute, $value, $fail) {
+                    if (preg_match_all('/[a-zA-Z]/', $value) < 4) {
+                        $fail('The password must contain at least 4 alphabetic letters (A-Z, a-z).');
+                    }
+                    if (!preg_match('/[!@#$]/', $value)) {
+                        $fail('The password must contain at least one special symbol (!, @, #, or $).');
+                    }
+                    if (preg_match('/[^A-Za-z0-9!@#$]/', $value)) {
+                        $fail('Other special characters are not allowed. Only (!, @, #, $) are permitted as symbols.');
+                    }
+                }
             ],
         ]);
 

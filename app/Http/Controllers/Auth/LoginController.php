@@ -19,7 +19,7 @@ class LoginController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:8',
             'captcha' => 'required|captcha'
         ], [
             'captcha.captcha' => 'Invalid CAPTCHA. Please try again.',

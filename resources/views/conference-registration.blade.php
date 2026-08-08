@@ -194,6 +194,9 @@
                                                 <span id="req-length" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
                                                     <i class="far fa-circle me-1 opacity-50"></i>8+ Chars
                                                 </span>
+                                                <span id="req-letters" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
+                                                    <i class="far fa-circle me-1 opacity-50"></i>4+ Letters
+                                                </span>
                                                 <span id="req-uppercase" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
                                                     <i class="far fa-circle me-1 opacity-50"></i>Uppercase
                                                 </span>
@@ -201,7 +204,7 @@
                                                     <i class="far fa-circle me-1 opacity-50"></i>Number
                                                 </span>
                                                 <span id="req-symbol" class="badge bg-light text-muted border fw-normal transition-all py-1 px-1.5">
-                                                    <i class="far fa-circle me-1 opacity-50"></i>Symbol
+                                                    <i class="far fa-circle me-1 opacity-50"></i>Symbol (!@#$)
                                                 </span>
                                             </div>
                                         </div>
@@ -418,6 +421,7 @@
                 const lengthBadge = document.getElementById('pw-length-badge');
 
                 const reqLength = document.getElementById('req-length');
+                const reqLetters = document.getElementById('req-letters');
                 const reqUpper = document.getElementById('req-uppercase');
                 const reqNumber = document.getElementById('req-number');
                 const reqSymbol = document.getElementById('req-symbol');
@@ -430,34 +434,57 @@
                 if (wrapper) wrapper.classList.remove('d-none');
 
                 const hasMinLen = val.length >= 8;
+                const letterCount = (val.match(/[a-zA-Z]/g) || []).length;
+                const has4Letters = letterCount >= 4;
                 const hasUpper = /[A-Z]/.test(val);
                 const hasNum = /\d/.test(val);
-                const hasSym = /[^a-zA-Z0-9]/.test(val);
+                const hasValidSym = /[!@#$]/.test(val);
+                const hasInvalidSym = /[^a-zA-Z0-9!@#$]/.test(val);
+                const hasSym = hasValidSym && !hasInvalidSym;
 
                 updateReqBadge(reqLength, hasMinLen, '8+ Chars');
+                updateReqBadge(reqLetters, has4Letters, '4+ Letters');
                 updateReqBadge(reqUpper, hasUpper, 'Uppercase');
                 updateReqBadge(reqNumber, hasNum, 'Number');
-                updateReqBadge(reqSymbol, hasSym, 'Symbol');
 
-                let passedCount = (hasMinLen ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNum ? 1 : 0) + (hasSym ? 1 : 0);
-                if (val.length >= 12) passedCount++;
+                if (hasInvalidSym) {
+                    if (reqSymbol) {
+                        reqSymbol.className = 'badge bg-danger-subtle text-danger border border-danger-subtle fw-medium transition-all py-1 px-1.5';
+                        reqSymbol.innerHTML = '<i class="fas fa-times-circle me-1 text-danger"></i>Only !@#$ Allowed';
+                    }
+                } else {
+                    updateReqBadge(reqSymbol, hasSym, 'Symbol (!@#$)');
+                }
+
+                let passedCount = (hasMinLen ? 1 : 0) + (has4Letters ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNum ? 1 : 0) + (hasSym ? 1 : 0);
+                if (val.length >= 12 && !hasInvalidSym) passedCount++;
 
                 if (lengthBadge) {
                     lengthBadge.textContent = val.length + '/8 min';
-                    lengthBadge.className = hasMinLen ? 'extra-small text-success fw-bold' : 'extra-small text-danger fw-medium';
+                    lengthBadge.className = hasMinLen && has4Letters && !hasInvalidSym ? 'extra-small text-success fw-bold' : 'extra-small text-danger fw-medium';
                 }
 
-                if (!hasMinLen) {
+                if (hasInvalidSym) {
+                    bar.style.width = '30%';
+                    bar.style.backgroundColor = '#dc3545';
+                    text.className = 'extra-small fw-bold text-danger';
+                    text.innerHTML = '<i class="fas fa-times-circle me-1"></i> Invalid Symbol! Only !, @, #, $ allowed';
+                } else if (!has4Letters) {
+                    bar.style.width = '30%';
+                    bar.style.backgroundColor = '#dc3545';
+                    text.className = 'extra-small fw-bold text-danger';
+                    text.innerHTML = '<i class="fas fa-times-circle me-1"></i> Min 4 letters required (' + letterCount + '/4)';
+                } else if (!hasMinLen) {
                     bar.style.width = Math.min((val.length / 8) * 25, 25) + '%';
                     bar.style.backgroundColor = '#dc3545';
                     text.className = 'extra-small fw-bold text-danger';
                     text.innerHTML = '<i class="fas fa-times-circle me-1"></i> Too Short (Min 8)';
-                } else if (passedCount <= 2) {
+                } else if (passedCount <= 3) {
                     bar.style.width = '45%';
                     bar.style.backgroundColor = '#ffc107';
                     text.className = 'extra-small fw-bold text-warning';
                     text.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Weak Strength';
-                } else if (passedCount === 3) {
+                } else if (passedCount === 4) {
                     bar.style.width = '75%';
                     bar.style.backgroundColor = '#0dcaf0';
                     text.className = 'extra-small fw-bold text-info';

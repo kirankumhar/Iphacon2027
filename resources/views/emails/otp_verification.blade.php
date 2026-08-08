@@ -145,8 +145,8 @@
             <!-- Hero Section -->
             <tr>
               <td class="hero">
-                <h2>Email Verification OTP</h2>
-                <p>Hello <strong>{{ $user->full_name ?? 'Delegate' }}</strong>, welcome to IPHACON 2027 registration.</p>
+                <h2>Your Verification OTP is</h2>
+                <p>Hello <strong>{{ $user->full_name ?? 'Delegate' }}</strong>, Welcome to IPHACON 2027 Registration.</p>
               </td>
             </tr>
 

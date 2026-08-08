@@ -216,8 +216,8 @@
                         message: "At least one number."
                     },
                     {
-                        regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
-                        message: "At least one special character."
+                        regex: /[!@#$]/,
+                        message: "At least one special character (!, @, #, $)."
                     }
 
                 ];

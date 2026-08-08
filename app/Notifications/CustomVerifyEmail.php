@@ -17,7 +17,7 @@ class CustomVerifyEmail extends Notification
         $otp = $notifiable->otp;
 
         return (new MailMessage)
-            ->subject('Email Verification OTP - IPHACON 2027')
+            ->subject('OTP for Account Verification - IPHACON 2027')
             ->view('emails.otp_verification', [
                 'user' => $notifiable,
                 'otp' => $otp

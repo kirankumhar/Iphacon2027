@@ -91,7 +91,7 @@
                                 </button>
                             </div>
                             <div class="text-muted mt-1" style="font-size: 0.78rem;">
-                                Must have: 1 uppercase, 1 lowercase, 1 number, 1 special char (min 6 chars).
+                                Must have: 1 uppercase, 1 lowercase, 1 number, 1 special char (!, @, #, or $) (min 6 chars).
                             </div>
                             @error('password')
                                 <div class="text-danger small mt-1" style="font-size: 0.8rem;">{{ $message }}</div>
