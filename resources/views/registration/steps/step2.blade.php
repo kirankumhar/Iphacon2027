@@ -284,8 +284,8 @@
                         <i class="fas fa-calculator"></i>
                     </div>
                     <div>
-                        <h6 class="text-uppercase text-white-50 mb-0.5 fw-bold extra-small" style="letter-spacing: 0.5px;">Summary Breakdown</h6>
-                        <h6 class="text-white fw-bold mb-0 extra-small">Calculated Registration Fee</h6>
+                        <h6 class="text-uppercase text-white-50 mb-0.5 fw-bold extra-small" style="letter-spacing: 0.5px;">Registration Fee Summary</h6>
+                        <h6 class="text-white fw-bold mb-0 extra-small">Amount to be Paid</h6>
                     </div>
                 </div>
             </div>
