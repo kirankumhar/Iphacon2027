@@ -49,14 +49,35 @@
         border-color: #93c5fd;
         background: #f0f9ff;
     }
-    .step2-radio-input:checked + .step2-radio-card {
+    .step2-radio-input-yes:checked + .step2-radio-card {
         border-color: #2D69FF;
         background: #E1F0FF;
         box-shadow: 0 2px 8px rgba(45, 105, 255, 0.12);
     }
-    .step2-radio-input:checked + .step2-radio-card .radio-title {
+    .step2-radio-input-yes:checked + .step2-radio-card .radio-title {
         color: #2D69FF;
         font-weight: 700;
+    }
+    .step2-radio-input-yes:checked + .step2-radio-card .radio-icon {
+        color: #2D69FF !important;
+    }
+
+    .step2-radio-input-no:checked + .step2-radio-card {
+        border-color: #EF4444 !important;
+        background: #FEF2F2 !important;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15) !important;
+    }
+    .step2-radio-input-no:checked + .step2-radio-card .radio-title {
+        color: #DC2626 !important;
+        font-weight: 700 !important;
+    }
+    .step2-radio-input-no:checked + .step2-radio-card .radio-icon {
+        color: #DC2626 !important;
+    }
+    .step2-radio-input-no:checked + .step2-radio-card .no-badge {
+        background-color: #FEE2E2 !important;
+        color: #DC2626 !important;
+        font-weight: 700 !important;
     }
     .total-fee-banner {
         background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -206,11 +227,11 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="w-100 m-0">
-                                    <input class="d-none step2-radio-input" type="radio" name="accompanying_persons" id="acc_yes" value="1"
+                                    <input class="d-none step2-radio-input step2-radio-input-yes" type="radio" name="accompanying_persons" id="acc_yes" value="1"
                                         {{ old('accompanying_persons', $registration->accompanying_persons) == 1 ? 'checked' : '' }}>
                                     <div class="step2-radio-card">
                                         <div class="d-flex align-items-center gap-1.5">
-                                            <i class="fas fa-user-check text-primary extra-small"></i>
+                                            <i class="fas fa-user-check text-primary extra-small radio-icon"></i>
                                             <span class="radio-title extra-small fw-semibold">Yes</span>
                                         </div>
                                         <span class="badge extra-small" style="background-color: #DCFFF0; color: #4BAA7D; font-weight: 700;">+ ₹5,000</span>
@@ -219,14 +240,14 @@
                             </div>
                             <div class="col-6">
                                 <label class="w-100 m-0">
-                                    <input class="d-none step2-radio-input" type="radio" name="accompanying_persons" id="acc_no" value="0"
+                                    <input class="d-none step2-radio-input step2-radio-input-no" type="radio" name="accompanying_persons" id="acc_no" value="0"
                                         {{ old('accompanying_persons', $registration->accompanying_persons) == 0 || old('accompanying_persons', $registration->accompanying_persons) === 0 ? 'checked' : '' }}>
                                     <div class="step2-radio-card">
                                         <div class="d-flex align-items-center gap-1.5">
-                                            <i class="fas fa-user-times text-muted extra-small"></i>
+                                            <i class="fas fa-user-times text-muted extra-small radio-icon"></i>
                                             <span class="radio-title extra-small fw-semibold">No</span>
                                         </div>
-                                        <span class="badge bg-light text-muted extra-small">₹0</span>
+                                        <span class="badge bg-light text-muted extra-small no-badge">₹0</span>
                                     </div>
                                 </label>
                             </div>
@@ -246,11 +267,11 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="w-100 m-0">
-                                    <input class="d-none step2-radio-input" type="radio" name="participate_in_cme" id="cme_yes" value="1"
+                                    <input class="d-none step2-radio-input step2-radio-input-yes" type="radio" name="participate_in_cme" id="cme_yes" value="1"
                                         {{ old('participate_in_cme', $registration->participate_in_cme) == 1 ? 'checked' : '' }}>
                                     <div class="step2-radio-card">
                                         <div class="d-flex align-items-center gap-1.5">
-                                            <i class="fas fa-check-circle text-primary extra-small"></i>
+                                            <i class="fas fa-check-circle text-primary extra-small radio-icon"></i>
                                             <span class="radio-title extra-small fw-semibold">Yes</span>
                                         </div>
                                         <span class="badge extra-small" style="background-color: #DCFFF0; color: #4BAA7D; font-weight: 700;">+ ₹2,000</span>
@@ -259,14 +280,14 @@
                             </div>
                             <div class="col-6">
                                 <label class="w-100 m-0">
-                                    <input class="d-none step2-radio-input" type="radio" name="participate_in_cme" id="cme_no" value="0"
+                                    <input class="d-none step2-radio-input step2-radio-input-no" type="radio" name="participate_in_cme" id="cme_no" value="0"
                                         {{ old('participate_in_cme', $registration->participate_in_cme) == 0 || old('participate_in_cme', $registration->participate_in_cme) === null ? 'checked' : '' }}>
                                     <div class="step2-radio-card">
                                         <div class="d-flex align-items-center gap-1.5">
-                                            <i class="fas fa-times-circle text-muted extra-small"></i>
+                                            <i class="fas fa-times-circle text-muted extra-small radio-icon"></i>
                                             <span class="radio-title extra-small fw-semibold">No</span>
                                         </div>
-                                        <span class="badge bg-light text-muted extra-small">₹0</span>
+                                        <span class="badge bg-light text-muted extra-small no-badge">₹0</span>
                                     </div>
                                 </label>
                             </div>
