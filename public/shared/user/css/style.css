@@ -853,20 +853,26 @@ hr {
     right: 1.875rem; /* 30px */
     bottom: 1.875rem; /* 30px */
     z-index: 999;
-    width: 1.875rem; /* 30px */
-    height: 1.875rem; /* 30px */
-    font-size: 1rem; /* 16px */
-    color: #1b2032;
-    line-height: 1.875rem; /* 30px */
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.1rem;
+    color: #ffffff !important;
+    line-height: 2.5rem;
     text-align: center;
-    background: #ffc600;
-    background: -o-linear-gradient(45deg, #ffc600 1%, #ff6c00 100%);
-    background: linear-gradient(45deg, #ffc600 1%, #ff6c00 100%);
+    background: #10B981 !important;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
     display: none;
-    border-radius: 1.25rem; /* 20px */
+    border-radius: 50% !important;
     cursor: pointer;
-    -webkit-box-shadow: 0 0.1875rem 0.625rem rgba(0, 0, 0, 0.1); /* 0 3px 10px */
-    box-shadow: 0 0.1875rem 0.625rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    transition: all 0.3s ease;
+}
+
+.scroll-to-top:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
 }
 
 .play-now {

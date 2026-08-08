@@ -347,6 +347,23 @@
 
     </div>
     <!--Scroll to top-->
+    <style>
+        .scroll-to-top {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+            border-radius: 50% !important;
+            width: 40px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            font-size: 18px !important;
+        }
+        .scroll-to-top:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            color: #ffffff !important;
+            transform: translateY(-3px) !important;
+        }
+    </style>
     <div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-up"></span></div>
 
     <script src="{{ asset('shared/user/js/jquery.js') }}"></script>
