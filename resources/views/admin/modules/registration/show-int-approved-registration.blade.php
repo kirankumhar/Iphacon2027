@@ -82,7 +82,7 @@
                                 </td>
                                 <td>
                                     <div class="fw-bold text-success fs-6 mb-1">
-                                        $175.00 USD
+                                        ₹45,000.00 INR
                                     </div>
                                     @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
                                         <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-primary rounded-pill px-2.5 py-0.5 extra-small fw-semibold">

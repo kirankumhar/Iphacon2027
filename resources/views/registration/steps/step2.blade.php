@@ -97,7 +97,7 @@
                 <strong class="d-block text-dark extra-small">
                     Registration Mode: <span class="text-primary">{{ $user->delegate_type }} Delegate</span>
                 </strong>
-                <small class="text-muted extra-small">Currency: <strong>{{ $user->delegate_type == 'Indian' ? 'INR (₹)' : 'USD ($)' }}</strong></small>
+                <small class="text-muted extra-small">Currency: <strong>INR (₹)</strong></small>
             </div>
         </div>
         <span class="badge px-2.5 py-1 extra-small fw-semibold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px;">
