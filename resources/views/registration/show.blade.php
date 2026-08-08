@@ -338,9 +338,15 @@
                                             </div>
                                             <div class="d-flex justify-content-between mb-1">
                                                 <span class="text-muted">Payment Status:</span>
-                                                <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1 rounded-pill fw-bold">
-                                                    {{ $payment->payment_status === 'Approved' || $registration->status === 'Approved' ? 'Approved' : 'Pending for Verification' }}
-                                                </span>
+                                                @if ($payment->payment_status === 'Approved' || $payment->payment_status === 'PAID' || $payment->payment_status === 'Success' || $registration->status === 'Approved')
+                                                    <span class="badge bg-success-subtle text-success border border-success px-2.5 py-1 rounded-pill fw-bold">
+                                                        <i class="fas fa-check-circle me-1"></i>PAID
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1 rounded-pill fw-bold">
+                                                        <i class="fas fa-hourglass-half me-1"></i>Pending for Verification
+                                                    </span>
+                                                @endif
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <span class="text-muted">Payment Method:</span>
@@ -371,9 +377,9 @@
                                         @php
                                             $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
                                             $cmeStatusText = 'Pending for Verification';
-                                            if ($cmeApp->status === 'Approved') {
+                                            if ($cmeApp->status === 'Approved' || $registration->status === 'Approved') {
                                                 $cmeBadgeClass = 'bg-success-subtle text-success border-success';
-                                                $cmeStatusText = 'Approved';
+                                                $cmeStatusText = 'PAID';
                                             } elseif ($cmeApp->status === 'Rejected') {
                                                 $cmeBadgeClass = 'bg-danger-subtle text-danger border-danger';
                                                 $cmeStatusText = 'Rejected';
@@ -383,6 +389,9 @@
                                             }
                                         @endphp
                                         <span class="badge {{ $cmeBadgeClass }} border px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
+                                            @if($cmeStatusText === 'PAID')
+                                                <i class="fas fa-check-circle me-1"></i>
+                                            @endif
                                             {{ $cmeStatusText }}
                                         </span>
                                     </div>

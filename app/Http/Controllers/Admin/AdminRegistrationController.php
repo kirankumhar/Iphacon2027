@@ -276,6 +276,12 @@ class AdminRegistrationController extends Controller
             $registration->approved_at = now();
             $registration->save();
 
+            // Also update associated payment records status to PAID
+            $registration->payments()->update([
+                'payment_status' => 'PAID',
+                'admin_verified' => true
+            ]);
+
             return redirect()->back()->with('success', "Registration successfully marked Approved. Reg No: {$registration->registration_number}");
         }
 

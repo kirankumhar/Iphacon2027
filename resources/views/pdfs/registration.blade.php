@@ -314,8 +314,8 @@
                 <td style="width: 34%;">
                     <div class="info-label">Payment Status</div>
                     <div class="info-value">
-                        @if(($registration->latestPayment->payment_status ?? '') === 'Success' || $registration->status === 'Approved')
-                            <span class="status-paid">SUCCESSFUL</span>
+                        @if(($registration->latestPayment->payment_status ?? '') === 'Success' || ($registration->latestPayment->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
+                            <span class="status-paid">PAID</span>
                         @else
                             <span class="status-pending">{{ strtoupper($registration->status ?? 'PENDING') }}</span>
                         @endif
