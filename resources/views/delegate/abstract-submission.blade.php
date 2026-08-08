@@ -311,16 +311,52 @@
 
             <!-- Co-authors Sub-section -->
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary mb-0">
-                    <i class="fas fa-user-friends me-1.5"></i>Co-Authors Details
-                </h6>
+                <div>
+                    <h6 class="fw-bold text-primary mb-0 d-inline-block me-2">
+                        <i class="fas fa-user-friends me-1.5"></i>Co-Authors Details
+                    </h6>
+                    <span class="badge bg-light text-dark border font-monospace" id="coAuthorCountBadge">0 / 10 Co-Authors</span>
+                </div>
                 <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="addCoAuthorBtn" onclick="addCoAuthorRow()" style="border-radius: 8px;">
-                    <i class="fas fa-plus me-1"></i> Add Another Author
+                    <i class="fas fa-plus me-1"></i> Add Co-Author
                 </button>
             </div>
 
             <div id="coAuthorsContainer" class="d-flex flex-column gap-3 mb-2">
-                <!-- Dynamic Co-author rows will be inserted here -->
+                @if (!empty($abstract?->co_authors) && is_array($abstract->co_authors))
+                    @foreach ($abstract->co_authors as $index => $ca)
+                        <div class="co-author-box" id="coAuthorBox_{{ $index + 1 }}">
+                            <button type="button" class="btn-remove-author" onclick="removeCoAuthorRow({{ $index + 1 }})" title="Remove Author">
+                                <i class="fas fa-trash-alt me-1"></i> Remove
+                            </button>
+                            <div class="fw-bold text-secondary mb-2.5" style="font-size: 0.85rem;">
+                                <i class="fas fa-user-plus me-1 text-primary"></i> Co-Author #{{ $index + 1 }}
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6 col-lg-4">
+                                    <label class="form-label fw-semibold text-dark small mb-1">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" name="co_author_name[]" value="{{ $ca['name'] ?? '' }}" placeholder="Co-author full name" required oninput="this.classList.remove('is-invalid')">
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <label class="form-label fw-semibold text-dark small mb-1">Designation <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" name="co_author_designation[]" value="{{ $ca['designation'] ?? '' }}" placeholder="Designation" required oninput="this.classList.remove('is-invalid')">
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <label class="form-label fw-semibold text-dark small mb-1">Department <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" name="co_author_department[]" value="{{ $ca['department'] ?? '' }}" placeholder="Department" required oninput="this.classList.remove('is-invalid')">
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <label class="form-label fw-semibold text-dark small mb-1">Institution <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" name="co_author_institution[]" value="{{ $ca['institution'] ?? '' }}" placeholder="Institution" required oninput="this.classList.remove('is-invalid')">
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <label class="form-label fw-semibold text-dark small mb-1">Email <span class="text-muted fw-normal">(Optional)</span></label>
+                                    <input type="email" class="form-control form-control-sm" name="co_author_email[]" value="{{ $ca['email'] ?? '' }}" placeholder="Email address">
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
         </div>
 
@@ -597,10 +633,73 @@
 
 <script>
     let coAuthorCount = 0;
+    const MAX_CO_AUTHORS = 10;
+
+    function updateCoAuthorBadge() {
+        const container = document.getElementById('coAuthorsContainer');
+        if (!container) return;
+        const existingBoxes = container.querySelectorAll('.co-author-box');
+        const count = existingBoxes.length;
+
+        const badge = document.getElementById('coAuthorCountBadge');
+        if (badge) {
+            badge.innerText = `${count} / ${MAX_CO_AUTHORS} Co-Authors`;
+            if (count >= MAX_CO_AUTHORS) {
+                badge.className = 'badge bg-danger text-white border ms-1 font-monospace';
+            } else {
+                badge.className = 'badge bg-light text-dark border ms-1 font-monospace';
+            }
+        }
+
+        const btn = document.getElementById('addCoAuthorBtn');
+        if (btn) {
+            if (count >= MAX_CO_AUTHORS) {
+                btn.disabled = true;
+                btn.classList.add('disabled');
+                btn.title = 'Maximum limit of 10 co-authors reached';
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('disabled');
+                btn.title = '';
+            }
+        }
+    }
 
     function addCoAuthorRow() {
-        coAuthorCount++;
         const container = document.getElementById('coAuthorsContainer');
+        const existingBoxes = container.querySelectorAll('.co-author-box');
+
+        // 1. Max 10 Co-authors limit check
+        if (existingBoxes.length >= MAX_CO_AUTHORS) {
+            alert(`You can add a maximum of ${MAX_CO_AUTHORS} co-authors.`);
+            return;
+        }
+
+        // 2. Validate current/previous co-author fields before adding a new co-author
+        if (existingBoxes.length > 0) {
+            const lastBox = existingBoxes[existingBoxes.length - 1];
+            const requiredInputs = lastBox.querySelectorAll('input[required]');
+            let hasEmpty = false;
+
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    hasEmpty = true;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (hasEmpty) {
+                alert('Please fill out all required fields (Full Name, Designation, Department, Institution) for the current co-author before adding a new co-author.');
+                const firstEmpty = lastBox.querySelector('.is-invalid');
+                if (firstEmpty) firstEmpty.focus();
+                return;
+            }
+        }
+
+        coAuthorCount++;
+        const boxNumber = existingBoxes.length + 1;
         const box = document.createElement('div');
         box.className = 'co-author-box';
         box.id = `coAuthorBox_${coAuthorCount}`;
@@ -610,24 +709,24 @@
                 <i class="fas fa-trash-alt me-1"></i> Remove
             </button>
             <div class="fw-bold text-secondary mb-2.5" style="font-size: 0.85rem;">
-                <i class="fas fa-user-plus me-1 text-primary"></i> Co-Author #${coAuthorCount}
+                <i class="fas fa-user-plus me-1 text-primary"></i> Co-Author #${boxNumber}
             </div>
             <div class="row g-3">
                 <div class="col-md-6 col-lg-4">
-                    <label class="form-label fw-semibold text-dark small mb-1">Full Name</label>
-                    <input type="text" class="form-control form-control-sm" name="co_author_name[]" placeholder="Co-author full name">
+                    <label class="form-label fw-semibold text-dark small mb-1">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" name="co_author_name[]" placeholder="Co-author full name" required oninput="this.classList.remove('is-invalid')">
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <label class="form-label fw-semibold text-dark small mb-1">Designation</label>
-                    <input type="text" class="form-control form-control-sm" name="co_author_designation[]" placeholder="Designation">
+                    <label class="form-label fw-semibold text-dark small mb-1">Designation <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" name="co_author_designation[]" placeholder="Designation" required oninput="this.classList.remove('is-invalid')">
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <label class="form-label fw-semibold text-dark small mb-1">Department</label>
-                    <input type="text" class="form-control form-control-sm" name="co_author_department[]" placeholder="Department">
+                    <label class="form-label fw-semibold text-dark small mb-1">Department <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" name="co_author_department[]" placeholder="Department" required oninput="this.classList.remove('is-invalid')">
                 </div>
                 <div class="col-md-6 col-lg-6">
-                    <label class="form-label fw-semibold text-dark small mb-1">Institution</label>
-                    <input type="text" class="form-control form-control-sm" name="co_author_institution[]" placeholder="Institution">
+                    <label class="form-label fw-semibold text-dark small mb-1">Institution <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" name="co_author_institution[]" placeholder="Institution" required oninput="this.classList.remove('is-invalid')">
                 </div>
                 <div class="col-md-6 col-lg-6">
                     <label class="form-label fw-semibold text-dark small mb-1">Email <span class="text-muted fw-normal">(Optional)</span></label>
@@ -636,12 +735,36 @@
             </div>
         `;
         container.appendChild(box);
+        updateCoAuthorBadge();
+
+        const newFirstInput = box.querySelector('input');
+        if (newFirstInput) newFirstInput.focus();
     }
 
     function removeCoAuthorRow(id) {
         const el = document.getElementById(`coAuthorBox_${id}`);
         if (el) el.remove();
+
+        const container = document.getElementById('coAuthorsContainer');
+        if (container) {
+            const remainingBoxes = container.querySelectorAll('.co-author-box');
+            remainingBoxes.forEach((box, index) => {
+                const label = box.querySelector('.fw-bold.text-secondary');
+                if (label) {
+                    label.innerHTML = `<i class="fas fa-user-plus me-1 text-primary"></i> Co-Author #${index + 1}`;
+                }
+            });
+        }
+        updateCoAuthorBadge();
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('coAuthorsContainer');
+        if (container) {
+            coAuthorCount = container.querySelectorAll('.co-author-box').length;
+            updateCoAuthorBadge();
+        }
+    });
 
     function toggleOtherCategory(select) {
         const wrapper = document.getElementById('other_category_wrapper');
