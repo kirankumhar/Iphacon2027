@@ -161,7 +161,7 @@
                         <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
                     </select>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
-                        value="{{ old('full_name', $user->full_name) }}" required maxlength="50"
+                        value="" required maxlength="50"
                         pattern="[A-Za-z. ]{2,}" placeholder="Enter your full name"
                         oninput="this.value = this.value.replace(/[^A-Za-z. ]/g, '')"
                         style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
@@ -197,10 +197,23 @@
                         <label for="dob" class="form-label">
                             <i class="fas fa-calendar form-icon"></i>Date of Birth<span class="required-star">*</span>
                         </label>
+                        @php
+                            $maxDob18Years = date('Y-m-d', strtotime('-18 years'));
+                            $dobVal = old('dob');
+                            if (!$dobVal && $user->date_of_birth) {
+                                $formattedUserDob = $user->date_of_birth->format('Y-m-d');
+                                if ($formattedUserDob !== '1990-01-01') {
+                                    $dobVal = $formattedUserDob;
+                                }
+                            }
+                            if (!$dobVal) {
+                                $dobVal = $maxDob18Years;
+                            }
+                        @endphp
                         <input type="date" class="form-control @error('dob') is-invalid @enderror" id="dob"
                             name="dob"
-                            value="{{ old('dob', $user->date_of_birth ? $user->date_of_birth->format('Y-m-d') : '') }}"
-                            required max="{{ date('Y-m-d', strtotime('-18 years')) }}" />
+                            value="{{ $dobVal }}"
+                            required max="{{ $maxDob18Years }}" />
                         <small id="ageDisplay" class="form-text text-muted"></small>
                         @error('dob')
                             <div class="invalid-feedback">{{ $message }}</div>

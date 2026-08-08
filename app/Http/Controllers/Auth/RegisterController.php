@@ -93,7 +93,7 @@ class RegisterController extends Controller
             'prefix' => $prefix,
             'full_name' => $request->full_name ?? $defaultName,
             'gender' => $request->gender ?? 'Male',
-            'date_of_birth' => $request->date_of_birth ?? '1990-01-01',
+            'date_of_birth' => $request->date_of_birth ?? date('Y-m-d', strtotime('-18 years')),
             'country_id' => $country_id,
             'mobile_country_code' => $country_code,
             'mobile_number' => $request->mobile_number ?? '',

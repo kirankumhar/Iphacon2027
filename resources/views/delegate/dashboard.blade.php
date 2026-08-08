@@ -15,7 +15,7 @@
                                 <i class="fas fa-check-circle me-1"></i>Verified Account
                             </span>
                         </div>
-                        <h4 class="fw-bold mt-1  text-light" style="letter-spacing: -0.3px;">
+                        <h4 class="fw-bold mt-1 text-light" style="letter-spacing: -0.3px;">
                             Welcome, {{ Auth::user()->full_name ?? 'Delegate' }}!
                         </h4>
                         <p class="text-white-50 mb-0" style="font-size: 0.85rem;">

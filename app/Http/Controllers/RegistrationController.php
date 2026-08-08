@@ -217,7 +217,7 @@ class RegistrationController extends Controller
             'prefix' => 'nullable|string|in:Dr.,Mr.,Mrs.,Prof.',
             'full_name' => 'nullable|string|max:100',
             'gender' => 'nullable|in:Male,Female',
-            'dob' => 'nullable|date|before:-18 years',
+            'dob' => $isDraft ? 'nullable|date|before_or_equal:-18 years' : 'required|date|before_or_equal:-18 years',
             'mobile_number' => 'nullable|string|max:18',
             'photo' => $registration->photo_path !== null ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : 'required|image|mimes:jpg,jpeg,png|max:500'),
             'address' => $isDraft ? 'nullable|string|max:500' : 'required|string|max:500',
@@ -237,6 +237,8 @@ class RegistrationController extends Controller
             'photo.image' => 'Profile photo must be a valid image file.',
             'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
             'photo.max' => 'Profile photo must not exceed 500KB.',
+            'dob.required' => 'Please select your Date of Birth.',
+            'dob.before_or_equal' => 'You must be at least 18 years old.',
             'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
         ];
