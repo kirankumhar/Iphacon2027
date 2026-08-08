@@ -640,6 +640,6 @@ class RegistrationController extends Controller
 
         $encrypted = Crypt::encryptString($gatewayData);
 
-        return redirect()->route('payment.gateway', $encrypted);
+        return redirect()->route('cme.payment.gateway', $encrypted);
     }
 }

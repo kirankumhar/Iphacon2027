@@ -102,6 +102,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 🎓 CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
     Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
+    Route::get('cme-payment/gateway/{encCmeAppId}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
+    Route::post('cme-payment/process/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'processCmePayment'])->name('cme.payment.process');
 
 
     Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])

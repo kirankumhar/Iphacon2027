@@ -394,27 +394,17 @@ class PaymentController extends Controller
                 'public'
             );
 
-            $isCmeOnly = $registration->status !== 'Draft' && $registration->step_completed >= 4;
-
-            if ($isCmeOnly) {
-                $delegateCategoryFee = 0.00;
+            $totalAmount = $registration->calculateTotalAmount();
+            if ($registration->delegate_type === 'International') {
+                $delegateCategoryFee = $totalAmount;
                 $accompanyingPersonsFee = 0.00;
-                $cmeFee = 2000.00;
-                $gstAmount = 360.00;
-                $totalAmount = 2360.00;
+                $cmeFee = 0.00;
+                $gstAmount = 0.00;
             } else {
-                $totalAmount = $registration->calculateTotalAmount();
-                if ($registration->delegate_type === 'International') {
-                    $delegateCategoryFee = $totalAmount;
-                    $accompanyingPersonsFee = 0.00;
-                    $cmeFee = 0.00;
-                    $gstAmount = 0.00;
-                } else {
-                    $delegateCategoryFee = round($totalAmount / 1.18, 2);
-                    $accompanyingPersonsFee = ($registration->accompanying_persons ?? 0) * 5000;
-                    $cmeFee = $registration->participate_in_cme ? 2000 : 0;
-                    $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
-                }
+                $delegateCategoryFee = round($totalAmount / 1.18, 2);
+                $accompanyingPersonsFee = ($registration->accompanying_persons ?? 0) * 5000;
+                $cmeFee = $registration->participate_in_cme ? 2000 : 0;
+                $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
             }
 
             // Create payment record
@@ -435,19 +425,6 @@ class PaymentController extends Controller
 
             $payment->save();
 
-            // Update CmeApplication record if CME payment
-            if ($isCmeOnly) {
-                $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
-                if ($cmeApp) {
-                    $cmeApp->update([
-                        'transaction_id'       => $request->transaction_id,
-                        'payment_receipt_path' => $receiptPath,
-                        'status'               => 'Payment Submitted',
-                        'submitted_at'         => now(),
-                    ]);
-                }
-            }
-
             // Update registration status
             if (empty($registration->registration_number)) {
                 $registration->registration_number = $registration->generateRegistrationNumber();
@@ -467,6 +444,86 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to submit payment details: ' . $e->getMessage());
+        }
+    }
+
+    public function cmeGateway($encCmeAppId)
+    {
+        $user = Auth::user();
+
+        $decrypted = Crypt::decryptString($encCmeAppId);
+        $stepData = json_decode($decrypted, true);
+
+        if (!isset($stepData['cme_app_id'], $stepData['uid'])) {
+            abort(404);
+        }
+
+        $cmeAppId = (int) $stepData['cme_app_id'];
+
+        $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)
+            ->where('id', $cmeAppId)
+            ->firstOrFail();
+
+        $registration = Registration::where('id', $cmeApp->registration_id)->first();
+
+        return view('payment.cme-gateway', compact('cmeApp', 'registration'));
+    }
+
+    public function processCmePayment(Request $request, $cmeAppId)
+    {
+        $user = Auth::user();
+
+        $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)
+            ->where('id', $cmeAppId)
+            ->firstOrFail();
+
+        $request->validate([
+            'transaction_id'  => 'required|string|max:100',
+            'payment_receipt' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $receiptPath = $request->file('payment_receipt')->store(
+                'cme_receipts/' . $cmeApp->id,
+                'public'
+            );
+
+            // Update CmeApplication record
+            $cmeApp->update([
+                'transaction_id'       => $request->transaction_id,
+                'payment_receipt_path' => $receiptPath,
+                'status'               => 'Payment Submitted',
+                'submitted_at'         => now(),
+            ]);
+
+            // Create explicit payment record for CME
+            $payment = new Payment([
+                'registration_id'          => $cmeApp->registration_id,
+                'delegate_category_fee'    => 0.00,
+                'accompanying_persons_fee' => 0.00,
+                'cme_fee'                  => 2000.00,
+                'gst_amount'               => 360.00,
+                'total_amount'             => 2360.00,
+                'currency'                 => 'INR',
+                'transaction_id'           => $request->transaction_id,
+                'payment_method'           => 'QR_Code',
+                'payment_status'           => 'Pending',
+                'payment_receipt_path'     => $receiptPath,
+                'admin_verified'           => false
+            ]);
+
+            $payment->save();
+
+            DB::commit();
+
+            return redirect()->route('registration.index')
+                ->with('success', 'CME Workshop payment proof submitted successfully! Verification is under process.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to submit CME payment details: ' . $e->getMessage());
         }
     }
 

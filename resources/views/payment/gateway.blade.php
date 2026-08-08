@@ -52,20 +52,12 @@
                                     <div class="card-body p-4 text-center">
 
                                         @php
-                                            $isAlreadyPaid = !empty($isCmeOnly) || ($registration->status !== 'Draft' && $registration->step_completed >= 4);
-
-                                            if ($isAlreadyPaid) {
-                                                $cmeBase = 2000.00;
-                                                $gstAmt = 360.00;
-                                                $totalAmt = 2360.00;
-                                            } else {
-                                                $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                                                $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                                                $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                                                $subtotalBase = $catBase + $cmeBase + $accBase;
-                                                $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                                                $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
-                                            }
+                                            $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                                            $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
+                                            $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                                            $subtotalBase = $catBase + $cmeBase + $accBase;
+                                            $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                                            $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
                                         @endphp
 
                                         <!-- Amount Badge -->
@@ -99,19 +91,6 @@
                                                     <tr>
                                                         <td><strong>Delegate Category (Foreign)</strong></td>
                                                         <td class="text-end fw-bold">$175.00</td>
-                                                    </tr>
-                                                @elseif ($isAlreadyPaid)
-                                                    <tr>
-                                                        <td><strong>CME/Workshop Participation</strong></td>
-                                                        <td class="text-end">₹2,000.00</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><strong>GST Amount (18%)</strong></td>
-                                                        <td class="text-end text-warning fw-bold">+ ₹360.00</td>
-                                                    </tr>
-                                                    <tr class="table-success fw-bold">
-                                                        <td><strong>Total Amount Payable</strong></td>
-                                                        <td class="text-end">₹2,360.00</td>
                                                     </tr>
                                                 @else
                                                     <tr>
