@@ -110,7 +110,7 @@
                         @foreach ($delegateCategories as $category)
                             <option value="{{ $category->id }}" data-fee="{{ $category->indian_fee }}"
                                 {{ old('delegate_category_id', $registration->delegate_category_id) == $category->id ? 'selected' : '' }}>
-                                {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }} (Base)
+                                {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
                             </option>
                         @endforeach
                     </select>
@@ -292,7 +292,7 @@
             <div class="col-md-7 text-md-end">
                 <div class="d-inline-flex flex-wrap gap-2 align-items-center justify-content-md-end">
                     <div class="px-2.5 py-1.5 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
-                        <span class="d-block text-white-50 extra-small fw-semibold">Base Price</span>
+                        <span class="d-block text-white-50 extra-small fw-semibold">Reg. Fee</span>
                         <span class="fw-bold text-white extra-small" id="base-amount">₹0.00</span>
                     </div>
                     <div class="px-2.5 py-1.5 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
