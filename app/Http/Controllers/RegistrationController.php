@@ -390,7 +390,7 @@ class RegistrationController extends Controller
             // International delegate - fixed values
             $updateData = [
                 'delegate_type' => 'International',
-                'delegate_category_id' => 1, // Default category for international
+                'delegate_category_id' => 6, // Foreign Delegates category
                 'accompanying_persons' => 0,
                 'participate_in_cme' => false,
                 'membership_no' => null,

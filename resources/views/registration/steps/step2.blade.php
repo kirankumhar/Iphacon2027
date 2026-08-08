@@ -108,6 +108,9 @@
                         id="delegate_category_id" name="delegate_category_id" required style="border-radius: 0 8px 8px 0;">
                         <option value="">-- Choose Delegate Category --</option>
                         @foreach ($delegateCategories as $category)
+                            @if ($category->id == 6 || str_contains(strtolower($category->category_name), 'foreign'))
+                                @continue
+                            @endif
                             <option value="{{ $category->id }}" data-fee="{{ $category->indian_fee }}"
                                 {{ old('delegate_category_id', $registration->delegate_category_id) == $category->id ? 'selected' : '' }}>
                                 {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
@@ -352,7 +355,7 @@
     </div>
 
     <!-- Hidden fields for international delegates -->
-    <input type="hidden" name="delegate_category_id" value="1">
+    <input type="hidden" name="delegate_category_id" value="6">
     <input type="hidden" name="accompanying_persons" value="0">
     <input type="hidden" name="participate_in_cme" value="0">
     <input type="hidden" name="is_ismm_member" value="0">
