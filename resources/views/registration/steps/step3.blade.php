@@ -116,42 +116,46 @@
                         <table class="table table-sm table-borderless mb-0 align-middle">
                             <tbody>
                                 <tr>
-                                    <td class="text-muted py-1" style="width: 45%;">Category:</td>
-                                    <td class="fw-bold text-dark py-1">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</td>
+                                    <td class="text-muted py-1">Category:</td>
+                                    <td class="fw-bold text-dark py-1 text-end">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</td>
                                 </tr>
                                 @if ($registration->membership_no)
                                     <tr>
-                                        <td class="text-muted py-1">Membership No:</td>
-                                        <td class="py-1"><span class="badge bg-primary-subtle text-primary fw-bold font-monospace">{{ $registration->membership_no }}</span></td>
+                                        <td class="text-muted py-1">IPHA Membership No:</td>
+                                        <td class="py-1 text-end"><span class="badge bg-primary-subtle text-primary fw-bold font-monospace">{{ $registration->membership_no }}</span></td>
                                     </tr>
                                 @endif
-                                <tr>
+                                <tr class="border-top border-light">
                                     <td class="text-muted py-1">Base Reg. Fee:</td>
-                                    <td class="fw-semibold text-dark py-1">₹{{ number_format($catBase, 2) }}</td>
+                                    <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($catBase, 2) }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted py-1">CME Workshop:</td>
-                                    <td class="py-1">
+                                    <td class="text-muted py-1">CME / Workshop:</td>
+                                    <td class="py-1 text-end">
                                         @if ($registration->participate_in_cme)
-                                            <span class="text-success fw-bold">Yes (+₹{{ number_format($cmeBase, 2) }})</span>
+                                            <span class="text-success fw-bold">+ ₹{{ number_format($cmeBase, 2) }}</span>
                                         @else
-                                            <span class="text-muted">No</span>
+                                            <span class="text-muted">₹0.00</span>
                                         @endif
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted py-1">Accompanying Person:</td>
-                                    <td class="py-1">
+                                    <td class="text-muted py-1">Accompanying Persons ({{ $registration->accompanying_persons ?? 0 }}):</td>
+                                    <td class="py-1 text-end">
                                         @if (($registration->accompanying_persons ?? 0) > 0)
-                                            <span class="text-success fw-bold">Yes ({{ $registration->accompanying_persons }} person - +₹{{ number_format($accBase, 2) }})</span>
+                                            <span class="text-success fw-bold">+ ₹{{ number_format($accBase, 2) }}</span>
                                         @else
-                                            <span class="text-muted">No</span>
+                                            <span class="text-muted">₹0.00</span>
                                         @endif
                                     </td>
+                                </tr>
+                                <tr class="border-top border-light">
+                                    <td class="text-muted py-1 fw-semibold">Subtotal:</td>
+                                    <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($subtotalBase, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted py-1">GST (18%):</td>
-                                    <td class="fw-bold text-warning py-1">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                                    <td class="fw-bold text-warning py-1 text-end">+ ₹{{ number_format($gstAmt, 2) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -161,15 +165,15 @@
                             <tbody>
                                 <tr>
                                     <td class="text-muted py-1">Package Type:</td>
-                                    <td class="fw-bold text-dark py-1">International Delegate Package</td>
+                                    <td class="fw-bold text-dark py-1 text-end">International Delegate Package</td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted py-1">Includes:</td>
-                                    <td class="text-dark py-1">All Scientific Sessions & CME Programs</td>
+                                    <td class="text-dark py-1 text-end">All Scientific Sessions & CME Programs</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted py-1">Total Fee:</td>
-                                    <td class="fw-bold text-success py-1 fs-6">$175.00 USD</td>
+                                    <td class="text-muted py-1">Registration Fee:</td>
+                                    <td class="fw-bold text-success py-1 text-end fs-6">$175.00 USD</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -177,22 +181,42 @@
                 </div>
             </div>
 
-            <!-- Compact Total Payable Banner -->
+            <!-- Premium Total Amount Card -->
             @if ($registration->delegate_type == 'Indian')
-                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff;">
-                    <div>
-                        <span class="d-block text-white-50 extra-small fw-semibold">Total Payable Amount</span>
-                        <small class="text-white-50 extra-small">Inclusive of all taxes & GST</small>
+                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(45, 105, 255, 0.25);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); color: #DCFFF0; font-size: 0.88rem;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>
+                                <span class="d-block text-white-50 extra-small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Total Amount Payable</span>
+                                <small class="text-white-50 extra-small" style="font-size: 0.72rem;">Inclusive of 18% GST</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">₹{{ number_format($totalAmt ?? 0, 2) }}</h4>
+                        </div>
                     </div>
-                    <h5 class="mb-0 fw-extrabold" style="color: #DCFFF0;">₹{{ number_format($totalAmt ?? 175, 2) }}</h5>
                 </div>
             @else
-                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff;">
-                    <div>
-                        <span class="d-block text-white-50 extra-small fw-semibold">Total Payable Amount</span>
-                        <small class="text-white-50 extra-small">Fixed fee USD</small>
+                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(45, 105, 255, 0.25);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); color: #DCFFF0; font-size: 0.88rem;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>
+                                <span class="d-block text-white-50 extra-small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Total Amount Payable</span>
+                                <small class="text-white-50 extra-small" style="font-size: 0.72rem;">Fixed Package Fee</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">$175.00 <span style="font-size: 0.75rem;">USD</span></h4>
+                        </div>
                     </div>
-                    <h5 class="mb-0 fw-extrabold" style="color: #DCFFF0;">$175.00 USD</h5>
                 </div>
             @endif
         </div>
