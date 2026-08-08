@@ -346,8 +346,8 @@ class RegistrationController extends Controller
 
             $categoryId = $request->delegate_category_id;
 
-            // Categories 1 (IPHA Member) and 3 (PG/PhD/MPH Student Member) require membership number
-            if (in_array($categoryId, [1, 3])) {
+            // ONLY Category 1 (IPHA Member) requires membership number
+            if ($categoryId == 1) {
                 $rules = array_merge($rules, [
                     'ismm_membership_no' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
                     'accompanying_persons' => 'nullable|integer|min:0|max:10',

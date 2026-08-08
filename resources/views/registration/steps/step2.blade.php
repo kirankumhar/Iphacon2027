@@ -399,9 +399,9 @@
 
             hideAllMembershipFields();
 
-            // ONLY show IPHA Membership section for IPHA Member (ID 1) or PG/PhD/MPH Student Member (ID 3)
-            // Non-IPHA Member (ID 2), Non-Member Student (ID 4), Co-Delegate (ID 5), Foreign (ID 6) stay HIDDEN
-            if (selectedValue === '1' || selectedValue === '3') {
+            // ONLY show IPHA Membership section for IPHA Member (ID 1)
+            // All other categories (including students, non-members, etc.) stay HIDDEN
+            if (selectedValue === '1') {
                 showMembershipField('ismm');
             }
 
