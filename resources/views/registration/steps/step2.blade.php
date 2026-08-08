@@ -157,7 +157,9 @@
                     <input type="text" class="form-control extra-small py-1.5 @error('ismm_membership_no') is-invalid @enderror"
                         id="ismm_membership_no" name="ismm_membership_no"
                         value="{{ old('ismm_membership_no', $registration->membership_no) }}"
-                        placeholder="Enter your IPHA Membership Number">
+                        maxlength="50"
+                        oninput="this.value = this.value.replace(/[^A-Za-z0-9_-]/g, '')"
+                        placeholder="Enter your IPHA Membership Number (e.g. IPHA-1234_A)">
                 </div>
                 <small class="text-muted extra-small mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Required for verified IPHA Members.</small>
                 @error('ismm_membership_no')

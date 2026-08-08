@@ -349,7 +349,7 @@ class RegistrationController extends Controller
             // ONLY Category 1 (IPHA Member) requires membership number
             if ($categoryId == 1) {
                 $rules = array_merge($rules, [
-                    'ismm_membership_no' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
+                    'ismm_membership_no' => [$isDraft ? 'nullable' : 'required', 'string', 'max:50', 'regex:/^[A-Za-z0-9_-]+$/'],
                     'accompanying_persons' => 'nullable|integer|min:0|max:10',
                     'participate_in_cme' => 'nullable|boolean',
                 ]);
@@ -368,7 +368,8 @@ class RegistrationController extends Controller
         }
 
         $messages = [
-            'ismm_membership_no.required' => 'IPHA Membership Number is required for Member categories.',
+            'ismm_membership_no.required' => 'IPHA Membership Number is required for IPHA Member category.',
+            'ismm_membership_no.regex' => 'IPHA Membership Number can only contain letters, numbers, hyphens (-), and underscores (_).',
             'delegate_category_id.required' => 'Please select your delegate category.',
             'ismm_membership_no.max' => 'IPHA Membership Number cannot exceed 50 characters.',
         ];
@@ -382,10 +383,10 @@ class RegistrationController extends Controller
                 'delegate_category_id' => $request->delegate_category_id,
                 'accompanying_persons' => $request->accompanying_persons ?? 0,
                 'participate_in_cme' => $request->participate_in_cme ?? false,
-                'membership_no' => $request->delegate_category_id == 2 ? $request->ismm_membership_no : ($request->delegate_category_id == 3 ? $request->young_isam_membership_no : null),
+                'membership_no' => $request->delegate_category_id == 1 ? $request->ismm_membership_no : null,
                 'cme_fee' => $request->participate_in_cme ? 2000 : 0,
                 'accompanying_fee' => $request->accompanying_persons ? 4000 : 0,
-                ];
+            ];
         } else {
             // International delegate - fixed values
             $updateData = [

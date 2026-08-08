@@ -221,9 +221,9 @@
                                         </a>
                                     @endif
                                 </div>
-                                <div class="d-flex align-items-center gap-2.5">
+                                <div class="d-flex align-items-center gap-3">
                                     @if ($step < 4)
-                                        <button type="button" class="btn btn-outline-primary px-3.5 py-2 fw-semibold" onclick="saveDraft()" style="border-radius: 10px;">
+                                        <button type="button" class="btn btn-outline-primary px-3.5 py-2 fw-semibold me-2" onclick="saveDraft()" style="border-radius: 10px;">
                                             <i class="fas fa-save me-1.5"></i>Save Draft
                                         </button>
 
