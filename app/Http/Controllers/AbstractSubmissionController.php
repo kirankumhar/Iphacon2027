@@ -204,4 +204,47 @@ class AbstractSubmissionController extends Controller
 
         return redirect()->back()->with('success', $isDraft ? 'Draft saved.' : 'Abstract submitted successfully!');
     }
+
+    /**
+     * View abstract details page.
+     */
+    public function show($id = null)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->first();
+
+        $abstract = $id
+            ? AbstractSubmission::where('user_id', $user->id)->where('id', $id)->firstOrFail()
+            : AbstractSubmission::where('user_id', $user->id)->latest()->first();
+
+        if (!$abstract) {
+            return redirect()->route('abstract.create')
+                ->with('info', 'No abstract submitted yet. You can submit your abstract below.');
+        }
+
+        return view('delegate.abstract-show', compact('user', 'registration', 'abstract'));
+    }
+
+    /**
+     * Download Abstract details as PDF.
+     */
+    public function downloadPdf($id)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->first();
+
+        $abstract = AbstractSubmission::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.abstract', compact('user', 'registration', 'abstract'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('margin-top', 10)
+            ->setOption('margin-bottom', 10)
+            ->setOption('margin-left', 10)
+            ->setOption('margin-right', 10);
+
+        $filename = "Abstract-{$abstract->acknowledgement_id}.pdf";
+        return $pdf->download($filename);
+    }
 }

@@ -87,6 +87,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Abstract Submission routes
     Route::get('abstract-submission', [AbstractSubmissionController::class, 'create'])->name('abstract.create');
     Route::post('abstract-submission', [AbstractSubmissionController::class, 'store'])->name('abstract.store');
+    Route::get('abstract/view/{id?}', [AbstractSubmissionController::class, 'show'])->name('abstract.show');
+    Route::get('abstract/download-pdf/{id}', [AbstractSubmissionController::class, 'downloadPdf'])->name('abstract.download-pdf');
 
     // 🔥 REGISTRATION ROUTES
     Route::get('registration', [RegistrationController::class, 'index'])->name('registration.index');

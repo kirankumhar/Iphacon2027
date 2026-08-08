@@ -149,9 +149,20 @@
                             </div>
                             <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Submit scientific abstract for Oral or Poster presentation.</p>
                         </div>
-                        <a href="{{ route('abstract.create') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
-                            {{ $abstract ? 'View Abstract' : 'Submit Abstract' }} <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                        <div class="d-flex flex-column gap-1.5">
+                            @if($abstract)
+                                <a href="{{ route('abstract.show', $abstract->id) }}" class="btn btn-outline-warning btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold text-dark" style="font-size: 0.8rem; border-color: #FF6B00;">
+                                    <i class="fas fa-eye me-1 text-warning"></i>View Abstract Details
+                                </a>
+                                <a href="{{ route('abstract.create') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
+                                    Edit Abstract <i class="fas fa-edit ms-1"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('abstract.create') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
+                                    Submit Abstract <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -197,7 +208,7 @@
                                 Submitted Abstract Details
                             </h6>
                             <small class="text-muted extra-small" style="font-size: 0.76rem;">
-                                Acknowledgement ID: <strong class="text-primary font-monospace ms-1 fs-6">{{ $abstract->acknowledgement_id ?? ($registration?->registration_number ? ($abstract->presentation_mode === 'Poster Presentation' ? 'IPHA-PP-' : 'IPHA-OP-') . $registration->registration_number : 'Draft') }}</strong>
+                                Abstract ID: <strong class="text-primary font-monospace ms-1 fs-6">{{ $abstract->acknowledgement_id ?? ($registration?->registration_number ? ($abstract->presentation_mode === 'Poster Presentation' ? 'IPHA-PP-' : 'IPHA-OP-') . $registration->registration_number : 'Draft') }}</strong>
                             </small>
                         </div>
                     </div>

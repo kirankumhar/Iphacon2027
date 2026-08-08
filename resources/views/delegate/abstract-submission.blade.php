@@ -168,7 +168,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 text-lg-end">
+            <div class="col-lg-4 text-lg-end d-flex flex-wrap align-items-center justify-content-lg-end gap-2">
+                @if(isset($abstract) && $abstract->id)
+                    <a href="{{ route('abstract.show', $abstract->id) }}" class="btn btn-warning px-3.5 py-2 fw-bold text-dark" style="border-radius: 10px; font-size: 0.88rem;">
+                        <i class="fas fa-eye me-1.5"></i> View Abstract Details
+                    </a>
+                @endif
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-light px-3.5 py-2 fw-semibold" style="border-radius: 10px; font-size: 0.88rem;">
                     <i class="fas fa-arrow-left me-1.5"></i> Back to Dashboard
                 </a>
