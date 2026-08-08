@@ -1,6 +1,6 @@
 @extends('shared.auth-delegate')
 @php
-    $inner_title = '';
+    $inner_title = 'Registration progress';
 @endphp
 @section('delegate-content')
     <div class="container py-3">
