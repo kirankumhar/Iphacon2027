@@ -108,10 +108,21 @@
                             <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">View registration status, payment & download PDF receipt.</p>
                         </div>
                         <div class="d-flex flex-column gap-1.5">
-                            @if($registration && !$registration->participate_in_cme)
-                                <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
-                                    <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
-                                </a>
+                            @if($registration)
+                                @php
+                                    $cmeSt = $registration->cmeApplication?->status;
+                                    $isCmeApproved = $registration->participate_in_cme || $cmeSt === 'Approved';
+                                    $isCmePending = $cmeSt === 'Payment Submitted';
+                                @endphp
+                                @if(!$isCmeApproved && !$isCmePending)
+                                    <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
+                                        <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
+                                    </a>
+                                @elseif($isCmePending)
+                                    <div class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
+                                        <i class="fas fa-hourglass-half me-1"></i>CME Verification Pending
+                                    </div>
+                                @endif
                             @endif
                             <a href="{{ route('registration.index') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">
                                 View Details <i class="fas fa-arrow-right ms-1"></i>

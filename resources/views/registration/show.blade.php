@@ -191,8 +191,19 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Workshop / CME</span>
-                                    @if ($registration->participate_in_cme)
-                                        <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating</span>
+                                    @php
+                                        $cmeStatus = $registration->cmeApplication?->status;
+                                        $isCmeApproved = $registration->participate_in_cme || $cmeStatus === 'Approved';
+                                        $isCmePending = $cmeStatus === 'Payment Submitted';
+                                    @endphp
+                                    @if ($isCmeApproved)
+                                        <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating (Approved)</span>
+                                    @elseif ($isCmePending)
+                                        <div class="d-flex align-items-center gap-2 mt-1">
+                                            <span class="badge bg-warning text-dark border px-2 py-1 rounded-pill small">
+                                                <i class="fas fa-hourglass-half me-1"></i>CME Verification Pending
+                                            </span>
+                                        </div>
                                     @else
                                         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                                             <span class="fw-semibold text-muted small">Not Registered</span>

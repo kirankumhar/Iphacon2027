@@ -306,8 +306,8 @@ class PaymentController extends Controller
                 try {
                     Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
                         $message->to($delegate->user->email)
-                            ->subject('Iphacon : Delegate Registration Confirmation')
-                            ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            ->subject('IPHACON 2027 : Delegate Registration Confirmation')
+                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
 
                         // Attach the PDF file
                         $localPath = storage_path("app/public/$path");
@@ -320,8 +320,8 @@ class PaymentController extends Controller
 
                     Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
                         $message->to("iphacon2027@gmail.com")
-                            ->subject('IPHACON : Delegate Registration Confirmation')
-                            ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            ->subject('IPHACON 2027 : Delegate Registration Confirmation')
+                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
 
                         // Attach the PDF file
                         $localPath = storage_path("app/public/$path");
@@ -435,6 +435,19 @@ class PaymentController extends Controller
 
             $payment->save();
 
+            // Update CmeApplication record if CME payment
+            if ($isCmeOnly) {
+                $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
+                if ($cmeApp) {
+                    $cmeApp->update([
+                        'transaction_id'       => $request->transaction_id,
+                        'payment_receipt_path' => $receiptPath,
+                        'status'               => 'Payment Submitted',
+                        'submitted_at'         => now(),
+                    ]);
+                }
+            }
+
             // Update registration status
             if (empty($registration->registration_number)) {
                 $registration->registration_number = $registration->generateRegistrationNumber();
@@ -442,8 +455,6 @@ class PaymentController extends Controller
             if ($registration->status === 'Draft') {
                 $registration->status = 'Payment Submitted';
             }
-            $registration->participate_in_cme = true;
-            $registration->cme_fee = 2000.00;
             $registration->step_completed = 4;
             $registration->submitted_at = $registration->submitted_at ?? now();
             $registration->save();

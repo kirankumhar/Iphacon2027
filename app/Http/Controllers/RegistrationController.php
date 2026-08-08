@@ -603,7 +603,9 @@ class RegistrationController extends Controller
                 ->with('error', 'Please complete your main conference registration first before applying for CME Workshop.');
         }
 
-        return view('delegate.cme-workshop', compact('registration', 'user'));
+        $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
+
+        return view('delegate.cme-workshop', compact('registration', 'user', 'cmeApp'));
     }
 
     public function processCmeWorkshop(Request $request)
@@ -615,15 +617,25 @@ class RegistrationController extends Controller
             return redirect()->back()->with('error', 'Please check the Pre-Conference CME Workshop box to proceed.');
         }
 
-        $registration->participate_in_cme = true;
-        $registration->cme_fee = 2000.00;
-        $registration->updateAmounts();
-        $registration->save();
+        // Create or get CME Application in Pending Payment state
+        $cmeApp = \App\Models\CmeApplication::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'registration_id' => $registration->id,
+                'status' => 'Pending Payment'
+            ],
+            [
+                'cme_fee' => 2000.00,
+                'gst_amount' => 360.00,
+                'total_amount' => 2360.00,
+            ]
+        );
 
         $gatewayData = json_encode([
-            'reg_id' => $registration->id,
-            'uid'    => $user->id,
-            'cme_only' => true
+            'cme_app_id' => $cmeApp->id,
+            'reg_id'     => $registration->id,
+            'uid'        => $user->id,
+            'cme_only'   => true
         ]);
 
         $encrypted = Crypt::encryptString($gatewayData);

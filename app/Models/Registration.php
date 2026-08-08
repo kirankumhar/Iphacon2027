@@ -103,6 +103,11 @@ class Registration extends Model
         return $this->hasOne(Payment::class)->orderByDesc('id');
     }
 
+    public function cmeApplication()
+    {
+        return $this->hasOne(CmeApplication::class)->latestOfMany();
+    }
+
 
     // Helper methods
     public function calculateTotalAmount()
