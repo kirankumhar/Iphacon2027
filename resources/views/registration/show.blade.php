@@ -283,20 +283,11 @@
                         <div class="card-body px-4 pt-1 pb-4">
                             @php
                                 $currencySymbol = $registration->delegate_type == 'International' ? '$' : '₹';
-                                if ($registration->delegate_type == 'International') {
-                                    $delFee = 175.00;
-                                    $accFee = 0.00;
-                                    $gstAmt = 0.00;
-                                    $totalAmt = 175.00;
-                                } else {
-                                    $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                                    $delFee = round($catFee / 1.18, 2);
-                                    $accFee = ($registration->accompanying_persons ?? 0) * 5000;
-                                    $accFeeExclGst = round($accFee / 1.18, 2);
-                                    $subtotalExclGst = $delFee + $accFeeExclGst;
-                                    $totalAmt = $catFee + $accFee;
-                                    $gstAmt = round($totalAmt - $subtotalExclGst, 2);
-                                }
+                                $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
+                                $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
+                                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
+                                $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
+                                $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $cmeFee + $accFee) : $registration->calculateTotalAmount());
                             @endphp
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
                                 <span class="text-muted">Delegate Registration Fee (Excl. GST)</span>
@@ -321,7 +312,7 @@
                             </div>
                             @endif
                             <div class="d-flex justify-content-between align-items-center py-3 rounded-3 px-3.5 my-3" style="background-color: #F0F9FF; border: 1px solid #BAE6FD;">
-                                <span class="fw-bold text-dark small">Total Main Registration Amount (Incl. GST)</span>
+                                <span class="fw-bold text-dark small">Total Amount (Incl. GST)</span>
                                 <span class="fw-bold fs-5" style="color: #0288D1;">
                                     {{ $currencySymbol }} {{ number_format($totalAmt, 2) }}
                                 </span>
@@ -332,6 +323,10 @@
                                 <div class="mt-3">
                                     <h6 class="fw-bold text-dark mb-2 small">Main Registration Payment Details</h6>
                                     @foreach($registration->payments as $payment)
+                                        {{-- Skip CME payments in main registration list --}}
+                                        @if(($registration->cmeApplication && $registration->cmeApplication->transaction_id && $payment->transaction_id === $registration->cmeApplication->transaction_id) || (isset($payment->payment_type) && strtolower($payment->payment_type) === 'cme'))
+                                            @continue
+                                        @endif
                                         <div class="p-3 bg-light rounded-3 mb-2 small" style="border: 1px solid #E2E8F0;">
                                             <div class="d-flex justify-content-between mb-1">
                                                 <span class="text-muted">Transaction ID:</span>
