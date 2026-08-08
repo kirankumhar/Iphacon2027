@@ -161,7 +161,7 @@
                         <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
                     </select>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
-                        value="" required maxlength="50"
+                        value="{{ old('full_name', $user->full_name) }}" required maxlength="50"
                         pattern="[A-Za-z. ]{2,}" placeholder="Enter your full name"
                         oninput="this.value = this.value.replace(/[^A-Za-z. ]/g, '')"
                         style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
