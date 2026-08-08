@@ -127,11 +127,19 @@ class Registration extends Model
     public function updateAmounts()
     {
         if ($this->delegate_type === 'International') {
-            $this->delegate_fee = 175.00;
-            $this->cme_fee = 0.00;
-            $this->accompanying_fee = 0.00;
-            $this->gst_amount = 0.00;
-            $this->total_amount = 175.00;
+            $categoryBase = 45000.00;
+            $cmeBase = $this->participate_in_cme ? 2000.00 : 0.00;
+            $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
+
+            $subtotalBase = $categoryBase + $cmeBase + $accompanyingBase;
+            $gstAmount = round($subtotalBase * 0.18, 2);
+            $totalAmount = round($subtotalBase + $gstAmount, 2);
+
+            $this->delegate_fee = $categoryBase;
+            $this->cme_fee = $cmeBase;
+            $this->accompanying_fee = $accompanyingBase;
+            $this->gst_amount = $gstAmount;
+            $this->total_amount = $totalAmount;
             return;
         }
 

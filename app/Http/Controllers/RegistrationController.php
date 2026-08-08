@@ -361,9 +361,10 @@ class RegistrationController extends Controller
                 ]);
             }
         } else {
-            // International delegates - minimal validation
+            // International delegates
             $rules = [
-                'participate_in_cme' => 'nullable|boolean|in:0',
+                'accompanying_persons' => 'nullable|integer|min:0|max:10',
+                'participate_in_cme' => 'nullable|boolean',
             ];
         }
 
@@ -385,16 +386,18 @@ class RegistrationController extends Controller
                 'participate_in_cme' => $request->participate_in_cme ?? false,
                 'membership_no' => $request->delegate_category_id == 1 ? $request->ismm_membership_no : null,
                 'cme_fee' => $request->participate_in_cme ? 2000 : 0,
-                'accompanying_fee' => $request->accompanying_persons ? 4000 : 0,
+                'accompanying_fee' => $request->accompanying_persons ? 5000 : 0,
             ];
         } else {
-            // International delegate - fixed values
+            // International delegate
             $updateData = [
                 'delegate_type' => 'International',
                 'delegate_category_id' => 6, // Foreign Delegates category
-                'accompanying_persons' => 0,
-                'participate_in_cme' => false,
+                'accompanying_persons' => $request->accompanying_persons ?? 0,
+                'participate_in_cme' => $request->participate_in_cme ?? false,
                 'membership_no' => null,
+                'cme_fee' => $request->participate_in_cme ? 2000 : 0,
+                'accompanying_fee' => $request->accompanying_persons ? 5000 : 0,
             ];
         }
 

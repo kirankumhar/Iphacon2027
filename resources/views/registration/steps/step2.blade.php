@@ -207,9 +207,38 @@
                 @enderror
             </div>
         </div>
+    <!-- Hidden fields for membership flags -->
+    <input type="hidden" name="is_ismm_member" value="0">
+    <input type="hidden" name="is_isham_member" value="0">
+    <input type="hidden" name="is_young_isam_member" value="0">
+@else
+    <!-- International Delegate Layout -->
+    <div class="card step2-card mb-3 border-0" style="background: linear-gradient(135deg, #2D69FF 0%, #1e293b 100%); color: #ffffff;">
+        <div class="card-body p-3.5 p-md-4">
+            <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                    style="width: 42px; height: 42px; background: rgba(255, 255, 255, 0.15); font-size: 1.15rem;">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div>
+                    <h6 class="text-white fw-bold mb-1">International Delegate Package</h6>
+                    <p class="text-white-50 mb-2 extra-small">All-inclusive registration package covering scientific sessions and conference collateral.</p>
+                    <span class="badge px-2.5 py-1.5 extra-small fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px;">
+                        Base Fee: ₹45,000.00 INR
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Additional Options & Add-ons Section -->
+    <!-- Hidden fields for international delegates -->
+    <input type="hidden" name="delegate_category_id" value="6">
+    <input type="hidden" name="is_ismm_member" value="0">
+    <input type="hidden" name="is_isham_member" value="0">
+    <input type="hidden" name="is_young_isam_member" value="0">
+@endif
+
+    <!-- Additional Options & Add-ons Section (Common for both Indian & International) -->
     <div class="card step2-card mb-3">
         <div class="card-header bg-transparent py-2.5 px-3 border-bottom d-flex align-items-center gap-2">
             <i class="fas fa-plus-circle text-primary extra-small"></i>
@@ -243,7 +272,7 @@
                             <div class="col-6">
                                 <label class="w-100 m-0">
                                     <input class="d-none step2-radio-input step2-radio-input-no" type="radio" name="accompanying_persons" id="acc_no" value="0"
-                                        {{ old('accompanying_persons', $registration->accompanying_persons) == 0 || old('accompanying_persons', $registration->accompanying_persons) === 0 ? 'checked' : '' }}>
+                                        {{ old('accompanying_persons', $registration->accompanying_persons) == 0 || old('accompanying_persons', $registration->accompanying_persons) === 0 || old('accompanying_persons', $registration->accompanying_persons) === null ? 'checked' : '' }}>
                                     <div class="step2-radio-card">
                                         <div class="d-flex align-items-center gap-1.5">
                                             <i class="fas fa-user-times text-muted extra-small radio-icon"></i>
@@ -333,60 +362,7 @@
             </div>
         </div>
     </div>
-@else
-    <!-- International Delegate Layout -->
-    <div class="card step2-card mb-3 border-0" style="background: linear-gradient(135deg, #2D69FF 0%, #1e293b 100%); color: #ffffff;">
-        <div class="card-body p-3.5 p-md-4">
-            <div class="d-flex align-items-start gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                    style="width: 42px; height: 42px; background: rgba(255, 255, 255, 0.15); font-size: 1.15rem;">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div>
-                    <h6 class="text-white fw-bold mb-1">International Delegate Package</h6>
-                    <p class="text-white-50 mb-2 extra-small">All-inclusive registration package covering all scientific sessions, CME programs, and conference collateral.</p>
-                    <span class="badge px-2.5 py-1.5 extra-small fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px;">
-                        Fixed Fee: ₹45,000.00 INR
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Total Amount Display for International -->
-    <div class="total-fee-banner p-3 mb-3">
-        <div class="row align-items-center">
-            <div class="col-md-7 mb-2 mb-md-0">
-                <div class="d-flex align-items-center gap-2.5">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 42px; height: 42px; background: rgba(255, 255, 255, 0.15); font-size: 1.25rem; color: #DCFFF0;">
-                        <i class="fas fa-calculator"></i>
-                    </div>
-                    <div>
-                        <h6 class="text-uppercase text-white-50 mb-0.5 fw-bold extra-small">Summary Overview</h6>
-                        <h6 class="text-white fw-bold mb-0 extra-small">Total Registration Fee</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5 text-md-end">
-                <div class="d-inline-block px-3 py-1.5 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
-                    <span class="d-block text-white-50 extra-small fw-semibold">Final Amount Payable</span>
-                    <h3 class="mb-0 fw-extrabold" style="color: #DCFFF0; font-size: 1.4rem;">₹45,000.00</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Hidden fields for international delegates -->
-    <input type="hidden" name="delegate_category_id" value="6">
-    <input type="hidden" name="accompanying_persons" value="0">
-    <input type="hidden" name="participate_in_cme" value="0">
-    <input type="hidden" name="is_ismm_member" value="0">
-    <input type="hidden" name="is_isham_member" value="0">
-    <input type="hidden" name="is_young_isam_member" value="0">
-@endif
-
-@if ($user->delegate_type == 'Indian')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -508,12 +484,17 @@
 
         function calculateTotal() {
             var baseSubtotal = 0;
+            var delegateType = '{{ $user->delegate_type }}';
 
-            var $categorySelect = $('#delegate_category_id');
-            if ($categorySelect.length && $categorySelect.val()) {
-                var selectedOption = $categorySelect.find('option:selected');
-                var fee = parseFloat(selectedOption.data('fee') || 0);
-                baseSubtotal += fee;
+            if (delegateType === 'International') {
+                baseSubtotal = 45000;
+            } else {
+                var $categorySelect = $('#delegate_category_id');
+                if ($categorySelect.length && $categorySelect.val()) {
+                    var selectedOption = $categorySelect.find('option:selected');
+                    var fee = parseFloat(selectedOption.data('fee') || 0);
+                    baseSubtotal += fee;
+                }
             }
 
             var $accYes = $('#acc_yes');
@@ -553,4 +534,3 @@
             }, 200);
         });
     </script>
-@endif
