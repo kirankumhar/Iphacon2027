@@ -257,7 +257,7 @@
                         otpInput.classList.add('is-valid');
 
                         setTimeout(function() {
-                            window.location.href = res.body.redirect || '{{ route("login") }}';
+                            window.location.href = res.body.redirect || '{{ route("dashboard") }}';
                         }, 800);
                     } else {
                         isVerifying = false;

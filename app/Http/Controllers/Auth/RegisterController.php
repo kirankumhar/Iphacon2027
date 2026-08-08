@@ -132,11 +132,14 @@ class RegisterController extends Controller
         }
 
         if ($user->hasVerifiedEmail()) {
-            if ($request->wantsJson() || $request->ajax()) {
-                return response()->json(['success' => true, 'message' => 'Email is already verified.', 'redirect' => route('login')]);
+            if (!Auth::check()) {
+                Auth::login($user);
             }
-            return redirect()->route('login')
-                ->with('success', 'Your email is already verified. Please login to continue.');
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Email is already verified.', 'redirect' => route('dashboard')]);
+            }
+            return redirect()->route('dashboard')
+                ->with('success', 'Your email is already verified. Welcome to your dashboard!');
         }
 
         if ($user->isOtpValid($request->otp)) {
@@ -156,13 +159,13 @@ class RegisterController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Email verified successfully! Redirecting...',
-                    'redirect' => route('login')
+                    'message' => 'Email verified successfully! Redirecting to dashboard...',
+                    'redirect' => route('dashboard')
                 ]);
             }
 
-            return redirect()->route('login')
-                ->with('success', 'Email verified successfully! You can now sign in to your account.');
+            return redirect()->route('dashboard')
+                ->with('success', 'Email verified successfully! Welcome to your dashboard.');
         }
 
         if ($request->wantsJson() || $request->ajax()) {
