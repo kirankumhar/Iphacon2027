@@ -284,15 +284,21 @@
                             @php
                                 $currencySymbol = '₹';
                                 if ($registration->delegate_type == 'International') {
-                                    $delFee = 45000.00;
-                                    $accFee = 0.00;
-                                    $gstAmt = 0.00;
-                                    $totalAmt = 45000.00;
+                                    $catBase = 45000.00;
+                                    $cmeFee = $registration->participate_in_cme ? 2000.00 : 0.00;
+                                    $accFee = ($registration->accompanying_persons ?? 0) * 5000.00;
+                                    $subtotalBase = $catBase + $cmeFee + $accFee;
+                                    $gstAmt = round($subtotalBase * 0.18, 2);
+                                    $totalAmt = round($subtotalBase + $gstAmt, 2);
+                                    $delFee = $catBase;
                                 } else {
-                                    $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
-                                    $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
-                                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                                    $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $accFee) : $registration->calculateTotalAmount());
+                                    $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                                    $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000.00 : 0.00);
+                                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000.00);
+                                    $subtotalBase = $catBase + $cmeFee + $accFee;
+                                    $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                                    $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                                    $delFee = $registration->delegate_fee ?: $catBase;
                                 }
                             @endphp
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
@@ -301,22 +307,28 @@
                                     {{ $currencySymbol }} {{ number_format($delFee, 2) }}
                                 </span>
                             </div>
-                            @if(($registration->accompanying_persons ?? 0) > 0)
+                            @if($registration->participate_in_cme)
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
-                                <span class="text-muted">Accompanying Persons Fee ({{ $registration->accompanying_persons }})</span>
-                                <span class="fw-semibold text-dark">
-                                    ₹{{ number_format($accFee, 2) }}
+                                <span class="text-muted">CME / Workshop Fee</span>
+                                <span class="fw-semibold text-success">
+                                    + ₹{{ number_format($cmeFee, 2) }}
                                 </span>
                             </div>
                             @endif
-                            @if($registration->delegate_type != 'International')
+                            @if(($registration->accompanying_persons ?? 0) > 0)
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
+                                <span class="text-muted">Accompanying Persons Fee ({{ $registration->accompanying_persons }})</span>
+                                <span class="fw-semibold text-success">
+                                    + ₹{{ number_format($accFee, 2) }}
+                                </span>
+                            </div>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
                                 <span class="text-muted">GST Amount (18%)</span>
                                 <span class="fw-semibold text-dark">
                                     {{ $currencySymbol }} {{ number_format($gstAmt, 2) }}
                                 </span>
                             </div>
-                            @endif
                             <div class="d-flex justify-content-between align-items-center py-3 rounded-3 px-3.5 my-3" style="background-color: #F0F9FF; border: 1px solid #BAE6FD;">
                                 <span class="fw-bold text-dark small">Total Amount (Incl. GST)</span>
                                 <span class="fw-bold fs-5" style="color: #0288D1;">
