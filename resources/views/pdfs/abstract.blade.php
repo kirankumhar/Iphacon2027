@@ -128,7 +128,7 @@
 
     <!-- Header Banner -->
     <div class="header">
-        <h1>IPHACON 2027 - Abstract Submission Receipt</h1>
+        <h1>IPHACON 2027 - Abstract Submission</h1>
         <p>71st Annual National Conference of Indian Public Health Association | RIMS, Ranchi</p>
     </div>
 
@@ -136,7 +136,7 @@
     <table class="ack-bar" width="100%">
         <tr>
             <td width="50%">
-                <div class="info-label">Acknowledgement ID</div>
+                <div class="info-label">Abstract ID</div>
                 <div class="info-value" style="color: #0288D1; font-size: 13px;">{{ $abstract->acknowledgement_id }}</div>
             </td>
             <td width="50%" text-align="right">

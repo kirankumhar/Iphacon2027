@@ -624,7 +624,7 @@
                 <p class="text-secondary small mb-3">Your abstract has been registered for IPHACON 2027 review.</p>
 
                 <div class="bg-light p-3 rounded-3 border mb-3 text-start">
-                    <div class="text-muted small uppercase fw-bold mb-1">Acknowledgement ID</div>
+                    <div class="text-muted small uppercase fw-bold mb-1">Abstract ID</div>
                     <div class="h4 text-primary font-monospace fw-bold mb-0" id="ackIDDisplay">
                         ABS-2027-8942
                     </div>

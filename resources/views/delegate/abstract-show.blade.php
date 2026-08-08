@@ -18,7 +18,7 @@
                                 {{ $abstract->abstract_title ?: 'Untitled Abstract' }}
                             </h3>
                             <div class="text-white opacity-90 small d-flex flex-wrap gap-3 mt-2" style="font-size: 0.88rem;">
-                                <span><i class="fas fa-barcode text-warning me-1"></i>Ack ID: <strong>{{ $abstract->acknowledgement_id }}</strong></span>
+                                <span><i class="fas fa-barcode text-warning me-1"></i>Abstract ID: <strong>{{ $abstract->acknowledgement_id }}</strong></span>
                                 <span><i class="fas fa-bullhorn text-warning me-1"></i>Mode: <strong>{{ $abstract->presentation_mode ?: 'N/A' }}</strong></span>
                                 <span><i class="fas fa-calendar-alt text-warning me-1"></i>Submitted: {{ $abstract->submitted_at ? $abstract->submitted_at->format('d M, Y h:i A') : $abstract->created_at->format('d M, Y') }}</span>
                             </div>
@@ -263,7 +263,7 @@
                     <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                 </a>
                 <a href="{{ route('abstract.download-pdf', $abstract->id) }}" class="btn btn-success px-4 py-2.5 fw-bold rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10B981, #059669); border: none;">
-                    <i class="fas fa-file-pdf me-2"></i>Generate PDF Receipt
+                    <i class="fas fa-file-pdf me-2"></i>Generate PDF
                 </a>
             </div>
 
