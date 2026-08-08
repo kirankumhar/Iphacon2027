@@ -394,21 +394,35 @@ class PaymentController extends Controller
                 'public'
             );
 
-            $totalAmount = $registration->calculateTotalAmount();
-            if ($registration->delegate_type === 'International') {
-                $delegateCategoryFee = $totalAmount;
-                $gstAmount = 0.00;
+            $isCmeOnly = $registration->status !== 'Draft' && $registration->step_completed >= 4;
+
+            if ($isCmeOnly) {
+                $delegateCategoryFee = 0.00;
+                $accompanyingPersonsFee = 0.00;
+                $cmeFee = 2000.00;
+                $gstAmount = 360.00;
+                $totalAmount = 2360.00;
             } else {
-                $delegateCategoryFee = round($totalAmount / 1.18, 2);
-                $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
+                $totalAmount = $registration->calculateTotalAmount();
+                if ($registration->delegate_type === 'International') {
+                    $delegateCategoryFee = $totalAmount;
+                    $accompanyingPersonsFee = 0.00;
+                    $cmeFee = 0.00;
+                    $gstAmount = 0.00;
+                } else {
+                    $delegateCategoryFee = round($totalAmount / 1.18, 2);
+                    $accompanyingPersonsFee = ($registration->accompanying_persons ?? 0) * 5000;
+                    $cmeFee = $registration->participate_in_cme ? 2000 : 0;
+                    $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
+                }
             }
 
             // Create payment record
             $payment = new Payment([
                 'registration_id' => $registration->id,
                 'delegate_category_fee' => $delegateCategoryFee,
-                'accompanying_persons_fee' => ($registration->accompanying_persons ?? 0) * 4000,
-                'cme_fee' => $registration->participate_in_cme ? 2000 : 0,
+                'accompanying_persons_fee' => $accompanyingPersonsFee,
+                'cme_fee' => $cmeFee,
                 'gst_amount' => $gstAmount,
                 'total_amount' => $totalAmount,
                 'currency' => $registration->delegate_type === 'International' ? 'USD' : 'INR',
@@ -425,9 +439,13 @@ class PaymentController extends Controller
             if (empty($registration->registration_number)) {
                 $registration->registration_number = $registration->generateRegistrationNumber();
             }
-            $registration->status = 'Payment Submitted';
+            if ($registration->status === 'Draft') {
+                $registration->status = 'Payment Submitted';
+            }
+            $registration->participate_in_cme = true;
+            $registration->cme_fee = 2000.00;
             $registration->step_completed = 4;
-            $registration->submitted_at = now();
+            $registration->submitted_at = $registration->submitted_at ?? now();
             $registration->save();
 
             DB::commit();
