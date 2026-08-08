@@ -99,6 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('registration/wizard/{token?}', [RegistrationController::class, 'wizard'])->name('registration.wizard');
     Route::post('registration/wizard/{token}', [RegistrationController::class, 'storeStep'])->name('registration.store-step');
 
+    // 🎓 CME WORKSHOP ROUTES
+    Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
+    Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
+
 
     Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
      ->name('delgate.download.receipt');

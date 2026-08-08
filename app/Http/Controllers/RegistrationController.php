@@ -592,4 +592,42 @@ class RegistrationController extends Controller
             'workshop_count' => $registrations,
         ]);
     }
+
+    public function showCmeWorkshop()
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->latest()->first();
+
+        if (!$registration) {
+            return redirect()->route('registration.create')
+                ->with('error', 'Please complete your main conference registration first before applying for CME Workshop.');
+        }
+
+        return view('delegate.cme-workshop', compact('registration', 'user'));
+    }
+
+    public function processCmeWorkshop(Request $request)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->latest()->firstOrFail();
+
+        if (!$request->has('participate_in_cme')) {
+            return redirect()->back()->with('error', 'Please check the Pre-Conference CME Workshop box to proceed.');
+        }
+
+        $registration->participate_in_cme = true;
+        $registration->cme_fee = 2000.00;
+        $registration->updateAmounts();
+        $registration->save();
+
+        $gatewayData = json_encode([
+            'reg_id' => $registration->id,
+            'uid'    => $user->id,
+            'cme_only' => true
+        ]);
+
+        $encrypted = Crypt::encryptString($gatewayData);
+
+        return redirect()->route('payment.gateway', $encrypted);
+    }
 }

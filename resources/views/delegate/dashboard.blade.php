@@ -109,10 +109,7 @@
                         </div>
                         <div class="d-flex flex-column gap-1.5">
                             @if($registration && !$registration->participate_in_cme)
-                                @php
-                                    $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
-                                @endphp
-                                <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
+                                <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
                                     <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
                                 </a>
                             @endif

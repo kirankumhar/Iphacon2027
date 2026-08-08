@@ -196,10 +196,7 @@
                                     @else
                                         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                                             <span class="fw-semibold text-muted small">Not Registered</span>
-                                            @php
-                                                $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
-                                            @endphp
-                                            <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-sm btn-outline-success px-2.5 py-0.5 fw-semibold rounded-pill shadow-xs" style="font-size: 0.76rem;">
+                                            <a href="{{ route('cme.apply') }}" class="btn btn-sm btn-outline-success px-2.5 py-0.5 fw-semibold rounded-pill shadow-xs" style="font-size: 0.76rem;">
                                                 <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
                                             </a>
                                         </div>
