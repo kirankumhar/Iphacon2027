@@ -76,13 +76,14 @@
 
         <div class="row mt-3">
             <div class="col-md-6">
-                <strong>ID Proof Type:</strong> {{ $registration->id_proof_type }}
+                <p class="mb-1"><strong>ID Proof Type:</strong> {{ $registration->id_proof_type ?: 'N/A' }}</p>
+                <p class="mb-0"><strong>ID Proof Number:</strong> <span class="badge bg-light text-dark border">{{ $registration->id_proof_number ?: 'N/A' }}</span></p>
             </div>
             <div class="col-md-6">
                 @if ($registration->photo_path)
-                    <strong>Photo:</strong> <span class="badge bg-success">Uploaded</span><br>
+                    <p class="mb-1"><strong>Photo:</strong> <span class="badge bg-success">Uploaded</span></p>
                 @endif
-                <strong>ID Document:</strong> <span class="badge bg-success">Uploaded</span>
+                <p class="mb-0"><strong>ID Document:</strong> <span class="badge bg-success">Uploaded</span></p>
             </div>
         </div>
     </div>
