@@ -128,12 +128,21 @@
                                             <span class="input-group-text border-end-0 bg-light text-muted px-2.5">
                                                 <i class="fas fa-flag text-primary extra-small"></i>
                                             </span>
+                                            @php
+                                                $firstACountry = $countries->first(function($c) {
+                                                    return str_starts_with(strtoupper(trim($c->country_name)), 'A');
+                                                });
+                                            @endphp
                                             <select class="form-select border-start-0 custom-input @error('country_id') is-invalid @enderror"
                                                 id="country_id" name="country_id" required>
                                                 <option value="">Select Country</option>
                                                 @foreach ($countries as $country)
                                                     <option value="{{ $country->id }}"
-                                                        {{ (old('country_id') == $country->id || (!old('country_id') && old('delegate_type', 'Indian') == 'Indian' && (strtolower(trim($country->country_name)) == 'india' || str_contains(strtolower($country->country_name), 'india')))) ? 'selected' : '' }}>
+                                                        {{ (
+                                                            old('country_id') == $country->id ||
+                                                            (!old('country_id') && old('delegate_type', 'Indian') == 'Indian' && (strtolower(trim($country->country_name)) == 'india' || str_contains(strtolower($country->country_name), 'india'))) ||
+                                                            (!old('country_id') && old('delegate_type') == 'International' && $firstACountry && $firstACountry->id == $country->id)
+                                                        ) ? 'selected' : '' }}>
                                                         {{ $country->country_name }}
                                                     </option>
                                                 @endforeach
@@ -354,7 +363,7 @@
                 });
             }
 
-            function handleCountryDropdown() {
+            function handleCountryDropdown(isUserChange = false) {
                 if (!countrySelect) return;
                 const selectedRadio = document.querySelector('input[name="delegate_type"]:checked');
                 const isIndian = !selectedRadio || selectedRadio.value === 'Indian';
@@ -384,17 +393,29 @@
                     countrySelect.style.cursor = 'pointer';
                     countrySelect.removeAttribute('tabindex');
                     countrySelect.title = 'Select your country of origin';
+
+                    // When selecting International, start with first country starting with letter 'A'
+                    const currentTxt = countrySelect.options[countrySelect.selectedIndex] ? countrySelect.options[countrySelect.selectedIndex].text.trim().toLowerCase() : '';
+                    if (isUserChange || currentTxt.includes('india') || !countrySelect.value) {
+                        for (let option of countrySelect.options) {
+                            if (option.value && option.text.trim().toUpperCase().startsWith('A')) {
+                                option.selected = true;
+                                countrySelect.value = option.value;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
             // Initial active state & country dropdown check
             updateCardState();
-            handleCountryDropdown();
+            handleCountryDropdown(false);
 
             delegateRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
                     updateCardState();
-                    handleCountryDropdown();
+                    handleCountryDropdown(true);
                 });
             });
 
