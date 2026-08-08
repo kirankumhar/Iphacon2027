@@ -121,10 +121,10 @@
             </div>
 
             <!-- Dynamic Membership Fields Section -->
-            <!-- IPHA Membership (Category ID 2) -->
+            <!-- IPHA Membership (Category ID 1 & 3) -->
             <div class="mt-2.5 p-2.5 rounded bg-light border" id="ismm_membership_row" style="display: none; border-left: 3px solid #2D69FF !important;">
                 <label for="ismm_membership_no" class="form-label fw-bold text-dark extra-small mb-1">
-                    <i class="fas fa-id-card text-primary me-1"></i>IPHACON Membership Number <span class="text-danger">*</span>
+                    <i class="fas fa-id-card text-primary me-1"></i>IPHA Membership Number <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
                     <span class="input-group-text bg-white text-muted px-2.5">
@@ -133,9 +133,9 @@
                     <input type="text" class="form-control extra-small py-1.5 @error('ismm_membership_no') is-invalid @enderror"
                         id="ismm_membership_no" name="ismm_membership_no"
                         value="{{ old('ismm_membership_no', $registration->membership_no) }}"
-                        placeholder="Enter your IPHACON Membership Number">
+                        placeholder="Enter your IPHA Membership Number">
                 </div>
-                <small class="text-muted extra-small mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Required for IPHACON Member discount.</small>
+                <small class="text-muted extra-small mt-1 d-block"><i class="fas fa-info-circle me-1"></i>Required for verified IPHA Members.</small>
                 @error('ismm_membership_no')
                     <div class="invalid-feedback d-block mt-1 extra-small">{{ $message }}</div>
                 @enderror
@@ -395,16 +395,13 @@
         }
 
         function handleCategoryChange() {
-            var $selectedOption = $('#delegate_category_id').find('option:selected');
             var selectedValue = $('#delegate_category_id').val();
-            var categoryText = $selectedOption.text().toLowerCase();
 
             hideAllMembershipFields();
 
-            // Open IPHA Membership section for IPHA Member (ID 1), Student Member (ID 3), or any member category
-            var isMember = (selectedValue === '1' || selectedValue === '3' || (categoryText.includes('member') && !categoryText.includes('non-member')));
-
-            if (isMember) {
+            // ONLY show IPHA Membership section for IPHA Member (ID 1) or PG/PhD/MPH Student Member (ID 3)
+            // Non-IPHA Member (ID 2), Non-Member Student (ID 4), Co-Delegate (ID 5), Foreign (ID 6) stay HIDDEN
+            if (selectedValue === '1' || selectedValue === '3') {
                 showMembershipField('ismm');
             }
 
