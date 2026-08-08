@@ -223,7 +223,9 @@ class RegistrationController extends Controller
             'address' => $isDraft ? 'nullable|string|max:500' : 'required|string|max:500',
             'state_id' => auth()->user()->delegate_type == 'Indian' ? ($isDraft ? 'nullable|integer' : 'required|integer') : ($isDraft ? 'nullable|string|max:50' : 'required|string|max:50'),
             'city' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
-            'pin_code' => $isDraft ? 'nullable|string|max:20' : 'required|string|max:20',
+            'pin_code' => auth()->user()->delegate_type == 'Indian' 
+                ? ($isDraft ? 'nullable|string|regex:/^[0-9]{6}$/' : 'required|string|regex:/^[0-9]{6}$/') 
+                : ($isDraft ? 'nullable|string|max:10' : 'required|string|max:10'),
             'whatsapp_country_code' => 'nullable|string',
             'whatsapp_number' => $isDraft ? 'nullable|string|max:20' : 'required|string|max:20',
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
@@ -239,6 +241,9 @@ class RegistrationController extends Controller
             'photo.max' => 'Profile photo must not exceed 500KB.',
             'dob.required' => 'Please select your Date of Birth.',
             'dob.before_or_equal' => 'You must be at least 18 years old.',
+            'pin_code.required' => 'Please enter your PIN / Zip Code.',
+            'pin_code.regex' => 'Indian PIN Code must be exactly 6 digits.',
+            'pin_code.max' => 'International Zip Code must not exceed 10 characters.',
             'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
         ];

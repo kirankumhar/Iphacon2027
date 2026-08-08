@@ -353,12 +353,19 @@
                 <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label for="pin_code" class="form-label">
-                            <i class="fas fa-map-pin form-icon"></i>PIN/Zip Code<span class="required-star">*</span>
+                            <i class="fas fa-map-pin form-icon"></i>{{ auth()->user()->delegate_type == 'Indian' ? 'PIN Code' : 'Zip / Postal Code' }}<span class="required-star">*</span>
                         </label>
-                        <input type="text" class="form-control @error('pin_code') is-invalid @enderror"
-                            id="pin_code" name="pin_code" value="{{ old('pin_code', $registration->pin_code) }}"
-                            required placeholder="Enter PIN/Zip" maxlength="8"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        @if(auth()->user()->delegate_type == 'Indian')
+                            <input type="text" class="form-control @error('pin_code') is-invalid @enderror"
+                                id="pin_code" name="pin_code" value="{{ old('pin_code', $registration->pin_code) }}"
+                                required placeholder="6-digit PIN Code" maxlength="6" minlength="6"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        @else
+                            <input type="text" class="form-control @error('pin_code') is-invalid @enderror"
+                                id="pin_code" name="pin_code" value="{{ old('pin_code', $registration->pin_code) }}"
+                                required placeholder="Zip Code (max 10)" maxlength="10"
+                                oninput="this.value = this.value.replace(/[^A-Za-z0-9 -]/g, '')">
+                        @endif
                         @error('pin_code')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
