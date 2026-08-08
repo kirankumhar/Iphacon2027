@@ -26,7 +26,11 @@
                                     {{ $registration->user->prefix }} {{ $registration->user->full_name }}
                                 </h2>
                                 <div class="text-white opacity-90 small d-flex flex-wrap gap-3 mt-1.5" style="font-size: 0.85rem;">
-                                    <span><i class="fas fa-id-badge text-warning me-1"></i>Reg No: <strong>{{ $registration->registration_number ?? 'Not Generated' }}</strong></span>
+                                    @if($registration->status === 'Approved')
+                                        <span><i class="fas fa-id-badge text-warning me-1"></i>Reg No: <strong>{{ $registration->registration_number }}</strong></span>
+                                    @else
+                                        <span><i class="fas fa-receipt text-warning me-1"></i>Acknowledgement No: <strong>ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}</strong></span>
+                                    @endif
                                     <span><i class="fas fa-envelope text-warning me-1"></i>{{ $registration->user->email }}</span>
                                     <span><i class="fas fa-calendar-alt text-warning me-1"></i>Registered: {{ $registration->created_at ? $registration->created_at->format('d M, Y') : 'N/A' }}</span>
                                 </div>
@@ -38,29 +42,34 @@
                                 $statusBg = '#E0F2FE';
                                 $statusFg = '#0288D1';
                                 $statusIcon = 'fa-clock';
+                                $statusText = $registration->status;
+
                                 if ($registration->status === 'Approved') {
                                     $statusBg = '#DCFFF0';
                                     $statusFg = '#4BAA7D';
                                     $statusIcon = 'fa-check-circle';
+                                    $statusText = 'Approved';
                                 } elseif ($registration->status === 'Rejected') {
                                     $statusBg = '#FFE2E2';
                                     $statusFg = '#DC2626';
                                     $statusIcon = 'fa-times-circle';
-                                } elseif ($registration->status === 'Payment Submitted') {
+                                    $statusText = 'Rejected';
+                                } elseif (in_array($registration->status, ['Payment Submitted', 'Submitted', 'Pending Payment', 'Pending'])) {
                                     $statusBg = '#FEF9C3';
                                     $statusFg = '#CA8A04';
-                                    $statusIcon = 'fa-receipt';
+                                    $statusIcon = 'fa-hourglass-half';
+                                    $statusText = 'Pending for Verification';
                                 }
                             @endphp
                             <span class="badge px-4 py-2.5 fw-bold shadow-xs" style="font-size: 0.9rem; border-radius: 30px; background-color: {{ $statusBg }}; color: {{ $statusFg }};">
-                                <i class="fas {{ $statusIcon }} me-1.5"></i> {{ $registration->status }}
+                                <i class="fas {{ $statusIcon }} me-1.5"></i> {{ $statusText }}
                             </span>
 
-                            @if($registration->status == 'Approved' || $registration->status == 'Payment Submitted')
+                            @if($registration->status === 'Approved')
                                 <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-warning btn-sm px-4 py-2.5 fw-bold shadow-sm rounded-pill text-dark">
                                     <i class="fas fa-file-download me-1.5"></i>Download Receipt
                                 </a>
-                            @elseif($registration->status == 'Draft')
+                            @elseif($registration->status === 'Draft')
                                 <a href="{{ route('registration.create') }}" class="btn btn-light btn-sm px-4 py-2.5 fw-bold text-primary shadow-sm rounded-pill">
                                     <i class="fas fa-edit me-1.5"></i>Continue Registration
                                 </a>

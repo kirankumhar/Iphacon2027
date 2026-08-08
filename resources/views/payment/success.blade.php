@@ -19,21 +19,25 @@
 
                     <h4 class="text-success mb-3">Registration Completed Successfully!</h4>
 
-                    <div class="alert alert-success">
-                        <h5><strong>Registration Number: {{ $registration->registration_number }}</strong></h5>
-                        <p class="mb-0">Please save this number for your records.</p>
-                    </div>
-
-                    @if($registration->status === 'Payment Submitted')
+                    @if($registration->status === 'Approved')
+                        <div class="alert alert-success">
+                            <h5><strong>Registration Number: {{ $registration->registration_number }}</strong></h5>
+                            <p class="mb-0">Please save your official registration number for your records.</p>
+                        </div>
+                    @else
+                        <div class="alert alert-warning border border-warning border-opacity-25" style="background: #fffbeb;">
+                            <h5 class="text-dark fw-bold mb-1"><strong>Acknowledgement Number: ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}</strong></h5>
+                            <p class="mb-0 text-muted small">Please save this acknowledgement number for your records.</p>
+                        </div>
                         <div class="alert alert-info">
-                            <i class="fas fa-clock me-2"></i>
-                            Your payment is being verified. You will receive a confirmation email within 24-48 hours.
+                            <i class="fas fa-hourglass-half me-2"></i>
+                            Your registration status is currently <strong>Pending for Verification</strong>. Once verified and approved by the organizing committee, your official Registration Number and Download Receipt PDF will be unlocked.
                         </div>
                     @endif
 
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <a href="{{ route('registration.show', $registration->registration_number) }}" class="btn btn-primary btn-lg w-100">
+                            <a href="{{ route('registration.show', $registration->id) }}" class="btn btn-primary btn-lg w-100">
                                 <i class="fas fa-eye me-2"></i>View Registration
                             </a>
                         </div>

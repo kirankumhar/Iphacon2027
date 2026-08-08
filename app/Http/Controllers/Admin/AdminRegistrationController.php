@@ -259,13 +259,27 @@ class AdminRegistrationController extends Controller
 
     public function approvedRegis(Request $request)
     {
-        $registration_number = $request->input('registration_number');
+        $regId = $request->input('registration_id') ?? $request->input('id');
+        $regNo = $request->input('registration_number');
 
-        Registration::where('registration_number', $registration_number)->update([
-            'status' => 'Approved'
-        ]);
+        $registration = Registration::when($regId, function($q) use ($regId) {
+            $q->where('id', $regId);
+        })->when(!$regId && $regNo, function($q) use ($regNo) {
+            $q->where('registration_number', $regNo);
+        })->first();
 
-        return redirect()->back()->with('success', "$registration_number, registration successfully marked Approved.");
+        if ($registration) {
+            if (empty($registration->registration_number)) {
+                $registration->registration_number = 'IPHACON-2027-' . sprintf('%04d', $registration->id);
+            }
+            $registration->status = 'Approved';
+            $registration->approved_at = now();
+            $registration->save();
+
+            return redirect()->back()->with('success', "Registration successfully marked Approved. Reg No: {$registration->registration_number}");
+        }
+
+        return redirect()->back()->with('error', 'Registration record not found.');
     }
 
     public function rejectRegis(Request $request)

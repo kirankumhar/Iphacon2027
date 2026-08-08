@@ -116,9 +116,9 @@
                     </div>
 
                     <div class="alert alert-info">
-                        <i class="fas fa-clock me-2"></i>
-                        After submitting, your registration will be marked as <strong>"Payment Submitted"</strong>
-                        and will be verified by our team within 24-48 hours.
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        After submitting, your registration status will be set to <strong>"Pending for Verification"</strong>
+                        and will be verified by our team. Upon approval, your official Registration Number and Download Receipt PDF will be generated.
                     </div>
 
                     <!-- Payment Status Info -->

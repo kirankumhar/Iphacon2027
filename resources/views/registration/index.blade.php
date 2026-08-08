@@ -37,7 +37,7 @@
                             <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="fw-bold">Registration No.</th>
+                                        <th class="fw-bold">Reg. / Ack. No.</th>
                                         <th class="fw-bold">Delegate Category</th>
                                         <th class="fw-bold">Status</th>
                                         <th class="fw-bold">Submitted Date</th>
@@ -47,11 +47,36 @@
                                 <tbody>
                                     @foreach($registrations as $registration)
                                         <tr>
-                                            <td class="fw-semibold text-dark">{{ $registration->registration_number }}</td>
+                                            <td class="fw-semibold text-dark font-monospace">
+                                                @if($registration->status === 'Approved')
+                                                    {{ $registration->registration_number }}
+                                                @else
+                                                    ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}
+                                                @endif
+                                            </td>
                                             <td><span class="badge bg-light text-dark border px-2.5 py-1.5">{{ $registration->delegateCategory->category_name ?? 'Pending Selection' }}</span></td>
                                             <td>
-                                                <span class="badge px-3 py-1.5 fw-semibold" style="background-color: {{ $registration->status == 'Approved' ? '#DCFFF0' : ($registration->status == 'Rejected' ? '#ffe2e2' : '#E1F0FF') }}; color: {{ $registration->status == 'Approved' ? '#4BAA7D' : ($registration->status == 'Rejected' ? '#dc2626' : '#2D69FF') }}; border-radius: 20px;">
-                                                    {{ $registration->status }}
+                                                @php
+                                                    $stBg = '#FEF9C3';
+                                                    $stFg = '#CA8A04';
+                                                    $stTxt = 'Pending for Verification';
+
+                                                    if ($registration->status === 'Approved') {
+                                                        $stBg = '#DCFFF0';
+                                                        $stFg = '#4BAA7D';
+                                                        $stTxt = 'Approved';
+                                                    } elseif ($registration->status === 'Rejected') {
+                                                        $stBg = '#FFE2E2';
+                                                        $stFg = '#DC2626';
+                                                        $stTxt = 'Rejected';
+                                                    } elseif ($registration->status === 'Draft') {
+                                                        $stBg = '#E1F0FF';
+                                                        $stFg = '#2D69FF';
+                                                        $stTxt = 'Draft';
+                                                    }
+                                                @endphp
+                                                <span class="badge px-3 py-1.5 fw-semibold" style="background-color: {{ $stBg }}; color: {{ $stFg }}; border-radius: 20px;">
+                                                    {{ $stTxt }}
                                                 </span>
                                             </td>
                                             <td class="text-muted small">{{ $registration->submitted_at ? $registration->submitted_at->format('d M, Y') : 'Not Submitted Yet' }}</td>
@@ -59,13 +84,13 @@
                                                 <a href="{{ route('registration.show', $registration->id) }}" class="btn btn-sm btn-outline-primary px-3 py-1 fw-semibold me-1" style="border-radius: 6px;">
                                                     <i class="fas fa-eye me-1"></i>View
                                                 </a>
-                                                @if($registration->status == 'Draft')
+                                                @if($registration->status === 'Draft')
                                                     <a href="{{ route('registration.create') }}" class="btn btn-sm btn-primary px-3 py-1 fw-semibold" style="background: #2D69FF; border: none; border-radius: 6px;">
                                                         <i class="fas fa-edit me-1"></i>Edit
                                                     </a>
-                                                @elseif($registration->status == 'Approved' || $registration->status == 'Payment Submitted')
+                                                @elseif($registration->status === 'Approved')
                                                     <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-sm btn-success px-3 py-1 fw-semibold" style="border-radius: 6px;">
-                                                        <i class="fas fa-download me-1"></i>Download Acknowledgement
+                                                        <i class="fas fa-download me-1"></i>Download Receipt
                                                     </a>
                                                 @endif
                                             </td>
