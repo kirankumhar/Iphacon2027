@@ -173,7 +173,7 @@
                                 </tr>
                                 <tr>
                                     <td class="text-muted py-1">Registration Fee:</td>
-                                    <td class="fw-bold text-success py-1 text-end fs-6">$175.00 USD</td>
+                                    <td class="fw-bold text-success py-1 text-end fs-6">₹45,000.00 INR</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -214,7 +214,7 @@
                             </div>
                         </div>
                         <div class="text-end">
-                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">$175.00 <span style="font-size: 0.75rem;">USD</span></h4>
+                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">₹45,000.00 <span style="font-size: 0.75rem;">INR</span></h4>
                         </div>
                     </div>
                 </div>

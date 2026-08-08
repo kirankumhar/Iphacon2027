@@ -346,7 +346,7 @@
                     <h6 class="text-white fw-bold mb-1">International Delegate Package</h6>
                     <p class="text-white-50 mb-2 extra-small">All-inclusive registration package covering all scientific sessions, CME programs, and conference collateral.</p>
                     <span class="badge px-2.5 py-1.5 extra-small fw-bold" style="background-color: #DCFFF0; color: #4BAA7D; border-radius: 20px;">
-                        Fixed Fee: $175.00 USD
+                        Fixed Fee: ₹45,000.00 INR
                     </span>
                 </div>
             </div>
@@ -371,7 +371,7 @@
             <div class="col-md-5 text-md-end">
                 <div class="d-inline-block px-3 py-1.5 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
                     <span class="d-block text-white-50 extra-small fw-semibold">Final Amount Payable</span>
-                    <h3 class="mb-0 fw-extrabold" style="color: #DCFFF0; font-size: 1.4rem;">$175.00</h3>
+                    <h3 class="mb-0 fw-extrabold" style="color: #DCFFF0; font-size: 1.4rem;">₹45,000.00</h3>
                 </div>
             </div>
         </div>

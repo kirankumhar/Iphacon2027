@@ -65,7 +65,7 @@
                                             <span class="badge bg-success fs-5 px-4 py-2.5 rounded-pill shadow-sm">
                                                 Total Payable:
                                                 @if ($registration->delegate_type === 'International')
-                                                    $175.00 USD
+                                                    ₹45,000.00 INR
                                                 @else
                                                     ₹{{ number_format($totalAmt, 2) }} INR
                                                 @endif
@@ -90,7 +90,7 @@
                                                 @if ($registration->delegate_type === 'International')
                                                     <tr>
                                                         <td><strong>Delegate Category (Foreign)</strong></td>
-                                                        <td class="text-end fw-bold">$175.00</td>
+                                                        <td class="text-end fw-bold">₹45,000.00</td>
                                                     </tr>
                                                 @else
                                                     <tr>

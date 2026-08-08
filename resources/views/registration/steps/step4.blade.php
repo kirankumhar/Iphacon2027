@@ -18,7 +18,7 @@
                 </div>
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <span class="badge bg-success fs-5 px-3 py-2">Total Amount: $175.00</span>
+                        <span class="badge bg-success fs-5 px-3 py-2">Total Amount: ₹45,000.00</span>
                     </div>
 
                         <div class="border rounded p-3 text-center" style="background: #f8f9fa;">
@@ -27,7 +27,7 @@
                                  alt="Payment QR Code"
                                  class="img-fluid border rounded shadow-sm" style="max-width: 220px; height: auto;">
                             <p class="mt-3 mb-0"><strong><i class="fas fa-qrcode me-1"></i>Scan QR Code to Pay
-                                    $175.00</strong></p>
+                                    ₹45,000.00</strong></p>
                         </div>
 
                     <div class="alert alert-warning text-start">
@@ -35,7 +35,7 @@
                         <strong>Payment Instructions:</strong>
                         <ol class="mb-0 mt-2">
                             <li>Scan the QR code above using any payment app</li>
-                            <li>Pay exactly <strong>$175.00 USD</strong></li>
+                            <li>Pay exactly <strong>₹45,000.00 INR</strong></li>
                             <li>Take screenshot of successful payment</li>
                             <li>Fill transaction details on the right side</li>
                             <li>Upload payment receipt/screenshot</li>

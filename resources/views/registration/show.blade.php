@@ -282,12 +282,18 @@
                         </div>
                         <div class="card-body px-4 pt-1 pb-4">
                             @php
-                                $currencySymbol = $registration->delegate_type == 'International' ? '$' : '₹';
-                                $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
-                                $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
-                                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                                $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
-                                $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $cmeFee + $accFee) : $registration->calculateTotalAmount());
+                                $currencySymbol = '₹';
+                                if ($registration->delegate_type == 'International') {
+                                    $delFee = 45000.00;
+                                    $accFee = 0.00;
+                                    $gstAmt = 0.00;
+                                    $totalAmt = 45000.00;
+                                } else {
+                                    $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
+                                    $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
+                                    $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                                    $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $accFee) : $registration->calculateTotalAmount());
+                                }
                             @endphp
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
                                 <span class="text-muted">Delegate Registration Fee (Excl. GST)</span>

@@ -48,7 +48,7 @@ class DelegateCategorySeeder extends Seeder
             [
                 'category_name' => 'Foreign Delegates',
                 'indian_fee' => 45000.00,
-                'foreign_fee' => 175.00,
+                'foreign_fee' => 45000.00,
                 'is_active' => true,
             ],
         ];

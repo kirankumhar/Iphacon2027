@@ -365,13 +365,13 @@
                 @if ($registration->delegate_type === 'International')
                     <tr>
                         <td>Delegate Category Registration Fee</td>
-                        <td style="text-align: right;">${{ number_format($registration->delegate_fee ?: 175, 2) }}</td>
-                        <td style="text-align: center;">USD</td>
+                        <td style="text-align: right;">₹{{ number_format($registration->delegate_fee ?: 45000, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
                     </tr>
                     <tr class="total-row">
                         <td><strong>TOTAL AMOUNT PAID</strong></td>
-                        <td style="text-align: right;"><strong>${{ number_format($registration->total_amount ?: 175, 2) }}</strong></td>
-                        <td style="text-align: center;"><strong>USD</strong></td>
+                        <td style="text-align: right;"><strong>₹{{ number_format($registration->total_amount ?: 45000, 2) }}</strong></td>
+                        <td style="text-align: center;"><strong>INR</strong></td>
                     </tr>
                 @else
                     @php

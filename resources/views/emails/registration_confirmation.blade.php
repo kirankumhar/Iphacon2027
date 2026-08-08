@@ -265,11 +265,11 @@
                         @if ($isForeign)
                           <tr>
                             <td class="label">Foreign Delegate Package</td>
-                            <td class="value">${{ number_format($registration->delegate_fee ?: 175, 2) }} USD</td>
+                            <td class="value">₹{{ number_format($registration->delegate_fee ?: 45000, 2) }} INR</td>
                           </tr>
                           <tr>
                             <td class="label" style="font-weight: 700; color: #01579B;">Total Paid Amount</td>
-                            <td class="value" style="color: #0288D1; font-size: 16px;">${{ number_format($registration->total_amount ?: 175, 2) }} USD</td>
+                            <td class="value" style="color: #0288D1; font-size: 16px;">₹{{ number_format($registration->total_amount ?: 45000, 2) }} INR</td>
                           </tr>
                         @else
                           <tr>

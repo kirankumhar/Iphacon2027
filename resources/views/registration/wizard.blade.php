@@ -286,7 +286,7 @@
                                 field.querySelectorAll('input, select').forEach(el => el
                                     .disabled = true);
                             });
-                            document.getElementById('total-amount').textContent = '$175.00';
+                            document.getElementById('total-amount').textContent = '₹45,000.00';
                         } else {
                             feeFields.forEach(field => {
                                 field.style.display = 'block';
