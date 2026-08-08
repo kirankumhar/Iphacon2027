@@ -34,6 +34,20 @@ class AbstractSubmissionController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
+
+        // Ensure user registration is Approved before allowing abstract submission
+        $registration = Registration::where('user_id', $user->id)->first();
+        if (!$registration || strtolower($registration->status) !== 'approved') {
+            $msg = 'Abstract submission is restricted until your registration is Approved by the organizing committee.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg
+                ], 403);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
         $isDraft = $request->input('action') === 'save_draft';
 
         $rules = [

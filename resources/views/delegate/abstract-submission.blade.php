@@ -5,6 +5,7 @@
 @php
     $user = Auth::user();
     $registration = $registration ?? \App\Models\Registration::where('user_id', $user->id)->first();
+    $isApproved = ($registration && strtolower($registration->status) === 'approved');
 @endphp
 
 @section('delegate-content')
@@ -195,10 +196,31 @@
                 </ul>
             </div>
         </div>
-    </div>
+    @if (!$isApproved)
+        <div class="alert alert-danger border-2 border-danger rounded-3 p-4 mb-4 shadow-sm" style="background: #fff5f5;">
+            <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-danger mb-1"><i class="fas fa-exclamation-triangle me-1"></i> Abstract Submission Restricted</h5>
+                    <p class="mb-2 text-dark" style="font-size: 0.95rem;">
+                        Abstract submission is strictly restricted until your conference registration has been <strong>Approved</strong> by the organizing committee.
+                    </p>
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-2 bg-white border text-dark fw-bold small">
+                        Current Registration Status: 
+                        <span class="badge bg-{{ $registration ? ($registration->status == 'Approved' ? 'success' : 'warning text-dark') : 'secondary' }} px-2.5 py-1">
+                            {{ $registration->status ?? 'Not Registered' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <form id="abstractForm" onsubmit="event.preventDefault(); handleAbstractSubmit();">
         @csrf
+        <fieldset {{ !$isApproved ? 'disabled' : '' }}>
 
         <!-- SECTION 1: Author Details -->
         <div class="form-section-card p-4 mb-4">
@@ -510,6 +532,7 @@
                 </div>
             </div>
         </div>
+        </fieldset>
     </form>
 
 </div>
@@ -731,6 +754,10 @@
     }
 
     function saveAsDraft() {
+        @if (!$isApproved)
+            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+            return;
+        @endif
         const form = document.getElementById('abstractForm');
         const formData = new FormData(form);
         formData.append('action', 'save_draft');
@@ -758,6 +785,10 @@
     }
 
     function handleAbstractSubmit() {
+        @if (!$isApproved)
+            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+            return;
+        @endif
         const form = document.getElementById('abstractForm');
 
         if (!form.checkValidity()) {
