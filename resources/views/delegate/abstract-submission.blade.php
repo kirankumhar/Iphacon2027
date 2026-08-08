@@ -128,6 +128,46 @@
         background: #e8f2ff;
         box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.2);
     }
+    .mode-select-card {
+        border: 2px solid #E2E8F0;
+        background: #FFFFFF;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    .mode-select-card:hover {
+        border-color: #94A3B8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+    .mode-check-badge {
+        font-size: 1.15rem;
+        color: #CBD5E1;
+        transition: all 0.2s ease;
+    }
+    .mode-radio-input:checked + .mode-card-oral {
+        border-color: #2563EB;
+        background: #EFF6FF;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+    }
+    .mode-radio-input:checked + .mode-card-oral .mode-check-badge {
+        color: #2563EB;
+    }
+    .mode-radio-input:checked + .mode-card-poster {
+        border-color: #16A34A;
+        background: #F0FDF4;
+        box-shadow: 0 4px 16px rgba(22, 163, 74, 0.15);
+    }
+    .mode-radio-input:checked + .mode-card-poster .mode-check-badge {
+        color: #16A34A;
+    }
+    .mode-radio-input:checked + .mode-card-nopref {
+        border-color: #9333EA;
+        background: #FAF5FF;
+        box-shadow: 0 4px 16px rgba(147, 51, 234, 0.15);
+    }
+    .mode-radio-input:checked + .mode-card-nopref .mode-check-badge {
+        color: #9333EA;
+    }
     .modal {
         z-index: 1060 !important;
     }
@@ -403,44 +443,79 @@
                 </div>
             </div>
 
-            <!-- Preferred Mode (Radio buttons) -->
+            <!-- Preferred Mode of Presentation -->
             <div class="mb-4">
-                <label class="form-label fw-bold text-dark small d-block mb-2">Preferred Mode of Presentation <span class="text-danger">*</span></label>
+                <div class="d-flex align-items-center justify-content-between mb-2.5">
+                    <label class="form-label fw-bold text-dark small mb-0 fs-6">
+                        <i class="fas fa-sliders-h text-primary me-1.5"></i> Preferred Mode of Presentation <span class="text-danger">*</span>
+                    </label>
+                    <span class="badge bg-light text-secondary border px-2.5 py-1 extra-small">
+                        <i class="fas fa-info-circle me-1"></i> Select one option
+                    </span>
+                </div>
+
                 <div class="row g-3">
+                    <!-- Oral Presentation Card -->
                     <div class="col-md-4">
-                        <label class="w-100">
-                            <input type="radio" class="form-check-input d-none" name="presentation_mode" value="Oral Presentation" required checked>
-                            <div class="custom-radio-card d-flex align-items-center gap-2.5">
-                                <i class="fas fa-microphone-alt text-primary fs-5"></i>
-                                <div>
-                                    <div class="fw-bold text-dark small">Oral Presentation</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Podium presentation</div>
+                        <label class="w-100 h-100 m-0" style="cursor: pointer;">
+                            <input type="radio" class="d-none mode-radio-input" name="presentation_mode" value="Oral Presentation" required {{ old('presentation_mode', $abstract->presentation_mode ?? 'Oral Presentation') == 'Oral Presentation' ? 'checked' : '' }}>
+                            <div class="mode-select-card mode-card-oral p-3 rounded-3 position-relative h-100">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="mode-icon-box bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                                        <i class="fas fa-microphone-lines"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center justify-content-between mb-0.5">
+                                            <span class="fw-bold text-dark fs-6">Oral Presentation</span>
+                                            <span class="mode-check-badge"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+                                        <small class="text-muted d-block" style="font-size: 0.78rem;">Podium presentation before scientific audience</small>
+                                        <span class="badge bg-primary-subtle text-primary fw-bold mt-2" style="font-size: 0.7rem;">Podium Session</span>
+                                    </div>
                                 </div>
                             </div>
                         </label>
                     </div>
 
+                    <!-- Poster Presentation Card -->
                     <div class="col-md-4">
-                        <label class="w-100">
-                            <input type="radio" class="form-check-input d-none" name="presentation_mode" value="Poster Presentation">
-                            <div class="custom-radio-card d-flex align-items-center gap-2.5">
-                                <i class="fas fa-image text-success fs-5"></i>
-                                <div>
-                                    <div class="fw-bold text-dark small">Poster Presentation</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Poster display session</div>
+                        <label class="w-100 h-100 m-0" style="cursor: pointer;">
+                            <input type="radio" class="d-none mode-radio-input" name="presentation_mode" value="Poster Presentation" {{ old('presentation_mode', $abstract->presentation_mode ?? '') == 'Poster Presentation' ? 'checked' : '' }}>
+                            <div class="mode-select-card mode-card-poster p-3 rounded-3 position-relative h-100">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="mode-icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                                        <i class="fas fa-chalkboard"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center justify-content-between mb-0.5">
+                                            <span class="fw-bold text-dark fs-6">Poster Presentation</span>
+                                            <span class="mode-check-badge"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+                                        <small class="text-muted d-block" style="font-size: 0.78rem;">Printed poster display in conference venue</small>
+                                        <span class="badge bg-success-subtle text-success fw-bold mt-2" style="font-size: 0.7rem;">Poster Display</span>
+                                    </div>
                                 </div>
                             </div>
                         </label>
                     </div>
 
+                    <!-- No Preference Card -->
                     <div class="col-md-4">
-                        <label class="w-100">
-                            <input type="radio" class="form-check-input d-none" name="presentation_mode" value="No Preference">
-                            <div class="custom-radio-card d-flex align-items-center gap-2.5">
-                                <i class="fas fa-balance-scale text-info fs-5"></i>
-                                <div>
-                                    <div class="fw-bold text-dark small">No Preference</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Decided by committee</div>
+                        <label class="w-100 h-100 m-0" style="cursor: pointer;">
+                            <input type="radio" class="d-none mode-radio-input" name="presentation_mode" value="No Preference" {{ old('presentation_mode', $abstract->presentation_mode ?? '') == 'No Preference' ? 'checked' : '' }}>
+                            <div class="mode-select-card mode-card-nopref p-3 rounded-3 position-relative h-100">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="mode-icon-box rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.25rem; background: #F3E8FF; color: #7E22CE;">
+                                        <i class="fas fa-sliders"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center justify-content-between mb-0.5">
+                                            <span class="fw-bold text-dark fs-6">No Preference</span>
+                                            <span class="mode-check-badge"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+                                        <small class="text-muted d-block" style="font-size: 0.78rem;">Decided by Scientific Review Committee</small>
+                                        <span class="badge fw-bold mt-2" style="font-size: 0.7rem; background: #F3E8FF; color: #7E22CE;">Committee Choice</span>
+                                    </div>
                                 </div>
                             </div>
                         </label>
