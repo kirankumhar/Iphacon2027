@@ -419,9 +419,13 @@
                     name="id_proof_type" required onchange="updateIdProofValidation()">
 
                     @if ($user->delegate_type == 'International')
+                    <option value="">Select ID Type</option>
                     <option value="Passport"
                         {{ old('id_proof_type', $registration->id_proof_type) == 'Passport' ? 'selected' : '' }}>
                         Passport</option>
+                    <option value="Driving License"
+                        {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
+                        Driving Licence</option>
                     @else
                     <option value="">Select ID Type</option>
                     <option value="Aadhaar"
