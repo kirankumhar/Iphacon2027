@@ -113,7 +113,7 @@ class Registration extends Model
 
         $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
         $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
-        $cmeBase = $this->participate_in_cme ? 1000.00 : 0.00;
+        $cmeBase = $this->participate_in_cme ? 2000.00 : 0.00;
 
         $subtotal = $categoryBase + $accompanyingBase + $cmeBase;
         return round($subtotal * 1.18, 2);
@@ -131,7 +131,7 @@ class Registration extends Model
         }
 
         $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
-        $cmeBase = $this->participate_in_cme ? 1000.00 : 0.00;
+        $cmeBase = $this->participate_in_cme ? 2000.00 : 0.00;
         $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
 
         $subtotalBase = $categoryBase + $cmeBase + $accompanyingBase;

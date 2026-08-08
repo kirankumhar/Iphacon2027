@@ -408,7 +408,7 @@ class PaymentController extends Controller
                 'registration_id' => $registration->id,
                 'delegate_category_fee' => $delegateCategoryFee,
                 'accompanying_persons_fee' => ($registration->accompanying_persons ?? 0) * 4000,
-                'cme_fee' => $registration->participate_in_cme ? 1000 : 0,
+                'cme_fee' => $registration->participate_in_cme ? 2000 : 0,
                 'gst_amount' => $gstAmount,
                 'total_amount' => $totalAmount,
                 'currency' => $registration->delegate_type === 'International' ? 'USD' : 'INR',

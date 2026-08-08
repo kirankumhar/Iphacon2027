@@ -250,7 +250,7 @@
                                             <i class="fas fa-check-circle text-primary extra-small"></i>
                                             <span class="radio-title extra-small fw-semibold">Yes</span>
                                         </div>
-                                        <span class="badge extra-small" style="background-color: #DCFFF0; color: #4BAA7D; font-weight: 700;">+ ₹1,000</span>
+                                        <span class="badge extra-small" style="background-color: #DCFFF0; color: #4BAA7D; font-weight: 700;">+ ₹2,000</span>
                                     </div>
                                 </label>
                             </div>
@@ -503,7 +503,7 @@
 
             var $cmeYes = $('#cme_yes');
             if ($cmeYes.length && $cmeYes.is(':checked')) {
-                var cmeFee = 1000;
+                var cmeFee = 2000;
                 baseSubtotal += cmeFee;
             }
 

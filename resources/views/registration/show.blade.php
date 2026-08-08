@@ -258,7 +258,7 @@
                                 $currencySymbol = $registration->delegate_type == 'International' ? '$' : '₹';
                                 $delFee = $registration->delegate_fee ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee / 1.18, 2) : 0);
                                 $gstAmt = $registration->gst_amount ?: ($registration->delegateCategory ? round($registration->delegateCategory->indian_fee - $delFee, 2) : 0);
-                                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                                 $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
                                 $totalAmt = $registration->total_amount ?: ($registration->delegateCategory ? ($registration->delegateCategory->indian_fee + $cmeFee + $accFee) : $registration->calculateTotalAmount());
                             @endphp

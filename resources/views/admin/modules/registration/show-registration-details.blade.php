@@ -251,7 +251,7 @@
                     @if($delegate->participate_in_cme)
                     <div class="d-flex justify-content-between mb-2 extra-small">
                         <span class="text-muted">CME / Workshop Fee</span>
-                        <span class="fw-semibold text-dark">₹{{ number_format($delegate->cme_fee ?: 1000, 2) }}</span>
+                        <span class="fw-semibold text-dark">₹{{ number_format($delegate->cme_fee ?: 2000, 2) }}</span>
                     </div>
                     @endif
 

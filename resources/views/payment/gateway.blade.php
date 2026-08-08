@@ -86,7 +86,7 @@
                                                 @else
                                                     @php
                                                         $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                                                        $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                                                        $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                                                         $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
                                                         $subtotalBase = $catBase + $cmeBase + $accBase;
                                                         $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);

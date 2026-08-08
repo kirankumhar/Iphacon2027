@@ -378,7 +378,7 @@
                         $catFee = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
                         $delFee = $registration->delegate_fee ?: round($catFee / 1.18, 2);
                         $gstAmt = $registration->gst_amount ?: round($catFee - $delFee, 2);
-                        $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 1000 : 0);
+                        $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                         $accFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
                         $totalAmt = $registration->total_amount ?: ($catFee + $cmeFee + $accFee);
                     @endphp

@@ -359,7 +359,7 @@ class RegistrationController extends Controller
                 'accompanying_persons' => $request->accompanying_persons ?? 0,
                 'participate_in_cme' => $request->participate_in_cme ?? false,
                 'membership_no' => $request->delegate_category_id == 2 ? $request->ismm_membership_no : ($request->delegate_category_id == 3 ? $request->young_isam_membership_no : null),
-                'cme_fee' => $request->participate_in_cme ? 1000 : 0,
+                'cme_fee' => $request->participate_in_cme ? 2000 : 0,
                 'accompanying_fee' => $request->accompanying_persons ? 4000 : 0,
                 ];
         } else {
