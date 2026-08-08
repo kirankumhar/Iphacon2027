@@ -90,7 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('abstract/view/{id?}', [AbstractSubmissionController::class, 'show'])->name('abstract.show');
     Route::get('abstract/download-pdf/{id}', [AbstractSubmissionController::class, 'downloadPdf'])->name('abstract.download-pdf');
 
-    // 🔥 REGISTRATION ROUTES
+    // REGISTRATION ROUTES
     Route::get('registration', [RegistrationController::class, 'index'])->name('registration.index');
     Route::get('registration/create', [RegistrationController::class, 'create'])->name('registration.create');
     Route::post('registration', [RegistrationController::class, 'store'])->name('registration.store');
@@ -101,7 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('registration/wizard/{token?}', [RegistrationController::class, 'wizard'])->name('registration.wizard');
     Route::post('registration/wizard/{token}', [RegistrationController::class, 'storeStep'])->name('registration.store-step');
 
-    // 🎓 CME WORKSHOP ROUTES
+    // CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
     Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
     Route::get('cme-payment/gateway/{encCmeAppId}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
@@ -111,7 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
      ->name('delgate.download.receipt');
 
-    // 💰 REGISTRATION PAYMENT ROUTES
+    // REGISTRATION PAYMENT ROUTES
 
     Route::get('payment/gateway/{registration}', [App\Http\Controllers\PaymentController::class, 'gateway'])
         ->name('payment.gateway');

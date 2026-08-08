@@ -129,7 +129,7 @@
                         id="delegate_category_id" name="delegate_category_id" required style="border-radius: 0 8px 8px 0;">
                         <option value="">-- Choose Delegate Category --</option>
                         @foreach ($delegateCategories as $category)
-                            @if ($category->id == 6 || str_contains(strtolower($category->category_name), 'foreign'))
+                            @if ($category->id == 5 || $category->id == 6 || str_contains(strtolower($category->category_name), 'foreign') || str_contains(strtolower($category->category_name), 'accompanying') || str_contains(strtolower($category->category_name), 'co-delegate'))
                                 @continue
                             @endif
                             <option value="{{ $category->id }}" data-fee="{{ $category->indian_fee }}"
