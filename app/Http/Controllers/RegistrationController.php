@@ -346,11 +346,10 @@ class RegistrationController extends Controller
 
             $categoryId = $request->delegate_category_id;
 
-            // Fixed logic error: use AND (&&) instead of OR (||)
-            if ($categoryId != 1 && $categoryId != 4) {
+            // Categories 1 (IPHA Member) and 3 (PG/PhD/MPH Student Member) require membership number
+            if (in_array($categoryId, [1, 3])) {
                 $rules = array_merge($rules, [
-                    'ismm_membership_no' => 'required_if:delegate_category_id,2|string|max:50|nullable',
-                    'young_isam_membership_no' => 'required_if:delegate_category_id,3|string|max:50|nullable',
+                    'ismm_membership_no' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
                     'accompanying_persons' => 'nullable|integer|min:0|max:10',
                     'participate_in_cme' => 'nullable|boolean',
                 ]);
@@ -359,7 +358,6 @@ class RegistrationController extends Controller
                     'accompanying_persons' => 'nullable|integer|min:0|max:10',
                     'participate_in_cme' => 'nullable|boolean',
                     'ismm_membership_no' => 'nullable|string|max:50',
-                    'young_isam_membership_no' => 'nullable|string|max:50',
                 ]);
             }
         } else {
@@ -370,11 +368,9 @@ class RegistrationController extends Controller
         }
 
         $messages = [
-            'ismm_membership_no.required_if' => 'Iphacon Membership Number is required for IPHACON Member category.',
-            'young_isam_membership_no.required_if' => 'Young ISAM Membership Number is required for Young ISAM Members category.',
+            'ismm_membership_no.required' => 'IPHA Membership Number is required for Member categories.',
             'delegate_category_id.required' => 'Please select your delegate category.',
-            'ismm_membership_no.max' => 'IPHACON Membership Number cannot exceed 50 characters.',
-            'young_isam_membership_no.max' => 'Young ISAM Membership Number cannot exceed 50 characters.',
+            'ismm_membership_no.max' => 'IPHA Membership Number cannot exceed 50 characters.',
         ];
 
         $request->validate($rules, $messages);

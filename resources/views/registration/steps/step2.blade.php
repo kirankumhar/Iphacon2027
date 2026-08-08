@@ -121,7 +121,7 @@
             </div>
 
             <!-- Dynamic Membership Fields Section -->
-            <!-- ISMM Membership (Category ID 2) -->
+            <!-- IPHA Membership (Category ID 2) -->
             <div class="mt-2.5 p-2.5 rounded bg-light border" id="ismm_membership_row" style="display: none; border-left: 3px solid #2D69FF !important;">
                 <label for="ismm_membership_no" class="form-label fw-bold text-dark extra-small mb-1">
                     <i class="fas fa-id-card text-primary me-1"></i>IPHACON Membership Number <span class="text-danger">*</span>
@@ -395,19 +395,17 @@
         }
 
         function handleCategoryChange() {
+            var $selectedOption = $('#delegate_category_id').find('option:selected');
             var selectedValue = $('#delegate_category_id').val();
+            var categoryText = $selectedOption.text().toLowerCase();
 
             hideAllMembershipFields();
 
-            switch (selectedValue) {
-                case '2':
-                    showMembershipField('ismm');
-                    break;
-                case '3':
-                    showMembershipField('young_isam');
-                    break;
-                default:
-                    break;
+            // Open IPHA Membership section for IPHA Member (ID 1), Student Member (ID 3), or any member category
+            var isMember = (selectedValue === '1' || selectedValue === '3' || (categoryText.includes('member') && !categoryText.includes('non-member')));
+
+            if (isMember) {
+                showMembershipField('ismm');
             }
 
             calculateTotal();
