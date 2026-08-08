@@ -104,121 +104,73 @@
                     </a>
                 </div>
                 <div class="card-body p-2.5 extra-small">
-                    @if ($registration->delegate_type == 'Indian')
-                        @php
+                    @php
+                        if ($registration->delegate_type == 'International') {
+                            $catName = 'Foreign Delegate Package';
+                            $catBase = 45000.00;
+                        } else {
+                            $catName = $registration->delegateCategory ? $registration->delegateCategory->category_name : 'Standard';
                             $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                            $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                            $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                            $subtotalBase = $catBase + $cmeBase + $accBase;
-                            $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                            $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
-                        @endphp
-                        <table class="table table-sm table-borderless mb-0 align-middle">
-                            <tbody>
+                        }
+                        $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
+                        $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                        $subtotalBase = $catBase + $cmeBase + $accBase;
+                        $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                        $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                    @endphp
+                    <table class="table table-sm table-borderless mb-0 align-middle">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted py-1">Category:</td>
+                                <td class="fw-bold text-dark py-1 text-end">{{ $catName }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted py-1">Delegate Fee:</td>
+                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($catBase, 2) }}</td>
+                            </tr>
+                            @if ($registration->participate_in_cme)
                                 <tr>
-                                    <td class="text-muted py-1">Category:</td>
-                                    <td class="fw-bold text-dark py-1 text-end">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</td>
+                                    <td class="text-muted py-1">CME Workshop:</td>
+                                    <td class="fw-semibold text-success py-1 text-end">+ ₹{{ number_format($cmeBase, 2) }}</td>
                                 </tr>
-                                @if ($registration->membership_no)
-                                    <tr>
-                                        <td class="text-muted py-1">IPHA Membership No:</td>
-                                        <td class="py-1 text-end"><span class="badge bg-primary-subtle text-primary fw-bold font-monospace">{{ $registration->membership_no }}</span></td>
-                                    </tr>
-                                @endif
-                                <tr class="border-top border-light">
-                                    <td class="text-muted py-1">Base Reg. Fee:</td>
-                                    <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($catBase, 2) }}</td>
-                                </tr>
+                            @endif
+                            @if (($registration->accompanying_persons ?? 0) > 0)
                                 <tr>
-                                    <td class="text-muted py-1">CME / Workshop:</td>
-                                    <td class="py-1 text-end">
-                                        @if ($registration->participate_in_cme)
-                                            <span class="text-success fw-bold">+ ₹{{ number_format($cmeBase, 2) }}</span>
-                                        @else
-                                            <span class="text-muted">₹0.00</span>
-                                        @endif
-                                    </td>
+                                    <td class="text-muted py-1">Accompanying Persons ({{ $registration->accompanying_persons }}):</td>
+                                    <td class="fw-semibold text-success py-1 text-end">+ ₹{{ number_format($accBase, 2) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted py-1">Accompanying Persons ({{ $registration->accompanying_persons ?? 0 }}):</td>
-                                    <td class="py-1 text-end">
-                                        @if (($registration->accompanying_persons ?? 0) > 0)
-                                            <span class="text-success fw-bold">+ ₹{{ number_format($accBase, 2) }}</span>
-                                        @else
-                                            <span class="text-muted">₹0.00</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr class="border-top border-light">
-                                    <td class="text-muted py-1 fw-semibold">Subtotal:</td>
-                                    <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($subtotalBase, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted py-1">GST (18%):</td>
-                                    <td class="fw-bold text-warning py-1 text-end">+ ₹{{ number_format($gstAmt, 2) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    @else
-                        <!-- International Delegate Summary -->
-                        <table class="table table-sm table-borderless mb-0 align-middle">
-                            <tbody>
-                                <tr>
-                                    <td class="text-muted py-1">Package Type:</td>
-                                    <td class="fw-bold text-dark py-1 text-end">International Delegate Package</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted py-1">Includes:</td>
-                                    <td class="text-dark py-1 text-end">All Scientific Sessions & CME Programs</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted py-1">Registration Fee:</td>
-                                    <td class="fw-bold text-success py-1 text-end fs-6">₹45,000.00 INR</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    @endif
+                            @endif
+                            <tr>
+                                <td class="text-muted py-1">Subtotal (Excl. GST):</td>
+                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($subtotalBase, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted py-1">GST (18%):</td>
+                                <td class="fw-semibold text-danger py-1 text-end">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Premium Total Amount Card -->
-            @if ($registration->delegate_type == 'Indian')
-                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(45, 105, 255, 0.25);">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); color: #DCFFF0; font-size: 0.88rem;">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div>
-                                <span class="d-block text-white-50 extra-small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Total Amount Payable</span>
-                                <small class="text-white-50 extra-small" style="font-size: 0.72rem;">Inclusive of 18% GST</small>
-                            </div>
+            <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(45, 105, 255, 0.25);">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); color: #DCFFF0; font-size: 0.88rem;">
+                            <i class="fas fa-wallet"></i>
                         </div>
-                        <div class="text-end">
-                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">₹{{ number_format($totalAmt ?? 0, 2) }}</h4>
+                        <div>
+                            <span class="d-block text-white-50 extra-small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Total Amount Payable</span>
+                            <small class="text-white-50 extra-small" style="font-size: 0.72rem;">Inclusive of 18% GST</small>
                         </div>
                     </div>
-                </div>
-            @else
-                <div class="p-2.5 mx-2.5 mb-2.5 rounded-3 text-white shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(45, 105, 255, 0.25);">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.15); color: #DCFFF0; font-size: 0.88rem;">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div>
-                                <span class="d-block text-white-50 extra-small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Total Amount Payable</span>
-                                <small class="text-white-50 extra-small" style="font-size: 0.72rem;">Fixed Package Fee</small>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">₹45,000.00 <span style="font-size: 0.75rem;">INR</span></h4>
-                        </div>
+                    <div class="text-end">
+                        <h4 class="mb-0 fw-extrabold" style="color: #4ADE80; font-size: 1.35rem;">₹{{ number_format($totalAmt ?? 0, 2) }}</h4>
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 </div>
