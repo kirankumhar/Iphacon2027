@@ -180,19 +180,19 @@ body {
 
 /* Logout Button Capsule Styling */
 .nav-logout-btn {
-    background: linear-gradient(135deg, #FF6B00 0%, #FF8800 100%) !important;
+    background: linear-gradient(135deg, #83b771 0%, #06565d 100%) !important;
     color: #FFFFFF !important;
     border: none !important;
     padding: 7px 20px !important;
     border-radius: 25px !important;
     font-size: 0.88rem !important;
     font-weight: 700 !important;
-    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.35) !important;
+    box-shadow: 0 4px 12px rgba(112, 189, 129, 1) !important;
     transition: all 0.25s ease-in-out !important;
 }
 .nav-logout-btn:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 6px 18px rgba(255, 107, 0, 0.5) !important;
+    box-shadow: 0 6px 18px rgba(4, 47, 100, 1) !important;
     color: #FFFFFF !important;
 }
 
