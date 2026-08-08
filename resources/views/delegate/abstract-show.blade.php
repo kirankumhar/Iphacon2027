@@ -7,12 +7,12 @@
         <div class="col-lg-11 col-xl-10">
 
             <!-- Top Header Card -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; overflow: hidden; background: linear-gradient(135deg, #FF6B00 0%, #E65100 50%, #D84315 100%);">
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; overflow: hidden; background: linear-gradient(135deg, #01579B 0%, #0288D1 50%, #00897B 100%);">
                 <div class="card-body p-4 text-white">
                     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                         <div>
-                            <span class="badge bg-white text-danger fw-bold mb-2 px-3 py-1.5 rounded-pill shadow-xs" style="font-size: 0.8rem; color: #D84315 !important;">
-                                <i class="fas fa-file-alt me-1"></i> Abstract Submission Details
+                            <span class="badge bg-white text-primary fw-bold mb-2 px-3 py-1.5 rounded-pill shadow-xs" style="font-size: 0.8rem; color: #01579B !important;">
+                                <i class="fas fa-file-alt me-1 text-info"></i> Abstract Submission Details
                             </span>
                             <h3 class="fw-bold mb-1 text-white" style="letter-spacing: -0.5px;">
                                 {{ $abstract->abstract_title ?: 'Untitled Abstract' }}
@@ -41,7 +41,7 @@
             <div class="row g-3 mb-4">
                 <!-- Status & Category Card -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 14px; background: #F8FAFC; border-left: 4px solid #FF6B00 !important;">
+                    <div class="card border-0 shadow-sm h-100 p-3" style="border-radius: 14px; background: #F8FAFC; border-left: 4px solid #00897B !important;">
                         <span class="text-muted extra-small fw-bold text-uppercase">Submission Status</span>
                         <div class="mt-1">
                             @if(strtolower($abstract->status) === 'submitted' || strtolower($abstract->status) === 'approved')
