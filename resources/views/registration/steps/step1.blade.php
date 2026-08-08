@@ -384,10 +384,10 @@
             </h6>
 
             <div class="text-center">
-                <div class="photo-upload-area py-2 px-2" onclick="handlePhotoAreaClick(event)">
+                <div class="photo-upload-area py-2 px-2" onclick="document.getElementById('photo').click()" style="cursor: pointer;">
                     <img id="photoPreview" class="photo-preview mb-1.5"
                         src="{{ $registration->photo_path ? asset('storage/' . $registration->photo_path) : asset('images/default-avatar.svg') }}"
-                        alt="Profile photo" onclick="openPhotoModal(event)"
+                        alt="Profile photo"
                         onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';">
                     <div>
                         <button type="button" class="btn upload-btn btn-sm py-1 px-3 extra-small">
@@ -648,10 +648,6 @@
     });
 
     function handlePhotoAreaClick(event) {
-        if (event.target.id === 'photoPreview' || event.target.closest('#photoPreview')) {
-            openPhotoModal(event);
-            return;
-        }
         document.getElementById('photo').click();
     }
 
@@ -663,17 +659,15 @@
     }
 
     function openPhotoModal(event) {
-        if (event) event.stopPropagation();
-        const photoPreview = document.getElementById('photoPreview');
-        const modalPhoto = document.getElementById('modalPhotoPreview');
-        if (photoPreview && modalPhoto && photoPreview.src) {
-            modalPhoto.src = photoPreview.src;
-        }
-        const photoModal = document.getElementById('photoModal');
-        if (photoModal) {
-            new bootstrap.Modal(photoModal).show();
-        }
+        document.getElementById('photo').click();
     }
+
+    document.addEventListener('hidden.bs.modal', function () {
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
 
     function openDocumentModal(event) {
         if (event) event.stopPropagation();
