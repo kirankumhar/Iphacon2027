@@ -5,7 +5,8 @@
 @php
     $user = Auth::user();
     $registration = $registration ?? \App\Models\Registration::where('user_id', $user->id)->first();
-    $isApproved = ($registration && strtolower($registration->status) === 'approved');
+    $isTestingMode = session('abstract_testing_mode', false);
+    $isApproved = (($registration && strtolower($registration->status) === 'approved') || $isTestingMode);
 @endphp
 
 @section('delegate-content')
@@ -201,6 +202,23 @@
                 </ul>
             </div>
         </div>
+    @if($isTestingMode)
+        <div class="alert alert-warning border-2 border-warning rounded-3 p-3.5 mb-4 d-flex align-items-center justify-content-between shadow-sm" style="background: #fffbeb;">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div>
+                    <strong class="text-dark d-block">🧪 Testing Mode ACTIVE</strong>
+                    <span class="text-muted extra-small">Abstract submission form is unlocked for testing (Registration approval check bypassed).</span>
+                </div>
+            </div>
+            <button type="button" onclick="toggleTestingMode()" class="btn btn-dark btn-sm rounded-pill fw-bold px-3">
+                <i class="fas fa-power-off me-1"></i> Disable Testing Mode
+            </button>
+        </div>
+    @endif
+
     @if (!$isApproved)
         <div class="alert alert-danger border-2 border-danger rounded-3 p-4 mb-4 shadow-sm" style="background: #fff5f5;">
             <div class="d-flex align-items-start gap-3">
@@ -212,11 +230,21 @@
                     <p class="mb-2 text-dark" style="font-size: 0.95rem;">
                         Abstract submission is strictly restricted until your conference registration has been <strong>Approved</strong> by the organizing committee.
                     </p>
-                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-2 bg-white border text-dark fw-bold small">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-2 bg-white border text-dark fw-bold small mb-3">
                         Current Registration Status: 
                         <span class="badge bg-{{ $registration ? ($registration->status == 'Approved' ? 'success' : 'warning text-dark') : 'secondary' }} px-2.5 py-1">
                             {{ $registration->status ?? 'Not Registered' }}
                         </span>
+                    </div>
+
+                    <!-- Testing Mode Toggle Button -->
+                    <div class="pt-2.5 border-top border-danger-subtle">
+                        <button type="button" onclick="toggleTestingMode()" class="btn btn-warning btn-sm fw-bold px-3 py-2 rounded-pill shadow-sm">
+                            <i class="fas fa-vial me-1.5"></i> Enable Testing Mode (Bypass Approval for Testing)
+                        </button>
+                        <small class="text-muted d-block mt-1">
+                            <i class="fas fa-info-circle me-1"></i> Click to unlock the abstract submission form without approval.
+                        </small>
                     </div>
                 </div>
             </div>
@@ -1003,6 +1031,16 @@
         .catch(err => {
             console.error(err);
             alert('An error occurred while submitting the abstract.');
+        });
+    }
+
+    function toggleTestingMode() {
+        $.post("{{ route('abstract.toggle-testing-mode') }}", {
+            _token: "{{ csrf_token() }}"
+        }, function(res) {
+            if(res && res.success) {
+                window.location.reload();
+            }
         });
     }
 </script>

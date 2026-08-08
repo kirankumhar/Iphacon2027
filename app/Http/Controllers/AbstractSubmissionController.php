@@ -29,15 +29,31 @@ class AbstractSubmissionController extends Controller
     }
 
     /**
+     * Toggle testing mode to bypass registration approval check.
+     */
+    public function toggleTestingMode(Request $request)
+    {
+        $current = session('abstract_testing_mode', false);
+        session(['abstract_testing_mode' => !$current]);
+
+        return response()->json([
+            'success' => true,
+            'testing_mode' => !$current,
+            'message' => !$current ? 'Testing Mode ENABLED! Abstract form unlocked.' : 'Testing Mode DISABLED! Normal approval restrictions applied.'
+        ]);
+    }
+
+    /**
      * Store or update an abstract submission (Submit or Save Draft).
      */
     public function store(Request $request)
     {
         $user = Auth::user();
 
-        // Ensure user registration is Approved before allowing abstract submission
+        // Ensure user registration is Approved before allowing abstract submission (unless Testing Mode is active)
+        $isTestingMode = session('abstract_testing_mode', false);
         $registration = Registration::where('user_id', $user->id)->first();
-        if (!$registration || strtolower($registration->status) !== 'approved') {
+        if (!$isTestingMode && (!$registration || strtolower($registration->status) !== 'approved')) {
             $msg = 'Abstract submission is restricted until your registration is Approved by the organizing committee.';
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
