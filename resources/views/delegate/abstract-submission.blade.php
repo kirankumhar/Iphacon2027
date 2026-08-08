@@ -381,14 +381,16 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-dark small">Conference Theme <span class="text-danger">*</span></label>
                     <select class="form-select" name="conference_theme" id="conference_theme" required>
-                        <option value="" disabled selected>Select Conference Theme</option>
-                        <option value="Antifungal agents including pharmacokinetics, pharmacodnamics and therapeutic drug monitoring">Antifungal agents including pharmacokinetics, pharmacodnamics and therapeutic drug monitoring</option>
-                        <option value="Antifungal susceptibility and resistance">Antifungal susceptibility and resistance</option>
-                        <option value="Management of fungal diseases">Management of fungal diseases</option>
-                        <option value="Cutaneous/superficial and subcutaneous fungal infections">Cutaneous/superficial and subcutaneous fungal infections</option>
-                        <option value="Diagnostic Mycology">Diagnostic Mycology</option>
-                        <option value="Epidemiology">Epidemiology</option>
-                        <option value="Infection control, prevention and antifungal stewardship">Infection control, prevention and antifungal stewardship</option>
+                        <option value="" disabled selected>-- Select Conference Theme / Sub-Theme --</option>
+                        <option value="Health Systems, Policy & Governance">Health Systems, Policy & Governance</option>
+                        <option value="One Health, Environment & Occupational Health">One Health, Environment & Occupational Health</option>
+                        <option value="Communicable Diseases & Immunization">Communicable Diseases & Immunization</option>
+                        <option value="Non-Communicable Diseases (NCDs) & Population Health">Non-Communicable Diseases (NCDs) & Population Health</option>
+                        <option value="Maternal, Child & Family Health">Maternal, Child & Family Health</option>
+                        <option value="Digital Health, AI & Innovation">Digital Health, AI & Innovation</option>
+                        <option value="Research, Education & Ethics">Research, Education & Ethics</option>
+                        <option value="Clinical & Allied Public Health">Clinical & Allied Public Health</option>
+                        <option value="Miscellaneous">Miscellaneous</option>
                     </select>
                 </div>
             </div>

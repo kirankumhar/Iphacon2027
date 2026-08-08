@@ -284,7 +284,7 @@
             {{-- Organization Meta --}}
             <div class="brand-block">
                 <div class="brand-title">71<sup>st</sup> Annual National Conference of IPHA</div>
-                <div class="brand-subtitle">IPHACON 2027 | RANCHI, JHARKHAND</div>
+                <div class="brand-subtitle">IPHACON 2027 | RIMS, RANCHI, JHARKHAND</div>
                 <div class="brand-meta">
                     <strong>Dates:</strong> 12<sup>th</sup> - 14<sup>th</sup> March 2027 &nbsp;|&nbsp; <strong>Venue:</strong> Rajendra Institute of Medical Sciences (RIMS), Ranchi &nbsp;|&nbsp; <strong>Web:</strong> www.iphacon2027.com
                 </div>
