@@ -415,10 +415,13 @@
                 </div>
             </div>
 
-            <div class="row g-3">
-                <!-- Category Dropdown -->
-                <div class="col-md-6">
-                    <label class="form-label fw-bold text-dark small">Category <span class="text-danger">*</span></label>
+            <div class="row g-3 align-items-center">
+                <!-- Category Label (3 col) -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-dark small mb-0">Category <span class="text-danger">*</span></label>
+                </div>
+                <!-- Category Dropdown (3 col) -->
+                <div class="col-md-3">
                     <select class="form-select" name="presenter_category" id="presenter_category" required onchange="toggleOtherCategory(this)">
                         <option value="" disabled selected>Select Category</option>
                         <option value="Faculty">Faculty</option>
@@ -429,17 +432,14 @@
                     </select>
                 </div>
 
-                <!-- Other Category Field (Conditional) -->
-                <div class="col-md-6 d-none" id="other_category_wrapper">
-                    <label class="form-label fw-bold text-dark small">Please Specify Category <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="other_category_text" id="other_category_text" placeholder="Specify your category">
+                <!-- Theme Label (3 col) -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-dark small mb-0">Conference Theme <span class="text-danger">*</span></label>
                 </div>
-
-                <!-- Theme Dropdown Field -->
-                <div class="col-md-6">
-                    <label class="form-label fw-bold text-dark small">Conference Theme <span class="text-danger">*</span></label>
+                <!-- Theme Dropdown (3 col) -->
+                <div class="col-md-3">
                     <select class="form-select" name="conference_theme" id="conference_theme" required>
-                        <option value="" disabled selected>-- Select Conference Theme / Sub-Theme --</option>
+                        <option value="" disabled selected>-- Select Theme --</option>
                         <option value="Health Systems, Policy & Governance">Health Systems, Policy & Governance</option>
                         <option value="One Health, Environment & Occupational Health">One Health, Environment & Occupational Health</option>
                         <option value="Communicable Diseases & Immunization">Communicable Diseases & Immunization</option>
@@ -450,6 +450,18 @@
                         <option value="Clinical & Allied Public Health">Clinical & Allied Public Health</option>
                         <option value="Miscellaneous">Miscellaneous</option>
                     </select>
+                </div>
+
+                <!-- Other Category Field (Conditional) -->
+                <div class="col-md-12 d-none mt-2" id="other_category_wrapper">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-dark small mb-0">Please Specify Category <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="other_category_text" id="other_category_text" placeholder="Specify your category">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
