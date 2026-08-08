@@ -107,9 +107,19 @@
                             </div>
                             <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">View registration status, payment & download PDF receipt.</p>
                         </div>
-                        <a href="{{ route('registration.index') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">
-                            View Details <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                        <div class="d-flex flex-column gap-1.5">
+                            @if($registration && !$registration->participate_in_cme)
+                                @php
+                                    $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
+                                @endphp
+                                <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
+                                    <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
+                                </a>
+                            @endif
+                            <a href="{{ route('registration.index') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">
+                                View Details <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

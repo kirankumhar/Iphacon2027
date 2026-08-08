@@ -84,6 +84,14 @@
                                                 <a href="{{ route('registration.show', $registration->id) }}" class="btn btn-sm btn-outline-primary px-3 py-1 fw-semibold me-1" style="border-radius: 6px;">
                                                     <i class="fas fa-eye me-1"></i>View
                                                 </a>
+                                                @if(!$registration->participate_in_cme)
+                                                    @php
+                                                        $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
+                                                    @endphp
+                                                    <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-sm btn-outline-success px-2.5 py-1 fw-semibold me-1" style="border-radius: 6px;">
+                                                        <i class="fas fa-microscope me-1"></i>Apply for CME
+                                                    </a>
+                                                @endif
                                                 @if($registration->status === 'Draft')
                                                     <a href="{{ route('registration.create') }}" class="btn btn-sm btn-primary px-3 py-1 fw-semibold" style="background: #2D69FF; border: none; border-radius: 6px;">
                                                         <i class="fas fa-edit me-1"></i>Edit

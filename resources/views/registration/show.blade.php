@@ -191,9 +191,19 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Workshop / CME</span>
-                                    <span class="fw-bold {{ $registration->participate_in_cme ? 'text-success' : 'text-muted' }}">
-                                        {{ $registration->participate_in_cme ? 'Participating' : 'Not Participating' }}
-                                    </span>
+                                    @if ($registration->participate_in_cme)
+                                        <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating</span>
+                                    @else
+                                        <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                                            <span class="fw-semibold text-muted small">Not Registered</span>
+                                            @php
+                                                $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
+                                            @endphp
+                                            <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-sm btn-outline-success px-2.5 py-0.5 fw-semibold rounded-pill shadow-xs" style="font-size: 0.76rem;">
+                                                <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Accompanying Persons</span>
