@@ -4,10 +4,10 @@
 <div class="container-xxl flex-grow-1 mt-3.5 mb-4">
     <div class="d-flex align-items-center justify-content-between py-2 mb-3">
         <h5 class="mb-0 fw-bold text-dark">
-            <i class="fas fa-graduation-cap me-2 text-info fs-4"></i>CME Workshop Participants
+            <i class="fas fa-graduation-cap me-2 text-info fs-4"></i>Pre-Conference Workshop Participants
         </h5>
         <span class="badge bg-info text-white rounded-pill px-3.5 py-2 fs-7 fw-bold shadow-xs">
-            Total CME Participants: {{ $registrations->count() }}
+            Total Workshop Participants: {{ $registrations->count() }}
         </span>
     </div>
 
@@ -23,7 +23,7 @@
 
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <h6 class="mb-0 fw-bold text-dark"><i class="bx bx-list-check me-1.5 text-primary"></i>CME Workshop Delegates List</h6>
+            <h6 class="mb-0 fw-bold text-dark"><i class="bx bx-list-check me-1.5 text-primary"></i>Pre-Conference Workshop Delegates List</h6>
             <div class="search-box" style="max-width: 300px; width: 100%;">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>

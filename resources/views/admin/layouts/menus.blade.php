@@ -150,7 +150,7 @@
     <li class="menu-item {{ request()->routeIs('admin.cme-delegates') ? 'active' : '' }}">
         <a href="{{ Route::has('admin.cme-delegates') ? route('admin.cme-delegates') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-book-reader text-info"></i>
-            <div>CME Workshop Participants</div>
+            <div>Pre-Conference Workshop Participants</div>
         </a>
     </li>
 

@@ -1,5 +1,5 @@
 @extends('shared.auth-delegate')
-@section('title', 'Pre-Conference CME / Workshop Registration')
+@section('title', 'Pre-Conference Workshop Registration')
 
 @section('delegate-content')
 <div class="container py-4">
@@ -17,7 +17,7 @@
                             <span class="badge bg-warning text-dark fw-bold mb-1 px-3 py-1 rounded-pill shadow-xs" style="font-size: 0.75rem;">
                                 <i class="fas fa-microscope me-1"></i> Pre-Conference Workshop
                             </span>
-                            <h3 class="fw-bold mb-1 text-white" style="letter-spacing: -0.5px;">CME / Workshop Registration</h3>
+                            <h3 class="fw-bold mb-1 text-white" style="letter-spacing: -0.5px;">Pre-Conference Workshop Registration</h3>
                             <p class="mb-0 text-white opacity-90 small">IPHACON 2027 • RIMS, Ranchi</p>
                         </div>
                     </div>
@@ -77,10 +77,10 @@
                                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                         <div>
                                             <h6 class="fw-bold text-dark mb-0.5" style="font-size: 1rem;">
-                                                Pre-Conference CME / Hands-on Workshop
+                                                Pre-Conference Hands-on Workshop
                                             </h6>
                                             <p class="text-muted small mb-0">
-                                                Gain access to interactive pre-conference CME sessions, hands-on learning modules, certificate & workshop material.
+                                                Gain access to interactive pre-conference workshop sessions, hands-on learning modules, certificate & workshop material.
                                             </p>
                                         </div>
                                         <div class="text-end">
@@ -99,7 +99,7 @@
                                 <i class="fas fa-calculator me-1.5"></i>Fee Breakdown Summary
                             </h6>
                             <div class="d-flex justify-content-between align-items-center mb-2 small">
-                                <span class="text-secondary">CME Workshop Base Fee</span>
+                                <span class="text-secondary">Pre-Conference Workshop Base Fee</span>
                                 <span class="fw-semibold text-dark" id="baseFeeDisplay">₹ 2,000.00</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2 small">
@@ -115,7 +115,7 @@
 
                         <div class="d-none mt-4 p-4 rounded-3 bg-light text-center border" id="unselectedMessage">
                             <i class="fas fa-info-circle text-muted fs-4 mb-2 d-block"></i>
-                            <p class="text-muted small mb-0">Please check the CME / Workshop checkbox above to proceed to payment.</p>
+                            <p class="text-muted small mb-0">Please check the Pre-Conference Workshop checkbox above to proceed to payment.</p>
                         </div>
                     </div>
 

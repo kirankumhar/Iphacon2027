@@ -278,7 +278,7 @@
                           </tr>
                           @if ($registration->participate_in_cme)
                           <tr>
-                            <td class="label">CME Workshop Fee</td>
+                            <td class="label">Pre-Conference Workshop Fee</td>
                             <td class="value">₹{{ number_format($cmeBase, 2) }}</td>
                           </tr>
                           @endif

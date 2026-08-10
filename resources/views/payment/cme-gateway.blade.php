@@ -1,5 +1,5 @@
 @extends('shared.auth-delegate')
-@section('title', 'CME Workshop Payment - Scan QR Code')
+@section('title', 'Pre-Conference Workshop Payment - Scan QR Code')
 
 @section('delegate-content')
     <div class="container py-2">
@@ -9,7 +9,7 @@
                     <div class="card-header text-center py-2.5 px-3"
                         style="background: linear-gradient(135deg, #10B981, #059669); border-radius: 12px 12px 0 0;">
                         <h5 class="text-white mb-0 fw-bold">
-                            <i class="fas fa-stethoscope me-2"></i>CME Workshop Payment - Scan QR Code
+                            <i class="fas fa-stethoscope me-2"></i>Pre-Conference Workshop Payment - Scan QR Code
                         </h5>
                     </div>
 
@@ -47,7 +47,7 @@
                             <div class="col-lg-6">
                                 <div class="card border shadow-sm h-100" style="border-radius: 12px;">
                                     <div class="card-header bg-success text-white py-3">
-                                        <h5 class="mb-0 fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i>CME Workshop Fee & QR Code</h5>
+                                        <h5 class="mb-0 fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i>Pre-Conference Workshop Fee & QR Code</h5>
                                     </div>
                                     <div class="card-body p-4 text-center">
 
@@ -66,7 +66,7 @@
                                         </div>
 
                                         <p class="mt-2 mb-1 fw-bold text-dark fs-6">
-                                            <i class="fas fa-camera me-1 text-success"></i>Scan QR Code to Pay for CME Workshop
+                                            <i class="fas fa-camera me-1 text-success"></i>Scan QR Code to Pay for Pre-Conference Workshop
                                         </p>
                                         <p class="text-muted small mb-3">Use GPay, PhonePe, Paytm, BHIM or any UPI app</p>
 

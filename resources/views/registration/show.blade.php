@@ -190,7 +190,7 @@
                                     <span class="fw-semibold text-dark">{{ $registration->dietary_preference ?: 'N/A' }}</span>
                                 </div>
                                 <div class="col-sm-6">
-                                    <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Workshop / CME</span>
+                                    <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Pre-Conference Workshop</span>
                                     @php
                                         $cmeStatus = $registration->cmeApplication?->status;
                                         $isCmeApproved = $registration->participate_in_cme || $cmeStatus === 'Approved';
@@ -201,14 +201,14 @@
                                     @elseif ($isCmePending)
                                         <div class="d-flex align-items-center gap-2 mt-1">
                                             <span class="badge bg-warning text-dark border px-2 py-1 rounded-pill small">
-                                                <i class="fas fa-hourglass-half me-1"></i>CME Verification Pending
+                                                <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
                                             </span>
                                         </div>
                                     @else
                                         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                                             <span class="fw-semibold text-muted small">Not Registered</span>
                                             <a href="{{ route('cme.apply') }}" class="btn btn-sm btn-outline-success px-2.5 py-0.5 fw-semibold rounded-pill shadow-xs" style="font-size: 0.76rem;">
-                                                <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
+                                                <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
                                             </a>
                                         </div>
                                     @endif
@@ -309,7 +309,7 @@
                             </div>
                             @if($registration->participate_in_cme)
                             <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light small">
-                                <span class="text-muted">CME / Workshop Fee</span>
+                                <span class="text-muted">Pre-Conference Workshop Fee</span>
                                 <span class="fw-semibold text-success">
                                     + ₹{{ number_format($cmeFee, 2) }}
                                 </span>
@@ -386,7 +386,7 @@
                                 <div class="mt-4 pt-3 border-top border-light">
                                     <div class="d-flex align-items-center justify-content-between mb-2.5">
                                         <h6 class="fw-bold text-dark mb-0 small d-flex align-items-center gap-1.5">
-                                            <i class="fas fa-stethoscope text-success"></i> CME Workshop Payment Details
+                                            <i class="fas fa-stethoscope text-success"></i> Pre-Conference Workshop Payment Details
                                         </h6>
                                         @php
                                             $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
@@ -411,7 +411,7 @@
                                     </div>
                                     <div class="p-3 bg-light rounded-3 small" style="border: 1px dashed #10B981;">
                                         <div class="d-flex justify-content-between mb-1.5">
-                                            <span class="text-muted">CME Fee + 18% GST:</span>
+                                            <span class="text-muted">Pre-Conference Workshop Fee + 18% GST:</span>
                                             <span class="fw-bold text-success">₹2,360.00</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-1.5">

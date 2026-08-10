@@ -291,7 +291,7 @@
                     <div class="p-2.5 rounded border bg-white h-100">
                         <div class="d-flex align-items-center justify-content-between mb-1.5">
                             <label class="form-label fw-bold text-dark mb-0 extra-small">
-                                <i class="fas fa-graduation-cap text-primary me-1"></i>CME Workshop
+                                <i class="fas fa-graduation-cap text-primary me-1"></i>Pre-Conference Workshop
                             </label>
                         </div>
 

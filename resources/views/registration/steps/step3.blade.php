@@ -130,7 +130,7 @@
                             </tr>
                             @if ($registration->participate_in_cme)
                                 <tr>
-                                    <td class="text-muted py-1">CME Workshop:</td>
+                                    <td class="text-muted py-1">Pre-Conference Workshop:</td>
                                     <td class="fw-semibold text-success py-1 text-end">+ ₹{{ number_format($cmeBase, 2) }}</td>
                                 </tr>
                             @endif

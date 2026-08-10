@@ -389,7 +389,7 @@
                     </tr>
                     @if ($registration->participate_in_cme)
                         <tr>
-                            <td>CME / Workshop Participation Fee</td>
+                            <td>Pre-Conference Workshop Participation Fee</td>
                             <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
                             <td style="text-align: center;">INR</td>
                         </tr>

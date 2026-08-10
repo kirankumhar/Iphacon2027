@@ -116,11 +116,11 @@
                                 @endphp
                                 @if(!$isCmeApproved && !$isCmePending)
                                     <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
-                                        <i class="fas fa-plus-circle me-1"></i>Apply for CME Workshop
+                                        <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
                                     </a>
                                 @elseif($isCmePending)
                                     <div class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-hourglass-half me-1"></i>CME Verification Pending
+                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
                                     </div>
                                 @endif
                             @endif
