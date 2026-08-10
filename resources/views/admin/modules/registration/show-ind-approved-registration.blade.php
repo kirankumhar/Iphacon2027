@@ -99,7 +99,7 @@
                                 </td>
                                 <td class="pe-3 text-end">
                                     <div class="d-inline-flex gap-1.5 align-items-center">
-                                        <a href="{{ route('show-registration-details', $reg->registration_number) }}" class="btn btn-sm btn-primary py-1 px-2.5 fw-semibold rounded-2 shadow-xs" title="View Full Details">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-sm btn-primary py-1 px-2.5 fw-semibold rounded-2 shadow-xs" title="View Full Details">
                                             <i class="bx bx-show me-1"></i>Details
                                         </a>
                                         @if($reg->registration_number)

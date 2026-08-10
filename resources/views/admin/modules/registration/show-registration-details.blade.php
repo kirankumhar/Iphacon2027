@@ -45,15 +45,15 @@
                             <div>
                                 <h4 class="text-white mb-1 fw-bold">{{ $delegate->user?->prefix }} {{ $delegate->user?->full_name }}</h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap text-white-50 extra-small">
-                                    <span class="badge bg-white bg-opacity-15 text-white font-monospace extra-small px-2.5 py-1">
-                                        <i class="bx bx-barcode me-1"></i>Ack ID: <strong class="text-white">{{ $delegate->acknowledgement_id ?? ('IPHA-ACK-'.$delegate->id) }}</strong>
+                                    <span class="badge font-monospace extra-small px-2.5 py-1.5 rounded-2" style="background-color: rgba(255, 255, 255, 0.18) !important; color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.35) !important; font-size: 0.78rem;">
+                                        <i class="bx bx-barcode me-1" style="color: #93C5FD !important;"></i>Ack ID: <strong style="color: #FFFFFF !important;">{{ $delegate->acknowledgement_id ?? ('IPHA-ACK-'.$delegate->id) }}</strong>
                                     </span>
                                     @if($delegate->registration_number)
-                                        <span class="badge bg-success text-white font-monospace extra-small px-2.5 py-1">
-                                            <i class="bx bx-check-shield me-1"></i>Reg No: <strong class="text-white">{{ $delegate->registration_number }}</strong>
+                                        <span class="badge font-monospace extra-small px-2.5 py-1.5 rounded-2" style="background-color: rgba(16, 185, 129, 0.25) !important; color: #6EE7B7 !important; border: 1px solid rgba(16, 185, 129, 0.45) !important; font-size: 0.78rem;">
+                                            <i class="bx bx-check-shield me-1" style="color: #34D399 !important;"></i>Reg No: <strong style="color: #FFFFFF !important;">{{ $delegate->registration_number }}</strong>
                                         </span>
                                     @else
-                                        <span class="badge bg-warning text-dark extra-small px-2.5 py-1 fw-bold">
+                                        <span class="badge extra-small px-2.5 py-1.5 rounded-2 fw-bold" style="background-color: rgba(245, 158, 11, 0.25) !important; color: #FDE047 !important; border: 1px solid rgba(245, 158, 11, 0.45) !important; font-size: 0.78rem;">
                                             <i class="bx bx-time me-1"></i>Reg No: Pending Approval
                                         </span>
                                     @endif

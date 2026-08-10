@@ -107,14 +107,8 @@
     @else
     <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <i class="menu-icon tf-icons bx bx-home-circle text-primary"></i>
             <div>Dashboard</div>
-        </a>
-    </li>
-    <li class="menu-item {{ request()->routeIs('admin.moderator.dashboard') ? 'active' : '' }}">
-        <a href="{{ route('admin.moderator.dashboard') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-shield-quarter text-info"></i>
-            <div>Moderator Dashboard</div>
         </a>
     </li>
     @endif
@@ -194,6 +188,13 @@
 
     <li class="menu-header">
         <span class="menu-header-text">Transactions</span>
+    </li>
+
+    <li class="menu-item {{ request()->routeIs('pending-payments') ? 'active' : '' }}">
+        <a href="{{ Route::has('pending-payments') ? route('pending-payments') : '#' }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-time-five text-warning"></i>
+            <div>Pending Payments</div>
+        </a>
     </li>
 
     <li class="menu-item {{ request()->routeIs('paid-payments') ? 'active' : '' }}">

@@ -181,6 +181,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/show-registration-details/{registration_number}', [AdminRegistrationController::class, 'viewRegistrationDetails'])->name('show-registration-details');
 
     Route::get('/cme-delegates', [AdminRegistrationController::class, 'cmeDelegates'])->name('admin.cme-delegates');
+    Route::get('/pending-payments', [AdminRegistrationController::class, 'pendingPayments'])->name('pending-payments');
     Route::get('/paid-payments', [AdminRegistrationController::class, 'paidPayments'])->name('paid-payments');
     Route::get('/failed-payments', [AdminRegistrationController::class, 'failedPayments'])->name('failed-payments');
     Route::get('/submitted-delegates', [AdminRegistrationController::class, 'submittedDelegates'])->name('submitted-delegates');

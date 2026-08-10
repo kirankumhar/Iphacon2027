@@ -240,6 +240,23 @@ class AdminRegistrationController extends Controller
         return view('admin.modules.payments.paid-payments', compact('payments'));
     }
 
+    public function pendingPayments()
+    {
+        $payments = \App\Models\Payment::with(['registration.user', 'registration.delegateCategory'])
+            ->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION', 'In Process'])
+            ->orWhereNull('payment_status')
+            ->latest()
+            ->get();
+
+        $pendingRegistrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->whereIn('status', ['Payment Submitted', 'Pending Payment', 'Submitted'])
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.payments.pending-payments', compact('payments', 'pendingRegistrations'));
+    }
+
     public function failedPayments()
     {
         $payments = \App\Models\Payment::with(['registration.user'])

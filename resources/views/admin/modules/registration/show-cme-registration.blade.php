@@ -88,7 +88,7 @@
                                     @endif
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <a href="{{ route('show-registration-details', $reg->registration_number) }}" class="btn btn-sm btn-outline-primary px-3 py-1 rounded-2" style="font-size: 0.75rem;">
+                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-sm btn-outline-primary px-3 py-1 rounded-2" style="font-size: 0.75rem;">
                                         <i class="bx bx-show me-1"></i> Details
                                     </a>
                                 </td>

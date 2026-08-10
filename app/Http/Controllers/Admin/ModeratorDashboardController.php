@@ -13,6 +13,10 @@ class ModeratorDashboardController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
+        if ($admin && !$admin->isModerator()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         // Submitted delegates awaiting verification / moderation
         $submittedCount = Registration::where('status', 'Payment Submitted')
             ->where('is_deleted', '0')

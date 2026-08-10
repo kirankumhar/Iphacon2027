@@ -200,6 +200,17 @@
                                 </a>
                             </div>
                             <div class="col-sm-6 col-lg-3">
+                                <a href="{{ route('pending-payments') }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
+                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #FEF3C7 !important; color: #D97706 !important;">
+                                        <i class="bx bx-time-five fs-3" style="color: #D97706 !important;"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-0.5" style="font-size: 0.9rem;">Pending Payments</h6>
+                                        <small class="text-muted extra-small d-block">Verify pending transactions</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
                                 <a href="{{ route('paid-payments') }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
                                     <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #DCFFF0 !important; color: #059669 !important;">
                                         <i class="bx bx-credit-card-front fs-3" style="color: #059669 !important;"></i>

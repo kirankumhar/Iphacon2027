@@ -86,7 +86,7 @@
                                                     <a href="{{ route('download.receipt', $reg->registration_number) }}" target="_blank" class="badge bg-label-danger text-danger border border-danger border-opacity-25 px-2 py-1 small rounded-2 text-decoration-none shadow-xs" title="Download Receipt PDF">
                                                         <i class="bx bxs-file-pdf me-1"></i>{{ $reg->registration_number }}
                                                     </a>
-                                                    <a href="{{ url('/admin/show-registration-details/' . $reg->registration_number) }}" target="_blank" class="badge bg-label-primary text-primary border border-primary border-opacity-25 px-2 py-1 small rounded-2 text-decoration-none shadow-xs">
+                                                    <a href="{{ url('/admin/show-registration-details/' . ($reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id))) }}" target="_blank" class="badge bg-label-primary text-primary border border-primary border-opacity-25 px-2 py-1 small rounded-2 text-decoration-none shadow-xs">
                                                         <i class="bx bx-show me-1"></i>Details
                                                     </a>
                                                 </div>

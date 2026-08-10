@@ -114,14 +114,15 @@
                                 </td>
                                 <td class="pe-3 text-end">
                                     <div class="d-flex align-items-center justify-content-end gap-1 flex-wrap">
-                                        <a href="{{ route('show-registration-details', $reg->registration_number) }}" class="btn btn-sm btn-outline-primary px-2 py-1 rounded-2" title="View Details" style="font-size: 0.75rem;">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-sm btn-outline-primary px-2 py-1 rounded-2" title="View Details" style="font-size: 0.75rem;">
                                             <i class="bx bx-show"></i> Details
                                         </a>
 
                                         <!-- Direct Approve Form -->
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf
-                                            <input type="hidden" name="registration_number" value="{{ $reg->registration_number }}">
+                                            <input type="hidden" name="registration_id" value="{{ $reg->id }}">
+                                            <input type="hidden" name="acknowledgement_id" value="{{ $reg->acknowledgement_id }}">
                                             <button type="submit" class="btn btn-sm btn-success px-2 py-1 rounded-2" onclick="return confirm('Approve registration for {{ $reg->user?->full_name }}?')" title="Approve Registration" style="font-size: 0.75rem;">
                                                 <i class="bx bx-check"></i> Approve
                                             </button>
