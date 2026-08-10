@@ -189,17 +189,35 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @php
-                                        $badgeClass = 'bg-secondary';
-                                        if ($item->status === 'Accepted') $badgeClass = 'bg-success';
-                                        elseif ($item->status === 'Rejected') $badgeClass = 'bg-danger';
-                                        elseif ($item->status === 'Submitted') $badgeClass = 'bg-warning text-dark';
-                                        elseif ($item->status === 'Under Review') $badgeClass = 'bg-info text-white';
-                                        elseif ($item->status === 'Reverted') $badgeClass = 'bg-dark';
-                                    @endphp
-                                    <span class="badge {{ $badgeClass }} px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
-                                        {{ $item->status ?: 'Draft' }}
-                                    </span>
+                                    @if($item->status === 'Accepted' && $item->presentation_mode === 'Oral Presentation')
+                                        <span class="badge rounded-pill px-2.5 py-1 fw-bold" style="background-color: #059669 !important; color: #FFFFFF !important; font-size: 0.75rem;">
+                                            <i class="bx bx-microphone me-0.5"></i> Accepted (OP)
+                                        </span>
+                                    @elseif($item->status === 'Accepted')
+                                        <span class="badge rounded-pill px-2.5 py-1 fw-bold" style="background-color: #0288D1 !important; color: #FFFFFF !important; font-size: 0.75rem;">
+                                            <i class="bx bx-file me-0.5"></i> Accepted (PP)
+                                        </span>
+                                    @elseif($item->status === 'Rejected')
+                                        <span class="badge rounded-pill px-2.5 py-1 fw-bold" style="background-color: #DC2626 !important; color: #FFFFFF !important; font-size: 0.75rem;">
+                                            <i class="bx bx-x-circle me-0.5"></i> Rejected
+                                        </span>
+                                    @else
+                                        @php
+                                            $badgeClass = 'bg-secondary';
+                                            if ($item->status === 'Submitted') $badgeClass = 'bg-warning text-dark';
+                                            elseif ($item->status === 'Under Review') $badgeClass = 'bg-info text-white';
+                                            elseif ($item->status === 'Reverted') $badgeClass = 'bg-dark';
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }} px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
+                                            {{ $item->status ?: 'Draft' }}
+                                        </span>
+                                    @endif
+
+                                    @if(in_array($item->status, ['Accepted', 'Rejected']) || $item->reviewed_at)
+                                        <small class="text-muted d-block extra-small mt-1" style="font-size: 0.68rem;" title="Evaluated by {{ $item->reviewed_by ?: 'Moderator' }}">
+                                            <i class="bx bx-time me-0.5"></i>{{ $item->reviewed_at ? $item->reviewed_at->format('d M Y, h:i A') : ($item->updated_at ? $item->updated_at->format('d M Y, h:i A') : '') }}
+                                        </small>
+                                    @endif
                                 </td>
                                 <td>
                                     <small class="text-muted extra-small">
@@ -207,9 +225,47 @@
                                     </small>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="{{ route('admin.abstracts.show', $item->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-bold" style="font-size: 0.78rem;">
-                                        <i class="bx bx-show me-1"></i>View
-                                    </a>
+                                    <div class="btn-group">
+                                        <a href="{{ route('admin.abstracts.show', $item->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-bold" style="font-size: 0.78rem;">
+                                            <i class="bx bx-show me-1"></i>View
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle dropdown-toggle dropdown-toggle-split ms-1" data-bs-toggle="dropdown" aria-expanded="false" style="width: 28px; height: 28px; padding: 0;">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 12px; font-size: 0.8rem;">
+                                            <li>
+                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
+                                                    @csrf
+                                                    <input type="hidden" name="decision" value="accept_oral">
+                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #059669 !important;">
+                                                        <i class="bx bx-microphone fs-6" style="color: #059669 !important;"></i>
+                                                        <span style="color: #059669 !important;">Accept for Oral</span>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
+                                                    @csrf
+                                                    <input type="hidden" name="decision" value="accept_paper">
+                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #0288D1 !important;">
+                                                        <i class="bx bx-file fs-6" style="color: #0288D1 !important;"></i>
+                                                        <span style="color: #0288D1 !important;">Accept for Paper</span>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider my-1"></li>
+                                            <li>
+                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
+                                                    @csrf
+                                                    <input type="hidden" name="decision" value="reject">
+                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #DC2626 !important;">
+                                                        <i class="bx bx-x-circle fs-6" style="color: #DC2626 !important;"></i>
+                                                        <span style="color: #DC2626 !important;">Reject</span>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

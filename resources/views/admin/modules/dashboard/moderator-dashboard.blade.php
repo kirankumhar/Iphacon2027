@@ -155,8 +155,8 @@
                 <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 16px;">
                     <div class="card-header bg-white py-3.5 px-4 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2.5">
-                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                <i class="bx bx-rocket fs-5"></i>
+                            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: #E8F2FF !important; color: #013069 !important;">
+                                <i class="bx bx-rocket fs-5" style="color: #013069 !important;"></i>
                             </div>
                             <div>
                                 <h6 class="fw-bold text-dark mb-0" style="font-size: 1rem;">Moderation Action Shortcuts</h6>
@@ -168,8 +168,8 @@
                         <div class="row g-3">
                             <div class="col-sm-6 col-lg-3">
                                 <a href="{{ route('submitted-delegates') }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
-                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="bx bx-paper-plane fs-3"></i>
+                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #E0F2FE !important; color: #0288D1 !important;">
+                                        <i class="bx bx-paper-plane fs-3" style="color: #0288D1 !important;"></i>
                                     </div>
                                     <div>
                                         <h6 class="fw-bold text-dark mb-0.5" style="font-size: 0.9rem;">Submitted Applications</h6>
@@ -179,8 +179,8 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <a href="{{ route('admin.cme-delegates') }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
-                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="bx bx-book-reader fs-3"></i>
+                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #E0F7FA !important; color: #00897B !important;">
+                                        <i class="bx bx-book-reader fs-3" style="color: #00897B !important;"></i>
                                     </div>
                                     <div>
                                         <h6 class="fw-bold text-dark mb-0.5" style="font-size: 0.9rem;">CME Workshop</h6>
@@ -190,8 +190,8 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <a href="{{ Route::has('admin.abstracts.index') ? route('admin.abstracts.index') : '#' }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
-                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="bx bx-file-find fs-3"></i>
+                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #FFF3E0 !important; color: #FF6B00 !important;">
+                                        <i class="bx bx-file-find fs-3" style="color: #FF6B00 !important;"></i>
                                     </div>
                                     <div>
                                         <h6 class="fw-bold text-dark mb-0.5" style="font-size: 0.9rem;">Scientific Abstracts</h6>
@@ -201,8 +201,8 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <a href="{{ route('paid-payments') }}" class="card h-100 text-decoration-none border shadow-xs action-hub-card p-3 d-flex flex-row align-items-center gap-3">
-                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="bx bx-credit-card-front fs-3"></i>
+                                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background-color: #DCFFF0 !important; color: #059669 !important;">
+                                        <i class="bx bx-credit-card-front fs-3" style="color: #059669 !important;"></i>
                                     </div>
                                     <div>
                                         <h6 class="fw-bold text-dark mb-0.5" style="font-size: 0.9rem;">Payment Records</h6>
@@ -223,7 +223,7 @@
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 16px;">
                     <div class="card-header bg-white py-3.5 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bx bx-time text-primary fs-4"></i>
+                            <i class="bx bx-time text-primary fs-4" style="color: #0288D1 !important;"></i>
                             <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">Recent Delegate Submissions</h6>
                         </div>
                         <a href="{{ route('submitted-delegates') }}" class="btn btn-sm btn-outline-primary fw-bold px-3 py-1" style="border-radius: 20px; font-size: 0.75rem;">
@@ -249,7 +249,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="avatar avatar-xs rounded-circle bg-light text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem;">
+                                                <div class="avatar avatar-xs rounded-circle bg-light text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; background-color: #E0F2FE !important; color: #0288D1 !important;">
                                                     {{ substr($reg->user->full_name ?? 'D', 0, 1) }}
                                                 </div>
                                                 <div>
@@ -265,7 +265,7 @@
                                         </td>
                                         <td>
                                             @if(strtolower($reg->status) === 'payment submitted')
-                                                <span class="badge bg-info text-white px-2 py-0.5 rounded-pill extra-small fw-bold" style="background-color: #0288D1 !important;">
+                                                <span class="badge bg-info text-white px-2 py-0.5 rounded-pill extra-small fw-bold" style="background-color: #0288D1 !important; color: #FFFFFF !important;">
                                                     💳 SUBMITTED
                                                 </span>
                                             @elseif(strtolower($reg->status) === 'reverted')
@@ -279,8 +279,8 @@
                                             @endif
                                         </td>
                                         <td class="text-end pe-4">
-                                            <a href="{{ route('show-registration-details', $reg->registration_number ?? $reg->id) }}" class="btn btn-sm btn-light border text-primary fw-bold px-2 py-1" style="border-radius: 6px; font-size: 0.75rem;">
-                                                <i class="bx bx-show me-1"></i>Verify
+                                            <a href="{{ route('show-registration-details', $reg->registration_number ?? $reg->id) }}" class="btn btn-sm btn-light border text-primary fw-bold px-2 py-1" style="border-radius: 6px; font-size: 0.75rem; color: #0288D1 !important;">
+                                                <i class="bx bx-show me-1" style="color: #0288D1 !important;"></i>Verify
                                             </a>
                                         </td>
                                     </tr>
@@ -302,7 +302,7 @@
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 16px;">
                     <div class="card-header bg-white py-3.5 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bx bx-file-find text-warning fs-4"></i>
+                            <i class="bx bx-file-find text-warning fs-4" style="color: #FF6B00 !important;"></i>
                             <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">Recent Abstracts</h6>
                         </div>
                         @if(Route::has('admin.abstracts.index'))
@@ -330,13 +330,64 @@
                                             <span class="fw-bold text-dark d-block text-truncate small" style="max-width: 190px;" title="{{ $abs->abstract_title }}">
                                                 {{ $abs->abstract_title }}
                                             </span>
-                                            <small class="text-muted extra-small">By: {{ $abs->presenting_author_name ?? ($abs->user->full_name ?? 'N/A') }}</small>
+                                            <small class="text-muted extra-small d-block">By: {{ $abs->presenting_author_name ?? ($abs->user->full_name ?? 'N/A') }}</small>
+                                            @if($abs->status === 'Accepted' && $abs->presentation_mode === 'Oral Presentation')
+                                                <span class="badge rounded-pill extra-small mt-0.5" style="background-color: #059669 !important; color: #FFFFFF !important; font-size: 0.68rem;">
+                                                    <i class="bx bx-microphone"></i> Oral (OP) • {{ $abs->reviewed_at ? $abs->reviewed_at->format('d M, h:i A') : $abs->updated_at->format('d M, h:i A') }}
+                                                </span>
+                                            @elseif($abs->status === 'Accepted')
+                                                <span class="badge rounded-pill extra-small mt-0.5" style="background-color: #0288D1 !important; color: #FFFFFF !important; font-size: 0.68rem;">
+                                                    <i class="bx bx-file"></i> Paper (PP) • {{ $abs->reviewed_at ? $abs->reviewed_at->format('d M, h:i A') : $abs->updated_at->format('d M, h:i A') }}
+                                                </span>
+                                            @elseif($abs->status === 'Rejected')
+                                                <span class="badge rounded-pill extra-small mt-0.5" style="background-color: #DC2626 !important; color: #FFFFFF !important; font-size: 0.68rem;">
+                                                    <i class="bx bx-x-circle"></i> Rejected • {{ $abs->reviewed_at ? $abs->reviewed_at->format('d M, h:i A') : $abs->updated_at->format('d M, h:i A') }}
+                                                </span>
+                                            @endif
                                         </td>
                                         <td class="text-end pe-4">
                                             @if(Route::has('admin.abstracts.show'))
-                                            <a href="{{ route('admin.abstracts.show', $abs->id) }}" class="btn btn-sm btn-light border text-dark fw-bold px-2 py-1" style="border-radius: 6px; font-size: 0.75rem;">
-                                                View
-                                            </a>
+                                            <div class="btn-group">
+                                                <a href="{{ route('admin.abstracts.show', $abs->id) }}" class="btn btn-sm btn-light border text-dark fw-bold px-2 py-1" style="border-radius: 6px; font-size: 0.75rem;">
+                                                    View
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-light border text-dark dropdown-toggle dropdown-toggle-split px-1" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 6px;">
+                                                    <span class="visually-hidden">Toggle</span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 12px; font-size: 0.78rem;">
+                                                    <li>
+                                                        <form action="{{ route('admin.abstracts.update-status', $abs->id) }}" method="POST" class="m-0">
+                                                            @csrf
+                                                            <input type="hidden" name="decision" value="accept_oral">
+                                                            <button type="submit" class="dropdown-item rounded-2 py-1 px-2 fw-bold d-flex align-items-center gap-1.5" style="color: #059669 !important;">
+                                                                <i class="bx bx-microphone" style="color: #059669 !important;"></i>
+                                                                <span style="color: #059669 !important;">Accept for Oral</span>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('admin.abstracts.update-status', $abs->id) }}" method="POST" class="m-0">
+                                                            @csrf
+                                                            <input type="hidden" name="decision" value="accept_paper">
+                                                            <button type="submit" class="dropdown-item rounded-2 py-1 px-2 fw-bold d-flex align-items-center gap-1.5" style="color: #0288D1 !important;">
+                                                                <i class="bx bx-file" style="color: #0288D1 !important;"></i>
+                                                                <span style="color: #0288D1 !important;">Accept for Paper</span>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider my-1"></li>
+                                                    <li>
+                                                        <form action="{{ route('admin.abstracts.update-status', $abs->id) }}" method="POST" class="m-0">
+                                                            @csrf
+                                                            <input type="hidden" name="decision" value="reject">
+                                                            <button type="submit" class="dropdown-item rounded-2 py-1 px-2 fw-bold d-flex align-items-center gap-1.5" style="color: #DC2626 !important;">
+                                                                <i class="bx bx-x-circle" style="color: #DC2626 !important;"></i>
+                                                                <span style="color: #DC2626 !important;">Reject</span>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                             @else
                                             <span class="badge bg-light text-muted border extra-small">Submitted</span>
                                             @endif
@@ -355,6 +406,8 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <style>

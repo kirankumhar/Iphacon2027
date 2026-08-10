@@ -42,11 +42,14 @@ class AbstractSubmission extends Model
         'status',
         'submitted_at',
         'review_comments',
+        'reviewed_at',
+        'reviewed_by',
     ];
 
     protected $casts = [
         'co_authors' => 'array',
         'submitted_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     /**

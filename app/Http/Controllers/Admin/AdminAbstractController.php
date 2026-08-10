@@ -128,22 +128,62 @@ class AdminAbstractController extends Controller
     }
 
     /**
-     * Update status and review comments.
+     * Update status and review comments based on moderator decision.
      */
     public function updateStatus(Request $request, $id)
     {
         $abstract = AbstractSubmission::findOrFail($id);
 
-        $validated = $request->validate([
-            'status'          => 'required|string|in:Draft,Submitted,Under Review,Accepted,Rejected,Reverted',
-            'review_comments' => 'nullable|string',
-        ]);
+        $decision = $request->input('decision') ?? $request->input('status');
+
+        $status = $abstract->status;
+        $presentationMode = $abstract->presentation_mode;
+        $message = "Abstract decision updated successfully.";
+
+        if (in_array($decision, ['accept_oral', 'Accept for Oral', 'Accepted for Oral'])) {
+            $status = 'Accepted';
+            $presentationMode = 'Oral Presentation';
+            $message = "Abstract {$abstract->acknowledgement_id} has been Accepted for Oral Presentation.";
+        } elseif (in_array($decision, ['accept_paper', 'accept_poster', 'Accept for Paper', 'Accepted for Paper', 'Accept for Poster', 'Accepted for Poster'])) {
+            $status = 'Accepted';
+            $presentationMode = 'Poster Presentation';
+            $message = "Abstract {$abstract->acknowledgement_id} has been Accepted for Paper / Poster Presentation.";
+        } elseif (in_array($decision, ['reject', 'Reject', 'Rejected'])) {
+            $status = 'Rejected';
+            $message = "Abstract {$abstract->acknowledgement_id} has been Rejected.";
+        } else {
+            $validated = $request->validate([
+                'status'          => 'required|string',
+                'presentation_mode' => 'nullable|string',
+                'review_comments' => 'nullable|string',
+            ]);
+            $status = $validated['status'];
+            if (!empty($validated['presentation_mode'])) {
+                $presentationMode = $validated['presentation_mode'];
+            }
+            $message = "Abstract {$abstract->acknowledgement_id} status updated to {$status}.";
+        }
+
+        // Regenerate acknowledgement ID prefix if mode changed and reg number exists
+        $ackId = $abstract->acknowledgement_id;
+        if ($presentationMode !== $abstract->presentation_mode && $abstract->registration) {
+            $regNum = $abstract->registration->registration_number ?? null;
+            if ($regNum) {
+                $ackId = AbstractSubmission::generateAcknowledgementId($presentationMode, $regNum, $abstract->user_id, $abstract->id);
+            }
+        }
+
+        $reviewer = optional(auth('admin')->user())->full_name ?? optional(auth('admin')->user())->username ?? 'Moderator';
 
         $abstract->update([
-            'status'          => $validated['status'],
-            'review_comments' => $validated['review_comments'] ?? null,
+            'status'            => $status,
+            'presentation_mode' => $presentationMode,
+            'acknowledgement_id'=> $ackId,
+            'review_comments'   => $request->input('review_comments') ?? $abstract->review_comments,
+            'reviewed_at'       => now(),
+            'reviewed_by'       => $reviewer,
         ]);
 
-        return redirect()->back()->with('success', "Abstract {$abstract->acknowledgement_id} status updated to {$abstract->status}.");
+        return redirect()->back()->with('success', $message);
     }
 }
