@@ -218,87 +218,9 @@
 
         <!-- Recent Activity Tables Row -->
         <div class="row g-4 mb-4">
-            <!-- Recent Delegate Applications awaiting moderation -->
-            <div class="col-lg-7">
-                <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 16px;">
-                    <div class="card-header bg-white py-3.5 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bx bx-time text-primary fs-4" style="color: #0288D1 !important;"></i>
-                            <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">Recent Delegate Submissions</h6>
-                        </div>
-                        <a href="{{ route('submitted-delegates') }}" class="btn btn-sm btn-outline-primary fw-bold px-3 py-1" style="border-radius: 20px; font-size: 0.75rem;">
-                            View All <i class="bx bx-right-arrow-alt"></i>
-                        </a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="ps-4 text-muted extra-small fw-bold text-uppercase">Reg No.</th>
-                                    <th class="text-muted extra-small fw-bold text-uppercase">Delegate</th>
-                                    <th class="text-muted extra-small fw-bold text-uppercase">Type</th>
-                                    <th class="text-muted extra-small fw-bold text-uppercase">Status</th>
-                                    <th class="text-end pe-4 text-muted extra-small fw-bold text-uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($recentSubmittedRegistrations as $reg)
-                                    <tr>
-                                        <td class="ps-4 fw-bold font-monospace text-primary" style="font-size: 0.82rem;">
-                                            {{ $reg->registration_number ?? 'Pending' }}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="avatar avatar-xs rounded-circle bg-light text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; background-color: #E0F2FE !important; color: #0288D1 !important;">
-                                                    {{ substr($reg->user->full_name ?? 'D', 0, 1) }}
-                                                </div>
-                                                <div>
-                                                    <span class="fw-bold text-dark d-block small" style="font-size: 0.82rem;">{{ $reg->user->full_name ?? 'N/A' }}</span>
-                                                    <small class="text-muted extra-small">{{ $reg->delegateCategory->category_name ?? 'Delegate' }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-light text-dark border px-2 py-0.5 rounded-pill extra-small">
-                                                {{ $reg->delegate_type ?? 'Indian' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if(strtolower($reg->status) === 'payment submitted')
-                                                <span class="badge bg-info text-white px-2 py-0.5 rounded-pill extra-small fw-bold" style="background-color: #0288D1 !important; color: #FFFFFF !important;">
-                                                    💳 SUBMITTED
-                                                </span>
-                                            @elseif(strtolower($reg->status) === 'reverted')
-                                                <span class="badge bg-warning text-dark px-2 py-0.5 rounded-pill extra-small fw-bold">
-                                                    ↩️ REVERTED
-                                                </span>
-                                            @else
-                                                <span class="badge bg-secondary text-white px-2 py-0.5 rounded-pill extra-small fw-bold">
-                                                    {{ strtoupper($reg->status ?? 'PENDING') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-end pe-4">
-                                            <a href="{{ route('show-registration-details', $reg->registration_number ?? $reg->id) }}" class="btn btn-sm btn-light border text-primary fw-bold px-2 py-1" style="border-radius: 6px; font-size: 0.75rem; color: #0288D1 !important;">
-                                                <i class="bx bx-show me-1" style="color: #0288D1 !important;"></i>Verify
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4 text-muted extra-small">
-                                            No pending registration submissions found.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
             <!-- Recent Abstract Submissions -->
-            <div class="col-lg-5">
+            <div class="col-lg-12">
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 16px;">
                     <div class="card-header bg-white py-3.5 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2">
