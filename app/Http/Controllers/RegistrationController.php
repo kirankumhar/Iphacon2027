@@ -523,6 +523,14 @@ class RegistrationController extends Controller
                     throw new \Exception("Failed to update registration status.");
                 }
 
+                // Record Activity Log
+                \App\Models\ActivityLog::record(
+                    'DELEGATE_REGISTRATION_SUBMITTED',
+                    "Delegate registration submitted for " . ($registration->user?->full_name ?? 'User') . ". Ack ID: {$registration->acknowledgement_id}",
+                    ['acknowledgement_id' => $registration->acknowledgement_id, 'registration_id' => $registration->id],
+                    $registration->user
+                );
+
                 DB::commit();
 
                 return redirect()->route('registration.index', $registration->id)

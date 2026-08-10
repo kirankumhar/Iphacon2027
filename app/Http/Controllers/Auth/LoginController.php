@@ -47,6 +47,14 @@ class LoginController extends Controller
                 'last_ip' => $request->ip()
             ]);
 
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'USER_LOGIN',
+                "User {$user->full_name} ({$user->email}) logged in successfully.",
+                ['email' => $user->email],
+                $user
+            );
+
             $request->session()->regenerate();
 
             return redirect()->intended('dashboard')->with('success', 'Welcome back, ' . $user->full_name . '!');
@@ -59,6 +67,16 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            \App\Models\ActivityLog::record(
+                'USER_LOGOUT',
+                "User {$user->full_name} ({$user->email}) logged out.",
+                ['email' => $user->email],
+                $user
+            );
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

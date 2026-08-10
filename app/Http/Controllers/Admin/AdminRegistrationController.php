@@ -286,6 +286,14 @@ class AdminRegistrationController extends Controller
                 'admin_verified' => true
             ]);
 
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'ADMIN_APPROVE_REGISTRATION',
+                "Approved registration for " . ($registration->user?->full_name ?? 'User') . ". Reg No: {$registration->registration_number}",
+                ['registration_id' => $registration->id, 'registration_number' => $registration->registration_number, 'acknowledgement_id' => $registration->acknowledgement_id],
+                \Illuminate\Support\Facades\Auth::guard('admin')->user()
+            );
+
             return redirect()->back()->with('success', "Registration successfully marked Approved. Reg No: {$registration->registration_number}");
         }
 
@@ -296,15 +304,26 @@ class AdminRegistrationController extends Controller
     {
         $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
 
-        Registration::where(function($q) use ($regNo) {
+        $reg = Registration::where(function($q) use ($regNo) {
             $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo)
               ->orWhere('id', $regNo);
-        })->update([
-            'status' => 'Rejected',
-            'rejection_reason' => $request->input('reason') ?? null,
-            'rejected_at' => now(),
-        ]);
+        })->first();
+
+        if ($reg) {
+            $reg->update([
+                'status' => 'Rejected',
+                'rejection_reason' => $request->input('reason') ?? null,
+                'rejected_at' => now(),
+            ]);
+
+            \App\Models\ActivityLog::record(
+                'ADMIN_REJECT_REGISTRATION',
+                "Rejected registration for " . ($reg->user?->full_name ?? 'User') . ". Reason: " . ($request->input('reason') ?? 'N/A'),
+                ['registration_id' => $reg->id, 'reason' => $request->input('reason')],
+                \Illuminate\Support\Facades\Auth::guard('admin')->user()
+            );
+        }
 
         return redirect()->back()->with('success', "Registration successfully marked Rejected.");
     }
@@ -313,15 +332,26 @@ class AdminRegistrationController extends Controller
     {
         $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
 
-        Registration::where(function($q) use ($regNo) {
+        $reg = Registration::where(function($q) use ($regNo) {
             $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo)
               ->orWhere('id', $regNo);
-        })->update([
-            'status' => 'Draft',
-            'reverted_at' => now(),
-            'revert_reason' => $request->input('reason') ?? null,
-        ]);
+        })->first();
+
+        if ($reg) {
+            $reg->update([
+                'status' => 'Draft',
+                'reverted_at' => now(),
+                'revert_reason' => $request->input('reason') ?? null,
+            ]);
+
+            \App\Models\ActivityLog::record(
+                'ADMIN_REVERT_REGISTRATION',
+                "Reverted registration to Draft for " . ($reg->user?->full_name ?? 'User'),
+                ['registration_id' => $reg->id],
+                \Illuminate\Support\Facades\Auth::guard('admin')->user()
+            );
+        }
 
         return redirect()->back()->with('success', "Registration successfully marked Reverted.");
     }

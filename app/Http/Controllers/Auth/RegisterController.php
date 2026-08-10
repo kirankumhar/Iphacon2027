@@ -52,6 +52,14 @@ class RegisterController extends Controller
                 $user = User::create($userData);
             }
 
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'USER_REGISTERED',
+                "New user registered: {$user->full_name} ({$user->email})",
+                ['email' => $user->email, 'delegate_type' => $user->delegate_type ?? 'Indian'],
+                $user
+            );
+
             // Generate OTP and send email
             try {
                 $user->generateOtp();

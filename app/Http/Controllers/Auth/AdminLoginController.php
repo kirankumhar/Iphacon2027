@@ -69,6 +69,14 @@ class AdminLoginController extends Controller
             'last_login' => now()
         ]);
 
+        // Record Activity Log
+        \App\Models\ActivityLog::record(
+            'ADMIN_LOGIN',
+            "Admin " . ($admin->full_name ?? $admin->username) . " ({$admin->username}) logged in.",
+            ['username' => $admin->username, 'role' => $admin->role],
+            $admin
+        );
+
         $request->session()->regenerate();
 
         Log::info('Admin logged in successfully', [
@@ -84,6 +92,16 @@ class AdminLoginController extends Controller
 
     public function logout(Request $request)
     {
+        $admin = Auth::guard('admin')->user();
+        if ($admin) {
+            \App\Models\ActivityLog::record(
+                'ADMIN_LOGOUT',
+                "Admin " . ($admin->full_name ?? $admin->username) . " ({$admin->username}) logged out.",
+                ['username' => $admin->username, 'role' => $admin->role],
+                $admin
+            );
+        }
+
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
