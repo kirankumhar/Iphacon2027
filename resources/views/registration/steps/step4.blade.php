@@ -246,10 +246,11 @@
                         previewThumb.onclick = function() {
                             modalBody.innerHTML =
                                 `<img src="${e.target.result}" class="img-fluid rounded shadow">`;
-                            new bootstrap.Modal(document.getElementById(
-                                'receiptPreviewModal'), {
-                                backdrop: false
-                            }).show();
+                            const receiptModal = document.getElementById('receiptPreviewModal');
+                            if (receiptModal && receiptModal.parentElement !== document.body) {
+                                document.body.appendChild(receiptModal);
+                            }
+                            bootstrap.Modal.getOrCreateInstance(receiptModal).show();
                         };
                     };
                     reader.readAsDataURL(file);
@@ -265,9 +266,11 @@
                         const pdfURL = URL.createObjectURL(file);
                         modalBody.innerHTML =
                             `<iframe src="${pdfURL}" width="100%" height="600px" style="border:none;"></iframe>`;
-                        new bootstrap.Modal(document.getElementById('receiptPreviewModal'), {
-                            backdrop: false
-                        }).show();
+                        const receiptModal = document.getElementById('receiptPreviewModal');
+                        if (receiptModal && receiptModal.parentElement !== document.body) {
+                            document.body.appendChild(receiptModal);
+                        }
+                        bootstrap.Modal.getOrCreateInstance(receiptModal).show();
                     };
                 } else {
                     alert('Only PDF, JPG, JPEG, and PNG formats are allowed!');

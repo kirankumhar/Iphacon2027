@@ -662,6 +662,17 @@
         document.getElementById('photo').click();
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const documentModal = document.getElementById('documentModal');
+        if (documentModal && documentModal.parentElement !== document.body) {
+            document.body.appendChild(documentModal);
+        }
+        const photoModal = document.getElementById('photoModal');
+        if (photoModal && photoModal.parentElement !== document.body) {
+            document.body.appendChild(photoModal);
+        }
+    });
+
     document.addEventListener('hidden.bs.modal', function () {
         document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
         document.body.classList.remove('modal-open');
@@ -696,7 +707,11 @@
 
         const documentModal = document.getElementById('documentModal');
         if (documentModal) {
-            new bootstrap.Modal(documentModal).show();
+            if (documentModal.parentElement !== document.body) {
+                document.body.appendChild(documentModal);
+            }
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(documentModal);
+            modalInstance.show();
         }
     }
 
