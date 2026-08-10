@@ -61,7 +61,7 @@
                 </div>
             </div>
             <div class="d-flex col-12 col-lg-6 col-xl-5 align-items-center bg-light p-sm-12 p-6">
-                <div class="w-px-500 mx-auto mt-12 px-2">
+                <div class="mx-auto mt-12 px-2 w-100" style="max-width: 600px;">
                     <div class="app-brand justify-content-center py-5 my-4">
                         <a href="#" class="app-brand-link gap-2">
                             <span class="app-brand-logo">

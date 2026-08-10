@@ -4,7 +4,7 @@
     <div class="login-page-wrapper py-4 py-md-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                <div class="col-12 col-md-10 col-lg-8 col-xl-7">
 
                     <!-- Compact Login Card -->
                     <div class="card login-card shadow-lg border-0 overflow-hidden">
@@ -13,16 +13,13 @@
                         <div class="card-accent-bar"></div>
 
                         <!-- Compact Header -->
-                        <div class="card-header text-center py-3.5 px-3.5 border-0 position-relative">
+                        <div class="card-header text-center py-2.5 px-3 border-0 position-relative">
                             <div class="header-bg-glow"></div>
                             
                             <div class="position-relative z-1">
-                                <div class="d-inline-flex align-items-center justify-content-center mb-1.5 px-3 py-1 rounded-pill header-badge-pill extra-small fw-semibold">
-                                    <i class="fas fa-user-lock text-warning me-1.5"></i> <span>Delegate Portal Access</span>
-                                </div>
-                                <h5 class="text-white fw-bold mb-0.5 tracking-wide">Sign In to Your Account</h5>
-                                <p class="text-white-80 mb-0 extra-small">
-                                    <i class="fas fa-award me-1 text-warning"></i> IPHACON 2027 • RIMS, Ranchi
+                                <h5 class="text-white fw-bold mb-0 tracking-wide" style="font-size: 1.05rem;">Sign In to Your Account</h5>
+                                <p class="text-white-80 mb-0 extra-small" style="font-size: 0.78rem;">
+                                    IPHACON 2027 • RIMS, Ranchi
                                 </p>
                             </div>
                         </div>

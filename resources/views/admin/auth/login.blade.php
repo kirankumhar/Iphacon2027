@@ -41,14 +41,15 @@
             </div>
         </div>
 
-        <div class="input-group input-group-merge my-3">
-            <img src="{{ route('captcha') }}" alt="captcha" id="captcha-image">
-            <button type="button" class="form-control" title="Refresh Captcha" onclick="refreshCaptcha()">↻ </button>
-            <input type="text" class="form-control" name="captcha" placeholder="Enter numbers" maxlength="6" required>
-
+        <div class="mb-3">
+            <label class="form-label fw-bold small text-dark mb-1">Security Verification</label>
+            <div class="d-flex align-items-center gap-2">
+                <img src="{{ route('captcha') }}" alt="captcha" id="captcha-image" class="rounded border p-1 bg-white" style="height: 48px; object-fit: contain; min-width: 140px;">
+                <button type="button" class="btn btn-outline-secondary" title="Refresh Captcha" onclick="refreshCaptcha()">↻</button>
+                <input type="text" class="form-control" name="captcha" placeholder="Enter numbers" maxlength="6" required style="height: 48px;">
+            </div>
             @error('captcha')
-                <br>
-                <span class="invalid-feedback">{{ $message }}</span>
+                <span class="invalid-feedback d-block small mt-1">{{ $message }}</span>
             @enderror
         </div>
 

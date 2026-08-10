@@ -3,21 +3,13 @@
 
     <div class="container py-4 py-md-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 16px; background: #ffffff; max-width: 650px; margin: 0 auto;">
+            <div class="col-12 col-md-11 col-lg-9 col-xl-8">
+                <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 16px; background: #ffffff; max-width: 850px; margin: 0 auto;">
                     <!-- Admin Header -->
-                    <div class="card-header text-center py-4 px-4 border-0 text-white"
+                    <div class="card-header text-center py-2.5 px-3 border-0 text-white"
                         style="background: linear-gradient(135deg, #0f172a, #1e293b, #334155);">
-                        <div class="d-flex align-items-center justify-content-center gap-3">
-                            <div class="header-icon-box bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
-                                style="width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.15);">
-                                <i class="fas fa-user-shield text-danger fs-4"></i>
-                            </div>
-                            <div class="text-start">
-                                <h5 class="text-white mb-0 fw-bold" style="letter-spacing: 0.5px;">Admin Portal Login</h5>
-                                <small class="text-white-50" style="font-size: 0.83rem;">Authorized Personnel Access Only</small>
-                            </div>
-                        </div>
+                        <h5 class="text-white mb-0 fw-bold" style="letter-spacing: 0.5px; font-size: 1.05rem;">Admin Portal Login</h5>
+                        <small class="text-white-50 d-block mt-0.5" style="font-size: 0.78rem;">Authorized Personnel Access Only</small>
                     </div>
 
                     <!-- Body -->
@@ -99,7 +91,7 @@
                                             <img src="{{ captcha_src() }}" alt="CAPTCHA" id="adminCaptchaImage"
                                                 class="img-fluid rounded cursor-pointer border w-100"
                                                 onclick="refreshAdminCaptcha()" title="Click to refresh CAPTCHA"
-                                                style="height: 44px; object-fit: cover;">
+                                                style="height: 48px; object-fit: contain; background: #ffffff; padding: 3px;">
                                             <button type="button" class="btn btn-sm btn-link text-danger p-1.5 ms-1"
                                                 onclick="refreshAdminCaptcha()" title="Refresh Code">
                                                 <i class="fas fa-sync-alt fs-6" id="adminCaptchaSpinner"></i>
