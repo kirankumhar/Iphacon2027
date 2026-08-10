@@ -13,6 +13,7 @@ class Registration extends Model
 
     protected $fillable = [
         'user_id',
+        'acknowledgement_id',
         'registration_number',
         'photo_path',
         'address',
@@ -163,6 +164,16 @@ class Registration extends Model
         $this->step_completed = $step;
         $this->updateAmounts();
         $this->save();
+    }
+
+    public function generateAcknowledgementId(): string
+    {
+        do {
+            $random = sprintf('%05d', rand(1, 99999));
+            $ack = "IPHA-ACK-{$random}";
+        } while (static::where('acknowledgement_id', $ack)->exists());
+
+        return $ack;
     }
 
     public function generateRegistrationNumber(): string

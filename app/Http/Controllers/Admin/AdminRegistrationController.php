@@ -260,17 +260,21 @@ class AdminRegistrationController extends Controller
     public function approvedRegis(Request $request)
     {
         $regId = $request->input('registration_id') ?? $request->input('id');
-        $regNo = $request->input('registration_number');
+        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id');
 
         $registration = Registration::when($regId, function($q) use ($regId) {
             $q->where('id', $regId);
         })->when(!$regId && $regNo, function($q) use ($regNo) {
-            $q->where('registration_number', $regNo);
+            $q->where('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo);
         })->first();
 
         if ($registration) {
             if (empty($registration->registration_number)) {
-                $registration->registration_number = 'IPHACON-2027-' . sprintf('%04d', $registration->id);
+                $registration->registration_number = $registration->generateRegistrationNumber();
+            }
+            if (empty($registration->acknowledgement_id)) {
+                $registration->acknowledgement_id = $registration->generateAcknowledgementId();
             }
             $registration->status = 'Approved';
             $registration->approved_at = now();
@@ -290,40 +294,52 @@ class AdminRegistrationController extends Controller
 
     public function rejectRegis(Request $request)
     {
-        $registration_number = $request->input('registration_number');
+        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
 
-        Registration::where('registration_number', $registration_number)->update([
+        Registration::where(function($q) use ($regNo) {
+            $q->where('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo)
+              ->orWhere('id', $regNo);
+        })->update([
             'status' => 'Rejected',
             'rejection_reason' => $request->input('reason') ?? null,
             'rejected_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', "$registration_number, registration successfully marked Reject.");
+        return redirect()->back()->with('success', "Registration successfully marked Rejected.");
     }
 
     public function revertRegis(Request $request)
     {
-        $registration_number = $request->input('registration_number');
+        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
 
-        Registration::where('registration_number', $registration_number)->update([
+        Registration::where(function($q) use ($regNo) {
+            $q->where('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo)
+              ->orWhere('id', $regNo);
+        })->update([
             'status' => 'Draft',
             'reverted_at' => now(),
             'revert_reason' => $request->input('reason') ?? null,
         ]);
 
-        return redirect()->back()->with('success', "$registration_number, registration successfully marked Revert.");
+        return redirect()->back()->with('success', "Registration successfully marked Reverted.");
     }
 
     public function deleteRegis(Request $request)
     {
-        $registration_number = $request->input('registration_number');
+        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
 
-        Registration::where('registration_number', $registration_number)->update([
+        Registration::where(function($q) use ($regNo) {
+            $q->where('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo)
+              ->orWhere('id', $regNo);
+        })->update([
             'is_deleted' => '1',
             'deleted_datetime' => date('Y-m-d H:i:s')
         ]);
 
-        return redirect()->back()->with('success', "$registration_number, registration successfully deleted.");
+        return redirect()->back()->with('success', "Registration successfully deleted.");
     }
 
     public function receiptCumRegistrationSlipDownload($id)
@@ -332,12 +348,15 @@ class AdminRegistrationController extends Controller
         $delegate = Registration::with([
             'user',
             'latestPayment'
-        ])->where('registration_number', $id)
-            ->latest('created_at')->first();
+        ])->where(function($q) use ($id) {
+            $q->where('registration_number', $id)
+              ->orWhere('acknowledgement_id', $id)
+              ->orWhere('id', $id);
+        })->latest('created_at')->firstOrFail();
 
         $pdf = PDF::loadView('pdfs.registration', [
             'registration' => $delegate,
-            'applicationNumber' => $delegate->registration_number
+            'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
         ])->setPaper('a4', 'portrait')
             ->setOption('margin-top', 10)
             ->setOption('margin-bottom', 10)
@@ -355,10 +374,12 @@ class AdminRegistrationController extends Controller
             'delegateCategory',
             'country',
             'state'
-        ])->where('registration_number', $id)
-            ->latest('created_at')->first();
+        ])->where(function($q) use ($id) {
+            $q->where('registration_number', $id)
+              ->orWhere('acknowledgement_id', $id)
+              ->orWhere('id', $id);
+        })->latest('created_at')->firstOrFail();
 
-            // dd($delegate->user);
         return view('admin.modules.registration.show-registration-details', compact('delegate'));
     }
 }

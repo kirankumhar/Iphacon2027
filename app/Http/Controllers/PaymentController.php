@@ -426,8 +426,8 @@ class PaymentController extends Controller
             $payment->save();
 
             // Update registration status
-            if (empty($registration->registration_number)) {
-                $registration->registration_number = $registration->generateRegistrationNumber();
+            if (empty($registration->acknowledgement_id)) {
+                $registration->acknowledgement_id = $registration->generateAcknowledgementId();
             }
             if ($registration->status === 'Draft') {
                 $registration->status = 'Payment Submitted';

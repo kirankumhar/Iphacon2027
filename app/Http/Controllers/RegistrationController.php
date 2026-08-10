@@ -511,7 +511,9 @@ class RegistrationController extends Controller
                 }
 
                 // Update registration status
-                $registration->registration_number = $this->generateUniqueRegistrationNumber();
+                if (empty($registration->acknowledgement_id)) {
+                    $registration->acknowledgement_id = $registration->generateAcknowledgementId();
+                }
                 $registration->status = 'Payment Submitted';
                 $registration->step_completed = 4;
                 $registration->submitted_at = now();
@@ -551,7 +553,9 @@ class RegistrationController extends Controller
         // Generate unique transaction ID
         $transactionId = 'CONF' . $registration->id . '_' . time();
 
-        $registration->registration_number = $this->generateUniqueRegistrationNumber();
+        if (empty($registration->acknowledgement_id)) {
+            $registration->acknowledgement_id = $registration->generateAcknowledgementId();
+        }
         $registration->status = 'Pending Payment';
         $registration->step_completed = 4;
         $registration->save();

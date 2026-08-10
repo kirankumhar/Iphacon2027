@@ -45,7 +45,18 @@
                             <div>
                                 <h4 class="text-white mb-1 fw-bold">{{ $delegate->user?->prefix }} {{ $delegate->user?->full_name }}</h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap text-white-50 extra-small">
-                                    <span><i class="bx bx-hash me-1"></i>Reg No: <strong class="text-white">{{ $delegate->registration_number ?? 'Pending' }}</strong></span>
+                                    <span class="badge bg-white bg-opacity-15 text-white font-monospace extra-small px-2.5 py-1">
+                                        <i class="bx bx-barcode me-1"></i>Ack ID: <strong class="text-white">{{ $delegate->acknowledgement_id ?? ('IPHA-ACK-'.$delegate->id) }}</strong>
+                                    </span>
+                                    @if($delegate->registration_number)
+                                        <span class="badge bg-success text-white font-monospace extra-small px-2.5 py-1">
+                                            <i class="bx bx-check-shield me-1"></i>Reg No: <strong class="text-white">{{ $delegate->registration_number }}</strong>
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning text-dark extra-small px-2.5 py-1 fw-bold">
+                                            <i class="bx bx-time me-1"></i>Reg No: Pending Approval
+                                        </span>
+                                    @endif
                                     <span>•</span>
                                     <span><i class="bx bx-calendar me-1"></i>Submitted: {{ $delegate->created_at ? \Carbon\Carbon::parse($delegate->created_at)->format('d M, Y h:i A') : 'N/A' }}</span>
                                 </div>
