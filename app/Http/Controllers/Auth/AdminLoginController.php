@@ -76,7 +76,9 @@ class AdminLoginController extends Controller
             'role' => $admin->role
         ]);
 
-        return redirect()->intended(route('admin.dashboard'))
+        $targetRoute = $admin->isModerator() ? route('admin.moderator.dashboard') : route('admin.dashboard');
+
+        return redirect()->intended($targetRoute)
             ->with('success', 'Welcome back, ' . ($admin->full_name ?? $admin->username) . '!');
     }
 

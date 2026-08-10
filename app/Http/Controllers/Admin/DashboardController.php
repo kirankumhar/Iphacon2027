@@ -14,6 +14,10 @@ class DashboardController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
+        if ($admin && $admin->isModerator()) {
+            return redirect()->route('admin.moderator.dashboard');
+        }
+
         $appliedCount = Registration::where('status', 'Payment Submitted')
             ->where('is_deleted', '0')
             ->count();

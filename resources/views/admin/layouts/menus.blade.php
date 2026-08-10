@@ -97,12 +97,27 @@
     </li>
     @endif
 
+    @if (optional(auth('admin')->user())->isModerator())
+    <li class="menu-item {{ request()->routeIs('admin.moderator.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin.moderator.dashboard') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-shield-quarter text-info"></i>
+            <div>Moderator Dashboard</div>
+        </a>
+    </li>
+    @else
     <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-home-circle"></i>
             <div>Dashboard</div>
         </a>
     </li>
+    <li class="menu-item {{ request()->routeIs('admin.moderator.dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin.moderator.dashboard') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-shield-quarter text-info"></i>
+            <div>Moderator Dashboard</div>
+        </a>
+    </li>
+    @endif
 
     <li class="menu-header">
         <span class="menu-header-text">Registration</span>

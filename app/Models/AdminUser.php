@@ -114,7 +114,7 @@ class AdminUser extends Authenticatable
      */
     public function hasPermission($permission)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin()) {
+        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
             return true;
         }
 
@@ -126,7 +126,7 @@ class AdminUser extends Authenticatable
      */
     public function hasAnyPermission(array $permissions)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin()) {
+        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
             return true;
         }
 
@@ -138,7 +138,7 @@ class AdminUser extends Authenticatable
      */
     public function hasAllPermissions(array $permissions)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin()) {
+        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
             return true;
         }
 

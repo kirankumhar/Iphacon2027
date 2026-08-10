@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\AdminAbstractController;
+use App\Http\Controllers\Admin\ModeratorDashboardController;
 use Illuminate\Support\Facades\Artisan;
 
 // Delegate Authentication Routes
@@ -148,6 +149,10 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])
         ->middleware('admin:dashboard.view')
         ->name('admin.dashboard');
+
+    // Moderator Dedicated Dashboard
+    Route::get('moderator/dashboard', [ModeratorDashboardController::class, 'index'])
+        ->name('admin.moderator.dashboard');
 
     Route::get('/profile/change-password', [DashboardController::class, 'getChangePassword'])->name('admin.profile.change-password');
     Route::post('/update-password', [DashboardController::class, 'updatePassword'])->name('admin.user.update.password');
