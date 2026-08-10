@@ -60,6 +60,11 @@ class LoginController extends Controller
             return redirect()->intended('dashboard')->with('success', 'Welcome back, ' . $user->full_name . '!');
         }
 
+        \Illuminate\Support\Facades\Log::warning("User login failed for email: {$request->email}", [
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->withInput($request->except('password'));

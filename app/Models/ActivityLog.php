@@ -70,6 +70,16 @@ class ActivityLog extends Model
             }
         }
 
+        // Write to Laravel log file
+        \Illuminate\Support\Facades\Log::info("Activity [{$action}]: {$description}", [
+            'user_id'      => $userId,
+            'admin_id'     => $adminId,
+            'user_type'    => $userType,
+            'subject_name' => $subjectName,
+            'ip'           => request()->ip(),
+            'properties'   => $properties,
+        ]);
+
         return static::create([
             'user_id'      => $userId,
             'admin_id'     => $adminId,
