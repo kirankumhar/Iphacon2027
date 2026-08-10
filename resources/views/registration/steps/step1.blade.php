@@ -158,7 +158,7 @@
                         <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.</option>
                         <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.</option>
                         <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.</option>
-                        <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
+                        <option value="Ms." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
                     </select>
                     <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
                         value="{{ old('full_name', $user->full_name) }}" required maxlength="50"
