@@ -36,6 +36,13 @@ class LoginController extends Controller
             // Check if email is verified
             if (!$user->hasVerifiedEmail()) {
                 Auth::logout();
+                \App\Models\ActivityLog::record(
+                    'USER_LOGIN_FAILED',
+                    "Login failed for {$request->email}: Email address is not verified.",
+                    ['email' => $request->email, 'reason' => 'Email not verified'],
+                    $user
+                );
+
                 return back()->withErrors([
                     'email' => 'Please verify your email address before logging in.'
                 ]);
@@ -60,10 +67,15 @@ class LoginController extends Controller
             return redirect()->intended('dashboard')->with('success', 'Welcome back, ' . $user->full_name . '!');
         }
 
-        \Illuminate\Support\Facades\Log::warning("User login failed for email: {$request->email}", [
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent()
-        ]);
+        // Determine specific failure reason
+        $existingUser = User::where('email', $request->email)->first();
+        $reason = $existingUser ? 'Invalid Password' : 'Email address not registered';
+
+        \App\Models\ActivityLog::record(
+            'USER_LOGIN_FAILED',
+            "Login failed for {$request->email}: {$reason}.",
+            ['email' => $request->email, 'reason' => $reason]
+        );
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',

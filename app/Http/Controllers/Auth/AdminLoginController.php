@@ -39,7 +39,11 @@ class AdminLoginController extends Controller
             ->first();
 
         if (!$admin) {
-            Log::warning('Admin login failed: User not found', ['username' => $username]);
+            \App\Models\ActivityLog::record(
+                'ADMIN_LOGIN_FAILED',
+                "Admin login failed for username '{$username}': Account not found.",
+                ['username' => $username, 'reason' => 'Account not found']
+            );
             return back()->withErrors([
                 'username' => 'The provided credentials do not match our records.',
             ])->withInput($request->except('password'));
@@ -47,7 +51,12 @@ class AdminLoginController extends Controller
 
         // Check if account is active
         if (!$admin->is_active) {
-            Log::warning('Admin login failed: Account inactive', ['username' => $username]);
+            \App\Models\ActivityLog::record(
+                'ADMIN_LOGIN_FAILED',
+                "Admin login failed for username '{$username}': Account deactivated.",
+                ['username' => $username, 'reason' => 'Account deactivated'],
+                $admin
+            );
             return back()->withErrors([
                 'username' => 'Your account has been deactivated. Please contact the system administrator.'
             ])->withInput($request->except('password'));
@@ -55,7 +64,12 @@ class AdminLoginController extends Controller
 
         // Verify password against stored password_hash
         if (!Hash::check($password, $admin->password_hash)) {
-            Log::warning('Admin login failed: Invalid password', ['username' => $username]);
+            \App\Models\ActivityLog::record(
+                'ADMIN_LOGIN_FAILED',
+                "Admin login failed for username '{$username}': Invalid password.",
+                ['username' => $username, 'reason' => 'Invalid password'],
+                $admin
+            );
             return back()->withErrors([
                 'username' => 'The provided credentials do not match our records.',
             ])->withInput($request->except('password'));

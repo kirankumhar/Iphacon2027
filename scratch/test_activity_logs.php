@@ -38,24 +38,33 @@ ActivityLog::record(
     $user
 );
 
-// 4. Admin Login Activity Log Test
-$admin = AdminUser::first();
-if ($admin) {
-    ActivityLog::record(
-        'ADMIN_LOGIN',
-        "Admin " . ($admin->full_name ?? $admin->username) . " ({$admin->username}) logged in.",
-        ['username' => $admin->username, 'role' => $admin->role],
-        $admin
-    );
+// 4. User Login Failure Tests
+ActivityLog::record(
+    'USER_LOGIN_FAILED',
+    "Login failed for test_invalid@email.com: Email address not registered.",
+    ['email' => 'test_invalid@email.com', 'reason' => 'Email address not registered']
+);
 
-    // 5. Admin Logout Activity Log Test
-    ActivityLog::record(
-        'ADMIN_LOGOUT',
-        "Admin " . ($admin->full_name ?? $admin->username) . " ({$admin->username}) logged out.",
-        ['username' => $admin->username, 'role' => $admin->role],
-        $admin
-    );
-}
+ActivityLog::record(
+    'USER_LOGIN_FAILED',
+    "Login failed for {$user->email}: Invalid Password.",
+    ['email' => $user->email, 'reason' => 'Invalid Password'],
+    $user
+);
+
+// 5. User Registration Failure Test
+ActivityLog::record(
+    'USER_REGISTRATION_FAILED',
+    "Registration failed for {$user->email}: Email address is already registered & verified.",
+    ['email' => $user->email, 'reason' => 'Email already registered and verified']
+);
+
+// 6. Admin Login Failure Tests
+ActivityLog::record(
+    'ADMIN_LOGIN_FAILED',
+    "Admin login failed for username 'invalid_admin': Account not found.",
+    ['username' => 'invalid_admin', 'reason' => 'Account not found']
+);
 
 // Fetch recent activity logs
 $recentLogs = ActivityLog::latest()->take(10)->get();

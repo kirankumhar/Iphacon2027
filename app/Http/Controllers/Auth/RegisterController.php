@@ -37,6 +37,12 @@ class RegisterController extends Controller
             if ($existingUser) {
                 if ($existingUser->hasVerifiedEmail()) {
                     // Email is verified, show error
+                    \App\Models\ActivityLog::record(
+                        'USER_REGISTRATION_FAILED',
+                        "Registration failed for {$request->email}: Email address is already registered & verified.",
+                        ['email' => $request->email, 'reason' => 'Email already registered and verified']
+                    );
+
                     return back()->withErrors([
                         'email' => 'This email address is already registered and verified. Please use a different email or try logging in.'
                     ])->withInput($request->except(['password', 'password_confirmation']));
@@ -73,6 +79,12 @@ class RegisterController extends Controller
                 ->with('email', $user->email);
 
         } catch (\Exception $e) {
+            \App\Models\ActivityLog::record(
+                'USER_REGISTRATION_FAILED',
+                "Registration failed for " . ($request->email ?? 'unknown') . ": " . $e->getMessage(),
+                ['email' => $request->email ?? null, 'error' => $e->getMessage()]
+            );
+
             \Illuminate\Support\Facades\Log::error('Registration Exception: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
