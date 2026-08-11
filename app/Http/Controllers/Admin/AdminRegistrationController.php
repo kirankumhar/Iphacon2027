@@ -211,7 +211,13 @@ class AdminRegistrationController extends Controller
 
     public function internationalRejectedDelegates()
     {
-        return view('admin.modules.registration.show-int-rejected-registration');
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where('status', 'Rejected')
+            ->where('is_deleted', '0')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-int-rejected-registration', compact('registrations'));
     }
 
     public function internationalRevertedDelegates()
