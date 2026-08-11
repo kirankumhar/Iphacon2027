@@ -52,43 +52,42 @@
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-md flex-shrink-0" style="width: 40px; height: 40px;">
                                             <img src="{{ $reg->photo_path ? asset('storage/' . $reg->photo_path) : asset('images/default-avatar.svg') }}"
-                                                alt="Avatar" class="rounded-circle w-100 h-100 border shadow-xs" style="object-fit: cover;"
+                                                alt="Avatar" class="rounded-circle w-100 h-100 border" style="object-fit: cover;"
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">
-                                                {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
+                                            <h6 class="mb-0 fw-semibold" style="font-size: 0.88rem;">
+                                                <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="text-dark text-decoration-none">
+                                                    {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
+                                                </a>
                                             </h6>
                                             <div class="extra-small text-muted mb-0.5" style="font-size: 0.76rem;">
-                                                <i class="bx bx-hash me-0.5 text-primary"></i><strong>{{ $reg->registration_number ?? 'N/A' }}</strong>
-                                            </div>
-                                            <div class="extra-small text-muted" style="font-size: 0.76rem;">
-                                                <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}
+                                                <i class="bx bx-hash me-0.5 text-muted"></i><span class="fw-semibold font-monospace text-dark">{{ $reg->registration_number ?? ($reg->acknowledgement_id ?? 'N/A') }}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-label-info text-info px-2.5 py-1 mb-1 fw-semibold extra-small" style="font-size: 0.72rem;">
-                                        <i class="fas fa-graduation-cap me-1"></i>CME Workshop
+                                    <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small" style="font-size: 0.72rem;">
+                                        <i class="fas fa-graduation-cap me-1"></i>Pre-Conference Workshop
                                     </span>
-                                    <div class="fw-bold text-dark extra-small" style="font-size: 0.78rem;">
+                                    <div class="fw-medium text-dark extra-small" style="font-size: 0.78rem;">
                                         {{ $reg->delegateCategory?->category_name ?? 'Delegate' }} ({{ $reg->delegate_type ?? 'Indian' }})
                                     </div>
                                 </td>
                                 <td>
                                     @if(strtolower($reg->status) === 'approved')
-                                        <span class="badge bg-success text-white px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.72rem;">
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #DCFCE7; color: #0F172A; border: 1px solid #BBF7D0;">
                                             <i class="bx bx-check-circle me-1"></i>APPROVED
                                         </span>
                                     @else
-                                        <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.72rem;">
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEF3C7; color: #0F172A; border: 1px solid #FDE68A;">
                                             {{ strtoupper($reg->status ?? 'PENDING') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-sm btn-outline-primary px-3 py-1 rounded-2" style="font-size: 0.75rem;">
+                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
                                         <i class="bx bx-show me-1"></i> Details
                                     </a>
                                 </td>
@@ -98,7 +97,7 @@
                                 <td colspan="5" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-graduation-cap fs-1 mb-2 text-secondary"></i>
-                                        <p class="mb-0 fw-semibold">No CME Workshop participants found.</p>
+                                        <p class="mb-0 fw-semibold text-dark">No Pre-Conference Workshop participants found.</p>
                                     </div>
                                 </td>
                             </tr>

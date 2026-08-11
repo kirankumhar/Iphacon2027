@@ -618,6 +618,11 @@ class RegistrationController extends Controller
                 ->with('error', 'Please complete your main conference registration first before applying for CME Workshop.');
         }
 
+        if ($registration->status === 'Rejected') {
+            return redirect()->route('registration.index')
+                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for CME Workshop.');
+        }
+
         $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
 
         return view('delegate.cme-workshop', compact('registration', 'user', 'cmeApp'));
@@ -627,6 +632,11 @@ class RegistrationController extends Controller
     {
         $user = Auth::user();
         $registration = Registration::where('user_id', $user->id)->latest()->firstOrFail();
+
+        if ($registration->status === 'Rejected') {
+            return redirect()->route('registration.index')
+                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for CME Workshop.');
+        }
 
         if (!$request->has('participate_in_cme')) {
             return redirect()->back()->with('error', 'Please check the Pre-Conference CME Workshop box to proceed.');

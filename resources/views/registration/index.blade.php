@@ -89,13 +89,13 @@
                                                     $isCmeApproved = $registration->participate_in_cme || $cmeSt === 'Approved';
                                                     $isCmePending = $cmeSt === 'Payment Submitted';
                                                 @endphp
-                                                @if(!$isCmeApproved && !$isCmePending)
+                                                @if(!$isCmeApproved && !$isCmePending && $registration->status !== 'Rejected')
                                                     <a href="{{ route('cme.apply') }}" class="btn btn-sm btn-outline-success px-2.5 py-1 fw-semibold me-1" style="border-radius: 6px;">
-                                                        <i class="fas fa-microscope me-1"></i>Apply for CME
+                                                        <i class="fas fa-microscope me-1"></i>Apply for Pre-Conference Workshop
                                                     </a>
                                                 @elseif($isCmePending)
                                                     <span class="badge bg-warning text-dark border px-2 py-1 me-1 small">
-                                                        <i class="fas fa-hourglass-half me-1"></i>CME Pending
+                                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Pending
                                                     </span>
                                                 @endif
                                                 @if($registration->status === 'Draft')
