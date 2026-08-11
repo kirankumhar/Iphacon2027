@@ -32,34 +32,16 @@ Route::get('/', [RegisterController::class, 'showRegistrationForm']);
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
-// 🔥 PASSWORD RESET ROUTES
-Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
-    ->middleware('guest')
-    ->name('password.request');
-
-Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-    ->middleware('guest')
-    ->name('password.email');
-
-Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
-    ->middleware('guest')
-    ->name('password.reset');
-
-Route::post('reset-password', [ResetPasswordController::class, 'reset'])
-    ->middleware('guest')
-    ->name('password.update');
+// PASSWORD RESET ROUTES
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->middleware('guest')->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->middleware('guest')->name('password.update');
 
 // Email verification routes
-Route::get('email/verify', [RegisterController::class, 'showVerificationNotice'])
-    ->name('verification.notice');
-
-Route::post('email/verify-otp', [RegisterController::class, 'verifyOtp'])
-    ->middleware(['throttle:10,1'])
-    ->name('verification.verify-otp');
-
-Route::post('email/verification-notification', [RegisterController::class, 'resendVerification'])
-    ->middleware(['throttle:6,1'])
-    ->name('verification.resend');
+Route::get('email/verify', [RegisterController::class, 'showVerificationNotice'])->name('verification.notice');
+Route::post('email/verify-otp', [RegisterController::class, 'verifyOtp'])->middleware(['throttle:10,1'])->name('verification.verify-otp');
+Route::post('email/verification-notification', [RegisterController::class, 'resendVerification'])->middleware(['throttle:6,1'])->name('verification.resend');
 
 // Dashboard route (protected)
 // Route::get('dashboard', function () {

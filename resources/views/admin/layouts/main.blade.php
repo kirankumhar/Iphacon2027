@@ -53,6 +53,9 @@
             background-color: #E1F0FF !important;
             background: linear-gradient(135deg, #E1F0FF 0%, #F0F6FF 60%, #DCFFF0 100%) !important;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         /* Modern Gradient Sidebar Styling */
