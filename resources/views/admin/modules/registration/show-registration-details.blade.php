@@ -312,11 +312,11 @@
 
                         <div class="d-flex gap-2">
                             <button type="button" class="btn btn-sm btn-warning text-dark fw-bold w-50 py-1.5 rounded-2 shadow-xs" style="font-size: 0.78rem;" 
-                                data-bs-toggle="modal" data-bs-target="#revertModal">
+                                @if($delegate->status !== 'Approved') data-bs-toggle="modal" data-bs-target="#revertModal" @else disabled @endif>
                                 <i class="bx bx-undo me-1"></i> Revert
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-danger fw-bold w-50 py-1.5 rounded-2" style="font-size: 0.78rem;" 
-                                data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                @if($delegate->status !== 'Approved') data-bs-toggle="modal" data-bs-target="#rejectModal" @else disabled @endif>
                                 <i class="bx bx-x-circle me-1"></i> Reject
                             </button>
                         </div>

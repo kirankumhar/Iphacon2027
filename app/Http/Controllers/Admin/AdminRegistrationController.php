@@ -335,6 +335,10 @@ class AdminRegistrationController extends Controller
         })->first();
 
         if ($reg) {
+            if ($reg->status === 'Approved') {
+                return redirect()->back()->with('error', "Approved registrations cannot be rejected.");
+            }
+
             $reg->update([
                 'status' => 'Rejected',
                 'registration_number' => null,
@@ -372,6 +376,10 @@ class AdminRegistrationController extends Controller
         })->first();
 
         if ($reg) {
+            if ($reg->status === 'Approved') {
+                return redirect()->back()->with('error', "Approved registrations cannot be reverted.");
+            }
+
             $reg->update([
                 'status' => 'Draft',
                 'registration_number' => null,
