@@ -126,6 +126,7 @@
                                             <i class="bx bx-show me-0.5"></i> View
                                         </a>
                                         
+                                        @if($reg->status === 'Payment Submitted')
                                         <!-- Approve Modal Button -->
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf
@@ -135,6 +136,7 @@
                                                 <i class="bx bx-check-circle me-0.5"></i> Approve
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

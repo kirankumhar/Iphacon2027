@@ -328,18 +328,22 @@
                 </div>
                 <div class="card-body p-3.5">
                     <div class="d-grid gap-2.5">
-                        @if($delegate->status !== 'Approved')
+                        @if($delegate->status === 'Payment Submitted')
                         <form action="{{ route('student-approved-regis') }}" method="POST" class="d-grid m-0">
                             @csrf
-                            <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
+                            <input type="hidden" name="registration_number" value="{{ $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id) }}">
                             <button type="submit" class="btn btn-sm btn-success fw-bold py-2.5 rounded-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.85rem;" onclick="return confirm('Are you sure you want to approve this registration?')">
                                 <i class="bx bx-check-circle fs-5"></i> Approve Registration
                             </button>
                         </form>
-                        @else
+                        @elseif($delegate->status === 'Approved')
                         <div class="p-3 mb-1 rounded-3 text-center border fw-semibold d-flex align-items-center justify-content-center gap-2 shadow-xs" style="background-color: #DCFCE7 !important; color: #065F46 !important; border-color: #86EFAC !important; font-size: 0.88rem;">
                             <i class="bx bx-check-double fs-4" style="color: #059669 !important;"></i>
                             <span>Registration Status: <strong>Approved</strong></span>
+                        </div>
+                        @else
+                        <div class="p-2.5 mb-1 rounded-2 text-center border text-muted extra-small bg-light">
+                            <i class="bx bx-info-circle me-1 text-primary"></i>Approve button will appear once delegate submits payment.
                         </div>
                         @endif
 

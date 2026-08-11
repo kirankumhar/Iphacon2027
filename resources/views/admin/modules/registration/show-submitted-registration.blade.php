@@ -118,6 +118,7 @@
                                             <i class="bx bx-show"></i> Details
                                         </a>
 
+                                        @if($reg->status === 'Payment Submitted')
                                         <!-- Direct Approve Form -->
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf
@@ -127,6 +128,7 @@
                                                 <i class="bx bx-check"></i> Approve
                                             </button>
                                         </form>
+                                        @endif
 
                                         <!-- Revert Button Trigger Modal -->
                                         <button type="button" class="btn btn-sm btn-outline-warning px-2 py-1 rounded-2" data-bs-toggle="modal" data-bs-target="#revertModal{{ $reg->id }}" title="Revert Back" style="font-size: 0.75rem;">

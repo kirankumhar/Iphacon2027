@@ -293,6 +293,10 @@ class AdminRegistrationController extends Controller
         })->first();
 
         if ($registration) {
+            if ($registration->status !== 'Payment Submitted' && $registration->status !== 'Approved') {
+                return redirect()->back()->with('error', "Approval failed. Delegate must submit payment before approval can be granted.");
+            }
+
             if (empty($registration->registration_number)) {
                 $registration->registration_number = $registration->generateRegistrationNumber();
             }
