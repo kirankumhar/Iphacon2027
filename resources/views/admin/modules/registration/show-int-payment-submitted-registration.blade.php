@@ -46,38 +46,42 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table id="customSimpleTable" class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
+                        <thead style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
                             <tr>
-                                <th class="ps-3 py-3 text-secondary text-uppercase fw-bold extra-small" style="width: 45px;">#</th>
-                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small"><i class="bx bx-user text-primary me-1"></i> Delegate Info</th>
-                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small"><i class="bx bx-category text-info me-1"></i> Category</th>
-                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small"><i class="bx bx-credit-card text-success me-1"></i> Payment Details</th>
-                                <th class="pe-3 py-3 text-secondary text-uppercase fw-bold text-end extra-small"><i class="bx bx-slider-alt text-warning me-1"></i> Actions</th>
+                                <th class="ps-3 py-3 text-secondary text-uppercase fw-bold extra-small" style="width: 35px;">#</th>
+                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small" style="width: 28%;"><i class="bx bx-user text-primary me-1"></i> Delegate Info</th>
+                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small" style="width: 22%;"><i class="bx bx-category text-info me-1"></i> Category</th>
+                                <th class="py-3 text-secondary text-uppercase fw-bold extra-small" style="width: 20%;"><i class="bx bx-credit-card text-success me-1"></i> Payment Details</th>
+                                <th class="pe-3 py-3 text-secondary text-uppercase fw-bold text-end extra-small" style="width: 27%;"><i class="bx bx-slider-alt text-warning me-1"></i> Actions</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
                             @forelse($registrations as $key => $reg)
                                 <tr>
                                     <td class="ps-3 fw-semibold text-muted small">{{ $key + 1 }}</td>
-                                    <td class="py-3">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="avatar avatar-md flex-shrink-0" style="width: 44px; height: 44px;">
+                                    <td class="py-2.5">
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div class="avatar avatar-md flex-shrink-0" style="width: 38px; height: 38px;">
                                                 @if($reg->photo_path)
                                                     <img src="{{ asset('storage/' . $reg->photo_path) }}" alt="Photo" class="rounded-circle border w-100 h-100 shadow-xs" style="object-fit: cover;">
                                                 @else
-                                                    <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center w-100 h-100 fs-5 border border-primary border-opacity-25">
+                                                    <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center w-100 h-100 fs-6 border border-primary border-opacity-25">
                                                         {{ strtoupper(substr($reg->user->full_name ?? 'U', 0, 1)) }}
                                                     </div>
                                                 @endif
                                             </div>
                                             <div>
-                                                <h6 class="fw-bold text-dark mb-0 fs-6">{{ $reg->user->prefix ?? '' }} {{ $reg->user->full_name ?? 'N/A' }}</h6>
-                                                <small class="text-muted d-block extra-small mb-1"><i class="bx bx-envelope me-1 opacity-75"></i>{{ $reg->user->email ?? 'N/A' }}</small>
-                                                <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                                                    <span class="badge bg-light text-dark border font-monospace extra-small px-2 py-0.5 rounded-2">
-                                                        <i class="bx bx-barcode text-primary me-0.5"></i>Ack: {{ $reg->acknowledgement_id ?? 'N/A' }}
+                                                <div class="fw-bold text-dark" style="font-size: 0.86rem; line-height: 1.2;">
+                                                    {{ $reg->user->prefix ?? '' }} {{ $reg->user->full_name ?? 'N/A' }}
+                                                </div>
+                                                <div class="text-muted extra-small text-truncate mb-1" style="max-width: 200px; font-size: 0.75rem;">
+                                                    {{ $reg->user->email ?? 'N/A' }}
+                                                </div>
+                                                <div class="d-flex align-items-center gap-1.5">
+                                                    <span class="badge font-monospace extra-small px-2 py-0.5 rounded-2" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-size: 0.70rem;">
+                                                        ACK: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                                     </span>
-                                                    <a href="{{ route('show-registration-details', $reg->acknowledgement_id ?? $reg->id) }}" class="btn btn-xs btn-outline-primary rounded-pill px-2.5 py-0.5 extra-small fw-bold">
+                                                    <a href="{{ route('show-registration-details', $reg->acknowledgement_id ?? $reg->id) }}" class="btn btn-xs btn-outline-primary rounded-pill px-2 py-0.5 extra-small fw-bold" style="font-size: 0.70rem;">
                                                         <i class="bx bx-show me-0.5"></i> Details
                                                     </a>
                                                 </div>
@@ -85,46 +89,52 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 fw-semibold extra-small mb-1">{{ $reg->delegate_type ?? 'International' }}</span>
-                                        <div class="extra-small fw-medium text-dark">
-                                            <i class="bx bx-tag-alt text-muted me-1"></i>{{ $reg->delegateCategory->category_name ?? 'N/A' }}
+                                        <span class="badge rounded-pill px-2.5 py-1 extra-small fw-semibold mb-1" style="background-color: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;">
+                                            {{ $reg->delegate_type ?? 'International' }}
+                                        </span>
+                                        <div class="extra-small text-dark fw-medium mt-0.5" style="font-size: 0.76rem;">
+                                            {{ $reg->delegateCategory->category_name ?? 'N/A' }}
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="fw-bold text-success fs-6 mb-0.5">
+                                        <div class="fw-bold fs-6 mb-0.5" style="color: #059669;">
                                             {{ $reg->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($reg->total_amount, 2) }}
                                         </div>
-                                        @if($reg->latestPayment && $reg->latestPayment->transaction_id)
-                                            <span class="badge bg-light text-dark border font-monospace extra-small px-2 py-0.5 d-inline-block"><i class="bx bx-hash text-muted me-0.5"></i>{{ $reg->latestPayment->transaction_id }}</span>
-                                        @endif
-                                        @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
-                                            <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-primary text-decoration-none d-block mt-0.5 fw-semibold">
-                                                <i class="bx bx-file me-0.5"></i>View Screenshot
-                                            </a>
-                                        @endif
+                                        <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                                            @if($reg->latestPayment && $reg->latestPayment->transaction_id)
+                                                <span class="badge font-monospace extra-small px-2 py-0.5" style="background-color: #F8FAFC; color: #475569; border: 1px solid #E2E8F0; font-size: 0.70rem;">
+                                                    <i class="bx bx-receipt text-primary me-0.5"></i>Txn ID: {{ $reg->latestPayment->transaction_id }}
+                                                </span>
+                                            @endif
+                                            @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
+                                                <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-primary text-decoration-none fw-semibold" style="font-size: 0.72rem;">
+                                                    <i class="bx bx-file me-0.5"></i>View Screenshot
+                                                </a>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="pe-3 text-end">
-                                        <div class="d-flex align-items-center justify-content-end gap-1.5 flex-wrap">
+                                        <div class="d-flex align-items-center justify-content-end gap-1" style="white-space: nowrap;">
                                             @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
                                                 {{-- Approve Form --}}
                                                 <form action="{{ route('student-approved-regis') }}" method="POST" class="d-inline m-0">
                                                     @csrf
                                                     <input type="hidden" name="registration_id" value="{{ $reg->id }}">
                                                     <input type="hidden" name="acknowledgement_id" value="{{ $reg->acknowledgement_id }}">
-                                                    <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1 shadow-xs rounded-2 px-2.5 py-1.5 fw-semibold" style="font-size: 0.78rem;" onclick="return confirm('Are you sure you want to approve this registration?')">
-                                                        <i class="bx bx-check-circle fs-6"></i> Approve
+                                                    <button type="submit" class="btn btn-xs btn-success fw-bold px-2.5 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" onclick="return confirm('Are you sure you want to approve this registration?')">
+                                                        <i class="bx bx-check-circle" style="font-size: 0.85rem;"></i> Approve
                                                     </button>
                                                 </form>
                                             @endif
 
                                             {{-- Revert Modal Trigger --}}
-                                            <button type="button" class="btn btn-sm btn-warning text-dark d-inline-flex align-items-center gap-1 rounded-2 px-2.5 py-1.5 fw-semibold shadow-xs" style="font-size: 0.78rem;" onclick="openRevertModal('{{ $reg->id }}', '{{ $reg->acknowledgement_id }}', '{{ addslashes($reg->user->full_name ?? '') }}')">
-                                                <i class="bx bx-undo fs-6"></i> Revert
+                                            <button type="button" class="btn btn-xs btn-warning text-dark fw-bold px-2.5 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" onclick="openRevertModal('{{ $reg->id }}', '{{ $reg->acknowledgement_id }}', '{{ addslashes($reg->user->full_name ?? '') }}')">
+                                                <i class="bx bx-undo" style="font-size: 0.85rem;"></i> Revert
                                             </button>
 
                                             {{-- Reject Modal Trigger --}}
-                                            <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 rounded-2 px-2.5 py-1.5 fw-semibold" style="font-size: 0.78rem;" onclick="openRejectModal('{{ $reg->id }}', '{{ $reg->acknowledgement_id }}', '{{ addslashes($reg->user->full_name ?? '') }}')">
-                                                <i class="bx bx-x-circle fs-6"></i> Reject
+                                            <button type="button" class="btn btn-xs btn-outline-danger fw-bold px-2.5 py-1 rounded-2 d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" onclick="openRejectModal('{{ $reg->id }}', '{{ $reg->acknowledgement_id }}', '{{ addslashes($reg->user->full_name ?? '') }}')">
+                                                <i class="bx bx-x-circle" style="font-size: 0.85rem;"></i> Reject
                                             </button>
 
                                             {{-- Delete Form --}}
@@ -132,8 +142,8 @@
                                                 @csrf
                                                 <input type="hidden" name="registration_id" value="{{ $reg->id }}">
                                                 <input type="hidden" name="acknowledgement_id" value="{{ $reg->acknowledgement_id }}">
-                                                <button type="submit" class="btn btn-sm btn-icon btn-light text-danger rounded-2" title="Delete Registration" onclick="return confirm('Are you sure you want to delete this registration?')">
-                                                    <i class="bx bx-trash fs-6"></i>
+                                                <button type="submit" class="btn btn-xs btn-icon btn-light text-danger rounded-2" title="Delete Registration" onclick="return confirm('Are you sure you want to delete this registration?')">
+                                                    <i class="bx bx-trash" style="font-size: 0.85rem;"></i>
                                                 </button>
                                             </form>
                                         </div>
