@@ -252,7 +252,7 @@ class AdminRegistrationController extends Controller
             ->whereIn('status', ['Payment Submitted', 'Pending Payment', 'Submitted'])
             ->where('is_deleted', '0')
             ->latest()
-            ->get();
+            ->paginate(10);
 
         return view('admin.modules.payments.pending-payments', compact('payments', 'pendingRegistrations'));
     }

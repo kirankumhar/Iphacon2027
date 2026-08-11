@@ -105,8 +105,19 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2 fw-medium">
-                                        <i class="bx bx-time me-1 text-muted"></i>{{ $reg->status }}
+                                    @php
+                                        $st = strtolower($reg->status ?? 'pending');
+                                        $bgStyle = 'background-color: #FEF3C7; color: #0F172A; border: 1px solid #FDE68A;';
+                                        if (str_contains($st, 'pending')) {
+                                            $bgStyle = 'background-color: #FFEDD5; color: #0F172A; border: 1px solid #FED7AA;';
+                                        } elseif (str_contains($st, 'approved') || str_contains($st, 'completed')) {
+                                            $bgStyle = 'background-color: #DCFCE7; color: #0F172A; border: 1px solid #BBF7D0;';
+                                        } elseif (str_contains($st, 'reject') || str_contains($st, 'cancel')) {
+                                            $bgStyle = 'background-color: #FEE2E2; color: #0F172A; border: 1px solid #FECACA;';
+                                        }
+                                    @endphp
+                                    <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="{{ $bgStyle }}">
+                                        <i class="bx bx-time me-1"></i>{{ $reg->status }}
                                     </span>
                                 </td>
                                 <td class="pe-3 text-end">
@@ -158,7 +169,16 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2">
+                                        @php
+                                            $pst = strtolower($pay->payment_status ?: 'Pending');
+                                            $pbgStyle = 'background-color: #FEF3C7; color: #0F172A; border: 1px solid #FDE68A;';
+                                            if (str_contains($pst, 'pending')) {
+                                                $pbgStyle = 'background-color: #FFEDD5; color: #0F172A; border: 1px solid #FED7AA;';
+                                            } elseif (str_contains($pst, 'paid') || str_contains($pst, 'success') || str_contains($pst, 'approved')) {
+                                                $pbgStyle = 'background-color: #DCFCE7; color: #0F172A; border: 1px solid #BBF7D0;';
+                                            }
+                                        @endphp
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="{{ $pbgStyle }}">
                                             {{ $pay->payment_status ?: 'Pending' }}
                                         </span>
                                     </td>
@@ -192,6 +212,18 @@
                 </table>
             </div>
         </div>
+        
+        <!-- Pagination Footer -->
+        @if(method_exists($pendingRegistrations, 'hasPages') && $pendingRegistrations->hasPages())
+            <div class="card-footer bg-white py-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="extra-small text-muted">
+                    Showing <strong>{{ $pendingRegistrations->firstItem() }}</strong> to <strong>{{ $pendingRegistrations->lastItem() }}</strong> of <strong>{{ $pendingRegistrations->total() }}</strong> entries
+                </div>
+                <div>
+                    {{ $pendingRegistrations->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
