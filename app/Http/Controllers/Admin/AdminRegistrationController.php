@@ -131,7 +131,11 @@ class AdminRegistrationController extends Controller
     public function submittedDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
-            ->whereIn('status', ['Payment Submitted', 'Submitted'])
+            ->where(function ($q) {
+                $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
+                  ->orWhereHas('latestPayment');
+            })
+            ->whereNotIn('status', ['Approved', 'Rejected', 'Draft'])
             ->where('is_deleted', '0')
             ->latest()
             ->get();
@@ -142,7 +146,11 @@ class AdminRegistrationController extends Controller
     public function internationalPaymentSubmittedDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
-            ->where('status', 'Payment Submitted')
+            ->where(function ($q) {
+                $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
+                  ->orWhereHas('latestPayment');
+            })
+            ->whereNotIn('status', ['Approved', 'Rejected', 'Draft'])
             ->where(function ($q) {
                 $q->where('delegate_type', 'International')
                   ->orWhereHas('user', function ($uq) {
@@ -293,7 +301,8 @@ class AdminRegistrationController extends Controller
         })->first();
 
         if ($registration) {
-            if ($registration->status !== 'Payment Submitted' && $registration->status !== 'Approved') {
+            $isPaymentSubmitted = in_array($registration->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($registration->latestPayment);
+            if (!$isPaymentSubmitted && $registration->status !== 'Approved') {
                 return redirect()->back()->with('error', "Approval failed. Delegate must submit payment before approval can be granted.");
             }
 

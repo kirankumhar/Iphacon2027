@@ -118,7 +118,7 @@
                                             <i class="bx bx-show"></i> Details
                                         </a>
 
-                                        @if($reg->status === 'Payment Submitted')
+                                        @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
                                         <!-- Direct Approve Form -->
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf

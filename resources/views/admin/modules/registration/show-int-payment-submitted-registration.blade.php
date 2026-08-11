@@ -113,14 +113,16 @@
                                     </td>
                                     <td class="px-3 text-center">
                                         <div class="d-flex align-items-center justify-content-center flex-wrap gap-1.5">
-                                            {{-- Approve Form --}}
-                                            <form action="{{ route('student-approved-regis') }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <input type="hidden" name="registration_number" value="{{ $reg->registration_number }}">
-                                                <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1 shadow-xs rounded-2 px-2.5 py-1.5 fw-semibold" onclick="return confirm('Are you sure you want to approve this registration?')">
-                                                    <i class="bx bx-check-circle fs-6"></i> Approve
-                                                </button>
-                                            </form>
+                                            @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
+                                                {{-- Approve Form --}}
+                                                <form action="{{ route('student-approved-regis') }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <input type="hidden" name="registration_number" value="{{ $reg->registration_number }}">
+                                                    <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1 shadow-xs rounded-2 px-2.5 py-1.5 fw-semibold" onclick="return confirm('Are you sure you want to approve this registration?')">
+                                                        <i class="bx bx-check-circle fs-6"></i> Approve
+                                                    </button>
+                                                </form>
+                                            @endif
 
                                             {{-- Revert Modal Trigger --}}
                                             <button type="button" class="btn btn-sm btn-warning text-dark d-inline-flex align-items-center gap-1 rounded-2 px-2.5 py-1.5 fw-semibold shadow-xs" onclick="openRevertModal('{{ $reg->id }}', '{{ $reg->registration_number }}', '{{ addslashes($reg->user->full_name ?? '') }}')">

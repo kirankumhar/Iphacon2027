@@ -328,7 +328,10 @@
                 </div>
                 <div class="card-body p-3.5">
                     <div class="d-grid gap-2.5">
-                        @if($delegate->status === 'Payment Submitted')
+                        @php
+                            $isDelegatePaymentSubmitted = in_array($delegate->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($delegate->latestPayment);
+                        @endphp
+                        @if($isDelegatePaymentSubmitted && $delegate->status !== 'Approved')
                         <form action="{{ route('student-approved-regis') }}" method="POST" class="d-grid m-0">
                             @csrf
                             <input type="hidden" name="registration_number" value="{{ $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id) }}">
