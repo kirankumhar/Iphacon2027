@@ -354,6 +354,24 @@
             color: #FFFFFF !important;
         }
 
+        /* Ultra-Modern Top Floating Glassmorphism Navbar Styling */
+        #layout-navbar.bg-navbar-theme {
+            background: rgba(255, 255, 255, 0.94) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(226, 232, 240, 0.9) !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+            border-radius: 14px !important;
+            margin-top: 12px;
+            padding: 8px 16px !important;
+        }
+        .navbar-welcome-badge {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            padding: 5px 14px;
+            border-radius: 30px;
+        }
+
         /* Footer */
         footer.content-footer {
             background-color: #FFFFFF !important;
@@ -411,82 +429,90 @@
                     id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4 text-primary" href="javascript:void(0)">
-                            <i class="bx bx-menu bx-sm"></i>
+                            <i class="bx bx-menu fs-4"></i>
                         </a>
                     </div>
 
-                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                    <div class="navbar-nav-right d-flex align-items-center justify-content-between w-100" id="navbar-collapse">
                         <div class="navbar-nav align-items-center">
-                            <!-- For larger screens -->
+                            <!-- Welcome Badge for larger screens -->
                             <div class="nav-item d-none d-md-flex">
-                                <div class="navbar-welcome-badge d-flex align-items-center gap-2">
-                                    <span class="badge bg-primary text-white rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
-                                        <i class="bx bx-user fs-7"></i>
-                                    </span>
-                                    <span class="text-dark fs-7">
-                                        Welcome, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong>
-                                    </span>
-                                    <span class="badge bg-success bg-opacity-15 text-success px-2 py-0.5 rounded-pill fw-bold fs-tiny">
-                                        IPHACON 2027 Panel
-                                    </span>
+                                <div class="navbar-welcome-badge d-flex align-items-center gap-2.5">
+                                    <div class="avatar avatar-online flex-shrink-0" style="width: 32px; height: 32px;">
+                                        <img src="{{ !empty(auth()->user()->adminDetails->profile_pic) ? asset(auth()->user()->adminDetails->profile_pic) : asset('assets/img/logo/favicon.png') }}" alt="Avatar" class="w-100 h-100 rounded-circle border border-primary" style="object-fit: cover;" />
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-dark extra-small">
+                                            Welcome, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</strong>
+                                        </span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-0.5 rounded-pill extra-small fw-semibold">
+                                            {{ strtoupper(auth('admin')->user()->role ?? 'ADMIN') }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- For mobile screens -->
+                            <!-- Welcome Badge for mobile screens -->
                             <div class="nav-item d-flex d-md-none">
                                 <div class="navbar-welcome-badge d-flex align-items-center gap-1.5 py-1 px-2.5">
-                                    <span class="text-dark fs-7">
-                                        Welcome, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'Admin' }}</strong>
+                                    <span class="text-dark extra-small">
+                                        Hi, <strong class="text-primary fw-bold">{{ auth('admin')->user()->full_name ?? 'Admin' }}</strong>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <!-- User -->
+                        <ul class="navbar-nav flex-row align-items-center ms-auto gap-2">
+                            <!-- Real-time Live Clock Badge -->
+                            <li class="nav-item d-none d-sm-block me-1">
+                                <div class="navbar-welcome-badge d-flex align-items-center gap-1.5 py-1 px-3" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 30px;">
+                                    <i class="bx bx-time-five text-primary fs-5"></i>
+                                    <span id="headerLiveClock" class="fw-bold font-monospace text-dark extra-small" style="font-size: 0.8rem; letter-spacing: 0.5px;"></span>
+                                    <span id="headerLiveDate" class="text-muted extra-small ms-1 d-none d-md-inline" style="font-size: 0.74rem;"></span>
+                                </div>
+                            </li>
+                            <!-- User Profile Dropdown -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
-                                    <div class="avatar avatar-online">
-                                        <img src="{{ asset('assets/img/logo/favicon.png') }}" alt="User Avatar"
-                                            class="w-px-40 h-auto rounded-circle" />
+                                    <div class="avatar avatar-online" style="width: 38px; height: 38px;">
+                                        <img src="{{ !empty(auth()->user()->adminDetails->profile_pic) ? asset(auth()->user()->adminDetails->profile_pic) : asset('assets/img/logo/favicon.png') }}" alt="User Avatar"
+                                            class="w-100 h-100 rounded-circle border border-2 border-primary" style="object-fit: cover;" />
                                     </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                    <li>
-                                        <a class="dropdown-item" href="javascript:void(0);">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ asset('assets/img/logo/favicon.png') }}"
-                                                            alt class="w-px-40 h-auto rounded-circle" />
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <span class="fw-bold text-dark d-block mb-0">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</span>
-                                                    <span class="badge bg-label-primary fs-tiny fw-bold text-uppercase">{{ auth('admin')->user()->role ?? 'ADMIN' }}</span>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius: 14px; min-width: 220px; font-size: 0.82rem;">
+                                    <li class="p-2">
+                                        <div class="d-flex align-items-center p-2 rounded-3 bg-light">
+                                            <div class="flex-shrink-0 me-2.5">
+                                                <div class="avatar avatar-online" style="width: 38px; height: 38px;">
+                                                    <img src="{{ !empty(auth()->user()->adminDetails->profile_pic) ? asset(auth()->user()->adminDetails->profile_pic) : asset('assets/img/logo/favicon.png') }}"
+                                                        alt class="w-100 h-100 rounded-circle border" style="object-fit: cover;" />
                                                 </div>
                                             </div>
-                                        </a>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <span class="fw-bold text-dark d-block text-truncate mb-0" style="font-size: 0.84rem;">{{ auth('admin')->user()->full_name ?? 'IPHACON 2027 Admin' }}</span>
+                                                <span class="badge bg-primary extra-small fw-semibold text-uppercase" style="font-size: 0.65rem;">{{ auth('admin')->user()->role ?? 'ADMIN' }}</span>
+                                            </div>
+                                        </div>
                                     </li>
                                     <li>
                                         <div class="dropdown-divider my-1"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.profile.change-password') }}">
+                                        <a class="dropdown-item d-flex align-items-center py-2 rounded-2" href="{{ route('admin.profile.change-password') }}">
                                             <i class="bx bx-cog me-2 text-primary fs-5"></i>
-                                            <span>Change Password</span>
+                                            <span class="fw-medium text-dark">Change Password</span>
                                         </a>
                                     </li>
                                     <li>
                                         <div class="dropdown-divider my-1"></div>
                                     </li>
-                                    <form method="POST" action="{{ route('admin.logout') }}">
+                                    <form method="POST" action="{{ route('admin.logout') }}" class="m-0">
                                         @csrf
                                         <li>
-                                            <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
-                                                <i class="bx bx-power-off me-2 fs-5"></i>
-                                                <span>Log Out</span>
+                                            <button type="submit" class="dropdown-item d-flex align-items-center py-2 rounded-2 text-danger">
+                                                <i class="bx bx-power-off me-2 fs-5 text-danger"></i>
+                                                <span class="fw-bold">Log Out</span>
                                             </button>
                                         </li>
                                     </form>
@@ -540,8 +566,21 @@
             $("#loading-text").text("Please Wait...");
         });
     </script>
-    @stack('script')
-
+    <script>
+        function updateHeaderClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+            
+            const clockEl = document.getElementById('headerLiveClock');
+            const dateEl = document.getElementById('headerLiveDate');
+            
+            if (clockEl) clockEl.innerText = now.toLocaleTimeString('en-US', timeOptions);
+            if (dateEl) dateEl.innerText = '• ' + now.toLocaleDateString('en-US', dateOptions);
+        }
+        updateHeaderClock();
+        setInterval(updateHeaderClock, 1000);
+    </script>
     <script src="{{ asset('assets/admin/assets/js/main.js') }}"></script>
 </body>
 
