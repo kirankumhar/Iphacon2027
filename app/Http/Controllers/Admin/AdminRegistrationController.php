@@ -319,28 +319,36 @@ class AdminRegistrationController extends Controller
 
     public function rejectRegis(Request $request)
     {
-        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
+        $regNo = $request->input('registration_id') ?? $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
+        $reason = $request->input('reason') ?? $request->input('rejection_reason') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('registration_number', $regNo)
-              ->orWhere('acknowledgement_id', $regNo)
-              ->orWhere('id', $regNo);
+            $q->where('id', $regNo)
+              ->orWhere('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo);
         })->first();
 
         if ($reg) {
             $reg->update([
                 'status' => 'Rejected',
                 'registration_number' => null,
-                'rejection_reason' => $request->input('reason') ?? null,
+                'rejection_reason' => $reason,
                 'rejected_at' => now(),
             ]);
 
             \App\Models\ActivityLog::record(
                 'ADMIN_REJECT_REGISTRATION',
-                "Rejected registration for " . ($reg->user?->full_name ?? 'User') . ". Reason: " . ($request->input('reason') ?? 'N/A'),
-                ['registration_id' => $reg->id, 'reason' => $request->input('reason')],
+                "Rejected registration for " . ($reg->user?->full_name ?? 'User') . ". Reason: " . ($reason ?? 'N/A'),
+                ['registration_id' => $reg->id, 'reason' => $reason],
                 \Illuminate\Support\Facades\Auth::guard('admin')->user()
             );
+
+            // If coming from details page, redirect to the details page using permanent acknowledgement_id or id
+            $previousUrl = url()->previous();
+            if (str_contains($previousUrl, 'show-registration-details')) {
+                return redirect()->route('show-registration-details', $reg->acknowledgement_id ?? $reg->id)
+                    ->with('success', "Registration successfully marked Rejected.");
+            }
         }
 
         return redirect()->back()->with('success', "Registration successfully marked Rejected.");
@@ -348,12 +356,13 @@ class AdminRegistrationController extends Controller
 
     public function revertRegis(Request $request)
     {
-        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
+        $regNo = $request->input('registration_id') ?? $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
+        $reason = $request->input('reason') ?? $request->input('revert_reason') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('registration_number', $regNo)
-              ->orWhere('acknowledgement_id', $regNo)
-              ->orWhere('id', $regNo);
+            $q->where('id', $regNo)
+              ->orWhere('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo);
         })->first();
 
         if ($reg) {
@@ -361,7 +370,7 @@ class AdminRegistrationController extends Controller
                 'status' => 'Draft',
                 'registration_number' => null,
                 'reverted_at' => now(),
-                'revert_reason' => $request->input('reason') ?? null,
+                'revert_reason' => $reason,
             ]);
 
             \App\Models\ActivityLog::record(
@@ -370,6 +379,12 @@ class AdminRegistrationController extends Controller
                 ['registration_id' => $reg->id],
                 \Illuminate\Support\Facades\Auth::guard('admin')->user()
             );
+
+            $previousUrl = url()->previous();
+            if (str_contains($previousUrl, 'show-registration-details')) {
+                return redirect()->route('show-registration-details', $reg->acknowledgement_id ?? $reg->id)
+                    ->with('success', "Registration successfully reverted to Draft.");
+            }
         }
 
         return redirect()->back()->with('success', "Registration successfully marked Reverted.");
