@@ -202,4 +202,16 @@ class Registration extends Model
 
         return $number;
     }
+
+    public function getMaskedIdProofNumberAttribute(): string
+    {
+        if (empty($this->id_proof_number)) {
+            return 'N/A';
+        }
+        $val = trim($this->id_proof_number);
+        if (strlen($val) <= 4) {
+            return 'XXXXX' . $val;
+        }
+        return 'XXXXX' . substr($val, -4);
+    }
 }

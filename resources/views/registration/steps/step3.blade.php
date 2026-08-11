@@ -74,7 +74,7 @@
                             <td class="py-1">
                                 <span class="fw-bold text-dark">{{ $registration->id_proof_type ?: 'N/A' }}</span>
                                 @if ($registration->id_proof_number)
-                                    <span class="badge bg-light text-dark border ms-1 font-monospace">{{ $registration->id_proof_number }}</span>
+                                    <span class="badge bg-light text-dark border ms-1 font-monospace">{{ $registration->masked_id_proof_number }}</span>
                                 @endif
                             </td>
                         </tr>
