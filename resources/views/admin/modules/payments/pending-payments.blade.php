@@ -58,10 +58,10 @@
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-3 py-3 fw-semibold" style="width: 4%;">#</th>
-                            <th class="py-3 fw-semibold" style="width: 26%;">Delegate & Contact</th>
-                            <th class="py-3 fw-semibold" style="width: 18%;">Ack ID / Reg No</th>
-                            <th class="py-3 fw-semibold" style="width: 18%;">Amount & Category</th>
-                            <th class="py-3 fw-semibold" style="width: 18%;">Proof / Status</th>
+                            <th class="py-3 fw-semibold" style="width: 30%;">Delegate & Contact</th>
+                            <th class="py-3 fw-semibold" style="width: 18%;">Ack ID</th>
+                            <th class="py-3 fw-semibold" style="width: 15%;">Amount</th>
+                            <th class="py-3 fw-semibold" style="width: 17%;">Proof / Status</th>
                             <th class="pe-3 py-3 text-end fw-semibold" style="width: 16%;">Action</th>
                         </tr>
                     </thead>
@@ -98,23 +98,11 @@
                                     <span class="badge bg-light text-secondary border font-monospace extra-small px-2 py-0.5 d-inline-block">
                                         Ack: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                     </span>
-                                    @if($reg->registration_number)
-                                        <div class="extra-small text-secondary font-monospace mt-1">
-                                            <i class="bx bx-hash text-muted me-0.5"></i>Reg: {{ $reg->registration_number }}
-                                        </div>
-                                    @else
-                                        <div class="extra-small text-muted mt-1">
-                                            <i class="bx bx-time text-muted me-0.5"></i>Pending Approval
-                                        </div>
-                                    @endif
                                 </td>
                                 <td>
                                     <div class="fw-semibold text-dark" style="font-size: 0.9rem;">
                                         ₹{{ number_format($reg->total_amount, 2) }}
                                     </div>
-                                    <span class="badge bg-light text-secondary border extra-small px-2 py-0.5 mt-1">
-                                        {{ $reg->delegateCategory?->category_name ?? ($reg->delegate_type ?? 'Delegate') }}
-                                    </span>
                                 </td>
                                 <td>
                                     @if($reg->latestPayment?->payment_receipt_path)
