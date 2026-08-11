@@ -58,11 +58,11 @@
                     <thead class="bg-light">
                         <tr>
                             <th class="ps-3 py-3 fw-semibold" style="width: 4%;">#</th>
-                            <th class="py-3 fw-semibold" style="width: 30%;">Delegate & Contact</th>
-                            <th class="py-3 fw-semibold" style="width: 18%;">Ack ID</th>
+                            <th class="py-3 fw-semibold" style="width: 32%;">Delegate & Contact</th>
+                            <th class="py-3 fw-semibold" style="width: 20%;">Ack ID</th>
                             <th class="py-3 fw-semibold" style="width: 15%;">Amount</th>
-                            <th class="py-3 fw-semibold" style="width: 17%;">Proof / Status</th>
-                            <th class="pe-3 py-3 text-end fw-semibold" style="width: 16%;">Action</th>
+                            <th class="py-3 fw-semibold" style="width: 15%;">Status</th>
+                            <th class="pe-3 py-3 text-end fw-semibold" style="width: 14%;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,22 +105,14 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($reg->latestPayment?->payment_receipt_path)
-                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" 
-                                            class="btn btn-xs btn-outline-secondary px-2.5 py-1 rounded-2 mb-1 d-inline-flex align-items-center gap-1 extra-small fw-medium">
-                                            <i class="bx bx-file"></i> View Proof
-                                        </a>
-                                    @endif
-                                    <div>
-                                        <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2 fw-medium">
-                                            <i class="bx bx-time me-1 text-muted"></i>{{ $reg->status }}
-                                        </span>
-                                    </div>
+                                    <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2 fw-medium">
+                                        <i class="bx bx-time me-1 text-muted"></i>{{ $reg->status }}
+                                    </span>
                                 </td>
                                 <td class="pe-3 text-end">
                                     <div class="d-inline-flex gap-1.5 align-items-center">
                                         <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" 
-                                            class="btn btn-xs btn-outline-secondary px-2.5 py-1 rounded-2 extra-small fw-medium" title="View Full Details">
+                                            class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium" title="View Full Details">
                                             <i class="bx bx-show me-0.5"></i> View
                                         </a>
                                         
@@ -128,7 +120,7 @@
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf
                                             <input type="hidden" name="registration_id" value="{{ $reg->id }}">
-                                            <button type="submit" class="btn btn-xs btn-dark px-2.5 py-1 rounded-2 extra-small fw-medium"
+                                            <button type="submit" class="btn btn-xs btn-success px-2.5 py-1 rounded-2 extra-small fw-medium"
                                                 onclick="return confirm('Are you sure you want to approve this delegate registration?')" title="Approve Delegate">
                                                 <i class="bx bx-check-circle me-0.5"></i> Approve
                                             </button>
@@ -166,21 +158,14 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if($pay->payment_receipt_path)
-                                            <a href="{{ asset('storage/' . $pay->payment_receipt_path) }}" target="_blank" 
-                                                class="btn btn-xs btn-outline-secondary px-2.5 py-1 rounded-2 extra-small fw-medium">
-                                                <i class="bx bx-file me-1"></i> View Proof
-                                            </a>
-                                        @else
-                                            <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2">
-                                                {{ $pay->payment_status ?: 'Pending' }}
-                                            </span>
-                                        @endif
+                                        <span class="badge bg-light text-secondary border extra-small px-2.5 py-1 rounded-2">
+                                            {{ $pay->payment_status ?: 'Pending' }}
+                                        </span>
                                     </td>
                                     <td class="pe-3 text-end">
                                         @if($pay->registration)
                                             <a href="{{ route('show-registration-details', $pay->registration->registration_number ?? ($pay->registration->acknowledgement_id ?? $pay->registration->id)) }}" 
-                                                class="btn btn-xs btn-outline-secondary px-2.5 py-1 rounded-2 extra-small fw-medium">
+                                                class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
                                                 <i class="bx bx-show me-0.5"></i> View
                                             </a>
                                         @else
