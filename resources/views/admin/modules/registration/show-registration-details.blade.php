@@ -43,10 +43,16 @@
                 <div class="card-body p-4 position-relative z-2">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                         <div class="d-flex align-items-center gap-3.5">
-                            <div class="avatar avatar-xl flex-shrink-0 position-relative">
-                                <img src="{{ $delegate->photo_path ? asset('storage/' . $delegate->photo_path) : asset('images/default-avatar.svg') }}"
+                            @php
+                                $profilePhotoUrl = $delegate->photo_path ? asset('storage/' . $delegate->photo_path) : asset('images/default-avatar.svg');
+                            @endphp
+                            <div class="avatar avatar-xl flex-shrink-0 position-relative" style="cursor: pointer;" onclick="openMediaLightbox('{{ $profilePhotoUrl }}', 'image', 'Profile Photo - {{ $delegate->user?->full_name }}')" title="Click to view full photo">
+                                <img src="{{ $profilePhotoUrl }}"
                                     alt="Delegate Photo" class="w-100 h-100 rounded-circle border border-3 border-white shadow-sm" style="object-fit: cover; width: 68px; height: 68px;"
                                     onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
+                                <span class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center border border-white" style="width: 22px; height: 22px; font-size: 0.65rem;">
+                                    <i class="bx bx-search"></i>
+                                </span>
                             </div>
                             <div>
                                 <h4 class="text-white mb-1 fw-bold fs-3" style="letter-spacing: -0.3px;">
@@ -152,14 +158,24 @@
                             <tr class="border-bottom border-light">
                                 <th class="text-muted fw-semibold py-3 px-3.5">ID Proof Details</th>
                                 <td class="fw-semibold text-dark py-3 px-3.5">
-                                    <div class="mb-1.5">
-                                        <span class="badge bg-light text-primary border me-1.5 px-2.5 py-1">{{ $delegate->id_proof_type ?? 'ID Proof' }}</span>
+                                    <div class="mb-1.5 d-flex align-items-center gap-2">
+                                        <span class="badge bg-light text-primary border px-2.5 py-1">{{ $delegate->id_proof_type ?? 'ID Proof' }}</span>
                                         <strong class="font-monospace text-dark">{{ $delegate->masked_id_proof_number }}</strong>
                                     </div>
                                     @if($delegate->id_proof_document_path)
-                                        <a href="{{ asset('storage/' . $delegate->id_proof_document_path) }}" target="_blank" class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1 fw-bold">
-                                            <i class="bx bx-show me-1"></i> View Document
-                                        </a>
+                                        @php
+                                            $idDocUrl = asset('storage/' . $delegate->id_proof_document_path);
+                                            $isPdf = str_ends_with(strtolower($delegate->id_proof_document_path), '.pdf');
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-1">
+                                            <button type="button" class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1"
+                                                onclick="openMediaLightbox('{{ $idDocUrl }}', '{{ $isPdf ? 'pdf' : 'image' }}', 'ID Proof Document - {{ $delegate->id_proof_type }}')">
+                                                <i class="bx bx-show me-0.5"></i> View ID Document (Lightbox)
+                                            </button>
+                                            <a href="{{ $idDocUrl }}" target="_blank" class="btn btn-xs btn-light text-secondary rounded-pill px-2.5 py-1 fw-semibold" title="Open in new tab">
+                                                <i class="bx bx-export"></i>
+                                            </a>
+                                        </div>
                                     @else
                                         <span class="text-danger extra-small">No document uploaded</span>
                                     @endif
@@ -169,9 +185,18 @@
                                 <th class="text-muted fw-semibold py-3 px-3.5">Profile Photo</th>
                                 <td class="py-3 px-3.5">
                                     @if($delegate->photo_path)
-                                        <a href="{{ asset('storage/' . $delegate->photo_path) }}" target="_blank" class="btn btn-xs btn-outline-success rounded-pill px-3 py-1 fw-bold">
-                                            <i class="bx bx-image me-1"></i> View Full Photo
-                                        </a>
+                                        @php
+                                            $photoUrl = asset('storage/' . $delegate->photo_path);
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-1">
+                                            <button type="button" class="btn btn-xs btn-outline-success rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1"
+                                                onclick="openMediaLightbox('{{ $photoUrl }}', 'image', 'Profile Photo - {{ $delegate->user?->full_name }}')">
+                                                <i class="bx bx-image me-0.5"></i> View Profile Photo (Lightbox)
+                                            </button>
+                                            <a href="{{ $photoUrl }}" target="_blank" class="btn btn-xs btn-light text-secondary rounded-pill px-2.5 py-1 fw-semibold" title="Open in new tab">
+                                                <i class="bx bx-export"></i>
+                                            </a>
+                                        </div>
                                     @else
                                         <span class="text-muted extra-small">Default Avatar</span>
                                     @endif
@@ -269,11 +294,21 @@
                     </div>
 
                     @if($delegate->latestPayment && $delegate->latestPayment->payment_receipt_path)
+                    @php
+                        $receiptUrl = asset('storage/' . $delegate->latestPayment->payment_receipt_path);
+                        $isReceiptPdf = str_ends_with(strtolower($delegate->latestPayment->payment_receipt_path), '.pdf');
+                    @endphp
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
                         <span class="extra-small fw-semibold text-dark"><i class="bx bx-file text-primary me-1"></i>Payment Screenshot</span>
-                        <a href="{{ asset('storage/' . $delegate->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-3 fw-bold rounded-pill">
-                            <i class="bx bx-show me-1"></i>View Screenshot
-                        </a>
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-xs btn-outline-primary py-1 px-3 fw-bold rounded-pill"
+                                onclick="openMediaLightbox('{{ $receiptUrl }}', '{{ $isReceiptPdf ? 'pdf' : 'image' }}', 'Payment Receipt - Txn #{{ $delegate->latestPayment->transaction_id }}')">
+                                <i class="bx bx-show me-1"></i>View Lightbox
+                            </button>
+                            <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-xs btn-light text-secondary rounded-pill px-2.5 py-1 fw-semibold" title="Open in new tab">
+                                <i class="bx bx-export"></i>
+                            </a>
+                        </div>
                     </div>
                     @endif
 
@@ -456,4 +491,91 @@
         </div>
     </div>
 </div>
+
+<!-- Media Lightbox Modal -->
+<div class="modal fade" id="mediaLightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg" style="background-color: #0F172A; color: #ffffff; border-radius: 16px;">
+            <div class="modal-header border-bottom border-secondary border-opacity-25 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bx bx-image-alt text-primary fs-4"></i>
+                    <h5 class="modal-title fw-bold text-white mb-0" id="lightboxTitle">Media Lightbox</h5>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a id="lightboxDownloadBtn" href="#" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1 extra-small fw-semibold">
+                        <i class="bx bx-export me-1"></i>Open Full Size
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-body p-4 text-center overflow-auto position-relative" style="min-height: 420px; max-height: 75vh; display: flex; align-items: center; justify-content: center; background-color: #020617;">
+                <!-- Image Viewer -->
+                <img id="lightboxImage" src="" alt="Media Preview" class="img-fluid rounded shadow-sm d-none" style="max-height: 70vh; object-fit: contain; transition: transform 0.2s ease;">
+                
+                <!-- PDF Viewer -->
+                <iframe id="lightboxPdf" src="" class="w-100 rounded d-none" style="height: 70vh; border: none;"></iframe>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25 py-2.5 px-4 justify-content-between">
+                <div class="d-flex align-items-center gap-2" id="imageControls">
+                    <button type="button" class="btn btn-xs btn-outline-light" onclick="zoomLightboxImage(1.25)" title="Zoom In"><i class="bx bx-zoom-in me-1"></i> Zoom In</button>
+                    <button type="button" class="btn btn-xs btn-outline-light" onclick="zoomLightboxImage(0.8)" title="Zoom Out"><i class="bx bx-zoom-out me-1"></i> Zoom Out</button>
+                    <button type="button" class="btn btn-xs btn-outline-light" onclick="resetLightboxImage()" title="Reset Zoom"><i class="bx bx-reset me-1"></i> Reset</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+let currentZoom = 1;
+
+function openMediaLightbox(url, type, title) {
+    const modalElement = document.getElementById('mediaLightboxModal');
+    const lightboxTitle = document.getElementById('lightboxTitle');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxPdf = document.getElementById('lightboxPdf');
+    const lightboxDownloadBtn = document.getElementById('lightboxDownloadBtn');
+    const imageControls = document.getElementById('imageControls');
+
+    if (!url) return;
+
+    lightboxTitle.innerText = title || 'Document Preview';
+    lightboxDownloadBtn.href = url;
+    currentZoom = 1;
+    lightboxImage.style.transform = 'scale(1)';
+
+    if (type === 'pdf' || url.toLowerCase().endsWith('.pdf')) {
+        lightboxImage.classList.add('d-none');
+        lightboxPdf.classList.remove('d-none');
+        lightboxPdf.src = url;
+        if (imageControls) imageControls.classList.add('d-none');
+    } else {
+        lightboxPdf.classList.add('d-none');
+        lightboxImage.classList.remove('d-none');
+        lightboxImage.src = url;
+        if (imageControls) imageControls.classList.remove('d-none');
+    }
+
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function zoomLightboxImage(factor) {
+    const lightboxImage = document.getElementById('lightboxImage');
+    if (!lightboxImage) return;
+    currentZoom *= factor;
+    currentZoom = Math.max(0.5, Math.min(4, currentZoom));
+    lightboxImage.style.transform = `scale(${currentZoom})`;
+}
+
+function resetLightboxImage() {
+    const lightboxImage = document.getElementById('lightboxImage');
+    if (!lightboxImage) return;
+    currentZoom = 1;
+    lightboxImage.style.transform = 'scale(1)';
+}
+</script>
+@endpush
 @endsection
