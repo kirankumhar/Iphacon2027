@@ -539,27 +539,38 @@ function openMediaLightbox(url, type, title) {
     const lightboxDownloadBtn = document.getElementById('lightboxDownloadBtn');
     const imageControls = document.getElementById('imageControls');
 
-    if (!url) return;
+    if (!url || !modalElement) return;
 
-    lightboxTitle.innerText = title || 'Document Preview';
-    lightboxDownloadBtn.href = url;
+    if (lightboxTitle) lightboxTitle.innerText = title || 'Document Preview';
+    if (lightboxDownloadBtn) lightboxDownloadBtn.href = url;
     currentZoom = 1;
-    lightboxImage.style.transform = 'scale(1)';
+    if (lightboxImage) lightboxImage.style.transform = 'scale(1)';
 
     if (type === 'pdf' || url.toLowerCase().endsWith('.pdf')) {
-        lightboxImage.classList.add('d-none');
-        lightboxPdf.classList.remove('d-none');
-        lightboxPdf.src = url;
+        if (lightboxImage) lightboxImage.classList.add('d-none');
+        if (lightboxPdf) {
+            lightboxPdf.classList.remove('d-none');
+            lightboxPdf.src = url;
+        }
         if (imageControls) imageControls.classList.add('d-none');
     } else {
-        lightboxPdf.classList.add('d-none');
-        lightboxImage.classList.remove('d-none');
-        lightboxImage.src = url;
+        if (lightboxPdf) lightboxPdf.classList.add('d-none');
+        if (lightboxImage) {
+            lightboxImage.classList.remove('d-none');
+            lightboxImage.src = url;
+        }
         if (imageControls) imageControls.classList.remove('d-none');
     }
 
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
+    if (window.bootstrap && bootstrap.Modal) {
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (!modal) {
+            modal = new bootstrap.Modal(modalElement);
+        }
+        modal.show();
+    } else if (window.jQuery && $.fn.modal) {
+        $(modalElement).modal('show');
+    }
 }
 
 function zoomLightboxImage(factor) {

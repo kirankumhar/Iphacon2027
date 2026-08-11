@@ -582,6 +582,7 @@
         setInterval(updateHeaderClock, 1000);
     </script>
     <script src="{{ asset('assets/admin/assets/js/main.js') }}"></script>
+    @stack('scripts')
 </body>
 
 </html>
