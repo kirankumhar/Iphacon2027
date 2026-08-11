@@ -50,17 +50,19 @@
         }
 
         body {
-            background-color: #E1F0FF !important;
-            background: linear-gradient(135deg, #E1F0FF 0%, #F0F6FF 60%, #DCFFF0 100%) !important;
+            background-color: #F8FAFC !important;
+            background: #F8FAFC !important;
+            color: #0F172A;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
 
-        /* Global Font Weight Adjustments (Thinner, Sleeker Typography) */
+        /* Global Font Weight & Typography Adjustments */
         h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             font-weight: 500 !important;
+            color: #1E293B;
         }
 
         .fw-bold {
@@ -81,10 +83,57 @@
 
         table th {
             font-weight: 500 !important;
+            color: #475569 !important;
+            background-color: #F8FAFC !important;
+            border-bottom: 1px solid #E2E8F0 !important;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
 
         .table > :not(caption) > * > * {
             font-weight: 400;
+            border-bottom-color: #F1F5F9;
+        }
+
+        /* Minimal Professional Badges & Overrides */
+        .badge {
+            font-weight: 500 !important;
+            letter-spacing: 0.2px;
+        }
+
+        .badge.bg-label-info,
+        .badge.bg-label-primary,
+        .badge.bg-label-secondary {
+            background-color: #F1F5F9 !important;
+            color: #334155 !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+
+        .badge.bg-light {
+            background-color: #F8FAFC !important;
+            color: #475569 !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+
+        .badge.bg-warning,
+        .badge.bg-label-warning {
+            background-color: #FEF3C7 !important;
+            color: #92400E !important;
+            border: 1px solid #FDE68A !important;
+        }
+
+        .badge.bg-success,
+        .badge.bg-label-success {
+            background-color: #ECFDF5 !important;
+            color: #065F46 !important;
+            border: 1px solid #A7F3D0 !important;
+        }
+
+        .badge.bg-primary {
+            background-color: #EFF6FF !important;
+            color: #1E40AF !important;
+            border: 1px solid #BFDBFE !important;
         }
 
         /* Modern Gradient Sidebar Styling */

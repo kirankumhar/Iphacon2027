@@ -5,9 +5,9 @@
     <!-- Top Title Header -->
     <div class="d-flex align-items-center justify-content-between py-2 mb-3">
         <h5 class="mb-0 fw-semibold text-dark">
-            <i class="bx bx-paper-plane me-2 text-warning fs-4"></i>Submitted Delegates (Awaiting Approval)
+            <i class="bx bx-paper-plane me-2 text-secondary fs-4"></i>Submitted Delegates (Awaiting Approval)
         </h5>
-        <span class="badge bg-warning text-dark rounded-pill px-3.5 py-2 fs-7 fw-semibold shadow-xs">
+        <span class="badge bg-light text-dark border px-3 py-1.5 fs-7 fw-medium rounded-2">
             Total Submitted: {{ $registrations->count() }}
         </span>
     </div>
@@ -37,7 +37,7 @@
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
             <h6 class="mb-0 fw-semibold text-dark">
-                <i class="bx bx-list-check me-1.5 text-primary"></i>Pending Approval List
+                <i class="bx bx-list-check me-1.5 text-secondary"></i>Pending Approval List
             </h6>
             <div class="search-box" style="max-width: 300px; width: 100%;">
                 <div class="input-group input-group-sm">
@@ -68,7 +68,7 @@
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-md flex-shrink-0" style="width: 42px; height: 42px;">
                                             <img src="{{ $reg->photo_path ? asset('storage/' . $reg->photo_path) : asset('images/default-avatar.svg') }}"
-                                                alt="Avatar" class="rounded-circle w-100 h-100 border shadow-xs" style="object-fit: cover;"
+                                                alt="Avatar" class="rounded-circle w-100 h-100 border" style="object-fit: cover;"
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
@@ -76,7 +76,7 @@
                                                 {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
                                             </h6>
                                             <div class="extra-small text-muted mb-0.5" style="font-size: 0.76rem;">
-                                                <i class="bx bx-barcode me-0.5 text-primary"></i>Ack ID: <span class="text-dark font-monospace fw-semibold">{{ $reg->acknowledgement_id ?? 'N/A' }}</span>
+                                                <i class="bx bx-barcode me-0.5 text-muted"></i>Ack ID: <span class="text-dark font-monospace fw-semibold">{{ $reg->acknowledgement_id ?? 'N/A' }}</span>
                                             </div>
                                             <div class="extra-small text-muted" style="font-size: 0.76rem;">
                                                 <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}
@@ -85,7 +85,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-label-primary px-2.5 py-1 mb-1 fw-semibold extra-small" style="font-size: 0.72rem;">
+                                    <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small" style="font-size: 0.72rem;">
                                         {{ $reg->delegate_type ?? 'Indian' }} Delegate
                                     </span>
                                     <div class="fw-medium text-dark extra-small" style="font-size: 0.78rem;">
@@ -98,23 +98,23 @@
                                     </div>
                                     @if ($reg->latestPayment?->transaction_id)
                                         <div class="extra-small text-muted" style="font-size: 0.75rem;">
-                                            Txn: <span class="font-monospace text-primary fw-medium">{{ $reg->latestPayment->transaction_id }}</span>
+                                            Txn: <span class="font-monospace text-dark fw-medium">{{ $reg->latestPayment->transaction_id }}</span>
                                         </div>
                                     @endif
                                     @if ($reg->latestPayment?->payment_receipt_path)
-                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-decoration-none fw-medium text-info" style="font-size: 0.72rem;">
+                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-decoration-none fw-medium text-secondary" style="font-size: 0.72rem;">
                                             <i class="bx bx-receipt me-0.5"></i>View Receipt
                                         </a>
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.72rem;">
-                                        <i class="bx bx-time-five me-1"></i>SUBMITTED
+                                    <span class="badge bg-light text-secondary border px-2.5 py-1 rounded-2 fw-medium extra-small">
+                                        <i class="bx bx-time-five me-1 text-muted"></i>SUBMITTED
                                     </span>
                                 </td>
                                 <td class="pe-3 text-end">
                                     <div class="d-flex align-items-center justify-content-end gap-1 flex-wrap">
-                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-sm btn-outline-primary px-2 py-1 rounded-2" title="View Details" style="font-size: 0.75rem;">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-outline-secondary px-2.5 py-1 rounded-2 fw-medium" title="View Details">
                                             <i class="bx bx-show"></i> Details
                                         </a>
 
