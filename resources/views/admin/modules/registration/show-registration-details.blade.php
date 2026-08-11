@@ -305,8 +305,9 @@
                             </button>
                         </form>
                         @else
-                        <div class="alert alert-success p-1.5 px-2 mb-1 rounded-2 extra-small fw-bold text-center" style="font-size: 0.76rem;">
-                            <i class="bx bx-check-double me-1"></i> Registration Status: Approved
+                        <div class="p-2.5 px-3 mb-2 rounded-2 text-center border fw-semibold d-flex align-items-center justify-content-center gap-1.5" style="background-color: #DCFCE7 !important; color: #065F46 !important; border-color: #86EFAC !important; font-size: 0.84rem;">
+                            <i class="bx bx-check-double fs-5" style="color: #059669 !important;"></i>
+                            <span>Registration Status: <strong>Approved</strong></span>
                         </div>
                         @endif
 
