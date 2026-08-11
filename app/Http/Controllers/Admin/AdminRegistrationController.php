@@ -330,6 +330,7 @@ class AdminRegistrationController extends Controller
         if ($reg) {
             $reg->update([
                 'status' => 'Rejected',
+                'registration_number' => null,
                 'rejection_reason' => $request->input('reason') ?? null,
                 'rejected_at' => now(),
             ]);
@@ -358,6 +359,7 @@ class AdminRegistrationController extends Controller
         if ($reg) {
             $reg->update([
                 'status' => 'Draft',
+                'registration_number' => null,
                 'reverted_at' => now(),
                 'revert_reason' => $request->input('reason') ?? null,
             ]);

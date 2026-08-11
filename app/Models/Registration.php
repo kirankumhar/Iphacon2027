@@ -73,6 +73,22 @@ class Registration extends Model
         'approved_at' => 'datetime',
     ];
 
+    /**
+     * Model boot handler
+     */
+    protected static function booted()
+    {
+        static::saving(function ($registration) {
+            if ($registration->status === 'Approved') {
+                if (empty($registration->registration_number)) {
+                    $registration->registration_number = $registration->generateRegistrationNumber();
+                }
+            } else {
+                $registration->registration_number = null;
+            }
+        });
+    }
+
     // Relationships
     public function user()
     {
