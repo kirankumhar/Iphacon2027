@@ -6,13 +6,13 @@
     <!-- Page Title & Stats Bar -->
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 py-2 mb-3">
         <div>
-            <h5 class="mb-1 fw-bold text-dark">
+            <h5 class="mb-1 fw-semibold text-dark">
                 <i class="bx bx-time-five me-2 text-warning fs-4"></i>Pending & Verification Payments
             </h5>
             <p class="text-muted extra-small mb-0">Review transactions and submitted payment proofs waiting for verification.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-warning text-dark rounded-pill px-3.5 py-2 fs-7 fw-bold shadow-xs">
+            <span class="badge bg-warning text-dark rounded-pill px-3.5 py-2 fs-7 fw-semibold shadow-xs">
                 Total Pending: {{ $pendingRegistrations->count() + $payments->count() }}
             </span>
         </div>
@@ -42,7 +42,7 @@
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div class="d-flex align-items-center gap-2">
                 <i class="bx bx-hourglass text-warning fs-5"></i>
-                <h6 class="mb-0 fw-bold text-dark">Pending Payment Verification List</h6>
+                <h6 class="mb-0 fw-semibold text-dark">Pending Payment Verification List</h6>
             </div>
             <div class="search-box" style="max-width: 320px; width: 100%;">
                 <div class="input-group input-group-sm">
@@ -57,12 +57,12 @@
                 <table class="table table-hover align-middle mb-0" id="pendingPaymentsTable">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-3 py-3" style="width: 4%;">#</th>
-                            <th class="py-3" style="width: 26%;">Delegate & Contact</th>
-                            <th class="py-3" style="width: 18%;">Ack ID / Reg No</th>
-                            <th class="py-3" style="width: 18%;">Amount & Category</th>
-                            <th class="py-3" style="width: 18%;">Proof / Status</th>
-                            <th class="pe-3 py-3 text-end" style="width: 16%;">Action</th>
+                            <th class="ps-3 py-3 fw-semibold" style="width: 4%;">#</th>
+                            <th class="py-3 fw-semibold" style="width: 26%;">Delegate & Contact</th>
+                            <th class="py-3 fw-semibold" style="width: 18%;">Ack ID / Reg No</th>
+                            <th class="py-3 fw-semibold" style="width: 18%;">Amount & Category</th>
+                            <th class="py-3 fw-semibold" style="width: 18%;">Proof / Status</th>
+                            <th class="pe-3 py-3 text-end fw-semibold" style="width: 16%;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,7 +71,7 @@
                         <!-- Pending Delegations from Registrations Table -->
                         @forelse ($pendingRegistrations as $reg)
                             <tr>
-                                <td class="ps-3 fw-bold text-muted">{{ $counter++ }}</td>
+                                <td class="ps-3 fw-medium text-muted">{{ $counter++ }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-md flex-shrink-0" style="width: 40px; height: 40px;">
@@ -80,7 +80,7 @@
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.88rem;">
+                                            <h6 class="mb-0 fw-semibold text-dark" style="font-size: 0.88rem;">
                                                 {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
                                             </h6>
                                             <div class="extra-small text-muted" style="font-size: 0.76rem;">
@@ -99,17 +99,17 @@
                                         <i class="bx bx-barcode me-0.5 text-primary"></i>Ack: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                     </span>
                                     @if($reg->registration_number)
-                                        <div class="extra-small text-success fw-bold font-monospace">
+                                        <div class="extra-small text-success fw-semibold font-monospace">
                                             Reg: {{ $reg->registration_number }}
                                         </div>
                                     @else
-                                        <div class="extra-small text-warning fw-semibold">
+                                        <div class="extra-small text-warning fw-medium">
                                             <i class="bx bx-time me-0.5"></i>Pending Approval
                                         </div>
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark" style="font-size: 0.9rem;">
+                                    <div class="fw-semibold text-dark" style="font-size: 0.9rem;">
                                         ₹{{ number_format($reg->total_amount, 2) }}
                                     </div>
                                     <span class="badge bg-label-info extra-small px-2 py-0.5 mt-0.5">
@@ -119,7 +119,7 @@
                                 <td>
                                     @if($reg->latestPayment?->payment_receipt_path)
                                         <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" 
-                                            class="btn btn-sm btn-outline-success px-2.5 py-1 rounded-2 mb-1 d-inline-flex align-items-center gap-1 extra-small">
+                                            class="btn btn-sm btn-outline-success px-2.5 py-1 rounded-2 mb-1 d-inline-flex align-items-center gap-1 extra-small fw-medium">
                                             <i class="bx bx-receipt"></i> View Proof
                                         </a>
                                     @endif
@@ -132,7 +132,7 @@
                                 <td class="pe-3 text-end">
                                     <div class="d-inline-flex gap-1">
                                         <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" 
-                                            class="btn btn-sm btn-primary px-2.5 py-1 rounded-2 extra-small fw-bold" title="View Full Details">
+                                            class="btn btn-sm btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium" title="View Full Details">
                                             <i class="bx bx-show me-0.5"></i> View
                                         </a>
                                         
@@ -140,7 +140,7 @@
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline">
                                             @csrf
                                             <input type="hidden" name="registration_id" value="{{ $reg->id }}">
-                                            <button type="submit" class="btn btn-sm btn-success px-2.5 py-1 rounded-2 extra-small fw-bold"
+                                            <button type="submit" class="btn btn-sm btn-success px-2.5 py-1 rounded-2 extra-small fw-medium"
                                                 onclick="return confirm('Are you sure you want to approve this delegate registration?')" title="Approve Delegate">
                                                 <i class="bx bx-check-circle me-0.5"></i> Approve
                                             </button>
@@ -155,9 +155,9 @@
                         @forelse ($payments as $pay)
                             @if(!$pendingRegistrations->contains('id', $pay->registration_id))
                                 <tr>
-                                    <td class="ps-3 fw-bold text-muted">{{ $counter++ }}</td>
+                                    <td class="ps-3 fw-medium text-muted">{{ $counter++ }}</td>
                                     <td>
-                                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.88rem;">
+                                        <h6 class="mb-0 fw-semibold text-dark" style="font-size: 0.88rem;">
                                             {{ $pay->registration?->user?->prefix }} {{ $pay->registration?->user?->full_name ?? 'N/A' }}
                                         </h6>
                                         <small class="text-muted extra-small d-block">
@@ -173,14 +173,14 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+                                        <span class="fw-semibold text-dark" style="font-size: 0.9rem;">
                                             ₹{{ number_format($pay->total_amount, 2) }}
                                         </span>
                                     </td>
                                     <td>
                                         @if($pay->payment_receipt_path)
                                             <a href="{{ asset('storage/' . $pay->payment_receipt_path) }}" target="_blank" 
-                                                class="btn btn-sm btn-outline-success px-2.5 py-1 rounded-2 extra-small">
+                                                class="btn btn-sm btn-outline-success px-2.5 py-1 rounded-2 extra-small fw-medium">
                                                 <i class="bx bx-receipt me-1"></i> Receipt
                                             </a>
                                         @else
@@ -192,7 +192,7 @@
                                     <td class="pe-3 text-end">
                                         @if($pay->registration)
                                             <a href="{{ route('show-registration-details', $pay->registration->registration_number ?? ($pay->registration->acknowledgement_id ?? $pay->registration->id)) }}" 
-                                                class="btn btn-sm btn-primary px-2.5 py-1 rounded-2 extra-small fw-bold">
+                                                class="btn btn-sm btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
                                                 <i class="bx bx-show me-0.5"></i> View
                                             </a>
                                         @else

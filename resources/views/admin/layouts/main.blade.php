@@ -58,6 +58,35 @@
             text-rendering: optimizeLegibility;
         }
 
+        /* Global Font Weight Adjustments (Thinner, Sleeker Typography) */
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-weight: 500 !important;
+        }
+
+        .fw-bold {
+            font-weight: 600 !important;
+        }
+
+        .fw-semibold {
+            font-weight: 500 !important;
+        }
+
+        .fw-medium {
+            font-weight: 400 !important;
+        }
+
+        strong, b {
+            font-weight: 600 !important;
+        }
+
+        table th {
+            font-weight: 500 !important;
+        }
+
+        .table > :not(caption) > * > * {
+            font-weight: 400;
+        }
+
         /* Modern Gradient Sidebar Styling */
         #layout-menu.bg-menu-theme {
             background: linear-gradient(180deg, #0F172A 0%, #1E293B 60%, #0F172A 100%) !important;

@@ -4,10 +4,10 @@
 <div class="container-xxl flex-grow-1 mt-3.5 mb-4">
     <!-- Top Title Header -->
     <div class="d-flex align-items-center justify-content-between py-2 mb-3">
-        <h5 class="mb-0 fw-bold text-dark">
+        <h5 class="mb-0 fw-semibold text-dark">
             <i class="bx bx-paper-plane me-2 text-warning fs-4"></i>Submitted Delegates (Awaiting Approval)
         </h5>
-        <span class="badge bg-warning text-dark rounded-pill px-3.5 py-2 fs-7 fw-bold shadow-xs">
+        <span class="badge bg-warning text-dark rounded-pill px-3.5 py-2 fs-7 fw-semibold shadow-xs">
             Total Submitted: {{ $registrations->count() }}
         </span>
     </div>
@@ -36,7 +36,7 @@
     <!-- Submitted Delegates List Table Card -->
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <h6 class="mb-0 fw-bold text-dark">
+            <h6 class="mb-0 fw-semibold text-dark">
                 <i class="bx bx-list-check me-1.5 text-primary"></i>Pending Approval List
             </h6>
             <div class="search-box" style="max-width: 300px; width: 100%;">
@@ -52,18 +52,18 @@
                 <table class="table table-hover align-middle mb-0" id="submittedDelegatesTable">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-3 py-3" style="width: 4%;">#</th>
-                            <th class="py-3" style="width: 25%;">Delegate Info</th>
-                            <th class="py-3" style="width: 20%;">Category & Type</th>
-                            <th class="py-3" style="width: 20%;">Payment Info</th>
-                            <th class="py-3" style="width: 13%;">Status</th>
-                            <th class="pe-3 py-3 text-end" style="width: 18%;">Actions</th>
+                            <th class="ps-3 py-3 fw-semibold" style="width: 4%;">#</th>
+                            <th class="py-3 fw-semibold" style="width: 25%;">Delegate Info</th>
+                            <th class="py-3 fw-semibold" style="width: 20%;">Category & Type</th>
+                            <th class="py-3 fw-semibold" style="width: 20%;">Payment Info</th>
+                            <th class="py-3 fw-semibold" style="width: 13%;">Status</th>
+                            <th class="pe-3 py-3 text-end fw-semibold" style="width: 18%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($registrations as $index => $reg)
                             <tr>
-                                <td class="ps-3 fw-bold text-muted">{{ $index + 1 }}</td>
+                                <td class="ps-3 fw-medium text-muted">{{ $index + 1 }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-md flex-shrink-0" style="width: 42px; height: 42px;">
@@ -72,11 +72,11 @@
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">
+                                            <h6 class="mb-0 fw-semibold text-dark" style="font-size: 0.9rem;">
                                                 {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
                                             </h6>
                                             <div class="extra-small text-muted mb-0.5" style="font-size: 0.76rem;">
-                                                <i class="bx bx-barcode me-0.5 text-primary"></i>Ack ID: <strong class="text-dark font-monospace">{{ $reg->acknowledgement_id ?? 'N/A' }}</strong>
+                                                <i class="bx bx-barcode me-0.5 text-primary"></i>Ack ID: <span class="text-dark font-monospace fw-semibold">{{ $reg->acknowledgement_id ?? 'N/A' }}</span>
                                             </div>
                                             <div class="extra-small text-muted" style="font-size: 0.76rem;">
                                                 <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}
@@ -88,27 +88,27 @@
                                     <span class="badge bg-label-primary px-2.5 py-1 mb-1 fw-semibold extra-small" style="font-size: 0.72rem;">
                                         {{ $reg->delegate_type ?? 'Indian' }} Delegate
                                     </span>
-                                    <div class="fw-bold text-dark extra-small" style="font-size: 0.78rem;">
+                                    <div class="fw-medium text-dark extra-small" style="font-size: 0.78rem;">
                                         <i class="bx bx-tag-alt text-muted me-1"></i>{{ $reg->delegateCategory?->category_name ?? 'N/A' }}
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark extra-small" style="font-size: 0.82rem;">
+                                    <div class="fw-semibold text-dark extra-small" style="font-size: 0.82rem;">
                                         ₹{{ number_format($reg->total_amount, 2) }}
                                     </div>
                                     @if ($reg->latestPayment?->transaction_id)
                                         <div class="extra-small text-muted" style="font-size: 0.75rem;">
-                                            Txn: <span class="font-monospace text-primary fw-bold">{{ $reg->latestPayment->transaction_id }}</span>
+                                            Txn: <span class="font-monospace text-primary fw-medium">{{ $reg->latestPayment->transaction_id }}</span>
                                         </div>
                                     @endif
                                     @if ($reg->latestPayment?->payment_receipt_path)
-                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-decoration-none fw-bold text-info" style="font-size: 0.72rem;">
+                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="extra-small text-decoration-none fw-medium text-info" style="font-size: 0.72rem;">
                                             <i class="bx bx-receipt me-0.5"></i>View Receipt
                                         </a>
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill fw-bold" style="font-size: 0.72rem;">
+                                    <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill fw-semibold" style="font-size: 0.72rem;">
                                         <i class="bx bx-time-five me-1"></i>SUBMITTED
                                     </span>
                                 </td>
