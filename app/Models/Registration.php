@@ -169,8 +169,7 @@ class Registration extends Model
     public function generateAcknowledgementId(): string
     {
         do {
-            $random = sprintf('%05d', rand(1, 99999));
-            $ack = "IPHA-ACK-{$random}";
+            $ack = (string) mt_rand(10000000, 99999999);
         } while (static::where('acknowledgement_id', $ack)->exists());
 
         return $ack;

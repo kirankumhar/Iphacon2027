@@ -12,7 +12,7 @@ $registrations = Registration::all();
 echo "Found " . $registrations->count() . " registrations." . PHP_EOL;
 
 foreach ($registrations as $r) {
-    if (empty($r->acknowledgement_id)) {
+    if (empty($r->acknowledgement_id) || !preg_match('/^\d{8}$/', $r->acknowledgement_id)) {
         $r->acknowledgement_id = $r->generateAcknowledgementId();
     }
     

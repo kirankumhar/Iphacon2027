@@ -76,7 +76,7 @@
                                                 {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
                                             </h6>
                                             <div class="extra-small text-muted mb-0.5" style="font-size: 0.76rem;">
-                                                <i class="bx bx-barcode me-0.5 text-primary"></i>Ack ID: <strong class="text-dark font-monospace">{{ $reg->acknowledgement_id ?? ('ACK-'.$reg->id) }}</strong>
+                                                <i class="bx bx-barcode me-0.5 text-primary"></i>Ack ID: <strong class="text-dark font-monospace">{{ $reg->acknowledgement_id ?? 'N/A' }}</strong>
                                             </div>
                                             <div class="extra-small text-muted" style="font-size: 0.76rem;">
                                                 <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}

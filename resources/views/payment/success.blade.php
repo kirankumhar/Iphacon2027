@@ -26,7 +26,7 @@
                         </div>
                     @else
                         <div class="alert alert-warning border border-warning border-opacity-25" style="background: #fffbeb;">
-                            <h5 class="text-dark fw-bold mb-1"><strong>Acknowledgement Number: ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}</strong></h5>
+                            <h5 class="text-dark fw-bold mb-1"><strong>Acknowledgement Number: {{ $registration->acknowledgement_id ?? 'N/A' }}</strong></h5>
                             <p class="mb-0 text-muted small">Please save this acknowledgement number for your records.</p>
                         </div>
                         <div class="alert alert-info">

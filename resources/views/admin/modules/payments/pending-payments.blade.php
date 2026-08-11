@@ -96,7 +96,7 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-light text-dark border font-monospace extra-small d-inline-block mb-1">
-                                        <i class="bx bx-barcode me-0.5 text-primary"></i>Ack: {{ $reg->acknowledgement_id ?? ('IPHA-ACK-'.$reg->id) }}
+                                        <i class="bx bx-barcode me-0.5 text-primary"></i>Ack: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                     </span>
                                     @if($reg->registration_number)
                                         <div class="extra-small text-success fw-bold font-monospace">

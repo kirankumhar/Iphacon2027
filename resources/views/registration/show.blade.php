@@ -29,7 +29,7 @@
                                     @if($registration->status === 'Approved')
                                         <span><i class="fas fa-id-badge text-warning me-1"></i>Reg No: <strong>{{ $registration->registration_number }}</strong></span>
                                     @else
-                                        <span><i class="fas fa-receipt text-warning me-1"></i>Acknowledgement No: <strong>ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}</strong></span>
+                                        <span><i class="fas fa-receipt text-warning me-1"></i>Acknowledgement No: <strong>{{ $registration->acknowledgement_id ?? 'N/A' }}</strong></span>
                                     @endif
                                     <span><i class="fas fa-envelope text-warning me-1"></i>{{ $registration->user->email }}</span>
                                     <span><i class="fas fa-calendar-alt text-warning me-1"></i>Registered: {{ $registration->created_at ? $registration->created_at->format('d M, Y') : 'N/A' }}</span>

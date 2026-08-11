@@ -26,8 +26,8 @@ echo "Step 1: Submitted Registration created." . PHP_EOL;
 echo "Ack ID: " . $reg->acknowledgement_id . PHP_EOL;
 echo "Reg Number (before approval): " . ($reg->registration_number ?? 'NULL') . PHP_EOL;
 
-if (empty($reg->acknowledgement_id)) {
-    echo "ERROR: Ack ID was not generated!" . PHP_EOL;
+if (empty($reg->acknowledgement_id) || !preg_match('/^\d{8}$/', $reg->acknowledgement_id)) {
+    echo "ERROR: Ack ID was not a valid 8-digit number! Got: {$reg->acknowledgement_id}" . PHP_EOL;
     exit(1);
 }
 

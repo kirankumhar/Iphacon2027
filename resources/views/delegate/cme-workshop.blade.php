@@ -40,7 +40,7 @@
                             <i class="fas fa-user-check text-primary me-2"></i>Delegate Details
                         </h6>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill small">
-                            Reg No / Ack: {{ $registration->status === 'Approved' ? $registration->registration_number : ('ACK-IPHACON-' . sprintf('%04d', $registration->id)) }}
+                            Reg No / Ack: {{ $registration->status === 'Approved' ? $registration->registration_number : ($registration->acknowledgement_id ?? 'N/A') }}
                         </span>
                     </div>
                     <div class="card-body p-4">

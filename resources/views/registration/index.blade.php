@@ -51,7 +51,7 @@
                                                 @if($registration->status === 'Approved')
                                                     {{ $registration->registration_number }}
                                                 @else
-                                                    ACK-IPHACON-{{ sprintf('%04d', $registration->id) }}
+                                                    {{ $registration->acknowledgement_id ?? 'N/A' }}
                                                 @endif
                                             </td>
                                             <td><span class="badge bg-light text-dark border px-2.5 py-1.5">{{ $registration->delegateCategory->category_name ?? 'Pending Selection' }}</span></td>

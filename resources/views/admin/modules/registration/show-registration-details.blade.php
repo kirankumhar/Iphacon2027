@@ -46,7 +46,7 @@
                                 <h4 class="text-white mb-1 fw-bold">{{ $delegate->user?->prefix }} {{ $delegate->user?->full_name }}</h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap text-white-50 extra-small">
                                     <span class="badge font-monospace extra-small px-2.5 py-1.5 rounded-2" style="background-color: rgba(255, 255, 255, 0.18) !important; color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.35) !important; font-size: 0.78rem;">
-                                        <i class="bx bx-barcode me-1" style="color: #93C5FD !important;"></i>Ack ID: <strong style="color: #FFFFFF !important;">{{ $delegate->acknowledgement_id ?? ('IPHA-ACK-'.$delegate->id) }}</strong>
+                                        <i class="bx bx-barcode me-1" style="color: #93C5FD !important;"></i>Ack ID: <strong style="color: #FFFFFF !important;">{{ $delegate->acknowledgement_id ?? 'N/A' }}</strong>
                                     </span>
                                     @if($delegate->registration_number)
                                         <span class="badge font-monospace extra-small px-2.5 py-1.5 rounded-2" style="background-color: rgba(16, 185, 129, 0.25) !important; color: #6EE7B7 !important; border: 1px solid rgba(16, 185, 129, 0.45) !important; font-size: 0.78rem;">
