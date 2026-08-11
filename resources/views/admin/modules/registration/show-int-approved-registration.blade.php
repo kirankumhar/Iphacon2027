@@ -55,61 +55,55 @@
                     <tbody>
                         @forelse ($registrations as $index => $reg)
                             <tr>
-                                <td class="ps-3 fw-medium text-muted">{{ $index + 1 }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2.5">
-                                        <div class="avatar avatar-md flex-shrink-0">
-                                            <img src="{{ $reg->photo_path ? asset('storage/' . $reg->photo_path) : asset('images/default-avatar.svg') }}"
-                                                alt="Avatar" class="rounded-circle w-100 h-100 border" style="object-fit: cover;"
-                                                onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 fw-semibold text-dark">{{ $reg->user?->prefix }} {{ $reg->user?->full_name }}</h6>
-                                            <div class="extra-small text-muted mb-0.5">
-                                                <i class="bx bx-hash me-0.5 text-muted"></i><span class="fw-semibold font-monospace text-dark">{{ $reg->registration_number ?? 'N/A' }}</span>
-                                            </div>
-                                            <div class="extra-small text-muted">
-                                                <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small">{{ $reg->delegate_type ?? 'International' }} Delegate</span>
-                                    <div class="fw-medium text-dark extra-small">
-                                        <i class="bx bx-tag-alt text-muted me-1"></i>{{ $reg->delegateCategory?->category_name ?? 'Foreign Package' }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold text-dark fs-6 mb-1">
-                                        ₹45,000.00 INR
-                                    </div>
-                                    @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
-                                        <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-2 px-2.5 py-0.5 extra-small fw-medium">
-                                            <i class="bx bx-file me-1"></i>Receipt: {{ $reg->latestPayment->transaction_id ?? 'View' }}
-                                        </a>
-                                    @elseif($reg->latestPayment && $reg->latestPayment->transaction_id)
-                                        <span class="badge bg-light text-secondary border extra-small font-monospace"><i class="bx bx-hash me-0.5"></i>{{ $reg->latestPayment->transaction_id }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2 fw-medium text-uppercase extra-small">
-                                        <i class="bx bx-check-double me-1 text-success"></i> {{ $reg->status }}
-                                    </span>
-                                </td>
-                                <td class="pe-3 text-end">
-                                    <div class="d-inline-flex gap-1.5 align-items-center">
-                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-outline-secondary py-1 px-2.5 fw-medium rounded-2" title="View Full Details">
-                                            <i class="bx bx-show me-1"></i>Details
-                                        </a>
-                                        @if($reg->registration_number)
-                                            <a href="{{ route('download.receipt', $reg->registration_number) }}" target="_blank" class="btn btn-xs btn-outline-danger py-1 px-2 fw-medium rounded-2" title="Download Receipt PDF">
-                                                <i class="bx bxs-file-pdf"></i>
-                                            </a>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
+                                 <td class="ps-3 fw-medium text-muted">{{ $index + 1 }}</td>
+                                 <td>
+                                     <div class="d-flex align-items-center gap-2.5">
+                                         <div class="avatar avatar-md flex-shrink-0">
+                                             <img src="{{ $reg->photo_path ? asset('storage/' . $reg->photo_path) : asset('images/default-avatar.svg') }}"
+                                                 alt="Avatar" class="rounded-circle w-100 h-100 border" style="object-fit: cover;"
+                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
+                                         </div>
+                                         <div>
+                                             <h6 class="mb-0 fw-semibold">
+                                                 <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="text-dark text-decoration-none">
+                                                     {{ $reg->user?->prefix }} {{ $reg->user?->full_name }}
+                                                 </a>
+                                             </h6>
+                                             <div class="extra-small text-muted mb-0.5">
+                                                 <i class="bx bx-hash me-0.5 text-muted"></i><span class="fw-semibold font-monospace text-dark">{{ $reg->registration_number ?? 'N/A' }}</span>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </td>
+                                 <td>
+                                     <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small">{{ $reg->delegate_type ?? 'International' }} Delegate</span>
+                                     <div class="fw-medium text-dark extra-small">
+                                         <i class="bx bx-tag-alt text-muted me-1"></i>{{ $reg->delegateCategory?->category_name ?? 'Foreign Package' }}
+                                     </div>
+                                 </td>
+                                 <td>
+                                     <div class="fw-semibold text-dark fs-6 mb-1">
+                                         ₹45,000.00 INR
+                                     </div>
+                                     @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
+                                         <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-2 px-2.5 py-0.5 extra-small fw-medium">
+                                             <i class="bx bx-file me-1"></i>Receipt: {{ $reg->latestPayment->transaction_id ?? 'View' }}
+                                         </a>
+                                     @elseif($reg->latestPayment && $reg->latestPayment->transaction_id)
+                                         <span class="badge bg-light text-secondary border extra-small font-monospace"><i class="bx bx-hash me-0.5"></i>{{ $reg->latestPayment->transaction_id }}</span>
+                                     @endif
+                                 </td>
+                                 <td>
+                                     <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2 fw-medium text-uppercase extra-small">
+                                         <i class="bx bx-check-double me-1 text-success"></i> {{ $reg->status }}
+                                     </span>
+                                 </td>
+                                 <td class="pe-3 text-end">
+                                     <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary py-1 px-2.5 fw-medium rounded-2" title="View Full Details">
+                                         <i class="bx bx-show me-1"></i>Details
+                                     </a>
+                                 </td>
+                             </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5">

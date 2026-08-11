@@ -64,12 +64,13 @@
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-semibold text-dark">{{ $reg->user?->prefix }} {{ $reg->user?->full_name }}</h6>
+                                            <h6 class="mb-0 fw-semibold">
+                                                <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="text-dark text-decoration-none">
+                                                    {{ $reg->user?->prefix }} {{ $reg->user?->full_name }}
+                                                </a>
+                                            </h6>
                                             <div class="extra-small text-muted mb-0.5">
                                                 <i class="bx bx-hash me-0.5 text-muted"></i><span class="fw-semibold font-monospace text-dark">{{ $reg->registration_number ?? 'N/A' }}</span>
-                                            </div>
-                                            <div class="extra-small text-muted">
-                                                <i class="bx bx-envelope me-0.5"></i>{{ $reg->user?->email }}
                                             </div>
                                         </div>
                                     </div>
@@ -98,16 +99,9 @@
                                     </span>
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <div class="d-inline-flex gap-1.5 align-items-center">
-                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-outline-secondary py-1 px-2.5 fw-medium rounded-2" title="View Full Details">
-                                            <i class="bx bx-show me-1"></i>Details
-                                        </a>
-                                        @if($reg->registration_number)
-                                            <a href="{{ route('download.receipt', $reg->registration_number) }}" target="_blank" class="btn btn-xs btn-outline-danger py-1 px-2 fw-medium rounded-2" title="Download Receipt PDF">
-                                                <i class="bx bxs-file-pdf"></i>
-                                            </a>
-                                        @endif
-                                    </div>
+                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary py-1 px-2.5 fw-medium rounded-2" title="View Full Details">
+                                        <i class="bx bx-show me-1"></i>Details
+                                    </a>
                                 </td>
                             </tr>
                         @empty

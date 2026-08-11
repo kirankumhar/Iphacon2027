@@ -80,12 +80,11 @@
                                                 onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fw-semibold text-dark" style="font-size: 0.88rem;">
-                                                {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
+                                            <h6 class="mb-0 fw-semibold" style="font-size: 0.88rem;">
+                                                <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="text-dark text-decoration-none">
+                                                    {{ $reg->user?->prefix }} {{ $reg->user?->full_name ?? 'N/A' }}
+                                                </a>
                                             </h6>
-                                            <div class="extra-small text-muted" style="font-size: 0.76rem;">
-                                                <i class="bx bx-envelope me-1"></i>{{ $reg->user?->email }}
-                                            </div>
                                             @if($reg->user?->mobile_no)
                                                 <div class="extra-small text-muted" style="font-size: 0.74rem;">
                                                     <i class="bx bx-phone me-1"></i>{{ $reg->user?->mobile_no }}
