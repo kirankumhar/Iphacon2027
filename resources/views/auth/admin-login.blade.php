@@ -39,7 +39,7 @@
                             <!-- Username -->
                             <div class="mb-3.5">
                                 <label for="username" class="form-label fw-bold text-dark mb-1.5 small">
-                                    <i class="fas fa-user text-danger me-1"></i>Admin Username <span class="text-danger">*</span>
+                                    <i class="fas fa-user text-danger me-1"></i>Admin Email-Id <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted px-3">
@@ -57,7 +57,7 @@
                             </div>
 
                             <!-- Password -->
-                            <div class="mb-3.5">
+                            <div class="mt-3 mb-3">
                                 <label for="password" class="form-label fw-bold text-dark mb-1.5 small">
                                     <i class="fas fa-key text-danger me-1"></i>Password <span class="text-danger">*</span>
                                 </label>

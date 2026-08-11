@@ -225,47 +225,9 @@
                                     </small>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.abstracts.show', $item->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-bold" style="font-size: 0.78rem;">
-                                            <i class="bx bx-show me-1"></i>View
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle dropdown-toggle dropdown-toggle-split ms-1" data-bs-toggle="dropdown" aria-expanded="false" style="width: 28px; height: 28px; padding: 0;">
-                                            <span class="visually-hidden">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2" style="border-radius: 12px; font-size: 0.8rem;">
-                                            <li>
-                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    <input type="hidden" name="decision" value="accept_oral">
-                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #059669 !important;">
-                                                        <i class="bx bx-microphone fs-6" style="color: #059669 !important;"></i>
-                                                        <span style="color: #059669 !important;">Accept for Oral</span>
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    <input type="hidden" name="decision" value="accept_paper">
-                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #0288D1 !important;">
-                                                        <i class="bx bx-file fs-6" style="color: #0288D1 !important;"></i>
-                                                        <span style="color: #0288D1 !important;">Accept for Paper</span>
-                                                    </button>
-                                                </form>
-                                            </li>
-                                            <li><hr class="dropdown-divider my-1"></li>
-                                            <li>
-                                                <form action="{{ route('admin.abstracts.update-status', $item->id) }}" method="POST" class="m-0">
-                                                    @csrf
-                                                    <input type="hidden" name="decision" value="reject">
-                                                    <button type="submit" class="dropdown-item rounded-2 py-1.5 px-2.5 fw-bold d-flex align-items-center gap-2" style="color: #DC2626 !important;">
-                                                        <i class="bx bx-x-circle fs-6" style="color: #DC2626 !important;"></i>
-                                                        <span style="color: #DC2626 !important;">Reject</span>
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <a href="{{ route('admin.abstracts.show', $item->id) }}" class="btn btn-xs btn-primary px-3 py-1 rounded-2 fw-medium" style="font-size: 0.78rem;">
+                                        <i class="bx bx-show me-1"></i>View
+                                    </a>
                                 </td>
                             </tr>
                         @empty
