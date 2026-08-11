@@ -445,6 +445,10 @@ class AdminRegistrationController extends Controller
               ->orWhere('id', $id);
         })->latest('created_at')->firstOrFail();
 
+        if ($delegate->status !== 'Approved') {
+            return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
+        }
+
         $pdf = PDF::loadView('pdfs.registration', [
             'registration' => $delegate,
             'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
