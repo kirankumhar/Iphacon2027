@@ -90,12 +90,15 @@
                 </div>
             @endif
 
-            @if($registration->status == 'Reverted' && $registration->revert_reason)
-                <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-4 p-3.5 d-flex align-items-start gap-3">
-                    <i class="fas fa-info-circle fs-4 text-warning mt-1"></i>
+            @if(!empty($registration->revert_reason) && ($registration->status === 'Draft' || $registration->status === 'Reverted' || !empty($registration->reverted_at)))
+                <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-4 p-4 d-flex align-items-start gap-3" style="background: #FFFBEB; border-left: 5px solid #F59E0B !important;">
+                    <i class="fas fa-exclamation-triangle fs-4 text-warning mt-1"></i>
                     <div>
-                        <h6 class="fw-bold mb-1">Registration Reverted for Modification</h6>
-                        <p class="mb-0 small">{{ $registration->revert_reason }}</p>
+                        <h6 class="fw-bold text-dark mb-1">Registration Application Reverted for Modification</h6>
+                        <p class="mb-2 text-dark font-medium">{{ $registration->revert_reason }}</p>
+                        <a href="{{ route('registration.create') }}" class="btn btn-sm btn-warning text-dark fw-bold px-3.5 py-1.5 rounded-pill shadow-xs">
+                            <i class="fas fa-edit me-1"></i>Update &amp; Resubmit Application Now
+                        </a>
                     </div>
                 </div>
             @endif

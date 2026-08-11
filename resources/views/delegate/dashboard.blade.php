@@ -64,6 +64,40 @@
             </div>
         @endif
 
+        <!-- Reverted Alert Banner for Delegate -->
+        @if ($registration && !empty($registration->revert_reason) && ($registration->status === 'Draft' || $registration->status === 'Reverted' || !empty($registration->reverted_at)))
+            <div class="alert alert-warning border-0 shadow-sm p-3.5 mb-4 position-relative overflow-hidden" style="border-radius: 16px; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-left: 5px solid #F59E0B !important;">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="rounded-circle p-2.5 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 42px; height: 42px; background-color: #FDE68A; color: #B45309;">
+                        <i class="fas fa-exclamation-triangle fs-5"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">
+                                Action Required: Application Reverted for Modification
+                            </h6>
+                            @if($registration->reverted_at)
+                                <span class="badge bg-warning bg-opacity-25 text-dark font-monospace extra-small px-2.5 py-1 rounded-pill border border-warning" style="font-size: 0.72rem;">
+                                    <i class="far fa-clock me-1"></i>{{ \Carbon\Carbon::parse($registration->reverted_at)->format('d M Y, h:i A') }}
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-dark mb-2" style="font-size: 0.88rem; line-height: 1.45;">
+                            <strong>Admin Remarks / Reason:</strong> "{{ $registration->revert_reason }}"
+                        </p>
+                        <div class="d-flex align-items-center gap-2 mt-2">
+                            <a href="{{ route('registration.create') }}" class="btn btn-sm btn-warning text-dark fw-bold px-3.5 py-1.5 shadow-xs rounded-pill" style="font-size: 0.82rem;">
+                                <i class="fas fa-edit me-1.5"></i>Update &amp; Resubmit Application
+                            </a>
+                            <a href="{{ route('registration.index') }}" class="btn btn-sm btn-outline-secondary fw-semibold px-3 py-1.5 rounded-pill" style="font-size: 0.82rem;">
+                                View Full Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Quick Action Cards Grid (4 Columns with Premium Styling) -->
         <div class="row g-3.5 mb-4.5 pt-1">
             <!-- 1. Conference Registration Card -->
@@ -304,7 +338,7 @@
         @endif
 
         <!-- Info Notice Section -->
-        <div class="p-3.5 rounded-3 bg-white shadow-sm border" style="border-radius: 16px !important;">
+        <div class="p-3.5 rounded-3 bg-white shadow-sm border mt-3" style="border-radius: 16px !important;">
             <div class="row align-items-center">
                 <div class="col-lg-8 mb-2 mb-lg-0">
                     <div class="d-flex align-items-center">

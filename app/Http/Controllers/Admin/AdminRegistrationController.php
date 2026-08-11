@@ -230,7 +230,19 @@ class AdminRegistrationController extends Controller
 
     public function internationalRevertedDelegates()
     {
-        return view('admin.modules.registration.show-int-reverted-registration');
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->where(function($q) {
+                $q->where('status', 'Reverted')
+                  ->orWhereNotNull('reverted_at')
+                  ->orWhereNotNull('revert_reason');
+            })
+            ->where('status', '!=', 'Approved')
+            ->where('is_deleted', '0')
+            ->latest('reverted_at')
+            ->latest()
+            ->get();
+
+        return view('admin.modules.registration.show-int-reverted-registration', compact('registrations'));
     }
 
     public function cmeDelegates()
@@ -339,7 +351,7 @@ class AdminRegistrationController extends Controller
     public function rejectRegis(Request $request)
     {
         $regNo = $request->input('registration_id') ?? $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
-        $reason = $request->input('reason') ?? $request->input('rejection_reason') ?? null;
+        $reason = $request->input('reason') ?? $request->input('rejection_reason') ?? $request->input('revert_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
             $q->where('id', $regNo)
@@ -380,7 +392,7 @@ class AdminRegistrationController extends Controller
     public function revertRegis(Request $request)
     {
         $regNo = $request->input('registration_id') ?? $request->input('registration_number') ?? $request->input('acknowledgement_id') ?? $request->input('id');
-        $reason = $request->input('reason') ?? $request->input('revert_reason') ?? null;
+        $reason = $request->input('reason') ?? $request->input('revert_reason') ?? $request->input('rejection_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
             $q->where('id', $regNo)

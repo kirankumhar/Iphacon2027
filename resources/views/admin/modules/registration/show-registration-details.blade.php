@@ -395,6 +395,8 @@
         <div class="modal-content border-0 shadow-lg rounded-3">
             <form action="{{ route('student-revert-regis') }}" method="POST">
                 @csrf
+                <input type="hidden" name="registration_id" value="{{ $delegate->id }}">
+                <input type="hidden" name="acknowledgement_id" value="{{ $delegate->acknowledgement_id }}">
                 <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
                 <div class="modal-header bg-warning bg-opacity-10 border-bottom-0 pb-0">
                     <div class="d-flex align-items-center gap-2">
@@ -427,6 +429,8 @@
         <div class="modal-content border-0 shadow-lg rounded-3">
             <form action="{{ route('student-reject-regis') }}" method="POST">
                 @csrf
+                <input type="hidden" name="registration_id" value="{{ $delegate->id }}">
+                <input type="hidden" name="acknowledgement_id" value="{{ $delegate->acknowledgement_id }}">
                 <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
                 <div class="modal-header bg-danger bg-opacity-10 border-bottom-0 pb-0">
                     <div class="d-flex align-items-center gap-2">

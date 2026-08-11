@@ -134,39 +134,55 @@
                             <div class="stepper-line-fill" style="width: {{ $fillPercentage }};"></div>
 
                             <!-- Step 1 Node -->
-                            <div class="step-node {{ $step > 1 ? 'completed' : ($step == 1 ? 'active' : '') }}">
+                            <a href="{{ route('registration.create', ['step' => 1]) }}" class="step-node {{ $step > 1 ? 'completed' : ($step == 1 ? 'active' : '') }}" title="Step 1: Personal Info">
                                 <div class="step-circle">
                                     @if($step > 1) <i class="fas fa-check fs-6"></i> @else 1 @endif
                                 </div>
                                 <span class="step-label"><i class="fas fa-user me-1"></i> Personal Info</span>
-                            </div>
+                            </a>
 
                             <!-- Step 2 Node -->
-                            <div class="step-node {{ $step > 2 ? 'completed' : ($step == 2 ? 'active' : '') }}">
+                            <a href="{{ route('registration.create', ['step' => 2]) }}" class="step-node {{ $step > 2 ? 'completed' : ($step == 2 ? 'active' : '') }}" title="Step 2: Registration Category">
                                 <div class="step-circle">
                                     @if($step > 2) <i class="fas fa-check fs-6"></i> @else 2 @endif
                                 </div>
                                 <span class="step-label"><i class="fas fa-clipboard-list me-1"></i> Registration</span>
-                            </div>
+                            </a>
 
                             <!-- Step 3 Node -->
-                            <div class="step-node {{ $step > 3 ? 'completed' : ($step == 3 ? 'active' : '') }}">
+                            <a href="{{ route('registration.create', ['step' => 3]) }}" class="step-node {{ $step > 3 ? 'completed' : ($step == 3 ? 'active' : '') }}" title="Step 3: Preview">
                                 <div class="step-circle">
                                     @if($step > 3) <i class="fas fa-check fs-6"></i> @else 3 @endif
                                 </div>
                                 <span class="step-label"><i class="fas fa-eye me-1"></i> Preview</span>
-                            </div>
+                            </a>
 
                             <!-- Step 4 Node -->
-                            <div class="step-node {{ $step == 4 ? 'active' : '' }}">
+                            <a href="{{ route('registration.create', ['step' => 4]) }}" class="step-node {{ $step == 4 ? 'active' : '' }}" title="Step 4: Payment Upload">
                                 <div class="step-circle">4</div>
                                 <span class="step-label"><i class="fas fa-credit-card me-1"></i> Payment</span>
-                            </div>
+                            </a>
                         </div>
                     </div>
 
                     <!-- Form Body -->
                     <div class="card-body compact-form-body">
+                        <!-- Reverted Alert Banner in Wizard -->
+                        @if ($registration && !empty($registration->revert_reason) && ($registration->status === 'Draft' || $registration->status === 'Reverted' || !empty($registration->reverted_at)))
+                            <div class="alert alert-warning border-0 shadow-sm p-3.5 mb-4 position-relative overflow-hidden" style="border-radius: 12px; background: #FFFBEB; border-left: 5px solid #F59E0B !important;">
+                                <div class="d-flex align-items-start gap-2.5">
+                                    <i class="fas fa-exclamation-triangle fs-4 text-warning mt-0.5"></i>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Application Reverted for Modification</h6>
+                                        <p class="mb-0 text-dark small" style="font-size: 0.85rem; line-height: 1.4;">
+                                            <strong>Admin Reason:</strong> "{{ $registration->revert_reason }}"
+                                        </p>
+                                        <small class="text-muted extra-small d-block mt-1">Please make the required changes below and proceed to step 4 to resubmit your payment details.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <form id="wizardForm" method="POST" action="{{ route('registration.store-step', $step) }}"
                             enctype="multipart/form-data">
                             @csrf

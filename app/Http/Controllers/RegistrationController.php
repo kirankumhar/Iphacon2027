@@ -28,7 +28,7 @@ class RegistrationController extends Controller
         return view('registration.index', compact('registrations'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
 
@@ -50,8 +50,16 @@ class RegistrationController extends Controller
 
                 return redirect()->route('payment.gateway', $encrypted);
             } else {
+                if ($request->has('step')) {
+                    $targetStep = max(1, min(4, (int)$request->input('step')));
+                } else if (!empty($existingRegistration->revert_reason) || !empty($existingRegistration->reverted_at)) {
+                    $targetStep = 1;
+                } else {
+                    $targetStep = max(1, min(4, (int)$existingRegistration->step_completed));
+                }
+
                 $stepData = json_encode([
-                    'step' => max(1, $existingRegistration->step_completed),
+                    'step' => $targetStep,
                     'uid' => auth()->id(),
                 ]);
             }
@@ -65,8 +73,7 @@ class RegistrationController extends Controller
         $encryptedToken = Crypt::encryptString($stepData);
 
         if ($existingRegistration) {
-            return redirect()->route('registration.wizard', ['token' => $encryptedToken])
-                ->with('info', 'You already have a registration in progress. Continue from where you left off.');
+            return redirect()->route('registration.wizard', ['token' => $encryptedToken]);
         }
 
         // Create new draft registration

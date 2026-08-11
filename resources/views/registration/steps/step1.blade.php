@@ -503,9 +503,14 @@
 
                         <div id="docActionsPrompt" class="mt-3 d-flex flex-wrap justify-content-center gap-2" style="display: {{ $hasDoc ? 'flex' : 'none' }}">
                             <button type="button"
-                                class="btn btn-success d-flex align-items-center gap-2 px-4 py-2 shadow-sm rounded-pill"
+                                class="btn btn-success d-flex align-items-center gap-1.5 px-3 py-1.5 shadow-sm rounded-pill extra-small"
                                 title="Preview Document" onclick="openDocumentModal(event)">
                                 <i class="fas fa-eye"></i> View Document
+                            </button>
+                            <button type="button"
+                                class="btn btn-warning text-dark fw-bold d-flex align-items-center gap-1.5 px-3 py-1.5 shadow-sm rounded-pill extra-small"
+                                title="Replace / Re-upload Document" onclick="triggerIdDocumentUpload(event)">
+                                <i class="fas fa-sync-alt"></i> Replace Document
                             </button>
                         </div>
 
@@ -656,6 +661,17 @@
             return;
         }
         document.getElementById('id_proof_document').click();
+    }
+
+    function triggerIdDocumentUpload(event) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        const docInput = document.getElementById('id_proof_document');
+        if (docInput) {
+            docInput.click();
+        }
     }
 
     function openPhotoModal(event) {

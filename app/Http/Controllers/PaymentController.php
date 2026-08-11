@@ -346,26 +346,6 @@ class PaymentController extends Controller
                     ->with('success', 'Payment Successfully Received!');
 
                 exit;
-
-                // $salt = 'vikash_goswami';
-                // $encoded_app = base64_encode(strrev($jsonData['payInstrument']['extras']['udf2']) . $salt);
-                // $encoded_email = base64_encode(strrev($student->email) . $salt);
-                // $encoded_path = base64_encode(strrev($student->registration_pdf_path) . $salt);
-                // $encoded_fname = base64_encode(strrev($student->first_name) . $salt);
-                // $encoded_class = base64_encode(strrev($student->apply_class) . $salt);
-                // $data = [
-                //     'ap' => $encoded_app,
-                //     'ai' => $encoded_email,
-                //     'th' => $encoded_path,
-                //     'an' => $encoded_fname,
-                //     'as' => $encoded_class
-                // ];
-
-                // $queryString = http_build_query($data);
-
-                // header("Location: http://localhost/project/admn/regn_confirm.php?$queryString");
-
-
                 break;
             default:
                 echo 'Payment status = Transaction Failed';
