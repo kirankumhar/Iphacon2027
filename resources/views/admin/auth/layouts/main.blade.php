@@ -22,6 +22,8 @@
         class="template-customizer-theme-css" />
 
     <link rel="stylesheet" type="text/css" href='{{ asset('assets/loader.css') }}'>
+    <!-- Toastr Notifications CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <script src="{{ asset('assets/admin/assets/vendor/js/helpers.js') }}"></script>
 </head>
 
@@ -81,6 +83,39 @@
     <script src="{{ asset('assets/admin/assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/admin/assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/admin/js/two-factor-auth-pages.js') }}"></script>
+    <!-- Toastr Notifications JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            if (typeof toastr !== 'undefined') {
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "2000"
+                };
+
+                @if(Session::has('success'))
+                    toastr.success("{!! addslashes(Session::get('success')) !!}", "Success");
+                @endif
+                @if(Session::has('error'))
+                    toastr.error("{!! addslashes(Session::get('error')) !!}", "Error");
+                @endif
+                @if(Session::has('info'))
+                    toastr.info("{!! addslashes(Session::get('info')) !!}", "Notice");
+                @endif
+                @if(Session::has('warning'))
+                    toastr.warning("{!! addslashes(Session::get('warning')) !!}", "Warning");
+                @endif
+                @if(isset($errors) && $errors->any())
+                    @foreach($errors->all() as $error)
+                        toastr.error("{!! addslashes($error) !!}", "Validation Error");
+                    @endforeach
+                @endif
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 

@@ -45,6 +45,9 @@
 
     <link rel="shortcut icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/x-icon">
     <link rel="icon" href="{{ asset('shared/user/images/favicon.png') }}" type="image/x-icon">
+    <!-- Toastr Notifications CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
     <!--Color Switcher Mockup-->
     <link href="{{ asset('shared/user/css/color-switcher-design.css') }}" rel="stylesheet">
 
@@ -378,6 +381,40 @@
     <script src="{{ asset('shared/user/js/script.js') }}"></script>
     <!-- Color Setting -->
     <script src="{{ asset('shared/user/js/color-settings.js') }}"></script>
+
+    <!-- Toastr Notifications JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            if (typeof toastr !== 'undefined') {
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "2000"
+                };
+
+                @if(Session::has('success'))
+                    toastr.success("{!! addslashes(Session::get('success')) !!}", "Success");
+                @endif
+                @if(Session::has('error'))
+                    toastr.error("{!! addslashes(Session::get('error')) !!}", "Error");
+                @endif
+                @if(Session::has('info'))
+                    toastr.info("{!! addslashes(Session::get('info')) !!}", "Notice");
+                @endif
+                @if(Session::has('warning'))
+                    toastr.warning("{!! addslashes(Session::get('warning')) !!}", "Warning");
+                @endif
+                @if(isset($errors) && $errors->any())
+                    @foreach($errors->all() as $error)
+                        toastr.error("{!! addslashes($error) !!}", "Validation Error");
+                    @endforeach
+                @endif
+            }
+        });
+    </script>
 
 </body>
 

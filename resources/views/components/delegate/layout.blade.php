@@ -34,6 +34,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Toastr Notifications CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
     <title>@yield('title', $title ?? 'Online Registration | 71st Annual National Conference of the Indian Public Health Association (IPHACON 2027) | Ranchi | Jharkhand')</title>
 </head>
@@ -241,6 +243,7 @@
         <a href="#" id="scroll-top"><i class="far fa-arrow-up"></i></a>
         <!-- scroll-top end -->
 
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
@@ -253,5 +256,38 @@
         <script src="{{ asset('assets/js/wow.min.js') }}"></script>
         <script src="{{ asset('assets/js/countdown.min.js') }}"></script>
         <script src="{{ asset('assets/js/main.js') }}"></script>
+        <!-- Toastr Notifications JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                if (typeof toastr !== 'undefined') {
+                    toastr.options = {
+                        "closeButton": true,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "2000"
+                    };
+
+                    @if(Session::has('success'))
+                        toastr.success("{!! addslashes(Session::get('success')) !!}", "Success");
+                    @endif
+                    @if(Session::has('error'))
+                        toastr.error("{!! addslashes(Session::get('error')) !!}", "Error");
+                    @endif
+                    @if(Session::has('info'))
+                        toastr.info("{!! addslashes(Session::get('info')) !!}", "Notice");
+                    @endif
+                    @if(Session::has('warning'))
+                        toastr.warning("{!! addslashes(Session::get('warning')) !!}", "Warning");
+                    @endif
+                    @if(isset($errors) && $errors->any())
+                        @foreach($errors->all() as $error)
+                            toastr.error("{!! addslashes($error) !!}", "Notice");
+                        @endforeach
+                    @endif
+                }
+            });
+        </script>
 </body>
 </html>
