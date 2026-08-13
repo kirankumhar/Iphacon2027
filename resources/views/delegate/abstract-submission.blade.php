@@ -5,8 +5,9 @@
 @php
     $user = Auth::user();
     $registration = $registration ?? \App\Models\Registration::where('user_id', $user->id)->first();
-    $isTestingMode = session('abstract_testing_mode', false);
-    $isApproved = (($registration && strtolower($registration->status) === 'approved') || $isTestingMode);
+    $isSubmissionOpen = \Carbon\Carbon::now()->gte(\Carbon\Carbon::parse('2026-08-15 00:00:00'));
+    $isApproved = ($registration && strtolower($registration->status) === 'approved');
+    $canSubmit = $isSubmissionOpen && $isApproved;
 @endphp
 
 @section('delegate-content')
@@ -300,20 +301,19 @@
                 </ul>
             </div>
         </div>
-    @if($isTestingMode)
-        <div class="alert alert-warning border-2 border-warning rounded-3 p-3.5 mb-4 d-flex align-items-center justify-content-between shadow-sm" style="background: #fffbeb;">
-            <div class="d-flex align-items-center gap-2.5">
-                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; font-size: 1.2rem;">
-                    <i class="fas fa-vial"></i>
+    @if (!$isSubmissionOpen)
+        <div class="alert alert-warning border-2 border-warning rounded-3 p-4 mb-4 shadow-sm" style="background: #fffbeb;">
+            <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                    <i class="fas fa-calendar-alt"></i>
                 </div>
                 <div>
-                    <strong class="text-dark d-block">🧪 Testing Mode ACTIVE</strong>
-                    <span class="text-muted extra-small">Abstract submission form is unlocked for testing (Registration approval check bypassed).</span>
+                    <h5 class="fw-bold text-warning-emphasis mb-1"><i class="fas fa-clock me-1"></i> Abstract Submission Opens on 15 August 2026</h5>
+                    <p class="mb-0 text-dark" style="font-size: 0.95rem;">
+                        Abstract submission will officially start on <strong>15 August 2026</strong>. The submission form is currently locked until submission opens.
+                    </p>
                 </div>
             </div>
-            <button type="button" onclick="toggleTestingMode()" class="btn btn-dark btn-sm rounded-pill fw-bold px-3">
-                <i class="fas fa-power-off me-1"></i> Disable Testing Mode
-            </button>
         </div>
     @endif
 
@@ -328,21 +328,11 @@
                     <p class="mb-2 text-dark" style="font-size: 0.95rem;">
                         Abstract submission is strictly restricted until your conference registration has been <strong>Approved</strong> by the organizing committee.
                     </p>
-                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-2 bg-white border text-dark fw-bold small mb-3">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-2 bg-white border text-dark fw-bold small">
                         Current Registration Status: 
                         <span class="badge bg-{{ $registration ? ($registration->status == 'Approved' ? 'success' : 'warning text-dark') : 'secondary' }} px-2.5 py-1">
                             {{ $registration->status ?? 'Not Registered' }}
                         </span>
-                    </div>
-
-                    <!-- Testing Mode Toggle Button -->
-                    <div class="pt-2.5 border-top border-danger-subtle">
-                        <button type="button" onclick="toggleTestingMode()" class="btn btn-warning btn-sm fw-bold px-3 py-2 rounded-pill shadow-sm">
-                            <i class="fas fa-vial me-1.5"></i> Enable Testing Mode (Bypass Approval for Testing)
-                        </button>
-                        <small class="text-muted d-block mt-1">
-                            <i class="fas fa-info-circle me-1"></i> Click to unlock the abstract submission form without approval.
-                        </small>
                     </div>
                 </div>
             </div>
@@ -351,7 +341,7 @@
 
     <form id="abstractForm" onsubmit="event.preventDefault(); handleAbstractSubmit();">
         @csrf
-        <fieldset {{ !$isApproved ? 'disabled' : '' }}>
+        <fieldset {{ !$canSubmit ? 'disabled' : '' }}>
 
         <!-- SECTION 1: Author Details -->
         <div class="form-section-card p-4 mb-4">
@@ -1055,8 +1045,12 @@
     }
 
     function saveAsDraft() {
-        @if (!$isApproved)
-            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+        @if (!$canSubmit)
+            @if (!$isSubmissionOpen)
+                alert('Abstract submission will start on August 15, 2026.');
+            @else
+                alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+            @endif
             return;
         @endif
         const form = document.getElementById('abstractForm');
@@ -1086,8 +1080,12 @@
     }
 
     function handleAbstractSubmit() {
-        @if (!$isApproved)
-            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+        @if (!$canSubmit)
+            @if (!$isSubmissionOpen)
+                alert('Abstract submission will start on August 15, 2026.');
+            @else
+                alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
+            @endif
             return;
         @endif
         const form = document.getElementById('abstractForm');
@@ -1164,16 +1162,6 @@
         .catch(err => {
             console.error(err);
             alert('An error occurred while submitting the abstract.');
-        });
-    }
-
-    function toggleTestingMode() {
-        $.post("{{ route('abstract.toggle-testing-mode') }}", {
-            _token: "{{ csrf_token() }}"
-        }, function(res) {
-            if(res && res.success) {
-                window.location.reload();
-            }
         });
     }
 

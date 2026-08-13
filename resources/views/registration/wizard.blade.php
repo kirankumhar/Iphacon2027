@@ -1,7 +1,15 @@
 @extends('shared.auth-delegate')
 @php
     $inner_title = 'Registration progress';
+    $stepTitles = [
+        1 => 'Step 1: Personal & Contact Information',
+        2 => 'Step 2: Conference Registration',
+        3 => 'Step 3: Preview Registration',
+        4 => 'Step 4: Payment Details',
+    ];
+    $pageTitle = $stepTitles[$step] ?? 'Registration Wizard';
 @endphp
+@section('title', $pageTitle)
 @section('delegate-content')
     <div class="container py-3">
         <div class="row justify-content-center">

@@ -72,7 +72,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('abstract-submission', [AbstractSubmissionController::class, 'store'])->name('abstract.store');
     Route::get('abstract/view/{id?}', [AbstractSubmissionController::class, 'show'])->name('abstract.show');
     Route::get('abstract/download-pdf/{id}', [AbstractSubmissionController::class, 'downloadPdf'])->name('abstract.download-pdf');
-    Route::post('abstract/toggle-testing-mode', [AbstractSubmissionController::class, 'toggleTestingMode'])->name('abstract.toggle-testing-mode');
 
     // REGISTRATION ROUTES
     Route::get('registration', [RegistrationController::class, 'index'])->name('registration.index');

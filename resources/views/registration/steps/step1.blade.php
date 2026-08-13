@@ -1,4 +1,3 @@
-@section('title', 'Personal Information')
 <link rel="stylesheet" href="{{ asset('assets/css/delegates/step1.css') }}" />
 <div class="row">
     <!-- Left Column - Main Form -->
