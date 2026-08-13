@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AbstractSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AdminAbstractController extends Controller
 {
@@ -183,6 +185,22 @@ class AdminAbstractController extends Controller
             'reviewed_at'       => now(),
             'reviewed_by'       => $reviewer,
         ]);
+
+        // Send email notification to author about status update
+        try {
+            $recipientEmail = $abstract->presenting_author_email ?: optional($abstract->user)->email;
+            if ($recipientEmail) {
+                Mail::send('emails.abstract_status_updated', [
+                    'abstract' => $abstract
+                ], function ($message) use ($recipientEmail, $abstract, $status) {
+                    $message->to($recipientEmail)
+                        ->subject('IPHACON 2027 : Abstract Review Status - ' . $status . ' (' . $abstract->acknowledgement_id . ')')
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send abstract status update email: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', $message);
     }

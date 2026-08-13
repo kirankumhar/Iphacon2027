@@ -7,6 +7,7 @@ use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AbstractSubmissionController extends Controller
 {
@@ -203,6 +204,25 @@ class AbstractSubmissionController extends Controller
             $abstract->update($dataToSave);
         } else {
             $abstract = AbstractSubmission::create($dataToSave);
+        }
+
+        // Send email notification to applicant upon abstract submission
+        if (!$isDraft) {
+            try {
+                $recipientEmail = $abstract->presenting_author_email ?: $user->email;
+                if ($recipientEmail) {
+                    Mail::send('emails.abstract_submission_confirmation', [
+                        'abstract' => $abstract,
+                        'user'     => $user
+                    ], function ($message) use ($recipientEmail, $abstract) {
+                        $message->to($recipientEmail)
+                            ->subject('IPHACON 2027 : Abstract Submission Confirmation (' . $abstract->acknowledgement_id . ')')
+                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                    });
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send abstract submission confirmation email: ' . $e->getMessage());
+            }
         }
 
         if ($request->wantsJson() || $request->ajax()) {
