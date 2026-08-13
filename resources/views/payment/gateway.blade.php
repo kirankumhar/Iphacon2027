@@ -74,8 +74,8 @@
 
                                         <!-- QR Code Image -->
                                         <div class="p-3 bg-light rounded-3 border d-inline-block shadow-sm my-2">
-                                            <img src="{{ asset('images/iphacon_qrcode.jpeg') }}" 
-                                                 onerror="this.onerror=null; this.src='{{ asset('public/images/iphacon_qrcode.jpeg') }}';" 
+                                            <img src="{{ asset('images/payment/qr_code_13Aug2026.jpeg') }}" 
+                                                 onerror="this.onerror=null; this.src='{{ asset('public/images/payment/qr_code_13Aug2026.jpeg') }}';" 
                                                  alt="Payment QR Code" class="img-fluid rounded" style="max-width: 220px; height: auto;">
                                         </div>
 
