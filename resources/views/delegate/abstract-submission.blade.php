@@ -5,9 +5,8 @@
 @php
     $user = Auth::user();
     $registration = $registration ?? \App\Models\Registration::where('user_id', $user->id)->first();
-    $isSubmissionOpen = \Carbon\Carbon::now()->gte(\Carbon\Carbon::parse('2026-08-15 00:00:00'));
     $isApproved = ($registration && strtolower($registration->status) === 'approved');
-    $canSubmit = $isSubmissionOpen && $isApproved;
+    $canSubmit = $isApproved;
 @endphp
 
 @section('delegate-content')
@@ -235,51 +234,6 @@
         </div>
     </div>
 
-    <!-- Abstract Submission Countdown Banner -->
-    <div class="countdown-card p-3.5 p-md-4 mb-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0d47a1 100%); border: 1px solid rgba(255, 255, 255, 0.15);">
-        <div class="row align-items-center gy-3">
-            <div class="col-lg-5">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.12); color: #4ADE80; font-size: 1.35rem; border: 1.5px solid rgba(74, 222, 128, 0.3);">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div>
-                        <span class="badge bg-success-subtle text-success border border-success px-2.5 py-1 rounded-pill fw-bold extra-small mb-1">
-                            <i class="fas fa-calendar-alt me-1"></i> Starting Date: 15 August 2026
-                        </span>
-                        <h5 class="fw-extrabold text-white mb-0" style="font-size: 1.15rem;">
-                            Abstract Submission Countdown
-                        </h5>
-                        <p class="text-white-50 extra-small mb-0 mt-0.5">Online portal opens for submission on August 15, 2026</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="d-flex align-items-center justify-content-lg-end gap-2 gap-md-3 text-center" id="countdownContainer">
-                    <div class="countdown-unit-box px-3 py-2 rounded-3 text-white">
-                        <span class="d-block fw-extrabold countdown-number text-warning" id="cd-days">00</span>
-                        <span class="d-block extra-small text-white-50 text-uppercase fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Days</span>
-                    </div>
-                    <span class="text-white-50 fw-bold fs-4">:</span>
-                    <div class="countdown-unit-box px-3 py-2 rounded-3 text-white">
-                        <span class="d-block fw-extrabold countdown-number" id="cd-hours" style="color: #4ADE80;">00</span>
-                        <span class="d-block extra-small text-white-50 text-uppercase fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Hours</span>
-                    </div>
-                    <span class="text-white-50 fw-bold fs-4">:</span>
-                    <div class="countdown-unit-box px-3 py-2 rounded-3 text-white">
-                        <span class="d-block fw-extrabold countdown-number" id="cd-minutes" style="color: #38BDF8;">00</span>
-                        <span class="d-block extra-small text-white-50 text-uppercase fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Minutes</span>
-                    </div>
-                    <span class="text-white-50 fw-bold fs-4">:</span>
-                    <div class="countdown-unit-box px-3 py-2 rounded-3 text-white">
-                        <span class="d-block fw-extrabold countdown-number" id="cd-seconds" style="color: #F472B6;">00</span>
-                        <span class="d-block extra-small text-white-50 text-uppercase fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Seconds</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- General Instructions Box -->
     <div class="instructions-card p-4 mb-4">
@@ -301,21 +255,7 @@
                 </ul>
             </div>
         </div>
-    @if (!$isSubmissionOpen)
-        <div class="alert alert-warning border-2 border-warning rounded-3 p-4 mb-4 shadow-sm" style="background: #fffbeb;">
-            <div class="d-flex align-items-start gap-3">
-                <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; font-size: 1.4rem;">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold text-warning-emphasis mb-1"><i class="fas fa-clock me-1"></i> Abstract Submission Opens on 15 August 2026</h5>
-                    <p class="mb-0 text-dark" style="font-size: 0.95rem;">
-                        Abstract submission will officially start on <strong>15 August 2026</strong>. The submission form is currently locked until submission opens.
-                    </p>
-                </div>
-            </div>
-        </div>
-    @endif
+
 
     @if (!$isApproved)
         <div class="alert alert-danger border-2 border-danger rounded-3 p-4 mb-4 shadow-sm" style="background: #fff5f5;">
@@ -1046,11 +986,7 @@
 
     function saveAsDraft() {
         @if (!$canSubmit)
-            @if (!$isSubmissionOpen)
-                alert('Abstract submission will start on August 15, 2026.');
-            @else
-                alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
-            @endif
+            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
             return;
         @endif
         const form = document.getElementById('abstractForm');
@@ -1081,11 +1017,7 @@
 
     function handleAbstractSubmit() {
         @if (!$canSubmit)
-            @if (!$isSubmissionOpen)
-                alert('Abstract submission will start on August 15, 2026.');
-            @else
-                alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
-            @endif
+            alert('Abstract submission is restricted until your registration is Approved by the organizing committee.');
             return;
         @endif
         const form = document.getElementById('abstractForm');
@@ -1165,48 +1097,6 @@
         });
     }
 
-    // Countdown Timer targeting 15 Aug 2026 00:00:00
-    function initAbstractCountdown() {
-        const targetDate = new Date("August 15, 2026 00:00:00").getTime();
 
-        function updateTimer() {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            if (difference <= 0) {
-                const container = document.getElementById("countdownContainer");
-                if (container) {
-                    container.innerHTML = `
-                        <div class="px-4 py-2 rounded-pill bg-success text-white fw-bold shadow-sm">
-                            <i class="fas fa-check-circle me-1.5"></i> Abstract Submissions Are Now Open!
-                        </div>
-                    `;
-                }
-                return;
-            }
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            const daysEl = document.getElementById("cd-days");
-            const hoursEl = document.getElementById("cd-hours");
-            const minsEl = document.getElementById("cd-minutes");
-            const secsEl = document.getElementById("cd-seconds");
-
-            if (daysEl) daysEl.innerText = days < 10 ? '0' + days : days;
-            if (hoursEl) hoursEl.innerText = hours < 10 ? '0' + hours : hours;
-            if (minsEl) minsEl.innerText = minutes < 10 ? '0' + minutes : minutes;
-            if (secsEl) secsEl.innerText = seconds < 10 ? '0' + seconds : seconds;
-        }
-
-        updateTimer();
-        setInterval(updateTimer, 1000);
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        initAbstractCountdown();
-    });
 </script>
 @endsection

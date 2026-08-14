@@ -36,18 +36,6 @@ class AbstractSubmissionController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure submission start date (15 August 2026) is reached
-        if (now()->lt(\Carbon\Carbon::parse('2026-08-15 00:00:00'))) {
-            $msg = 'Abstract submission starts on August 15, 2026.';
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $msg
-                ], 403);
-            }
-            return redirect()->back()->with('error', $msg);
-        }
-
         // Ensure user registration is Approved before allowing abstract submission
         $registration = Registration::where('user_id', $user->id)->first();
         if (!$registration || strtolower($registration->status) !== 'approved') {
