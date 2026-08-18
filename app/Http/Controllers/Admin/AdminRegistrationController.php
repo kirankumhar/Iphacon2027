@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminRegistrationController extends Controller
 {
@@ -333,6 +336,60 @@ class AdminRegistrationController extends Controller
                 'payment_status' => 'PAID',
                 'admin_verified' => true
             ]);
+
+            // Generate Registration Receipt PDF & Save
+            $pdfPath = null;
+            try {
+                $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                $pdf = Pdf::loadView('pdfs.registration', [
+                    'registration' => $registration,
+                    'applicationNumber' => $registration->registration_number
+                ])->setPaper('a4', 'portrait')
+                    ->setOption('margin-top', 10)
+                    ->setOption('margin-bottom', 10)
+                    ->setOption('margin-left', 10)
+                    ->setOption('margin-right', 10);
+
+                $year = now()->format('Y');
+                $month = now()->format('m');
+                $filename = "Delegate_Registration_{$registration->registration_number}.pdf";
+                $pdfPath = "registrations_receipt/{$year}/{$month}/{$filename}";
+
+                Storage::disk('public')->put($pdfPath, $pdf->output());
+
+                $registration->update([
+                    'registration_pdf_path' => $pdfPath
+                ]);
+            } catch (\Exception $pdfEx) {
+                Log::warning('PDF generation during approval failed: ' . $pdfEx->getMessage());
+            }
+
+            // Send Confirmation Email with Registration Number & PDF Attachment
+            try {
+                $recipientEmail = $registration->user?->email;
+                if ($recipientEmail) {
+                    $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                    Mail::send('emails.registration_confirmation', [
+                        'registration'   => $registration,
+                        'registrationID' => $registration->registration_number,
+                    ], function ($message) use ($recipientEmail, $registration, $pdfPath) {
+                        $message->to($recipientEmail)
+                            ->subject('IPHACON 2027 : Delegate Registration Approved (Reg No: ' . $registration->registration_number . ')')
+                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                        // Attach the PDF file if available
+                        if ($pdfPath && Storage::disk('public')->exists($pdfPath)) {
+                            $localPath = storage_path("app/public/{$pdfPath}");
+                            $message->attach($localPath, [
+                                'as' => "Delegate Registration - {$registration->registration_number}.pdf",
+                                'mime' => 'application/pdf'
+                            ]);
+                        }
+                    });
+                }
+            } catch (\Exception $mailEx) {
+                Log::error('Failed to send delegate approval confirmation email: ' . $mailEx->getMessage());
+            }
 
             // Record Activity Log
             \App\Models\ActivityLog::record(

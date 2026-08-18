@@ -7,6 +7,9 @@
   <title>IPHACON 2027 Abstract Submission Confirmation</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body, table, td, a {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif !important;
       -webkit-font-smoothing: antialiased;
@@ -58,7 +61,7 @@
       font-weight: 600;
     }
     .hero {
-      padding: 28px 30px 10px;
+      padding: 28px 24px 10px;
       text-align: center;
     }
     .hero h2 {
@@ -73,12 +76,16 @@
       margin: 0;
       line-height: 1.5;
     }
+    .card-cell {
+      padding: 10px 24px;
+    }
     .card {
-      margin: 18px 24px;
+      width: 100% !important;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       overflow: hidden;
       background: #ffffff;
+      border-collapse: separate;
     }
     .card-header {
       background: #f8fafc;
@@ -91,13 +98,14 @@
       letter-spacing: 0.5px;
     }
     .card-body {
-      padding: 16px 18px;
+      padding: 14px 18px;
     }
     .info-table {
-      width: 100%;
+      width: 100% !important;
+      border-collapse: collapse;
     }
     .info-table td {
-      padding: 8px 0;
+      padding: 8px 4px 8px 0;
       vertical-align: top;
       font-size: 13.5px;
       border-bottom: 1px solid #f1f5f9;
@@ -109,16 +117,19 @@
       color: #64748b;
       width: 40%;
       font-weight: 500;
+      text-align: left;
+      padding-right: 8px;
     }
     .value {
       color: #0f172a;
       font-weight: 700;
       width: 60%;
       text-align: right;
+      word-break: break-word;
     }
     .badge {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 4px 10px;
       font-size: 11.5px;
       border-radius: 20px;
       font-weight: 700;
@@ -140,7 +151,6 @@
       border: 1px solid #bae6fd;
       border-radius: 10px;
       padding: 16px 20px;
-      margin: 0 24px 20px;
       text-align: left;
     }
     .notice-box p {
@@ -207,7 +217,7 @@
 
             <!-- Core Abstract Details Card -->
             <tr>
-              <td>
+              <td class="card-cell">
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="card-header">📋 Submission Summary</td>
@@ -256,7 +266,7 @@
 
             <!-- Important Notice Banner -->
             <tr>
-              <td>
+              <td style="padding: 10px 24px 20px;">
                 <div class="notice-box">
                   <p style="font-weight: 700; color: #0288D1; font-size: 14px; margin-bottom: 6px;">ℹ️ Next Steps & Approval Process</p>
                   <p>Your abstract is currently queued for evaluation by the Scientific Committee. <strong>Once your abstract is reviewed and approved, you will be informed via email regarding the acceptance status and presentation guidelines.</strong></p>

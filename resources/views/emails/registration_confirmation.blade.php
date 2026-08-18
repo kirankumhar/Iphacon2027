@@ -7,6 +7,9 @@
   <title>IPHACON 2027 Registration Confirmation</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body, table, td, a {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif !important;
       -webkit-font-smoothing: antialiased;
@@ -58,7 +61,7 @@
       font-weight: 600;
     }
     .hero {
-      padding: 28px 30px 10px;
+      padding: 28px 24px 10px;
       text-align: center;
     }
     .hero h2 {
@@ -73,12 +76,16 @@
       margin: 0;
       line-height: 1.5;
     }
+    .card-cell {
+      padding: 10px 24px;
+    }
     .card {
-      margin: 18px 24px;
+      width: 100% !important;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       overflow: hidden;
       background: #ffffff;
+      border-collapse: separate;
     }
     .card-header {
       background: #f8fafc;
@@ -91,13 +98,14 @@
       letter-spacing: 0.5px;
     }
     .card-body {
-      padding: 16px 18px;
+      padding: 14px 18px;
     }
     .info-table {
-      width: 100%;
+      width: 100% !important;
+      border-collapse: collapse;
     }
     .info-table td {
-      padding: 8px 0;
+      padding: 8px 4px 8px 0;
       vertical-align: top;
       font-size: 13.5px;
       border-bottom: 1px solid #f1f5f9;
@@ -107,18 +115,21 @@
     }
     .label {
       color: #64748b;
-      width: 45%;
+      width: 40%;
       font-weight: 500;
+      text-align: left;
+      padding-right: 8px;
     }
     .value {
       color: #0f172a;
       font-weight: 700;
-      width: 55%;
+      width: 60%;
       text-align: right;
+      word-break: break-word;
     }
     .badge {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 4px 10px;
       font-size: 11.5px;
       border-radius: 20px;
       font-weight: 700;
@@ -150,6 +161,7 @@
       box-shadow: 0 4px 15px rgba(2, 136, 209, 0.3);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-decoration: none;
     }
     .footer {
       text-align: center;
@@ -185,14 +197,19 @@
             <!-- Hero Section -->
             <tr>
               <td class="hero">
-                <h2>Delegate Registration Confirmation</h2>
-                <p>Dear <strong>{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? 'Delegate' }}</strong>, you are succesfully registered as IPHACON 2027 Delegate.</p>
+                @if(strtolower($registration->status ?? '') === 'approved')
+                  <h2>Delegate Registration Approved</h2>
+                  <p>Dear <strong>{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? 'Delegate' }}</strong>, your registration for <strong>IPHACON 2027</strong> has been successfully approved! Your official Registration Number is <strong>{{ $registration->registration_number }}</strong>.</p>
+                @else
+                  <h2>Delegate Registration Confirmation</h2>
+                  <p>Dear <strong>{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? 'Delegate' }}</strong>, you are successfully registered as an IPHACON 2027 Delegate.</p>
+                @endif
               </td>
             </tr>
 
             <!-- Core Registration Details Card -->
             <tr>
-              <td>
+              <td class="card-cell">
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="card-header">📋 Registration Details</td>
@@ -252,7 +269,7 @@
 
             <!-- Financial Breakdown Card -->
             <tr>
-              <td>
+              <td class="card-cell">
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="card-header">💳 Financial Summary</td>
@@ -314,8 +331,8 @@
 
             <!-- Notice & PDF Attachment Banner -->
             <tr>
-              <td style="padding: 0 24px; text-align: center;">
-                <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+              <td style="padding: 10px 24px 20px; text-align: center;">
+                <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 16px; margin: 0;">
                   <p style="color: #0288D1; font-size: 13.5px; margin: 0; font-weight: 600;">
                     📄 Your official <strong>IPHACON Registration Acknowledgement PDF</strong> is attached to this email.
                   </p>
