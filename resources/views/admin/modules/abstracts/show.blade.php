@@ -12,7 +12,25 @@
                 Abstract Details: <span class="text-primary font-monospace">{{ $abstract->acknowledgement_id }}</span>
             </h5>
         </div>
-        <div>
+        <div class="d-flex align-items-center gap-2">
+            {{-- @if ($abstract->status == 'Accepted' || $abstract->status == 'Approved')
+                @if ($abstract->presentation_mode == 'Oral Presentation' || $abstract->presentation_mode == 'Oral')
+                    @if (Route::has('admin.abstracts.assign-oral'))
+                        <a href="{{ route('admin.abstracts.assign-oral', $abstract->id) }}"
+                            class="btn btn-primary btn-sm px-3 py-1.5 fw-semibold rounded-pill">
+                            <i class="bx bx-user me-1"></i>Assign to Oral
+                        </a>
+                    @endif
+                @else
+                    @if (Route::has('admin.abstracts.unassign-oral'))
+                        <a href="{{ route('admin.abstracts.unassign-oral', $abstract->id) }}"
+                            class="btn btn-warning btn-sm px-3 py-1.5 fw-semibold rounded-pill">
+                            <i class="bx bx-user me-1"></i>Unassign from Oral
+                        </a>
+                    @endif
+                @endif
+            @endif --}}
+
             @if($abstract->status === 'Accepted' && $abstract->presentation_mode === 'Oral Presentation')
                 <span class="badge rounded-pill px-3 py-2 fw-bold shadow-xs" style="background-color: #059669 !important; color: #FFFFFF !important; font-size: 0.85rem;">
                     <i class="bx bx-microphone me-1" style="color: #FFFFFF !important;"></i> ACCEPTED FOR ORAL
@@ -32,6 +50,16 @@
             @endif
         </div>
     </div>
+
+    @if ($abstract->status == 'Accepted' || $abstract->status == 'Approved')
+        <div class="alert alert-dismissible fade show mb-4 fw-semibold shadow-xs"
+            style="background-color: #d1e7dd; color: #0f5132; border: 1px solid #a3cfbb; border-radius: 10px;"
+            role="alert">
+            <i class="bx bx-check-circle me-1.5 text-success fs-4 align-middle"></i>
+            <span><strong>Approved:</strong> This abstract has been accepted and approved for
+                <strong>{{ $abstract->presentation_mode }}</strong>.</span>
+        </div>
+    @endif
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show p-3 mb-4 rounded-3 shadow-xs border-0" role="alert" style="background-color: #ECFDF5; border-left: 4px solid #10B981 !important;">

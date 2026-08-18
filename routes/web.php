@@ -1,26 +1,21 @@
 <?php
 
+use App\Http\Controllers\AbstractSubmissionController;
+use App\Http\Controllers\Admin\AdminAbstractController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminRegistrationController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ModeratorDashboardController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+// ****** Admin ********
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AbstractSubmissionController;
-// ****** Admin ********
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\AdminRegistrationController;
-use App\Http\Controllers\Admin\ContentController;
-use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Admin\LogController;
-use App\Http\Controllers\Admin\AdminAbstractController;
-use App\Http\Controllers\Admin\ModeratorDashboardController;
-use Illuminate\Support\Facades\Artisan;
 
 // Delegate Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -57,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = Auth::user();
         $registration = \App\Models\Registration::where('user_id', $user->id)->first();
         $abstract = \App\Models\AbstractSubmission::where('user_id', $user->id)->first();
+
         return view('delegate.dashboard', compact('registration', 'abstract'));
     })->name('dashboard');
 
@@ -90,9 +86,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('cme-payment/gateway/{encCmeAppId}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
     Route::post('cme-payment/process/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'processCmePayment'])->name('cme.payment.process');
 
-
     Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
-     ->name('delgate.download.receipt');
+        ->name('delgate.download.receipt');
 
     // REGISTRATION PAYMENT ROUTES
 
@@ -107,13 +102,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //  Route::post('response', [App\Http\Controllers\PaymentController::class, 'response'])->name('response');
 
-
     Route::get('payment/failed/{registration}', [App\Http\Controllers\PaymentController::class, 'failed'])
         ->name('payment.failed');
 
     // API route for states
     Route::get('api/states/{country}', function ($countryId) {
         $states = \App\Models\State::where('country_id', $countryId)->get();
+
         return response()->json($states);
     });
 });
@@ -185,7 +180,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/abstracts/{id}', [AdminAbstractController::class, 'show'])->name('admin.abstracts.show');
     Route::post('/abstracts/{id}/status', [AdminAbstractController::class, 'updateStatus'])->name('admin.abstracts.update-status');
 
-
     // Admin Management - Super Admin Only
     Route::middleware('admin.role:Super Admin')->prefix('admins')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('admin.admins.index');
@@ -195,5 +189,5 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::put('{id}', [AdminController::class, 'update'])->name('admin.admins.update');
         Route::delete('{id}', [AdminController::class, 'destroy'])->name('admin.admins.destroy');
     });
+    Route::get('/activity-log', [AdminController::class, 'activityLog'])->name('admin.activity-log');
 });
-

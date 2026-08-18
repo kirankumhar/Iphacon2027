@@ -80,4 +80,10 @@ class AdminController extends Controller
 
         return redirect()->route('admin.admins.index')->with('success', 'Admin user deleted successfully.');
     }
+
+    public function activityLog()
+    {
+        $activities = ActivityLog::latest()->get();
+        return view('admin.superadmin.activity-log.index', compact('activities'));
+    }
 }
