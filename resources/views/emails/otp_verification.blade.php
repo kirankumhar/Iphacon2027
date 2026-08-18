@@ -7,6 +7,9 @@
   <title>Email Verification OTP - IPHACON 2027</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body, table, td, a {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif !important;
       -webkit-font-smoothing: antialiased;
@@ -58,7 +61,7 @@
       font-weight: 600;
     }
     .hero {
-      padding: 28px 30px 10px;
+      padding: 28px 24px 10px;
       text-align: center;
     }
     .hero h2 {
@@ -74,7 +77,6 @@
       line-height: 1.5;
     }
     .otp-card {
-      margin: 20px 30px;
       background: #F0F9FF;
       border: 2px dashed #0288D1;
       border-radius: 14px;
@@ -105,7 +107,6 @@
       margin-top: 4px;
     }
     .info-box {
-      margin: 0 30px 24px;
       font-size: 13.5px;
       color: #475569;
       line-height: 1.6;
@@ -152,7 +153,7 @@
 
             <!-- OTP Box Card -->
             <tr>
-              <td>
+              <td style="padding: 10px 24px 20px;">
                 <div class="otp-card">
                   <div class="otp-label">Your One-Time Password (OTP)</div>
                   <div class="otp-code">{{ $otp }}</div>
@@ -163,9 +164,11 @@
 
             <!-- Info Message -->
             <tr>
-              <td class="info-box">
-                <p style="margin: 0 0 8px 0;">Please enter this OTP code on the verification page to complete your registration process.</p>
-                <p style="margin: 0; font-size: 12px; color: #94A3B8;">If you did not initiate this registration request, please ignore this email.</p>
+              <td style="padding: 0 24px 24px;">
+                <div class="info-box">
+                  <p style="margin: 0 0 8px 0;">Please enter this OTP code on the verification page to complete your registration process.</p>
+                  <p style="margin: 0; font-size: 12px; color: #94A3B8;">If you did not initiate this registration request, please ignore this email.</p>
+                </div>
               </td>
             </tr>
 

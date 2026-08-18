@@ -7,6 +7,9 @@
   <title>IPHACON 2027 Abstract Decision Update</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body, table, td, a {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif !important;
       -webkit-font-smoothing: antialiased;
@@ -58,7 +61,7 @@
       font-weight: 600;
     }
     .hero {
-      padding: 28px 30px 10px;
+      padding: 28px 24px 10px;
       text-align: center;
     }
     .hero h2 {
@@ -73,12 +76,16 @@
       margin: 0;
       line-height: 1.5;
     }
+    .card-cell {
+      padding: 10px 24px;
+    }
     .card {
-      margin: 18px 24px;
+      width: 100% !important;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       overflow: hidden;
       background: #ffffff;
+      border-collapse: separate;
     }
     .card-header {
       background: #f8fafc;
@@ -91,13 +98,14 @@
       letter-spacing: 0.5px;
     }
     .card-body {
-      padding: 16px 18px;
+      padding: 14px 18px;
     }
     .info-table {
-      width: 100%;
+      width: 100% !important;
+      border-collapse: collapse;
     }
     .info-table td {
-      padding: 8px 0;
+      padding: 8px 4px 8px 0;
       vertical-align: top;
       font-size: 13.5px;
       border-bottom: 1px solid #f1f5f9;
@@ -109,12 +117,15 @@
       color: #64748b;
       width: 40%;
       font-weight: 500;
+      text-align: left;
+      padding-right: 8px;
     }
     .value {
       color: #0f172a;
       font-weight: 700;
       width: 60%;
       text-align: right;
+      word-break: break-word;
     }
     .badge {
       display: inline-block;
@@ -123,6 +134,7 @@
       border-radius: 20px;
       font-weight: 700;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     .badge-success {
       background: #DCFFF0;
@@ -140,16 +152,24 @@
       background: #E0F2FE;
       color: #0288D1;
       font-family: monospace;
-      font-size: 13px;
+      font-size: 12.5px;
       padding: 4px 10px;
+      word-break: break-all;
     }
     .notice-box {
       background-color: #f0f9ff;
       border: 1px solid #bae6fd;
       border-radius: 10px;
       padding: 16px 20px;
-      margin: 0 24px 20px;
       text-align: left;
+    }
+    .notice-box p {
+      font-size: 13.5px;
+      margin: 0 0 6px 0;
+      line-height: 1.5;
+    }
+    .notice-box p:last-child {
+      margin-bottom: 0;
     }
     .btn {
       display: inline-block;
@@ -206,7 +226,7 @@
 
             <!-- Core Abstract Details Card -->
             <tr>
-              <td>
+              <td class="card-cell">
                 <table role="presentation" class="card" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="card-header">📋 Decision Details</td>
@@ -222,7 +242,7 @@
                         </tr>
                         <tr>
                           <td class="label">Abstract Title</td>
-                          <td class="value" style="word-break: break-word;">{{ $abstract->abstract_title ?? 'N/A' }}</td>
+                          <td class="value">{{ $abstract->abstract_title ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                           <td class="label">Assigned Presentation Mode</td>
@@ -249,7 +269,7 @@
 
             <!-- Reviewer Comments / Instructions Banner -->
             <tr>
-              <td>
+              <td style="padding: 10px 24px 20px;">
                 <div class="notice-box" style="{{ strtolower($abstract->status) === 'accepted' ? 'background-color: #f0fdf4; border-color: #bbf7d0;' : '' }}">
                   @if(strtolower($abstract->status) === 'accepted')
                     <p style="font-weight: 700; color: #15803d; font-size: 14px; margin-bottom: 6px;">🎉 Congratulations!</p>
