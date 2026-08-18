@@ -82,9 +82,27 @@ class AdminController extends Controller
         return redirect()->route('admin.admins.index')->with('success', 'Admin user deleted successfully.');
     }
 
-    public function activityLog()
+    public function activityLog(Request $request)
     {
-        $activities = ActivityLog::latest()->get();
+        $query = ActivityLog::with(['user', 'admin'])->latest();
+
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('action', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('subject_name', 'like', "%{$search}%")
+                  ->orWhere('ip_address', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('user_type', $request->input('type'));
+        }
+
+        $perPage = max(10, min(100, (int) $request->input('per_page', 20)));
+        $activities = $query->paginate($perPage)->withQueryString();
+
         return view('admin.superadmin.activity-log.index', compact('activities'));
     }
 }

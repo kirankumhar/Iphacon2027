@@ -1,21 +1,56 @@
 @extends('admin.layouts.main')
 @section('admin-content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h5 class="py-3 mb-4"><span class="text-muted fw-light">System /</span> Activity Logs</h5>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h5 class="mb-0"><span class="text-muted fw-light">System /</span> Activity Logs</h5>
+            <span class="badge bg-label-primary px-3 py-2 rounded-pill fs-7">
+                Total Logs: {{ $activities->total() }}
+            </span>
+        </div>
+
         <div class="card mb-4 border-0 shadow-sm rounded-3">
-            <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-                    <i class="bx bx-history text-primary fs-5"></i> System Activity Logs
-                </h6>
-                <span class="badge bg-label-primary px-3 py-1.5 rounded-pill">Total: {{ count($activities) }}</span>
+            <div class="card-header bg-white py-3 border-bottom">
+                <form method="GET" action="{{ route('admin.activity-log') }}" class="row g-2 align-items-center">
+                    <div class="col-12 col-md-5">
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-search"></i></span>
+                            <input type="text" name="search" class="form-control" placeholder="Search by user, action, description, IP..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <select name="type" class="form-select">
+                            <option value="">All Types (User / Admin)</option>
+                            <option value="Admin" {{ request('type') === 'Admin' ? 'selected' : '' }}>Admin Only</option>
+                            <option value="User" {{ request('type') === 'User' ? 'selected' : '' }}>Delegate Only</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <select name="per_page" class="form-select">
+                            <option value="20" {{ request('per_page', 20) == 20 ? 'selected' : '' }}>20 per page</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 per page</option>
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 per page</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bx bx-filter-alt me-1"></i>Filter
+                        </button>
+                        @if(request()->hasAny(['search', 'type', 'per_page']))
+                            <a href="{{ route('admin.activity-log') }}" class="btn btn-outline-secondary" title="Reset Filters">
+                                <i class="bx bx-reset"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
-            <div class="card-body p-4">
-                <div class="table-responsive">
-                    <table id="activityLogTable" class="table table-hover table-striped align-middle w-100">
+
+            <div class="card-body p-0">
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-hover table-striped align-middle w-100 mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 50px;">#</th>
-                                <th>Actor / User</th>
+                                <th style="width: 60px;">#</th>
+                                <th>User</th>
                                 <th>Type</th>
                                 <th>Action</th>
                                 <th>Description</th>
@@ -26,7 +61,7 @@
                         <tbody>
                             @forelse($activities as $activity)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $activities->firstItem() + $loop->index }}</td>
                                     <td>
                                         <div class="fw-bold text-dark">
                                             {{ $activity->subject_name ?: ($activity->user?->full_name ?? ($activity->admin?->full_name ?? $activity->admin?->username ?? 'System')) }}
@@ -49,7 +84,7 @@
                                             {{ $activity->action }}
                                         </span>
                                     </td>
-                                    <td style="max-width: 320px;">
+                                    <td style="max-width: 320px; white-space: normal;">
                                         <span class="text-secondary small">{{ $activity->description }}</span>
                                     </td>
                                     <td>
@@ -61,9 +96,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">
-                                        <i class="bx bx-info-circle fs-3 d-block mb-1"></i>
-                                        No activity logs found.
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <i class="bx bx-info-circle fs-2 d-block mb-2 text-secondary"></i>
+                                        No activity logs found matching the criteria.
                                     </td>
                                 </tr>
                             @endforelse
@@ -71,24 +106,17 @@
                     </table>
                 </div>
             </div>
+
+            @if($activities->hasPages() || $activities->total() > 0)
+                <div class="card-footer bg-white border-top py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <small class="text-muted">
+                        Showing <strong>{{ $activities->firstItem() ?? 0 }}</strong> to <strong>{{ $activities->lastItem() ?? 0 }}</strong> of <strong>{{ $activities->total() }}</strong> entries
+                    </small>
+                    <div>
+                        {{ $activities->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection
-@push('script')
-    <script>
-        $(document).ready(function() {
-            if ($.fn.DataTable) {
-                $('#activityLogTable').DataTable({
-                    "paging": true,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                    "order": [[6, "desc"]]
-                });
-            }
-        });
-    </script>
-@endpush
