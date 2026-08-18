@@ -1,38 +1,70 @@
 @extends('admin.layouts.main')
 @section('admin-content')
-    <div class="container-xxl flex-grow-1 ">
-        <h6 class="py-3 mb-4"><span class="invert-text-white">Activity Log</span>
-        </h6>
-        <div class="card mb-4">
-            <h5 class="card-header text-white bg-info">Activity Log</h5>
-            <div class="card-body mt-2">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h5 class="py-3 mb-4"><span class="text-muted fw-light">System /</span> Activity Logs</h5>
+        <div class="card mb-4 border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                    <i class="bx bx-history text-primary fs-5"></i> System Activity Logs
+                </h6>
+                <span class="badge bg-label-primary px-3 py-1.5 rounded-pill">Total: {{ count($activities) }}</span>
+            </div>
+            <div class="card-body p-4">
                 <div class="table-responsive">
-                    <table id="activityLogTable" class="table table-bordered table-striped">
-                        <thead>
+                    <table id="activityLogTable" class="table table-hover table-striped align-middle w-100">
+                        <thead class="table-light">
                             <tr>
-                                <th>#</th>
-                                <th>User</th>
-                                <th>Activity</th>
-                                <th>URL</th>
+                                <th style="width: 50px;">#</th>
+                                <th>Actor / User</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                                <th>Description</th>
                                 <th>IP Address</th>
-                                <th>User Agent</th>
-                                <th>Date</th>
+                                <th>Date & Time</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($activities as $activity)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $activity->user_name }}</td>
-                                    <td>{{ $activity->activity }}</td>
-                                    <td>{{ $activity->url }}</td>
-                                    <td>{{ $activity->ip_address }}</td>
-                                    <td>{{ $activity->user_agent }}</td>
-                                    <td>{{ $activity->created_at->format('Y-m-d H:i:s') }}</td>
+                                    <td>
+                                        <div class="fw-bold text-dark">
+                                            {{ $activity->subject_name ?: ($activity->user?->full_name ?? ($activity->admin?->full_name ?? $activity->admin?->username ?? 'System')) }}
+                                        </div>
+                                        @if($activity->user?->email)
+                                            <small class="text-muted">{{ $activity->user->email }}</small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($activity->user_type === 'Admin')
+                                            <span class="badge bg-label-danger rounded-pill px-2.5 py-1">Admin</span>
+                                        @elseif($activity->user_type === 'User')
+                                            <span class="badge bg-label-primary rounded-pill px-2.5 py-1">Delegate</span>
+                                        @else
+                                            <span class="badge bg-label-secondary rounded-pill px-2.5 py-1">{{ $activity->user_type ?: 'System' }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-label-info font-monospace" style="font-size: 0.75rem;">
+                                            {{ $activity->action }}
+                                        </span>
+                                    </td>
+                                    <td style="max-width: 320px;">
+                                        <span class="text-secondary small">{{ $activity->description }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-monospace small text-muted">{{ $activity->ip_address ?: 'N/A' }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ $activity->created_at ? $activity->created_at->format('d M, Y h:i A') : 'N/A' }}</small>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center">No activity logs found</td>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bx bx-info-circle fs-3 d-block mb-1"></i>
+                                        No activity logs found.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -45,15 +77,18 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('#activityLogTable').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": true,
-                "responsive": true
-            });
+            if ($.fn.DataTable) {
+                $('#activityLogTable').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
+                    "order": [[6, "desc"]]
+                });
+            }
         });
     </script>
 @endpush
