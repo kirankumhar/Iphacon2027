@@ -409,14 +409,41 @@ class PaymentController extends Controller
             if (empty($registration->acknowledgement_id)) {
                 $registration->acknowledgement_id = $registration->generateAcknowledgementId();
             }
-            if ($registration->status === 'Draft') {
+            if ($registration->status === 'Draft' || $registration->status === 'Pending Payment') {
                 $registration->status = 'Payment Submitted';
             }
             $registration->step_completed = 4;
             $registration->submitted_at = $registration->submitted_at ?? now();
             $registration->save();
 
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'DELEGATE_REGISTRATION_SUBMITTED',
+                "Delegate registration payment submitted for " . ($registration->user?->full_name ?? 'User') . ". Ack ID: {$registration->acknowledgement_id}",
+                ['acknowledgement_id' => $registration->acknowledgement_id, 'registration_id' => $registration->id],
+                $registration->user
+            );
+
             DB::commit();
+
+            // Send email notification to delegate upon registration submission
+            try {
+                $recipientEmail = $registration->user?->email;
+                if ($recipientEmail) {
+                    $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                    Mail::send('emails.delegate_submission_confirmation', [
+                        'registration' => $registration,
+                        'user'         => $registration->user,
+                        'payment'      => $payment,
+                    ], function ($message) use ($recipientEmail, $registration) {
+                        $message->to($recipientEmail)
+                            ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
+                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                    });
+                }
+            } catch (\Exception $mailEx) {
+                \Illuminate\Support\Facades\Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
+            }
 
             return redirect()->route('registration.index')
                 ->with('success', 'Payment proof submitted successfully! Verification is under process.');

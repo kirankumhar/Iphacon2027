@@ -13,6 +13,7 @@ use App\Models\Payment;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Str;
 
 class RegistrationController extends Controller
@@ -539,6 +540,25 @@ class RegistrationController extends Controller
                 );
 
                 DB::commit();
+
+                // Send email notification to delegate upon registration submission
+                try {
+                    $recipientEmail = $registration->user?->email;
+                    if ($recipientEmail) {
+                        $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                        Mail::send('emails.delegate_submission_confirmation', [
+                            'registration' => $registration,
+                            'user'         => $registration->user,
+                            'payment'      => $payment,
+                        ], function ($message) use ($recipientEmail, $registration) {
+                            $message->to($recipientEmail)
+                                ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
+                                ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                        });
+                    }
+                } catch (\Exception $mailEx) {
+                    Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
+                }
 
                 return redirect()->route('registration.index', $registration->id)
                     ->with('success', 'Registration submitted successfully! Payment verification is under process.');
