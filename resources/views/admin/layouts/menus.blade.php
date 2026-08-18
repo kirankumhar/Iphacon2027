@@ -125,167 +125,178 @@
 </style>
 
 <ul class="menu-inner py-2 flex-grow-1">
-    <!-- Dashboard -->
-    @if (optional(auth('admin')->user())->role == 'superadmin')
-    <li class="menu-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
-        <a href="{{ Route::has('superadmin.dashboard') ? route('superadmin.dashboard') : '#' }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-grid-alt" style="color: #38BDF8 !important;"></i>
-            <div>Super Dashboard</div>
-        </a>
-    </li>
-    @endif
-
     @if (optional(auth('admin')->user())->isModerator())
-    <li class="menu-item {{ request()->routeIs('admin.moderator.dashboard') ? 'active' : '' }}">
-        <a href="{{ route('admin.moderator.dashboard') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-shield-quarter" style="color: #38BDF8 !important;"></i>
-            <div>Moderator Dashboard</div>
-        </a>
-    </li>
+        <!-- Moderator Dashboard -->
+        <li class="menu-item {{ request()->routeIs('admin.moderator.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.moderator.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-shield-quarter" style="color: #38BDF8 !important;"></i>
+                <div>Moderator Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Scientific & Abstracts -->
+        <li class="menu-item {{ request()->routeIs('admin.abstracts.*') ? 'active open' : '' }}">
+            <a href="{{ route('admin.abstracts.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file-find" style="color: #FBBF24 !important;"></i>
+                <div>Abstract Submissions</div>
+            </a>
+        </li>
     @else
-    <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle" style="color: #38BDF8 !important;"></i>
-            <div>Dashboard</div>
-        </a>
-    </li>
+        <!-- Dashboard -->
+        @if (optional(auth('admin')->user())->role == 'superadmin' || optional(auth('admin')->user())->isSuperAdmin())
+        <li class="menu-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+            <a href="{{ Route::has('superadmin.dashboard') ? route('superadmin.dashboard') : '#' }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-grid-alt" style="color: #38BDF8 !important;"></i>
+                <div>Super Dashboard</div>
+            </a>
+        </li>
+        @else
+        <li class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle" style="color: #38BDF8 !important;"></i>
+                <div>Dashboard</div>
+            </a>
+        </li>
+        @endif
+
+        <!-- Admin & Roles Dropdown -->
+        @if (optional(auth('admin')->user())->role == 'superadmin' || optional(auth('admin')->user())->isSuperAdmin())
+        @php
+            $isAdminActive = request()->routeIs('admin.admins.*') || request()->routeIs('admins.*');
+        @endphp
+        <li class="menu-item {{ $isAdminActive ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-user-check" style="color: #34D399 !important;"></i>
+                <div>Admin &amp; Roles</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->routeIs('admin.admins.create') || request()->routeIs('admins.create') ? 'active' : '' }}">
+                    <a href="{{ Route::has('admin.admins.create') ? route('admin.admins.create') : (Route::has('admins.create') ? route('admins.create') : '#') }}" class="menu-link">
+                        <div>Create Admin</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('admin.admins.index') || request()->routeIs('admins.view-admins') ? 'active' : '' }}">
+                    <a href="{{ Route::has('admin.admins.index') ? route('admin.admins.index') : (Route::has('admins.view-admins') ? route('admins.view-admins') : '#') }}" class="menu-link">
+                        <div>View Admins</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endif
+
+        <!-- Registration Dropdown -->
+        @php
+            $isRegActive = request()->routeIs('submitted-delegates') || 
+                            request()->routeIs('indian-approved-delegates') || 
+                            request()->routeIs('international-approved-delegates') || 
+                            request()->routeIs('indian-incomplete-delegates') || 
+                            request()->routeIs('admin.cme-delegates') || 
+                            request()->routeIs('international-rejected-delegates') || 
+                            request()->routeIs('international-reverted-delegates') || 
+                            request()->routeIs('deleted-delegates');
+        @endphp
+        <li class="menu-item {{ $isRegActive ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-group" style="color: #60A5FA !important;"></i>
+                <div>Registration</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->routeIs('submitted-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('submitted-delegates') ? route('submitted-delegates') : '#' }}" class="menu-link">
+                        <div>Submitted Delegates</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('international-payment-submitted-delegates') ? route('international-payment-submitted-delegates') : '#' }}" class="menu-link">
+                        <div>Submitted Delegates (Foreign)</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('indian-approved-delegates') ? route('indian-approved-delegates') : '#' }}" class="menu-link">
+                        <div>Registered Delegates (India)</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('international-approved-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('international-approved-delegates') ? route('international-approved-delegates') : '#' }}" class="menu-link">
+                        <div>Registered Delegates (Foreign)</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('indian-incomplete-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('indian-incomplete-delegates') ? route('indian-incomplete-delegates') : '#' }}" class="menu-link">
+                        <div>Incomplete Registration</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('admin.cme-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('admin.cme-delegates') ? route('admin.cme-delegates') : '#' }}" class="menu-link">
+                        <div>Pre-Conference Workshop</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('international-rejected-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('international-rejected-delegates') ? route('international-rejected-delegates') : '#' }}" class="menu-link">
+                        <div>Rejected Registrations</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('international-reverted-delegates') ? route('international-reverted-delegates') : '#' }}" class="menu-link">
+                        <div>Reverted Registrations</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('deleted-delegates') ? 'active' : '' }}">
+                    <a href="{{ Route::has('deleted-delegates') ? route('deleted-delegates') : '#' }}" class="menu-link">
+                        <div>Deleted Registrations</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Scientific & Abstracts Dropdown -->
+        @php
+            $isAbstractActive = request()->routeIs('admin.abstracts.*');
+        @endphp
+        <li class="menu-item {{ $isAbstractActive ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-file-find" style="color: #FBBF24 !important;"></i>
+                <div>Scientific &amp; Abstracts</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->routeIs('admin.abstracts.*') ? 'active' : '' }}">
+                    <a href="{{ Route::has('admin.abstracts.index') ? route('admin.abstracts.index') : '#' }}" class="menu-link">
+                        <div>Abstract Submissions</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
     @endif
 
-    <!-- Admin & Roles Dropdown -->
-    @if (optional(auth('admin')->user())->role == 'superadmin')
-    @php
-        $isAdminActive = request()->routeIs('admin.admins.*') || request()->routeIs('admins.*');
-    @endphp
-    <li class="menu-item {{ $isAdminActive ? 'active open' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-user-check" style="color: #34D399 !important;"></i>
-            <div>Admin &amp; Roles</div>
-        </a>
-        <ul class="menu-sub">
-            <li class="menu-item {{ request()->routeIs('admin.admins.create') || request()->routeIs('admins.create') ? 'active' : '' }}">
-                <a href="{{ Route::has('admin.admins.create') ? route('admin.admins.create') : (Route::has('admins.create') ? route('admins.create') : '#') }}" class="menu-link">
-                    <div>Create Admin</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('admin.admins.index') || request()->routeIs('admins.view-admins') ? 'active' : '' }}">
-                <a href="{{ Route::has('admin.admins.index') ? route('admin.admins.index') : (Route::has('admins.view-admins') ? route('admins.view-admins') : '#') }}" class="menu-link">
-                    <div>View Admins</div>
-                </a>
-            </li>
-        </ul>
-    </li>
+    @if (!optional(auth('admin')->user())->isModerator())
+        <!-- Transactions Dropdown -->
+        @php
+            $isTxActive = request()->routeIs('pending-payments') || request()->routeIs('paid-payments') || request()->routeIs('failed-payments');
+        @endphp
+        <li class="menu-item {{ $isTxActive ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-credit-card" style="color: #F472B6 !important;"></i>
+                <div>Transactions</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->routeIs('pending-payments') ? 'active' : '' }}">
+                    <a href="{{ Route::has('pending-payments') ? route('pending-payments') : '#' }}" class="menu-link">
+                        <div>Pending Payments</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('paid-payments') ? 'active' : '' }}">
+                    <a href="{{ Route::has('paid-payments') ? route('paid-payments') : '#' }}" class="menu-link">
+                        <div>Successful Payments</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('failed-payments') ? 'active' : '' }}">
+                    <a href="{{ Route::has('failed-payments') ? route('failed-payments') : '#' }}" class="menu-link">
+                        <div>Failed Payments</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
     @endif
-
-    <!-- Registration Dropdown -->
-    @php
-        $isRegActive = request()->routeIs('submitted-delegates') || 
-                        request()->routeIs('indian-approved-delegates') || 
-                        request()->routeIs('international-approved-delegates') || 
-                        request()->routeIs('indian-incomplete-delegates') || 
-                        request()->routeIs('admin.cme-delegates') || 
-                        request()->routeIs('international-rejected-delegates') || 
-                        request()->routeIs('international-reverted-delegates') || 
-                        request()->routeIs('deleted-delegates');
-    @endphp
-    <li class="menu-item {{ $isRegActive ? 'active open' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-group" style="color: #60A5FA !important;"></i>
-            <div>Registration</div>
-        </a>
-        <ul class="menu-sub">
-            <li class="menu-item {{ request()->routeIs('submitted-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('submitted-delegates') ? route('submitted-delegates') : '#' }}" class="menu-link">
-                    <div>Submitted Delegates</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('international-payment-submitted-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('international-payment-submitted-delegates') ? route('international-payment-submitted-delegates') : '#' }}" class="menu-link">
-                    <div>Submitted Delegates (Foreign)</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('indian-approved-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('indian-approved-delegates') ? route('indian-approved-delegates') : '#' }}" class="menu-link">
-                    <div>Registered Delegates (India)</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('international-approved-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('international-approved-delegates') ? route('international-approved-delegates') : '#' }}" class="menu-link">
-                    <div>Registered Delegates (Foreign)</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('indian-incomplete-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('indian-incomplete-delegates') ? route('indian-incomplete-delegates') : '#' }}" class="menu-link">
-                    <div>Incomplete Registration</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('admin.cme-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('admin.cme-delegates') ? route('admin.cme-delegates') : '#' }}" class="menu-link">
-                    <div>Pre-Conference Workshop</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('international-rejected-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('international-rejected-delegates') ? route('international-rejected-delegates') : '#' }}" class="menu-link">
-                    <div>Rejected Registrations</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('international-reverted-delegates') ? route('international-reverted-delegates') : '#' }}" class="menu-link">
-                    <div>Reverted Registrations</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('deleted-delegates') ? 'active' : '' }}">
-                <a href="{{ Route::has('deleted-delegates') ? route('deleted-delegates') : '#' }}" class="menu-link">
-                    <div>Deleted Registrations</div>
-                </a>
-            </li>
-        </ul>
-    </li>
-
-    <!-- Scientific & Abstracts Dropdown -->
-    @php
-        $isAbstractActive = request()->routeIs('admin.abstracts.*');
-    @endphp
-    <li class="menu-item {{ $isAbstractActive ? 'active open' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-file-find" style="color: #FBBF24 !important;"></i>
-            <div>Scientific &amp; Abstracts</div>
-        </a>
-        <ul class="menu-sub">
-            <li class="menu-item {{ request()->routeIs('admin.abstracts.*') ? 'active' : '' }}">
-                <a href="{{ Route::has('admin.abstracts.index') ? route('admin.abstracts.index') : '#' }}" class="menu-link">
-                    <div>Abstract Submissions</div>
-                </a>
-            </li>
-        </ul>
-    </li>
-
-    <!-- Transactions Dropdown -->
-    @php
-        $isTxActive = request()->routeIs('pending-payments') || request()->routeIs('paid-payments') || request()->routeIs('failed-payments');
-    @endphp
-    <li class="menu-item {{ $isTxActive ? 'active open' : '' }}">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-credit-card" style="color: #F472B6 !important;"></i>
-            <div>Transactions</div>
-        </a>
-        <ul class="menu-sub">
-            <li class="menu-item {{ request()->routeIs('pending-payments') ? 'active' : '' }}">
-                <a href="{{ Route::has('pending-payments') ? route('pending-payments') : '#' }}" class="menu-link">
-                    <div>Pending Payments</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('paid-payments') ? 'active' : '' }}">
-                <a href="{{ Route::has('paid-payments') ? route('paid-payments') : '#' }}" class="menu-link">
-                    <div>Successful Payments</div>
-                </a>
-            </li>
-            <li class="menu-item {{ request()->routeIs('failed-payments') ? 'active' : '' }}">
-                <a href="{{ Route::has('failed-payments') ? route('failed-payments') : '#' }}" class="menu-link">
-                    <div>Failed Payments</div>
-                </a>
-            </li>
-        </ul>
-    </li>
 </ul>
 
 <!-- Sidebar Bottom User Profile & Logout Section -->

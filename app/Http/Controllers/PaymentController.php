@@ -51,16 +51,16 @@ class PaymentController extends Controller
         $merchTxnId = 'CONF' . $registration->id . '_' . time();
         $totalAmount = $registration->user_id == 12 ? 30 : $registration->calculateTotalAmount();
 
-        $login = "738775";
-        $password = "c7c909aa";
-        $product_id = "ASSOCIATION";
+        $login = "";
+        $password = "";
+        $product_id = "";
         $date = date('Y-m-d H:i:s'); // current date
-        $encRequestKey = "FECC5464AF23EB279B7E1A3A746043E4";
-        $decResponseKey = "4AE12A7794F02329204685C298B4EDF0";
-        $api_url = "https://payment1.atomtech.in/ots/aipay/auth";
+        $encRequestKey = "";
+        $decResponseKey = "";
+        $api_url = "";
         $user_email = auth()->user()->email;
         $user_contact_number = auth()->user()->mobile_number;
-        $return_url = "https://registration.iphacon2027.com/api/response";
+        $return_url = "";
 
         $payData = array(
             'login' => $login,

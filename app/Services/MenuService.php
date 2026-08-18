@@ -46,9 +46,8 @@ class MenuService
                     break;
                 case 'Moderator':
                     $permissions = [
-                        'view_registrations',
-                        'verify_payments',
-                        'view_reports'
+                        'view_abstracts',
+                        'manage_abstracts'
                     ];
                     break;
             }

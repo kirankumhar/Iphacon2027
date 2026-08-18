@@ -114,8 +114,12 @@ class AdminUser extends Authenticatable
      */
     public function hasPermission($permission)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
             return true;
+        }
+
+        if ($this->isModerator()) {
+            return in_array($permission, ['abstracts.view', 'abstracts.manage', 'abstracts.edit']);
         }
 
         return in_array($permission, $this->permissions());
@@ -126,8 +130,12 @@ class AdminUser extends Authenticatable
      */
     public function hasAnyPermission(array $permissions)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
             return true;
+        }
+
+        if ($this->isModerator()) {
+            return count(array_intersect($permissions, ['abstracts.view', 'abstracts.manage', 'abstracts.edit'])) > 0;
         }
 
         return count(array_intersect($permissions, $this->permissions())) > 0;
@@ -138,8 +146,12 @@ class AdminUser extends Authenticatable
      */
     public function hasAllPermissions(array $permissions)
     {
-        if ($this->isAdmin() || $this->isSuperAdmin() || $this->isModerator()) {
+        if ($this->isAdmin() || $this->isSuperAdmin()) {
             return true;
+        }
+
+        if ($this->isModerator()) {
+            return count(array_diff($permissions, ['abstracts.view', 'abstracts.manage', 'abstracts.edit'])) === 0;
         }
 
         return count(array_intersect($permissions, $this->permissions())) === count($permissions);

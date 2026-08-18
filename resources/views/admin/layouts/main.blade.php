@@ -407,7 +407,7 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme pb-3">
                 <div class="app-brand mt-3">
-                    <a href="{{ route('admin.dashboard') }}" class="app-brand-link text-center w-100 px-2">
+                    <a href="{{ auth('admin')->user() && auth('admin')->user()->isModerator() ? route('admin.abstracts.index') : route('admin.dashboard') }}" class="app-brand-link text-center w-100 px-2">
                         <span class="app-brand-logo w-100">
                             <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo" style="max-width: 155px; height: auto;">
                         </span>

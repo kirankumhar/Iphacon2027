@@ -17,80 +17,42 @@ class ModeratorDashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        // Submitted delegates awaiting verification / moderation
-        $submittedCount = Registration::where('status', 'Payment Submitted')
-            ->where('is_deleted', '0')
-            ->count();
-
-        // Reverted applications needing follow-up
-        $revertedCount = Registration::where('status', 'Reverted')
-            ->where('is_deleted', '0')
-            ->count();
-
-        // Rejected applications
-        $rejectedCount = Registration::where('status', 'Rejected')
-            ->where('is_deleted', '0')
-            ->count();
-
-        // Approved Indian Delegates
-        $approvedIndCount = Registration::where('status', 'Approved')
-            ->where(function ($q) {
-                $q->where('delegate_type', 'Indian')
-                  ->orWhereHas('user', function ($uq) {
-                      $uq->where('delegate_type', 'Indian');
-                  })
-                  ->orWhereNull('delegate_type');
-            })
-            ->where('is_deleted', '0')
-            ->count();
-
-        // Approved International Delegates
-        $approvedIntCount = Registration::where('status', 'Approved')
-            ->where(function ($q) {
-                $q->where('delegate_type', 'International')
-                  ->orWhereHas('user', function ($uq) {
-                      $uq->where('delegate_type', 'International');
-                  });
-            })
-            ->where('is_deleted', '0')
-            ->count();
-
-        // Total Abstract Submissions & Pending Abstracts
-        $abstractCount = AbstractSubmission::count();
+        // Abstract Metrics
+        $totalAbstracts = AbstractSubmission::count();
         $pendingAbstractCount = AbstractSubmission::whereIn('status', ['Pending', 'Under Review', 'Submitted'])
             ->orWhereNull('status')
             ->count();
-
-        // CME Workshop Participants
-        $cmeCount = Registration::where('participate_in_cme', 1)
-            ->where('is_deleted', '0')
+        
+        $acceptedOralCount = AbstractSubmission::where('status', 'Accepted')
+            ->where('presentation_mode', 'Oral Presentation')
             ->count();
 
-        // Recent Submitted Delegate Applications for Review
-        $recentSubmittedRegistrations = Registration::with(['user', 'delegateCategory'])
-            ->where('is_deleted', '0')
-            ->whereIn('status', ['Payment Submitted', 'Pending', 'In Progress'])
-            ->latest()
-            ->take(6)
-            ->get();
+        $acceptedPosterCount = AbstractSubmission::where('status', 'Accepted')
+            ->where(function ($q) {
+                $q->where('presentation_mode', 'Poster Presentation')
+                  ->orWhere('presentation_mode', 'Paper Presentation')
+                  ->orWhere('presentation_mode', 'like', '%Poster%')
+                  ->orWhere('presentation_mode', 'like', '%Paper%');
+            })
+            ->count();
 
-        // Recent Abstract Submissions
-        $recentAbstracts = AbstractSubmission::with('user')
+        $totalAcceptedCount = AbstractSubmission::where('status', 'Accepted')->count();
+        $rejectedAbstractCount = AbstractSubmission::where('status', 'Rejected')->count();
+
+        // Recent Abstract Submissions with User and Registration relationship
+        $recentAbstracts = AbstractSubmission::with(['user', 'registration'])
             ->latest()
-            ->take(5)
+            ->take(10)
             ->get();
 
         $data = [
             'admin' => $admin,
-            'submittedCount' => $submittedCount,
-            'revertedCount' => $revertedCount,
-            'rejectedCount' => $rejectedCount,
-            'approvedIndCount' => $approvedIndCount,
-            'approvedIntCount' => $approvedIntCount,
-            'abstractCount' => $abstractCount,
+            'totalAbstracts' => $totalAbstracts,
             'pendingAbstractCount' => $pendingAbstractCount,
-            'cmeCount' => $cmeCount,
-            'recentSubmittedRegistrations' => $recentSubmittedRegistrations,
+            'acceptedOralCount' => $acceptedOralCount,
+            'acceptedPosterCount' => $acceptedPosterCount,
+            'totalAcceptedCount' => $totalAcceptedCount,
+            'rejectedAbstractCount' => $rejectedAbstractCount,
             'recentAbstracts' => $recentAbstracts,
         ];
 
