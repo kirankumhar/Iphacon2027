@@ -277,10 +277,11 @@
                       <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
                         @php
                           $isForeign = ($registration->delegate_type === 'International');
-                          $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                          $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : ($registration->delegate_fee ?: 0);
+                          $delFee = $registration->delegate_fee ?: $catBase;
                           $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                          $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 4000);
-                          $subtotalBase = $catBase + $cmeBase + $accBase;
+                          $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                          $subtotalBase = $delFee + $cmeBase + $accBase;
                           $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
                           $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
                         @endphp
@@ -297,7 +298,7 @@
                         @else
                           <tr>
                             <td class="label">Delegate Fee (Excl. GST)</td>
-                            <td class="value">₹{{ number_format($catBase / 1.18, 2) }}</td>
+                            <td class="value">₹{{ number_format($delFee, 2) }}</td>
                           </tr>
                           @if ($registration->participate_in_cme)
                           <tr>
