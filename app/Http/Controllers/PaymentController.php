@@ -251,18 +251,23 @@ class PaymentController extends Controller
 
                 $payAmount = (float) ($jsonData['payInstrument']['payDetails']['amount'] ?? 0);
                 if ($delegate && $delegate->delegate_type === 'International') {
-                    $delFee = $payAmount;
+                    $delFee = $delegate->delegate_fee ?: $payAmount;
+                    $cmeFee = 0.00;
+                    $accFee = 0.00;
                     $gstAmt = 0.00;
                 } else {
-                    $delFee = round($payAmount / 1.18, 2);
-                    $gstAmt = round($payAmount - $delFee, 2);
+                    $delFee = $delegate ? ($delegate->delegate_fee ?: ($delegate->delegateCategory ? (float)$delegate->delegateCategory->indian_fee : 0.00)) : round($payAmount / 1.18, 2);
+                    $cmeFee = $delegate ? ($delegate->cme_fee ?: ($delegate->participate_in_cme ? 2000.00 : 0.00)) : 0.00;
+                    $accFee = $delegate ? ($delegate->accompanying_fee ?: (($delegate->accompanying_persons ?? 0) * 5000.00)) : 0.00;
+                    $subtotal = $delFee + $cmeFee + $accFee;
+                    $gstAmt = $delegate ? ($delegate->gst_amount ?: round($subtotal * 0.18, 2)) : round($payAmount - $delFee, 2);
                 }
 
                 $payment = new Payment([
                     'registration_id' => $jsonData['payInstrument']['extras']['udf1'],
                     'delegate_category_fee' => $delFee,
-                    'accompanying_persons_fee' => 0.00,
-                    'cme_fee' => 0.00,
+                    'accompanying_persons_fee' => $accFee,
+                    'cme_fee' => $cmeFee,
                     'gst_amount' => $gstAmt,
                     'total_amount' => $payAmount,
                     'currency' => 'INR',
