@@ -546,4 +546,132 @@ class AdminRegistrationController extends Controller
 
         return view('admin.modules.registration.show-registration-details', compact('delegate'));
     }
+
+    public function resendSubmissionEmail(Request $request)
+    {
+        $regId = $request->input('registration_id') ?? $request->input('id');
+        $regNo = $request->input('registration_number') ?? $request->input('acknowledgement_id');
+        $customEmail = trim($request->input('email') ?? '');
+        $emailType = $request->input('email_type', 'submission'); // 'submission' or 'approval'
+
+        $registration = Registration::when($regId, function($q) use ($regId) {
+            $q->where('id', $regId);
+        })->when(!$regId && $regNo, function($q) use ($regNo) {
+            $q->where('registration_number', $regNo)
+              ->orWhere('acknowledgement_id', $regNo);
+        })->first();
+
+        if (!$registration) {
+            return redirect()->back()->with('error', 'Registration record not found.');
+        }
+
+        $recipientEmail = !empty($customEmail) ? $customEmail : ($registration->user?->email);
+
+        if (empty($recipientEmail)) {
+            return redirect()->back()->with('error', 'No recipient email found. Please provide a valid email address.');
+        }
+
+        if (!filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->with('error', 'Invalid email address provided.');
+        }
+
+        try {
+            $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment', 'payments']);
+
+            // If user's account has empty email, update it with provided email
+            if (!empty($customEmail) && $registration->user && empty($registration->user->email)) {
+                $registration->user->update(['email' => $customEmail]);
+            }
+
+            if ($emailType === 'approval' && $registration->status === 'Approved') {
+                // Ensure PDF is generated if missing
+                $pdfPath = $registration->registration_pdf_path;
+                if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
+                    try {
+                        $pdf = Pdf::loadView('pdfs.registration', [
+                            'registration' => $registration,
+                            'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
+                        ])->setPaper('a4', 'portrait')
+                            ->setOption('margin-top', 10)
+                            ->setOption('margin-bottom', 10)
+                            ->setOption('margin-left', 10)
+                            ->setOption('margin-right', 10);
+
+                        $year = now()->format('Y');
+                        $month = now()->format('m');
+                        $filename = "Delegate_Registration_{$registration->registration_number}.pdf";
+                        $pdfPath = "registrations_receipt/{$year}/{$month}/{$filename}";
+
+                        Storage::disk('public')->put($pdfPath, $pdf->output());
+
+                        $registration->update([
+                            'registration_pdf_path' => $pdfPath
+                        ]);
+                    } catch (\Exception $pdfEx) {
+                        Log::warning('PDF generation during resend email failed: ' . $pdfEx->getMessage());
+                    }
+                }
+
+                // Send Confirmation Email with Registration Number & PDF Attachment
+                Mail::send('emails.registration_confirmation', [
+                    'registration'   => $registration,
+                    'registrationID' => $registration->registration_number,
+                ], function ($message) use ($recipientEmail, $registration, $pdfPath) {
+                    $message->to($recipientEmail)
+                        ->subject('IPHACON 2027 : Delegate Registration Approved (Reg No: ' . $registration->registration_number . ')')
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                    if ($pdfPath && Storage::disk('public')->exists($pdfPath)) {
+                        $localPath = storage_path("app/public/{$pdfPath}");
+                        $message->attach($localPath, [
+                            'as' => "Delegate Registration - {$registration->registration_number}.pdf",
+                            'mime' => 'application/pdf'
+                        ]);
+                    }
+                });
+
+                $logMsg = "Resent Registration Approval Confirmation Email to {$recipientEmail}. Reg No: {$registration->registration_number}";
+                $successMsg = "Approval confirmation email successfully sent to {$recipientEmail}!";
+            } else {
+                // Send Registration Submission Confirmation Email (sent after final submit)
+                Mail::send('emails.delegate_submission_confirmation', [
+                    'registration' => $registration,
+                    'user'         => $registration->user,
+                    'payment'      => $registration->latestPayment,
+                ], function ($message) use ($recipientEmail, $registration) {
+                    $message->to($recipientEmail)
+                        ->subject('IPHACON 2027 : Delegate Registration Submitted (' . ($registration->acknowledgement_id ?? 'IPHACON') . ')')
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                });
+
+                $logMsg = "Resent Registration Submission Confirmation Email to {$recipientEmail}. Ack ID: {$registration->acknowledgement_id}";
+                $successMsg = "Registration submission confirmation email successfully sent to {$recipientEmail}!";
+            }
+
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'ADMIN_RESEND_REGISTRATION_EMAIL',
+                $logMsg,
+                [
+                    'registration_id' => $registration->id,
+                    'acknowledgement_id' => $registration->acknowledgement_id,
+                    'registration_number' => $registration->registration_number,
+                    'recipient_email' => $recipientEmail,
+                    'email_type' => $emailType
+                ],
+                \Illuminate\Support\Facades\Auth::guard('admin')->user()
+            );
+
+            return redirect()->back()->with('success', $successMsg);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send registration email: ' . $e->getMessage(), [
+                'registration_id' => $registration->id,
+                'email' => $recipientEmail,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to send email: ' . $e->getMessage());
+        }
+    }
 }

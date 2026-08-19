@@ -115,6 +115,11 @@
                                     </td>
                                     <td class="pe-3 text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-1" style="white-space: nowrap;">
+                                            {{-- Send / Resend Email Button --}}
+                                            <button type="button" class="btn btn-xs btn-outline-primary fw-bold px-2 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" onclick="openResendEmailModal('{{ $reg->id }}', '{{ $reg->acknowledgement_id }}', '{{ addslashes($reg->user->full_name ?? '') }}', '{{ addslashes($reg->user->email ?? '') }}')" title="Send/Resend Submission Email">
+                                                <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
+                                            </button>
+
                                             @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
                                                 {{-- Approve Form --}}
                                                 <form action="{{ route('student-approved-regis') }}" method="POST" class="d-inline m-0">
@@ -241,7 +246,63 @@
         </div>
     </div>
 
+    <!-- Send / Resend Email Modal -->
+    <div class="modal fade" id="resendEmailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <form action="{{ route('admin.resend-submission-email') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="registration_id" id="modal_email_registration_id">
+                    <input type="hidden" name="acknowledgement_id" id="modal_email_acknowledgement_id">
+                    <input type="hidden" name="email_type" value="submission">
+                    <div class="modal-header bg-primary bg-opacity-10 py-3 border-bottom-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bx bx-envelope fs-5"></i>
+                            </div>
+                            <h5 class="modal-title fw-bold text-dark mb-0">Send Submission Email</h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-3">
+                        <div class="alert alert-primary bg-light border-primary border-opacity-25 extra-small mb-3 d-flex align-items-start gap-2">
+                            <i class="bx bx-info-circle fs-5 flex-shrink-0 mt-0.5 text-primary"></i>
+                            <div>
+                                This will send the <strong>Registration Submission Confirmation Email</strong> (which is sent after final submit) with Ack ID, registration details, and payment summary.
+                            </div>
+                        </div>
+                        <p class="small text-muted mb-2">Delegate: <strong id="modal_email_delegate_info" class="text-dark"></strong></p>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold extra-small text-dark">Recipient Email Address <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light"><i class="bx bx-envelope text-muted"></i></span>
+                                <input type="email" name="email" id="modal_email_input" class="form-control form-control-sm" required placeholder="Enter delegate email address">
+                            </div>
+                            <small class="text-muted extra-small mt-1 d-block">You can edit or enter email manually if delegate did not receive or provided a wrong email.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary fw-bold px-3 shadow-xs">
+                            <i class="bx bx-send me-1"></i> Send Email Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openResendEmailModal(id, ackNo, name, email) {
+            document.getElementById('modal_email_registration_id').value = id;
+            document.getElementById('modal_email_acknowledgement_id').value = ackNo;
+            document.getElementById('modal_email_delegate_info').innerText = name + ' (Ack: ' + ackNo + ')';
+            document.getElementById('modal_email_input').value = email || '';
+            var modalElement = document.getElementById('resendEmailModal');
+            var modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+
         function openRevertModal(id, ackNo, name) {
             document.getElementById('modal_revert_registration_id').value = id;
             document.getElementById('modal_revert_acknowledgement_id').value = ackNo;

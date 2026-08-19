@@ -125,6 +125,11 @@
                                 </td>
                                 <td class="pe-3 text-end">
                                     <div class="d-flex align-items-center justify-content-end gap-1" style="white-space: nowrap;">
+                                        <!-- Send / Resend Submission Email Button -->
+                                        <button type="button" class="btn btn-xs btn-outline-primary fw-bold px-2 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal{{ $reg->id }}" title="Send/Resend Submission Email">
+                                            <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
+                                        </button>
+
                                         @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
                                         <!-- Direct Approve Form -->
                                         <form method="POST" action="{{ route('student-approved-regis') }}" class="d-inline m-0">
@@ -146,6 +151,61 @@
                                         <button type="button" class="btn btn-xs btn-outline-danger fw-bold px-2.5 py-1 rounded-2 d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $reg->id }}" title="Reject Registration">
                                             <i class="bx bx-x-circle" style="font-size: 0.85rem;"></i> Reject
                                         </button>
+                                    </div>
+
+                                    <!-- Send / Resend Email Modal -->
+                                    <div class="modal fade text-start" id="resendEmailModal{{ $reg->id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-3">
+                                                <form method="POST" action="{{ route('admin.resend-submission-email') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="registration_id" value="{{ $reg->id }}">
+                                                    <input type="hidden" name="acknowledgement_id" value="{{ $reg->acknowledgement_id }}">
+                                                    <input type="hidden" name="email_type" value="submission">
+                                                    <div class="modal-header bg-primary bg-opacity-10 py-3 border-bottom-0">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="avatar avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                                                <i class="bx bx-envelope fs-5"></i>
+                                                            </div>
+                                                            <h5 class="modal-title fw-bold text-dark mb-0">Send Submission Email</h5>
+                                                        </div>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body py-3">
+                                                        <div class="alert alert-primary bg-light border-primary border-opacity-25 extra-small mb-3 d-flex align-items-start gap-2">
+                                                            <i class="bx bx-info-circle fs-5 flex-shrink-0 mt-0.5 text-primary"></i>
+                                                            <div>
+                                                                This will send the <strong>Registration Submission Confirmation Email</strong> (which is sent after final submit) with Ack ID <strong>({{ $reg->acknowledgement_id }})</strong>, delegate info, and payment summary.
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-3 p-2.5 rounded-2 bg-light border">
+                                                            <div class="extra-small text-muted mb-0.5">Delegate:</div>
+                                                            <div class="fw-bold text-dark fs-7">{{ $reg->user?->prefix }} {{ $reg->user?->full_name }}</div>
+                                                            <div class="extra-small text-secondary mt-0.5">
+                                                                Ack ID: <span class="font-monospace fw-semibold">{{ $reg->acknowledgement_id ?? 'N/A' }}</span> | 
+                                                                Category: {{ $reg->delegateCategory?->category_name ?? 'N/A' }}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label fw-semibold extra-small text-dark">Recipient Email Address <span class="text-danger">*</span></label>
+                                                            <div class="input-group input-group-sm">
+                                                                <span class="input-group-text bg-light"><i class="bx bx-envelope text-muted"></i></span>
+                                                                <input type="email" name="email" class="form-control form-control-sm" value="{{ $reg->user?->email }}" required placeholder="Enter delegate email address">
+                                                            </div>
+                                                            <small class="text-muted extra-small mt-1 d-block">You can edit or enter email manually if delegate did not receive or provided a wrong email.</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-top-0 pt-0">
+                                                        <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-sm btn-primary fw-bold px-3 shadow-xs">
+                                                            <i class="bx bx-send me-1"></i> Send Email Now
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <!-- Revert Modal -->

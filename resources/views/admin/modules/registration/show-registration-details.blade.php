@@ -395,6 +395,11 @@
                                 <i class="bx bx-x-circle me-1"></i> Reject
                             </button>
                         </div>
+
+                        <!-- Send / Resend Confirmation Email Button -->
+                        <button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 py-2 rounded-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.8rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal">
+                            <i class="bx bx-envelope fs-5"></i> Send Confirmation Email
+                        </button>
                     </div>
                 </div>
             </div>
@@ -486,6 +491,62 @@
                 <div class="modal-footer bg-light border-top-0 pt-0">
                     <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-sm btn-danger fw-bold px-3">Confirm Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Send / Resend Email Modal -->
+<div class="modal fade" id="resendEmailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <form action="{{ route('admin.resend-submission-email') }}" method="POST">
+                @csrf
+                <input type="hidden" name="registration_id" value="{{ $delegate->id }}">
+                <input type="hidden" name="acknowledgement_id" value="{{ $delegate->acknowledgement_id }}">
+                <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
+                <div class="modal-header bg-primary bg-opacity-10 py-3 border-bottom-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bx bx-envelope fs-5"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Send Registration Email</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="alert alert-primary bg-light border-primary border-opacity-25 extra-small mb-3 d-flex align-items-start gap-2">
+                        <i class="bx bx-info-circle fs-5 flex-shrink-0 mt-0.5 text-primary"></i>
+                        <div>
+                            Send confirmation email directly to the delegate. If the delegate did not receive it or provided an incorrect email, you can specify the target email below.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold extra-small text-dark">Select Email Template to Send <span class="text-danger">*</span></label>
+                        <select name="email_type" class="form-select form-select-sm">
+                            <option value="submission" selected>Submission Confirmation Email (Ack ID &amp; Payment Summary)</option>
+                            @if($delegate->status === 'Approved')
+                                <option value="approval">Approval Confirmation Email (With Reg No &amp; PDF Receipt)</option>
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold extra-small text-dark">Recipient Email Address <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light"><i class="bx bx-envelope text-muted"></i></span>
+                            <input type="email" name="email" class="form-control form-control-sm" value="{{ $delegate->user?->email }}" required placeholder="Enter delegate email address">
+                        </div>
+                        <small class="text-muted extra-small mt-1 d-block">You can edit or enter the email address if needed.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary fw-bold px-3 shadow-xs">
+                        <i class="bx bx-send me-1"></i> Send Email Now
+                    </button>
                 </div>
             </form>
         </div>
