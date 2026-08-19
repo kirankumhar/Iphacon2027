@@ -217,18 +217,16 @@
                   <tr>
                     <td class="card-body">
                       <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
-                        @if(!empty($registration->acknowledgement_id))
                         <tr>
                           <td class="label">Acknowledgement ID</td>
                           <td class="value">
-                            <span class="badge badge-reg">{{ $registration->acknowledgement_id }}</span>
+                            <span class="badge badge-reg">{{ $registration->acknowledgement_id ?? 'N/A' }}</span>
                           </td>
                         </tr>
-                        @endif
                         <tr>
                           <td class="label">Registration No.</td>
                           <td class="value">
-                            <span class="badge badge-reg">{{ $registration->registration_number ?? 'Pending' }}</span>
+                            <span class="badge badge-reg">{{ $registration->registration_number ?? ($registrationID ?? 'Pending Approval') }}</span>
                           </td>
                         </tr>
                         <tr>

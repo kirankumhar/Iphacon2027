@@ -275,32 +275,39 @@ class PaymentController extends Controller
                 
                 $payment->save();
 
-                $registrationNo = $delegate->generateRegistrationNumber();
+                $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
+                if (empty($delegate->acknowledgement_id)) {
+                    $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
+                }
+
+                $delegate->updateAmounts();
+                $delegate->status = "Approved";
+                $delegate->registration_number = $registrationNo;
+                $delegate->approved_at = now();
+                $delegate->save();
+
+                $delegate->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
 
                 $pdf = PDF::loadView('pdfs.registration', [
                     'registration' => $delegate,
-                    'applicationNumber' => $delegate->registration_number
+                    'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
                 ])->setPaper('a4', 'portrait')
                     ->setOption('margin-top', 10)
                     ->setOption('margin-bottom', 10)
                     ->setOption('margin-left', 10)
                     ->setOption('margin-right', 10);
 
-                $filename = "Delegate_Registration_{$delegate->registration_number}.pdf";
-                // $path = "registrations_receipt/{$delegate->registration_number}/{$filename}";
-
                 $year  = now()->format('Y');   // 2026
                 $month = now()->format('m');   // 04
+                $docName = $delegate->registration_number ?? $delegate->acknowledgement_id;
+                $filename = "Delegate_Registration_{$docName}.pdf";
 
                 $path = "registrations_receipt/{$year}/{$month}/{$filename}";
 
                 \Illuminate\Support\Facades\Storage::disk('public')->put($path, $pdf->output());
 
-                $delegate->updateAmounts();
                 $delegate->update([
-                    'status' => "Approved",
                     'registration_pdf_path' => $path,
-                    'registration_number' => $registrationNo,
                 ]);
 
                 try {

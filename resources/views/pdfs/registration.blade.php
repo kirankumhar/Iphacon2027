@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>IPHACON Registration Acknowledgement Receipt - {{ $registration->registration_number }}</title>
+    <title>IPHACON Registration Acknowledgement Receipt - {{ $registration->registration_number ?? $registration->acknowledgement_id }}</title>
     <style>
         @page {
             margin: 10mm 10mm 10mm 10mm;
@@ -303,15 +303,23 @@
         {{-- Info Grid Table --}}
         <table class="info-table">
             <tr>
-                <td style="width: 33%;">
-                    <div class="info-label">Registration Number</div>
-                    <div class="info-value" style="color: #0288D1;">{{ $registration->registration_number }}</div>
+                <td style="width: 25%;">
+                    <div class="info-label">Acknowledgement ID</div>
+                    <div class="info-value" style="color: #01579B; font-family: monospace; font-size: 11px;">
+                        {{ $registration->acknowledgement_id ?? ($applicationNumber ?? 'N/A') }}
+                    </div>
                 </td>
-                <td style="width: 33%;">
+                <td style="width: 25%;">
+                    <div class="info-label">Registration Number</div>
+                    <div class="info-value" style="color: #0288D1; font-family: monospace; font-size: 11px;">
+                        {{ $registration->registration_number ?? ($registration->status === 'Approved' ? 'N/A' : 'Pending Approval') }}
+                    </div>
+                </td>
+                <td style="width: 25%;">
                     <div class="info-label">Receipt Issue Date</div>
                     <div class="info-value">{{ now()->format('d M Y') }}</div>
                 </td>
-                <td style="width: 34%;">
+                <td style="width: 25%;">
                     <div class="info-label">Payment Status</div>
                     <div class="info-value">
                         @if(($registration->latestPayment->payment_status ?? '') === 'Success' || ($registration->latestPayment->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
@@ -323,7 +331,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <div class="info-label">Delegate Name</div>
                     <div class="info-value">{{ $registration->user?->prefix }} {{ $registration->user?->full_name ?? ($registration->full_name ?? 'N/A') }}</div>
                 </td>
@@ -337,7 +345,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <div class="info-label">Delegate Category</div>
                     <div class="info-value">{{ $registration->delegate_type }} - {{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
                 </td>
