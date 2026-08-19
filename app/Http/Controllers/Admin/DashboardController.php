@@ -18,7 +18,11 @@ class DashboardController extends Controller
             return redirect()->route('admin.moderator.dashboard');
         }
 
-        $appliedCount = Registration::where('status', 'Payment Submitted')
+        $appliedCount = Registration::where(function ($q) {
+                $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
+                  ->orWhereHas('latestPayment');
+            })
+            ->whereNotIn('status', ['Approved', 'Rejected', 'Draft'])
             ->where('is_deleted', '0')
             ->count();
 

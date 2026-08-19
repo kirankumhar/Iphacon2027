@@ -75,29 +75,29 @@
                 </div>
             </div>
 
-            <!-- 2. Foreign Payment Submitted Card -->
+            <!-- 2. Submitted Delegates (Awaiting Approval) Card -->
             <div class="col-sm-6 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm admin-stat-card overflow-hidden position-relative">
-                    <div class="stat-top-bar" style="background: linear-gradient(90deg, #0288D1 0%, #00897B 100%);"></div>
+                    <div class="stat-top-bar" style="background: linear-gradient(90deg, #F59E0B 0%, #EA580C 100%);"></div>
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center stat-icon-box"
-                                    style="width: 48px; height: 48px; background-color: #E0F2FE; color: #0288D1;">
-                                    <i class="bx bx-credit-card-front fs-3"></i>
+                                    style="width: 48px; height: 48px; background-color: #FEF3C7; color: #D97706;">
+                                    <i class="bx bx-time-five fs-3"></i>
                                 </div>
                                 <span class="badge px-3 py-1.5 fs-6 fw-bold rounded-pill shadow-xs"
-                                    style="background-color: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD;">
+                                    style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
                                     {{ number_format($appliedCount) }}
                                 </span>
                             </div>
                             <h6 class="text-muted fw-bold mb-0.5 text-uppercase extra-small"
-                                style="letter-spacing: 0.6px; font-size: 0.72rem;">Delegates</h6>
-                            <h5 class="fw-bold text-dark mb-3" style="font-size: 1.05rem;">Payment Submitted</h5>
+                                style="letter-spacing: 0.6px; font-size: 0.72rem;">Awaiting Approval</h6>
+                            <h5 class="fw-bold text-dark mb-3" style="font-size: 1.05rem;">Pending Approval</h5>
                         </div>
-                        <a href="{{ route('international-payment-submitted-delegates') }}"
+                        <a href="{{ route('submitted-delegates') }}"
                             class="btn btn-sm w-100 fw-bold d-flex align-items-center justify-content-center gap-1.5 btn-capsule py-2"
-                            style="background-color: #F0F9FF; color: #0288D1; border: 1px solid #BAE6FD; font-size: 0.8rem;">
+                            style="background-color: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; font-size: 0.8rem;">
                             <span>Review Submissions</span>
                             <i class="bx bx-right-arrow-alt fs-5"></i>
                         </a>
