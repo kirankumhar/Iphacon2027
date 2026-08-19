@@ -276,40 +276,50 @@
                     <td class="card-body">
                       <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
                         @php
+                          $pay = $payment ?? $registration->latestPayment;
                           $isForeign = ($registration->delegate_type === 'International');
-                          $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : ($registration->delegate_fee ?: 0);
-                          $delFee = $registration->delegate_fee ?: $catBase;
-                          $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                          $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                          $subtotalBase = $delFee + $cmeBase + $accBase;
-                          $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                          $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                          
+                          if ($pay) {
+                              $delFee = (float)($pay->delegate_category_fee ?? 0);
+                              $cmeFee = (float)($pay->cme_fee ?? 0);
+                              $accFee = (float)($pay->accompanying_persons_fee ?? 0);
+                              $gstAmt = (float)($pay->gst_amount ?? 0);
+                              $totalAmt = (float)($pay->total_amount ?? 0);
+                          } else {
+                              $delFee = (float)($registration->delegate_fee ?? ($registration->delegateCategory->indian_fee ?? 0));
+                              $cmeFee = (float)($registration->cme_fee ?? 0);
+                              $accFee = (float)($registration->accompanying_fee ?? 0);
+                              $gstAmt = (float)($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
+                              $totalAmt = (float)($registration->total_amount ?? round($delFee + $cmeFee + $accFee + $gstAmt, 2));
+                          }
                         @endphp
 
                         @if ($isForeign)
                           <tr>
                             <td class="label">Foreign Delegate Package</td>
-                            <td class="value">₹{{ number_format($registration->delegate_fee ?: 45000, 2) }} INR</td>
+                            <td class="value">₹{{ number_format($delFee ?: ($registration->delegate_fee ?: 45000), 2) }} INR</td>
                           </tr>
                           <tr>
                             <td class="label" style="font-weight: 700; color: #01579B;">Total Paid Amount</td>
-                            <td class="value" style="color: #0288D1; font-size: 16px;">₹{{ number_format($registration->total_amount ?: 45000, 2) }} INR</td>
+                            <td class="value" style="color: #0288D1; font-size: 16px;">₹{{ number_format($totalAmt ?: 45000, 2) }} INR</td>
                           </tr>
                         @else
+                          @if ($delFee > 0)
                           <tr>
                             <td class="label">Delegate Fee (Excl. GST)</td>
                             <td class="value">₹{{ number_format($delFee, 2) }}</td>
                           </tr>
-                          @if ($registration->participate_in_cme)
+                          @endif
+                          @if ($cmeFee > 0 || $registration->participate_in_cme)
                           <tr>
                             <td class="label">Pre-Conference Workshop Fee</td>
-                            <td class="value">₹{{ number_format($cmeBase, 2) }}</td>
+                            <td class="value">₹{{ number_format($cmeFee, 2) }}</td>
                           </tr>
                           @endif
-                          @if (($registration->accompanying_persons ?? 0) > 0)
+                          @if ($accFee > 0 || ($registration->accompanying_persons ?? 0) > 0)
                           <tr>
-                            <td class="label">Accompanying Persons ({{ $registration->accompanying_persons }})</td>
-                            <td class="value">₹{{ number_format($accBase, 2) }}</td>
+                            <td class="label">Accompanying Persons ({{ $registration->accompanying_persons ?? 0 }})</td>
+                            <td class="value">₹{{ number_format($accFee, 2) }}</td>
                           </tr>
                           @endif
                           <tr>

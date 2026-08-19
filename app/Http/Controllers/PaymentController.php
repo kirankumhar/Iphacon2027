@@ -381,17 +381,19 @@ class PaymentController extends Controller
                 'public'
             );
 
-            $totalAmount = $registration->calculateTotalAmount();
+            $totalAmount = $registration->total_amount ?: $registration->calculateTotalAmount();
             if ($registration->delegate_type === 'International') {
-                $delegateCategoryFee = $totalAmount;
+                $delegateCategoryFee = $registration->delegate_fee ?: $totalAmount;
                 $accompanyingPersonsFee = 0.00;
                 $cmeFee = 0.00;
                 $gstAmount = 0.00;
             } else {
-                $delegateCategoryFee = round($totalAmount / 1.18, 2);
-                $accompanyingPersonsFee = ($registration->accompanying_persons ?? 0) * 5000;
-                $cmeFee = $registration->participate_in_cme ? 2000 : 0;
-                $gstAmount = round($totalAmount - $delegateCategoryFee, 2);
+                $delegateCategoryFee = $registration->delegate_fee ?: ($registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0.00);
+                $accompanyingPersonsFee = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000.00);
+                $cmeFee = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000.00 : 0.00);
+                $subtotal = $delegateCategoryFee + $accompanyingPersonsFee + $cmeFee;
+                $gstAmount = $registration->gst_amount ?: round($subtotal * 0.18, 2);
+                $totalAmount = $registration->total_amount ?: round($subtotal + $gstAmount, 2);
             }
 
             // Create payment record
