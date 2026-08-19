@@ -253,10 +253,18 @@
                           <td class="label">Pre-Conference Workshop</td>
                           <td class="value">{{ $registration->participate_in_cme ? 'Yes (Enrolled)' : 'No' }}</td>
                         </tr>
+                        @php
+                          $payRec = $payment ?? $registration->latestPayment;
+                          $isPaid = in_array(strtoupper($payRec?->payment_status ?? ''), ['PAID', 'SUCCESS', 'APPROVED', 'COMPLETED']) || strtolower($registration->status ?? '') === 'approved';
+                        @endphp
                         <tr>
                           <td class="label">Submission Status</td>
                           <td class="value">
-                            <span class="badge badge-pending">⏳ PAYMENT SUBMITTED / UNDER VERIFICATION</span>
+                            @if($isPaid)
+                              <span class="badge" style="background: #DCFCE7; color: #065F46; border: 1px solid #86EFAC;">✓ PAYMENT PAID</span>
+                            @else
+                              <span class="badge badge-pending">⏳ PAYMENT SUBMITTED / UNDER VERIFICATION</span>
+                            @endif
                           </td>
                         </tr>
                       </table>
@@ -281,11 +289,20 @@
                           $totalAmt = $registration->total_amount ?: $registration->calculateTotalAmount();
                           $curr = $isForeign ? 'USD' : 'INR';
                           $currSym = $isForeign ? '$' : '₹';
-                          $payRec = $payment ?? $registration->latestPayment;
                         @endphp
                         <tr>
                           <td class="label" style="font-weight: 700; color: #01579B;">Total Paid Amount</td>
                           <td class="value" style="color: #0288D1; font-size: 15px;">{{ $currSym }}{{ number_format($totalAmt, 2) }} {{ $curr }}</td>
+                        </tr>
+                        <tr>
+                          <td class="label">Payment Status</td>
+                          <td class="value">
+                            @if($isPaid)
+                              <span class="badge" style="background: #DCFCE7; color: #065F46; border: 1px solid #86EFAC;">PAID</span>
+                            @else
+                              <span class="badge badge-pending">PENDING VERIFICATION</span>
+                            @endif
+                          </td>
                         </tr>
                         @if(!empty($payRec?->transaction_id))
                         <tr>
@@ -311,7 +328,13 @@
               <td style="padding: 10px 24px 20px;">
                 <div class="notice-box">
                   <p style="font-weight: 700; color: #0288D1; font-size: 14px; margin-bottom: 6px;">ℹ️ Next Steps & Verification Process</p>
-                  <p>Your payment proof is currently being verified by the Organizing & Finance Committee. <strong>Once your payment is approved, you will receive an official confirmation email along with your permanent Delegate Registration Number and download access to your Registration Receipt Slip.</strong></p>
+                  @if($registration->status === 'Approved')
+                    <p>Your registration and payment have been <strong>verified &amp; approved</strong>. You can download your official Registration Receipt Slip from the delegate portal.</p>
+                  @elseif($isPaid)
+                    <p>Your payment has been successfully recorded as <strong>PAID</strong>. The Organizing Committee is processing final verification and your official Registration Number will be allocated shortly.</p>
+                  @else
+                    <p>Your payment proof is currently being verified by the Organizing & Finance Committee. <strong>Once your payment is approved, you will receive an official confirmation email along with your permanent Delegate Registration Number and download access to your Registration Receipt Slip.</strong></p>
+                  @endif
                   <p style="margin-top: 6px;">Please save your <strong>Acknowledgement ID ({{ $registration->acknowledgement_id }})</strong> for future communications regarding your registration.</p>
                 </div>
               </td>

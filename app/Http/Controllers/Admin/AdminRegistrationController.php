@@ -583,7 +583,9 @@ class AdminRegistrationController extends Controller
                 $registration->user->update(['email' => $customEmail]);
             }
 
-            if ($emailType === 'approval' && $registration->status === 'Approved') {
+            $shouldSendApprovalEmail = ($emailType === 'approval') || ($registration->status === 'Approved' && $emailType !== 'submission_only');
+
+            if ($shouldSendApprovalEmail && $registration->status === 'Approved') {
                 // Ensure PDF is generated if missing
                 $pdfPath = $registration->registration_pdf_path;
                 if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
@@ -631,21 +633,45 @@ class AdminRegistrationController extends Controller
                 });
 
                 $logMsg = "Resent Registration Approval Confirmation Email to {$recipientEmail}. Reg No: {$registration->registration_number}";
-                $successMsg = "Approval confirmation email successfully sent to {$recipientEmail}!";
+                $successMsg = "Approval confirmation email with PDF receipt successfully sent to {$recipientEmail}!";
             } else {
-                // Send Registration Submission Confirmation Email (sent after final submit)
+                // Generate Acknowledgement / Registration Receipt PDF
+                $ackPdf = null;
+                try {
+                    $pdf = Pdf::loadView('pdfs.registration', [
+                        'registration' => $registration,
+                        'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
+                    ])->setPaper('a4', 'portrait')
+                        ->setOption('margin-top', 10)
+                        ->setOption('margin-bottom', 10)
+                        ->setOption('margin-left', 10)
+                        ->setOption('margin-right', 10);
+
+                    $ackPdf = $pdf->output();
+                } catch (\Exception $pdfEx) {
+                    Log::warning('PDF generation for submission confirmation email failed: ' . $pdfEx->getMessage());
+                }
+
+                // Send Registration Submission Confirmation Email with PDF Attachment
                 Mail::send('emails.delegate_submission_confirmation', [
                     'registration' => $registration,
                     'user'         => $registration->user,
                     'payment'      => $registration->latestPayment,
-                ], function ($message) use ($recipientEmail, $registration) {
+                ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
                     $message->to($recipientEmail)
                         ->subject('IPHACON 2027 : Delegate Registration Submitted (' . ($registration->acknowledgement_id ?? 'IPHACON') . ')')
                         ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                    if ($ackPdf) {
+                        $docId = $registration->registration_number ?? $registration->acknowledgement_id;
+                        $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
+                            'mime' => 'application/pdf'
+                        ]);
+                    }
                 });
 
-                $logMsg = "Resent Registration Submission Confirmation Email to {$recipientEmail}. Ack ID: {$registration->acknowledgement_id}";
-                $successMsg = "Registration submission confirmation email successfully sent to {$recipientEmail}!";
+                $logMsg = "Resent Registration Submission Confirmation Email with PDF Attachment to {$recipientEmail}. Ack ID: {$registration->acknowledgement_id}";
+                $successMsg = "Registration submission confirmation email with Acknowledgement PDF successfully sent to {$recipientEmail}!";
             }
 
             // Record Activity Log

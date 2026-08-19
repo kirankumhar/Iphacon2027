@@ -546,14 +546,38 @@ class RegistrationController extends Controller
                     $recipientEmail = $registration->user?->email;
                     if ($recipientEmail) {
                         $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                        
+                        $ackPdf = null;
+                        try {
+                            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
+                                'registration' => $registration,
+                                'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
+                            ])->setPaper('a4', 'portrait')
+                                ->setOption('margin-top', 10)
+                                ->setOption('margin-bottom', 10)
+                                ->setOption('margin-left', 10)
+                                ->setOption('margin-right', 10);
+
+                            $ackPdf = $pdf->output();
+                        } catch (\Exception $pdfEx) {
+                            Log::warning('PDF generation during delegate registration submission failed: ' . $pdfEx->getMessage());
+                        }
+
                         Mail::send('emails.delegate_submission_confirmation', [
                             'registration' => $registration,
                             'user'         => $registration->user,
                             'payment'      => $payment,
-                        ], function ($message) use ($recipientEmail, $registration) {
+                        ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
                             $message->to($recipientEmail)
                                 ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
                                 ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                            if ($ackPdf) {
+                                $docId = $registration->registration_number ?? $registration->acknowledgement_id;
+                                $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
+                                    'mime' => 'application/pdf'
+                                ]);
+                            }
                         });
                     }
                 } catch (\Exception $mailEx) {
