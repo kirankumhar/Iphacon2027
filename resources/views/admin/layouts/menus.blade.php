@@ -236,7 +236,7 @@
                         <div>Rejected Registrations</div>
                     </a>
                 </li>
-                <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
+                {{-- <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
                     <a href="{{ Route::has('international-reverted-delegates') ? route('international-reverted-delegates') : '#' }}" class="menu-link">
                         <div>Reverted Registrations</div>
                     </a>
@@ -245,7 +245,7 @@
                     <a href="{{ Route::has('deleted-delegates') ? route('deleted-delegates') : '#' }}" class="menu-link">
                         <div>Deleted Registrations</div>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </li>
 
