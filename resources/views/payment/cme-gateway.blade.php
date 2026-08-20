@@ -109,7 +109,7 @@
                                             </ol>
                                         </div>
 
-                                        <form method="POST" action="{{ route('cme.payment.process', $cmeApp->id) }}" enctype="multipart/form-data">
+                                        <form id="cmePaymentProcessForm" method="POST" action="{{ route('cme.payment.process', $cmeApp->id) }}" enctype="multipart/form-data">
                                             @csrf
 
                                             <div class="mb-3">
@@ -140,7 +140,7 @@
                                                 @enderror
                                             </div>
 
-                                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px; background: linear-gradient(135deg, #10B981, #059669); border: none;">
+                                            <button type="submit" id="submitCmePaymentBtn" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px; background: linear-gradient(135deg, #10B981, #059669); border: none;">
                                                 <i class="fas fa-paper-plane me-2"></i>Submit CME Payment Proof
                                             </button>
                                         </form>
@@ -155,4 +155,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('cmePaymentProcessForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const btn = document.getElementById('submitCmePaymentBtn');
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+                    form.submit();
+                }
+            });
+        }
+    });
+    </script>
 @endsection

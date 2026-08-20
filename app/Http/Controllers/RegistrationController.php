@@ -491,13 +491,35 @@ class RegistrationController extends Controller
             ]);
 
             try {
+                $registration = Registration::where('id', $registration->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                // If already approved, return without creating duplicate
+                if ($registration->status === 'Approved') {
+                    DB::commit();
+                    return redirect()->route('registration.index')
+                        ->with('success', 'Registration is already approved.');
+                }
+
+                // Only send confirmation email on first submission
+                $isFirstSubmission = empty($registration->submitted_at) || in_array($registration->status, ['Draft', 'Pending Payment']);
+
                 $receiptPath = $request->file('payment_receipt')->store(
-                    'International/payment_receipts/' . $registration->registration_number,
+                    'International/payment_receipts/' . ($registration->registration_number ?? $registration->id),
                     'public'
                 );
 
-                // Create the payment record explicitly
-                $payment = new Payment([
+                // Check if payment already exists for this registration to prevent duplicate records
+                $payment = Payment::where('registration_id', $registration->id)
+                    ->where(function($q) use ($request) {
+                        $q->where('transaction_id', $request->transaction_id)
+                          ->orWhereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION']);
+                    })
+                    ->latest()
+                    ->first();
+
+                $paymentData = [
                     'registration_id' => $registration->id,
                     'delegate_category_fee' => 175.00,
                     'accompanying_persons_fee' => 0.00,
@@ -510,12 +532,12 @@ class RegistrationController extends Controller
                     'payment_status' => 'Pending',
                     'payment_receipt_path' => $receiptPath,
                     'admin_verified' => false
-                ]);
+                ];
 
-                $paymentSaved = $payment->save();
-
-                if (!$paymentSaved) {
-                    throw new \Exception("Failed to save payment record.");
+                if ($payment) {
+                    $payment->update($paymentData);
+                } else {
+                    $payment = Payment::create($paymentData);
                 }
 
                 // Update registration status
@@ -524,7 +546,7 @@ class RegistrationController extends Controller
                 }
                 $registration->status = 'Payment Submitted';
                 $registration->step_completed = 4;
-                $registration->submitted_at = now();
+                $registration->submitted_at = $registration->submitted_at ?? now();
                 $registrationSaved = $registration->save();
 
                 if (!$registrationSaved) {
@@ -541,47 +563,49 @@ class RegistrationController extends Controller
 
                 DB::commit();
 
-                // Send email notification to delegate upon registration submission
-                try {
-                    $recipientEmail = $registration->user?->email;
-                    if ($recipientEmail) {
-                        $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
-                        
-                        $ackPdf = null;
-                        try {
-                            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
-                                'registration' => $registration,
-                                'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
-                            ])->setPaper('a4', 'portrait')
-                                ->setOption('margin-top', 10)
-                                ->setOption('margin-bottom', 10)
-                                ->setOption('margin-left', 10)
-                                ->setOption('margin-right', 10);
+                // Send email notification to delegate ONLY upon first registration submission
+                if ($isFirstSubmission) {
+                    try {
+                        $recipientEmail = $registration->user?->email;
+                        if ($recipientEmail) {
+                            $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                            
+                            $ackPdf = null;
+                            try {
+                                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
+                                    'registration' => $registration,
+                                    'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
+                                ])->setPaper('a4', 'portrait')
+                                    ->setOption('margin-top', 10)
+                                    ->setOption('margin-bottom', 10)
+                                    ->setOption('margin-left', 10)
+                                    ->setOption('margin-right', 10);
 
-                            $ackPdf = $pdf->output();
-                        } catch (\Exception $pdfEx) {
-                            Log::warning('PDF generation during delegate registration submission failed: ' . $pdfEx->getMessage());
-                        }
-
-                        Mail::send('emails.delegate_submission_confirmation', [
-                            'registration' => $registration,
-                            'user'         => $registration->user,
-                            'payment'      => $payment,
-                        ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
-                            $message->to($recipientEmail)
-                                ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
-                                ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
-
-                            if ($ackPdf) {
-                                $docId = $registration->registration_number ?? $registration->acknowledgement_id;
-                                $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
-                                    'mime' => 'application/pdf'
-                                ]);
+                                $ackPdf = $pdf->output();
+                            } catch (\Exception $pdfEx) {
+                                Log::warning('PDF generation during delegate registration submission failed: ' . $pdfEx->getMessage());
                             }
-                        });
+
+                            Mail::send('emails.delegate_submission_confirmation', [
+                                'registration' => $registration,
+                                'user'         => $registration->user,
+                                'payment'      => $payment,
+                            ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
+                                $message->to($recipientEmail)
+                                    ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
+                                    ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                                if ($ackPdf) {
+                                    $docId = $registration->registration_number ?? $registration->acknowledgement_id;
+                                    $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
+                                        'mime' => 'application/pdf'
+                                    ]);
+                                }
+                            });
+                        }
+                    } catch (\Exception $mailEx) {
+                        Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
                     }
-                } catch (\Exception $mailEx) {
-                    Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
                 }
 
                 return redirect()->route('registration.index', $registration->id)

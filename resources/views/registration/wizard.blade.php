@@ -271,6 +271,14 @@
     </div>
 
     <script>
+        document.getElementById('wizardForm')?.addEventListener('submit', function(e) {
+            const submitBtns = this.querySelectorAll('button[type="submit"]');
+            submitBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...';
+            });
+        });
+
         function saveDraft() {
             const formData = new FormData(document.getElementById('wizardForm'));
             formData.append('action', 'save_draft');

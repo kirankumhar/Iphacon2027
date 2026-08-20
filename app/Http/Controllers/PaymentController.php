@@ -242,12 +242,19 @@ class PaymentController extends Controller
 
         switch ($jsonData['payInstrument']['responseDetails']['statusCode']) {
             case 'OTS0000':
+                $regId = $jsonData['payInstrument']['extras']['udf1'];
+                $bankTxnId = $jsonData['payInstrument']['payModeSpecificData']['bankDetails']['bankTxnId'] ?? null;
+                $merchTxnId = $jsonData['payInstrument']['merchDetails']['merchTxnId'] ?? null;
 
                 $delegate = Registration::with([
                     'user',
                     'latestPayment'
-                ])->where('id', $jsonData['payInstrument']['extras']['udf1'])
+                ])->where('id', $regId)
                     ->latest('created_at')->first();
+
+                if (!$delegate) {
+                    return redirect()->route('login');
+                }
 
                 $payAmount = (float) ($jsonData['payInstrument']['payDetails']['amount'] ?? 0);
                 if ($delegate && $delegate->delegate_type === 'International') {
@@ -263,101 +270,111 @@ class PaymentController extends Controller
                     $gstAmt = $delegate ? ($delegate->gst_amount ?: round($subtotal * 0.18, 2)) : round($payAmount - $delFee, 2);
                 }
 
-                $payment = new Payment([
-                    'registration_id' => $jsonData['payInstrument']['extras']['udf1'],
+                // Check for existing payment to prevent duplicate records
+                $existingPayment = Payment::where('registration_id', $regId)
+                    ->where(function($q) use ($bankTxnId, $merchTxnId) {
+                        if ($bankTxnId) {
+                            $q->where('transaction_id', $bankTxnId);
+                        }
+                        if ($merchTxnId) {
+                            $q->orWhere('gateway_transaction_id', $merchTxnId);
+                        }
+                    })->first();
+
+                $paymentData = [
+                    'registration_id' => $regId,
                     'delegate_category_fee' => $delFee,
                     'accompanying_persons_fee' => $accFee,
                     'cme_fee' => $cmeFee,
                     'gst_amount' => $gstAmt,
                     'total_amount' => $payAmount,
                     'currency' => 'INR',
-                    'transaction_id' => $jsonData['payInstrument']['payModeSpecificData']['bankDetails']['bankTxnId'] ?? null,
-                    // 'gateway_response' => $jsonData,
-                    'gateway_transaction_id' => $jsonData['payInstrument']['merchDetails']['merchTxnId'] ?? null,
+                    'transaction_id' => $bankTxnId,
+                    'gateway_transaction_id' => $merchTxnId,
                     'payment_method' => 'Gateway',
                     'payment_status' => 'Success',
-                ]);
-                
-                $payment->save();
+                    'admin_verified' => true,
+                    'payment_date' => now(),
+                ];
+
+                if ($existingPayment) {
+                    $existingPayment->update($paymentData);
+                    $payment = $existingPayment;
+                } else {
+                    $payment = Payment::create($paymentData);
+                }
 
                 $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
                 if (empty($delegate->acknowledgement_id)) {
                     $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
                 }
 
+                $wasAlreadyApproved = ($delegate->status === 'Approved');
+
                 $delegate->updateAmounts();
                 $delegate->status = "Approved";
                 $delegate->registration_number = $registrationNo;
-                $delegate->approved_at = now();
+                $delegate->approved_at = $delegate->approved_at ?? now();
                 $delegate->save();
 
                 $delegate->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
 
-                $pdf = PDF::loadView('pdfs.registration', [
-                    'registration' => $delegate,
-                    'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
-                ])->setPaper('a4', 'portrait')
-                    ->setOption('margin-top', 10)
-                    ->setOption('margin-bottom', 10)
-                    ->setOption('margin-left', 10)
-                    ->setOption('margin-right', 10);
+                // Only generate and send emails if not already approved to avoid duplicate emails
+                if (!$wasAlreadyApproved || empty($delegate->registration_pdf_path)) {
+                    $pdf = PDF::loadView('pdfs.registration', [
+                        'registration' => $delegate,
+                        'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
+                    ])->setPaper('a4', 'portrait')
+                        ->setOption('margin-top', 10)
+                        ->setOption('margin-bottom', 10)
+                        ->setOption('margin-left', 10)
+                        ->setOption('margin-right', 10);
 
-                $year  = now()->format('Y');   // 2026
-                $month = now()->format('m');   // 04
-                $docName = $delegate->registration_number ?? $delegate->acknowledgement_id;
-                $filename = "Delegate_Registration_{$docName}.pdf";
+                    $year  = now()->format('Y');
+                    $month = now()->format('m');
+                    $docName = $delegate->registration_number ?? $delegate->acknowledgement_id;
+                    $filename = "Delegate_Registration_{$docName}.pdf";
 
-                $path = "registrations_receipt/{$year}/{$month}/{$filename}";
+                    $path = "registrations_receipt/{$year}/{$month}/{$filename}";
 
-                \Illuminate\Support\Facades\Storage::disk('public')->put($path, $pdf->output());
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($path, $pdf->output());
 
-                $delegate->update([
-                    'registration_pdf_path' => $path,
-                ]);
-
-                try {
-                    Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
-                        $message->to($delegate->user->email)
-                            ->subject('IPHACON 2027 : Delegate Registration Confirmation')
-                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
-
-                        // Attach the PDF file
-                        $localPath = storage_path("app/public/$path");
-
-                        $message->attach($localPath, [
-                            'as' => "Delegate Registration - {$delegate->registration_number}.pdf",
-                            'mime' => 'application/pdf'
-                        ]);
-                    });
-
-                    Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
-                        $message->to("iphacon2027@gmail.com")
-                            ->subject('IPHACON 2027 : Delegate Registration Confirmation')
-                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
-
-                        // Attach the PDF file
-                        $localPath = storage_path("app/public/$path");
-
-                        $message->attach($localPath, [
-                            'as' => "Delegate Registration - {$delegate->registration_number}.pdf",
-                            'mime' => 'application/pdf'
-                        ]);
-                    });
-                } catch (\Exception $e) {
-                    \Log::error('Mail sending failed: ' . $e->getMessage());
-
-                    return response()->json([
-                        'status' => 'failed',
-                        'error' => $e->getMessage(),
+                    $delegate->update([
+                        'registration_pdf_path' => $path,
                     ]);
-                }
 
-                // dd($jsonData['payInstrument']);
+                    try {
+                        Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
+                            $message->to($delegate->user->email)
+                                ->subject('IPHACON 2027 : Delegate Registration Confirmation')
+                                ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
+
+                            $localPath = storage_path("app/public/$path");
+                            $message->attach($localPath, [
+                                'as' => "Delegate Registration - {$delegate->registration_number}.pdf",
+                                'mime' => 'application/pdf'
+                            ]);
+                        });
+
+                        Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
+                            $message->to("iphacon2027@gmail.com")
+                                ->subject('IPHACON 2027 : Delegate Registration Confirmation')
+                                ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
+
+                            $localPath = storage_path("app/public/$path");
+                            $message->attach($localPath, [
+                                'as' => "Delegate Registration - {$delegate->registration_number}.pdf",
+                                'mime' => 'application/pdf'
+                            ]);
+                        });
+                    } catch (\Exception $e) {
+                        \Log::error('Mail sending failed: ' . $e->getMessage());
+                    }
+                }
 
                 return redirect()->route('payment.success', ['registration' => $delegate->registration_number])
                     ->with('success', 'Payment Successfully Received!');
 
-                exit;
                 break;
             default:
                 echo 'Payment status = Transaction Failed';
@@ -369,9 +386,6 @@ class PaymentController extends Controller
     public function processPayment(Request $request, $registrationId)
     {
         $user = Auth::user();
-        $registration = Registration::where('user_id', $user->id)
-            ->where('id', $registrationId)
-            ->firstOrFail();
 
         $request->validate([
             'transaction_id' => 'required|string|max:100',
@@ -380,6 +394,21 @@ class PaymentController extends Controller
 
         try {
             DB::beginTransaction();
+
+            $registration = Registration::where('user_id', $user->id)
+                ->where('id', $registrationId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // If already approved, return without creating duplicate
+            if ($registration->status === 'Approved') {
+                DB::commit();
+                return redirect()->route('registration.index')
+                    ->with('success', 'Registration is already approved.');
+            }
+
+            // Only send confirmation email on first submission (prevents repeated emails on multiple submits/clicks)
+            $isFirstSubmission = empty($registration->submitted_at) || in_array($registration->status, ['Draft', 'Pending Payment']);
 
             $receiptPath = $request->file('payment_receipt')->store(
                 'payment_receipts/' . $registration->id,
@@ -401,8 +430,16 @@ class PaymentController extends Controller
                 $totalAmount = $registration->total_amount ?: round($subtotal + $gstAmount, 2);
             }
 
-            // Create payment record
-            $payment = new Payment([
+            // Check if payment already exists for this registration to prevent duplicate records
+            $payment = Payment::where('registration_id', $registration->id)
+                ->where(function($q) use ($request) {
+                    $q->where('transaction_id', $request->transaction_id)
+                      ->orWhereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION']);
+                })
+                ->latest()
+                ->first();
+
+            $paymentData = [
                 'registration_id' => $registration->id,
                 'delegate_category_fee' => $delegateCategoryFee,
                 'accompanying_persons_fee' => $accompanyingPersonsFee,
@@ -415,9 +452,13 @@ class PaymentController extends Controller
                 'payment_status' => 'Pending',
                 'payment_receipt_path' => $receiptPath,
                 'admin_verified' => false
-            ]);
+            ];
 
-            $payment->save();
+            if ($payment) {
+                $payment->update($paymentData);
+            } else {
+                $payment = Payment::create($paymentData);
+            }
 
             // Update registration status
             if (empty($registration->acknowledgement_id)) {
@@ -440,47 +481,49 @@ class PaymentController extends Controller
 
             DB::commit();
 
-            // Send email notification to delegate upon registration submission
-            try {
-                $recipientEmail = $registration->user?->email;
-                if ($recipientEmail) {
-                    $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+            // Send email notification to delegate ONLY upon first registration submission
+            if ($isFirstSubmission) {
+                try {
+                    $recipientEmail = $registration->user?->email;
+                    if ($recipientEmail) {
+                        $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
 
-                    $ackPdf = null;
-                    try {
-                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
-                            'registration' => $registration,
-                            'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
-                        ])->setPaper('a4', 'portrait')
-                            ->setOption('margin-top', 10)
-                            ->setOption('margin-bottom', 10)
-                            ->setOption('margin-left', 10)
-                            ->setOption('margin-right', 10);
+                        $ackPdf = null;
+                        try {
+                            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
+                                'registration' => $registration,
+                                'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
+                            ])->setPaper('a4', 'portrait')
+                                ->setOption('margin-top', 10)
+                                ->setOption('margin-bottom', 10)
+                                ->setOption('margin-left', 10)
+                                ->setOption('margin-right', 10);
 
-                        $ackPdf = $pdf->output();
-                    } catch (\Exception $pdfEx) {
-                        \Illuminate\Support\Facades\Log::warning('PDF generation during payment submission email failed: ' . $pdfEx->getMessage());
-                    }
-
-                    Mail::send('emails.delegate_submission_confirmation', [
-                        'registration' => $registration,
-                        'user'         => $registration->user,
-                        'payment'      => $payment,
-                    ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
-                        $message->to($recipientEmail)
-                            ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
-                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
-
-                        if ($ackPdf) {
-                            $docId = $registration->registration_number ?? $registration->acknowledgement_id;
-                            $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
-                                'mime' => 'application/pdf'
-                            ]);
+                            $ackPdf = $pdf->output();
+                        } catch (\Exception $pdfEx) {
+                            \Illuminate\Support\Facades\Log::warning('PDF generation during payment submission email failed: ' . $pdfEx->getMessage());
                         }
-                    });
+
+                        Mail::send('emails.delegate_submission_confirmation', [
+                            'registration' => $registration,
+                            'user'         => $registration->user,
+                            'payment'      => $payment,
+                        ], function ($message) use ($recipientEmail, $registration, $ackPdf) {
+                            $message->to($recipientEmail)
+                                ->subject('IPHACON 2027 : Delegate Registration Submitted (' . $registration->acknowledgement_id . ')')
+                                ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+
+                            if ($ackPdf) {
+                                $docId = $registration->registration_number ?? $registration->acknowledgement_id;
+                                $message->attachData($ackPdf, "IPHACON_2027_Acknowledgement_Receipt_{$docId}.pdf", [
+                                    'mime' => 'application/pdf'
+                                ]);
+                            }
+                        });
+                    }
+                } catch (\Exception $mailEx) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
                 }
-            } catch (\Exception $mailEx) {
-                \Illuminate\Support\Facades\Log::error('Failed to send delegate registration submission confirmation email: ' . $mailEx->getMessage());
             }
 
             return redirect()->route('registration.index')
@@ -543,8 +586,17 @@ class PaymentController extends Controller
                 'submitted_at'         => now(),
             ]);
 
-            // Create explicit payment record for CME
-            $payment = new Payment([
+            // Check if CME payment already exists to prevent duplicates
+            $payment = Payment::where('registration_id', $cmeApp->registration_id)
+                ->where(function($q) use ($request) {
+                    $q->where('transaction_id', $request->transaction_id)
+                      ->orWhere('cme_fee', '>', 0);
+                })
+                ->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION'])
+                ->latest()
+                ->first();
+
+            $paymentData = [
                 'registration_id'          => $cmeApp->registration_id,
                 'delegate_category_fee'    => 0.00,
                 'accompanying_persons_fee' => 0.00,
@@ -557,9 +609,13 @@ class PaymentController extends Controller
                 'payment_status'           => 'Pending',
                 'payment_receipt_path'     => $receiptPath,
                 'admin_verified'           => false
-            ]);
+            ];
 
-            $payment->save();
+            if ($payment) {
+                $payment->update($paymentData);
+            } else {
+                $payment = Payment::create($paymentData);
+            }
 
             DB::commit();
 

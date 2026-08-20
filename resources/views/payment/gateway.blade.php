@@ -142,7 +142,7 @@
                                             </ol>
                                         </div>
 
-                                        <form method="POST" action="{{ route('payment.process', $registration->id) }}" enctype="multipart/form-data">
+                                        <form id="paymentProcessForm" method="POST" action="{{ route('payment.process', $registration->id) }}" enctype="multipart/form-data">
                                             @csrf
 
                                             <div class="mb-3">
@@ -174,7 +174,7 @@
                                                 @enderror
                                             </div>
 
-                                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px;">
+                                            <button type="submit" id="submitPaymentBtn" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px;">
                                                 <i class="fas fa-check-circle me-2"></i>Submit Payment Details
                                             </button>
                                         </form>
@@ -216,4 +216,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('paymentProcessForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const btn = document.getElementById('submitPaymentBtn');
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+                    form.submit();
+                }
+            });
+        }
+    });
+    </script>
 @endsection
