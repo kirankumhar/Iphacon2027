@@ -36,9 +36,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($payments as $index => $pay)
+                        @forelse ($payments as $pay)
                             <tr>
-                                <td class="ps-3 fw-bold text-muted">{{ $index + 1 }}</td>
+                                <td class="ps-3 fw-bold text-muted">{{ $loop->iteration }}</td>
                                 <td>
                                     <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">
                                         {{ $pay->registration?->user?->prefix }} {{ $pay->registration?->user?->full_name ?? 'N/A' }}

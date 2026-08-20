@@ -264,7 +264,12 @@ class AdminRegistrationController extends Controller
         $payments = \App\Models\Payment::with(['registration.user'])
             ->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed'])
             ->latest()
-            ->get();
+            ->get()
+            ->unique(function ($item) {
+                $txn = trim($item->transaction_id ?: ($item->gateway_transaction_id ?: ''));
+                return $txn !== '' ? $txn : 'payment_' . $item->id;
+            })
+            ->values();
 
         return view('admin.modules.payments.paid-payments', compact('payments'));
     }
@@ -272,10 +277,17 @@ class AdminRegistrationController extends Controller
     public function pendingPayments()
     {
         $payments = \App\Models\Payment::with(['registration.user', 'registration.delegateCategory'])
-            ->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION', 'In Process'])
-            ->orWhereNull('payment_status')
+            ->where(function($q) {
+                $q->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION', 'In Process'])
+                  ->orWhereNull('payment_status');
+            })
             ->latest()
-            ->get();
+            ->get()
+            ->unique(function ($item) {
+                $txn = trim($item->transaction_id ?: ($item->gateway_transaction_id ?: ''));
+                return $txn !== '' ? $txn : 'payment_' . $item->id;
+            })
+            ->values();
 
         $pendingRegistrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
             ->whereIn('status', ['Payment Submitted', 'Pending Payment', 'Submitted'])
@@ -291,7 +303,12 @@ class AdminRegistrationController extends Controller
         $payments = \App\Models\Payment::with(['registration.user'])
             ->whereIn('payment_status', ['Failed', 'Failure', 'Rejected', 'CANCELLED'])
             ->latest()
-            ->get();
+            ->get()
+            ->unique(function ($item) {
+                $txn = trim($item->transaction_id ?: ($item->gateway_transaction_id ?: ''));
+                return $txn !== '' ? $txn : 'payment_' . $item->id;
+            })
+            ->values();
 
         return view('admin.modules.payments.failed-payments', compact('payments'));
     }
