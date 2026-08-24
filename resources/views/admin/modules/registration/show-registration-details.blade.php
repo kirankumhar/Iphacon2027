@@ -356,50 +356,107 @@
 
             <!-- Admin Action Control Card -->
             <div class="card shadow-sm border-0 mb-4 rounded-3 overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
                     <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-                        <i class="bx bx-slider-alt text-success fs-5"></i>Admin Control &amp; Actions
+                        <i class="bx bx-shield-quarter text-primary fs-5"></i>Admin Control &amp; Actions
                     </h6>
+                    @if($delegate->status === 'Approved')
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                            <i class="bx bx-check me-1"></i>Approved
+                        </span>
+                    @elseif($delegate->status === 'Rejected')
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                            <i class="bx bx-x me-1"></i>Rejected
+                        </span>
+                    @else
+                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                            <i class="bx bx-time-five me-1"></i>{{ $delegate->status }}
+                        </span>
+                    @endif
                 </div>
                 <div class="card-body p-3.5">
-                    <div class="d-grid gap-2.5">
+                    <div class="d-flex flex-column gap-3">
                         @php
-                            $isDelegatePaymentSubmitted = in_array($delegate->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($delegate->latestPayment);
+                            $hasPaymentProof = !empty($delegate->latestPayment?->payment_receipt_path) || !empty($delegate->latestPayment?->transaction_id);
+                            $isPaymentSubmitted = in_array($delegate->status, ['Payment Submitted', 'Submitted']) || ($hasPaymentProof && !in_array($delegate->status, ['Pending Payment', 'Draft', 'Incomplete', 'Rejected']));
+                            $isPaymentPending = in_array($delegate->status, ['Pending Payment', 'Pending', 'Draft', 'Incomplete']) || (!$hasPaymentProof && $delegate->status !== 'Approved' && $delegate->status !== 'Rejected');
                         @endphp
-                        @if($isDelegatePaymentSubmitted && $delegate->status !== 'Approved')
-                        <form action="{{ route('student-approved-regis') }}" method="POST" class="d-grid m-0">
-                            @csrf
-                            <input type="hidden" name="registration_number" value="{{ $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id) }}">
-                            <button type="submit" class="btn btn-sm btn-success fw-bold py-2.5 rounded-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.85rem;" onclick="return confirm('Are you sure you want to approve this registration?')">
-                                <i class="bx bx-check-circle fs-5"></i> Approve Registration
-                            </button>
-                        </form>
-                        @elseif($delegate->status === 'Approved')
-                        <div class="p-3 mb-1 rounded-3 text-center border fw-semibold d-flex align-items-center justify-content-center gap-2 shadow-xs" style="background-color: #DCFCE7 !important; color: #065F46 !important; border-color: #86EFAC !important; font-size: 0.88rem;">
-                            <i class="bx bx-check-double fs-4" style="color: #059669 !important;"></i>
-                            <span>Registration Status: <strong>Approved</strong></span>
+
+                        <!-- Primary Approval / Status Callout -->
+                        @if($delegate->status === 'Approved')
+                        <div class="p-3 rounded-3 border d-flex align-items-center gap-3" style="background-color: #ECFDF5; border-color: #A7F3D0 !important;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #10B981; color: #FFFFFF;">
+                                <i class="bx bx-check-double fs-4"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark" style="font-size: 0.88rem; color: #065F46 !important;">Registration Approved</div>
+                                <div class="text-muted extra-small">Reg No: <strong class="font-monospace text-dark">{{ $delegate->registration_number ?? 'Assigned' }}</strong></div>
+                            </div>
+                        </div>
+                        @elseif($isPaymentSubmitted && $delegate->status !== 'Rejected')
+                        <div class="p-3 rounded-3 border bg-light">
+                            <div class="d-flex align-items-start gap-2.5 mb-2.5">
+                                <i class="bx bx-info-circle text-primary fs-5 mt-0.5"></i>
+                                <div>
+                                    <div class="fw-bold text-dark extra-small">Ready for Approval</div>
+                                    <div class="text-muted extra-small">Payment submitted. Verify receipt details before approving.</div>
+                                </div>
+                            </div>
+                            <form action="{{ route('student-approved-regis') }}" method="POST" class="d-grid m-0">
+                                @csrf
+                                <input type="hidden" name="registration_number" value="{{ $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id) }}">
+                                <button type="submit" class="btn btn-success fw-bold py-2.5 rounded-3 shadow-xs d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); border: none; font-size: 0.85rem;" onclick="return confirm('Are you sure you want to approve this registration and issue registration number?')">
+                                    <i class="bx bx-check-circle fs-5"></i> Approve Registration
+                                </button>
+                            </form>
+                        </div>
+                        @elseif($delegate->status === 'Rejected')
+                        <div class="p-3 rounded-3 border d-flex align-items-center gap-3" style="background-color: #FEF2F2; border-color: #FECACA !important;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #EF4444; color: #FFFFFF;">
+                                <i class="bx bx-x fs-4"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-danger" style="font-size: 0.88rem;">Registration Rejected</div>
+                                <div class="text-muted extra-small">This application has been marked as rejected.</div>
+                            </div>
                         </div>
                         @else
-                        <div class="p-2.5 mb-1 rounded-2 text-center border text-muted extra-small bg-light">
-                            <i class="bx bx-info-circle me-1 text-primary"></i>Approve button will appear once delegate submits payment.
+                        <!-- Payment Pending State -->
+                        <div class="p-3 rounded-3 border bg-light">
+                            <div class="d-flex align-items-start gap-2.5 mb-2.5">
+                                <i class="bx bx-time-five text-warning fs-5 mt-0.5"></i>
+                                <div>
+                                    <div class="fw-bold text-dark extra-small">Payment Pending</div>
+                                    <div class="text-muted extra-small">Delegate has not submitted payment. Approval is disabled until payment is received.</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 opacity-75" disabled style="cursor: not-allowed; font-size: 0.85rem;" title="Approve is disabled because payment is pending">
+                                <i class="bx bx-lock-alt fs-5"></i> Approve Registration (Disabled)
+                            </button>
                         </div>
                         @endif
 
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-warning text-dark fw-bold w-50 py-2 rounded-2 shadow-xs" style="font-size: 0.8rem;" 
-                                @if($delegate->status !== 'Approved') data-bs-toggle="modal" data-bs-target="#revertModal" @else disabled title="Disabled for Approved delegates" @endif>
-                                <i class="bx bx-undo me-1"></i> Revert
+                        <!-- Action Buttons Section -->
+                        <div class="d-flex flex-column gap-2">
+                            <!-- Send / Resend Confirmation Email Button -->
+                            <button type="button" class="btn btn-outline-primary w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#resendEmailModal" style="font-size: 0.825rem;">
+                                <span class="d-flex align-items-center gap-2">
+                                    <i class="bx bx-envelope fs-5 text-primary"></i>
+                                    <span>Send Confirmation Email</span>
+                                </span>
+                                <i class="bx bx-chevron-right text-muted"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold w-50 py-2 rounded-2" style="font-size: 0.8rem;" 
+
+                            <!-- Reject Button -->
+                            <button type="button" class="btn btn-outline-danger w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3" style="font-size: 0.825rem;"
                                 @if($delegate->status !== 'Approved') data-bs-toggle="modal" data-bs-target="#rejectModal" @else disabled title="Disabled for Approved delegates" @endif>
-                                <i class="bx bx-x-circle me-1"></i> Reject
+                                <span class="d-flex align-items-center gap-2">
+                                    <i class="bx bx-x-circle fs-5 text-danger"></i>
+                                    <span>Reject Registration</span>
+                                </span>
+                                <i class="bx bx-chevron-right text-muted"></i>
                             </button>
                         </div>
-
-                        <!-- Send / Resend Confirmation Email Button -->
-                        <button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 py-2 rounded-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.8rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal">
-                            <i class="bx bx-envelope fs-5"></i> Send Confirmation Email
-                        </button>
                     </div>
                 </div>
             </div>
@@ -415,50 +472,16 @@
                     @if($delegate->status === 'Approved')
                     <a href="{{ route('download.receipt', $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id)) }}"
                         target="_blank"
-                        class="btn btn-sm btn-success w-100 py-2.5 fw-bold rounded-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.825rem;">
+                        class="btn btn-primary w-100 py-2.5 fw-bold rounded-3 shadow-xs d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); border: none; font-size: 0.825rem;">
                         <i class="bx bxs-file-pdf fs-5"></i>Download Receipt PDF
                     </a>
                     @else
-                    <button class="btn btn-sm btn-secondary w-100 py-2.5 fw-bold rounded-2 opacity-75 d-flex align-items-center justify-content-center gap-1.5" style="font-size: 0.825rem;" disabled title="Receipt download is available after approval">
-                        <i class="bx bxs-file-pdf fs-5"></i>Download Receipt PDF (Pending Approval)
+                    <button class="btn btn-light border text-muted w-100 py-2.5 fw-semibold rounded-3 d-flex align-items-center justify-content-center gap-2" style="font-size: 0.825rem;" disabled title="Receipt download is available after approval">
+                        <i class="bx bxs-file-pdf fs-5 text-muted"></i>Download Receipt PDF (Pending Approval)
                     </button>
                     @endif
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Revert Registration Modal -->
-<div class="modal fade" id="revertModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-3">
-            <form action="{{ route('student-revert-regis') }}" method="POST">
-                @csrf
-                <input type="hidden" name="registration_id" value="{{ $delegate->id }}">
-                <input type="hidden" name="acknowledgement_id" value="{{ $delegate->acknowledgement_id }}">
-                <input type="hidden" name="registration_number" value="{{ $delegate->registration_number }}">
-                <div class="modal-header bg-warning bg-opacity-10 border-bottom-0 pb-0">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="avatar avatar-sm bg-warning text-white rounded-circle d-flex align-items-center justify-content-center">
-                            <i class="bx bx-undo fs-5"></i>
-                        </div>
-                        <h5 class="modal-title fw-bold text-dark">Revert Registration</h5>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body py-3">
-                    <p class="text-muted extra-small mb-3">Specify the reason for reverting this application back to draft status for correction.</p>
-                    <div class="mb-3">
-                        <label for="revert_reason" class="form-label fw-bold text-dark extra-small">Reason for Reverting <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="reason" rows="3" required placeholder="Enter revert reason details for delegate..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light border-top-0 pt-0">
-                    <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-3">Confirm Revert</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

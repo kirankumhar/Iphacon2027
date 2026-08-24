@@ -333,7 +333,8 @@ class AdminRegistrationController extends Controller
         })->first();
 
         if ($registration) {
-            $isPaymentSubmitted = in_array($registration->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($registration->latestPayment);
+            $hasPaymentProof = !empty($registration->latestPayment?->payment_receipt_path) || !empty($registration->latestPayment?->transaction_id);
+            $isPaymentSubmitted = in_array($registration->status, ['Payment Submitted', 'Submitted']) || ($hasPaymentProof && $registration->status !== 'Pending Payment');
             if (!$isPaymentSubmitted && $registration->status !== 'Approved') {
                 return redirect()->back()->with('error', "Approval failed. Delegate must submit payment before approval can be granted.");
             }
