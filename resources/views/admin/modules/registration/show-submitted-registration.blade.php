@@ -108,11 +108,7 @@
                                                         style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-size: 0.70rem;">
                                                         ACK: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                                     </span>
-                                                    <a href="{{ route('show-registration-details', $reg->acknowledgement_id ?? $reg->id) }}"
-                                                        class="btn btn-xs btn-outline-primary rounded-pill px-2 py-0.5 extra-small fw-bold"
-                                                        style="font-size: 0.70rem;">
-                                                        <i class="bx bx-show me-0.5"></i> Details
-                                                    </a>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -157,6 +153,11 @@
                                     <td class="pe-3 text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-1"
                                             style="white-space: nowrap;">
+                                            <a href="{{ route('show-registration-details', $reg->acknowledgement_id ?? $reg->id) }}"
+                                                    class="btn btn-xs btn-outline-primary rounded-pill px-2 py-0.5 extra-small fw-bold"
+                                                    style="font-size: 0.70rem;">
+                                                    <i class="bx bx-show me-0.5"></i> Details
+                                                </a>
                                             <!-- Send / Resend Submission Email Button -->
                                             {{-- <button type="button" class="btn btn-xs btn-outline-primary fw-bold px-2 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal{{ $reg->id }}" title="Send/Resend Submission Email">
                                             <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
