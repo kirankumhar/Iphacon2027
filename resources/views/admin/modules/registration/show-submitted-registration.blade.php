@@ -126,9 +126,9 @@
                                 <td class="pe-3 text-end">
                                     <div class="d-flex align-items-center justify-content-end gap-1" style="white-space: nowrap;">
                                         <!-- Send / Resend Submission Email Button -->
-                                        <button type="button" class="btn btn-xs btn-outline-primary fw-bold px-2 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal{{ $reg->id }}" title="Send/Resend Submission Email">
+                                        {{-- <button type="button" class="btn btn-xs btn-outline-primary fw-bold px-2 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#resendEmailModal{{ $reg->id }}" title="Send/Resend Submission Email">
                                             <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
-                                        </button>
+                                        </button> --}}
 
                                         @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
                                         <!-- Direct Approve Form -->
@@ -143,9 +143,9 @@
                                         @endif
 
                                         <!-- Revert Button Trigger Modal -->
-                                        <button type="button" class="btn btn-xs btn-warning text-dark fw-bold px-2.5 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#revertModal{{ $reg->id }}" title="Revert Back">
+                                        {{-- <button type="button" class="btn btn-xs btn-warning text-dark fw-bold px-2.5 py-1 rounded-2 shadow-xs d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#revertModal{{ $reg->id }}" title="Revert Back">
                                             <i class="bx bx-undo" style="font-size: 0.85rem;"></i> Revert
-                                        </button>
+                                        </button> --}}
 
                                         <!-- Reject Button Trigger Modal -->
                                         <button type="button" class="btn btn-xs btn-outline-danger fw-bold px-2.5 py-1 rounded-2 d-inline-flex align-items-center gap-1" style="font-size: 0.74rem;" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $reg->id }}" title="Reject Registration">
