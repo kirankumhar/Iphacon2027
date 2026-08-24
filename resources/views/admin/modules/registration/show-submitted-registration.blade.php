@@ -78,17 +78,19 @@
                                     <td class="py-2.5">
                                         <div class="d-flex align-items-center gap-2.5">
                                             <div class="avatar avatar-md flex-shrink-0" style="width: 38px; height: 38px;">
-                                                @if ($reg->photo_path)
-                                                    <img src="{{ asset('storage/' . $reg->photo_path) }}" alt="Avatar"
-                                                        class="rounded-circle border w-100 h-100 shadow-xs"
-                                                        style="object-fit: cover;"
-                                                        onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
-                                                @else
-                                                    <div
-                                                        class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center w-100 h-100 fs-6 border border-primary border-opacity-25">
-                                                        {{ strtoupper(substr($reg->user?->full_name ?? 'U', 0, 1)) }}
-                                                    </div>
-                                                @endif
+                                                <a href="{{ route('show-registration-details', $reg->id) }}">
+                                                    @if ($reg->photo_path)
+                                                        <img src="{{ asset('storage/' . $reg->photo_path) }}" alt="Avatar"
+                                                            class="rounded-circle border w-100 h-100 shadow-xs"
+                                                            style="object-fit: cover;"
+                                                            onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
+                                                    @else
+                                                        <div
+                                                            class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center w-100 h-100 fs-6 border border-primary border-opacity-25">
+                                                            {{ strtoupper(substr($reg->user?->full_name ?? 'U', 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                </a>
                                             </div>
                                             <div>
                                                 <a href="{{ route('show-registration-details', $reg->id) }}">
@@ -310,7 +312,8 @@
                                                                 <i class="bx bx-info-circle fs-5 flex-shrink-0 mt-0.5"></i>
                                                                 <div>Reverting will allow delegate
                                                                     <strong>{{ $reg->user?->full_name }}</strong> to make
-                                                                    corrections or re-upload payment screenshot.</div>
+                                                                    corrections or re-upload payment screenshot.
+                                                                </div>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label
@@ -362,7 +365,8 @@
                                                                 <i
                                                                     class="bx bx-error-circle fs-5 flex-shrink-0 mt-0.5"></i>
                                                                 <div>Are you sure you want to reject registration for
-                                                                    <strong>{{ $reg->user?->full_name }}</strong>?</div>
+                                                                    <strong>{{ $reg->user?->full_name }}</strong>?
+                                                                </div>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label
