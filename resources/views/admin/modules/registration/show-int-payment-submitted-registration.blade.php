@@ -120,7 +120,11 @@
                                                 <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
                                             </button>
 
-                                            @if(in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
+                                            @php
+                                                $hasPaymentProof = !empty($reg->latestPayment?->payment_receipt_path) || !empty($reg->latestPayment?->transaction_id);
+                                                $isPaymentDone = ($reg->status === 'Payment Submitted') || ($hasPaymentProof && $reg->status !== 'Pending Payment');
+                                            @endphp
+                                            @if($isPaymentDone)
                                                 {{-- Approve Form --}}
                                                 <form action="{{ route('student-approved-regis') }}" method="POST" class="d-inline m-0">
                                                     @csrf

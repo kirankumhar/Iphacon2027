@@ -378,7 +378,7 @@
                     <div class="d-flex flex-column gap-3">
                         @php
                             $hasPaymentProof = !empty($delegate->latestPayment?->payment_receipt_path) || !empty($delegate->latestPayment?->transaction_id);
-                            $isPaymentSubmitted = in_array($delegate->status, ['Payment Submitted', 'Submitted']) || ($hasPaymentProof && !in_array($delegate->status, ['Pending Payment', 'Draft', 'Incomplete', 'Rejected']));
+                            $isPaymentSubmitted = ($delegate->status === 'Payment Submitted') || ($hasPaymentProof && !in_array($delegate->status, ['Pending Payment', 'Draft', 'Incomplete', 'Rejected']));
                             $isPaymentPending = in_array($delegate->status, ['Pending Payment', 'Pending', 'Draft', 'Incomplete']) || (!$hasPaymentProof && $delegate->status !== 'Approved' && $delegate->status !== 'Rejected');
                         @endphp
 

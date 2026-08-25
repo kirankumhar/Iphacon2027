@@ -145,10 +145,21 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge rounded-pill fw-semibold extra-small px-2.5 py-1"
-                                            style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.72rem;">
-                                            <i class="bx bx-time-five me-1"></i>SUBMITTED
-                                        </span>
+                                        @php
+                                            $hasPaymentProof = !empty($reg->latestPayment?->payment_receipt_path) || !empty($reg->latestPayment?->transaction_id);
+                                            $isPaymentDone = ($reg->status === 'Payment Submitted') || ($hasPaymentProof && $reg->status !== 'Pending Payment');
+                                        @endphp
+                                        @if ($isPaymentDone)
+                                            <span class="badge rounded-pill fw-semibold extra-small px-2.5 py-1"
+                                                style="background-color: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-size: 0.72rem;">
+                                                <i class="bx bx-check-circle me-1"></i>SUBMITTED
+                                            </span>
+                                        @else
+                                            <span class="badge rounded-pill fw-semibold extra-small px-2.5 py-1"
+                                                style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; font-size: 0.72rem;">
+                                                <i class="bx bx-time-five me-1"></i>PENDING PAYMENT
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="pe-3 text-end">
                                         <div class="d-flex align-items-center justify-content-end gap-1"
@@ -163,7 +174,7 @@
                                             <i class="bx bx-envelope" style="font-size: 0.85rem;"></i> Send Email
                                         </button> --}}
 
-                                            @if (in_array($reg->status, ['Payment Submitted', 'Submitted', 'Pending Payment']) || !empty($reg->latestPayment))
+                                            @if ($isPaymentDone)
                                                 <!-- Direct Approve Form -->
                                                 <form method="POST" action="{{ route('student-approved-regis') }}"
                                                     class="d-inline m-0">
