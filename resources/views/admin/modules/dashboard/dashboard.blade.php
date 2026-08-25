@@ -18,7 +18,7 @@
                             </span>
                         </div>
                         <h3 class="text-white fw-bold mt-1 mb-1 fs-3" style="letter-spacing: -0.4px;">
-                            Welcome back, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }} 👋
+                            Welcome, {{ auth('admin')->user()->full_name ?? auth('admin')->user()->username }} 👋
                         </h3>
                         <p class="text-white-50 mb-0 small" style="font-size: 0.88rem;">
                             Live monitoring & real-time registration metrics for the 71st Annual National Conference of
