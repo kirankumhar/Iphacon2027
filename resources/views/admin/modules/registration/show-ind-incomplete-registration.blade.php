@@ -2,7 +2,7 @@
 
 @section('admin-content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- Page Header & Actions -->
+    <!-- Page Header -->
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
         <div>
             <h4 class="mb-1 fw-bold text-dark d-flex align-items-center gap-2">
@@ -12,12 +12,6 @@
                 <span>Incomplete Registrations</span>
             </h4>
             <p class="text-muted mb-0 fs-7">Track draft application forms and signed-up users who haven't finished registration</p>
-        </div>
-        <div class="d-flex align-items-center flex-wrap gap-2">
-            <button type="button" class="btn btn-warning text-dark fw-bold px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2" onclick="openBulkReminderModal('all')">
-                <i class="bx bx-mail-send fs-5"></i>
-                <span>Send Reminder to Everyone</span>
-            </button>
         </div>
     </div>
 
@@ -85,7 +79,7 @@
                         <h3 class="fw-bold text-dark mb-0">
                             {{ (method_exists($registrations, 'total') ? $registrations->total() : $registrations->count()) + (method_exists($usersWithoutReg, 'total') ? $usersWithoutReg->total() : $usersWithoutReg->count()) }}
                         </h3>
-                        <small class="text-muted extra-small">Eligible for reminder emails</small>
+                        <small class="text-muted extra-small">Eligible for individual reminder</small>
                     </div>
                     <div class="avatar avatar-md rounded-3 bg-label-info d-flex align-items-center justify-content-center">
                         <i class="bx bx-paper-plane text-info fs-3"></i>
@@ -134,30 +128,24 @@
                         </h6>
                         <small class="text-muted">Delegates who began registration but haven't submitted or paid</small>
                     </div>
-                    <div class="d-flex align-items-center flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-semibold d-flex align-items-center gap-1.5 px-3 rounded-2 shadow-xs" onclick="openBulkReminderModal('drafts')">
-                            <i class="bx bx-bell"></i>
-                            <span>Remind All Drafts</span>
-                        </button>
-                        <div class="search-box" style="max-width: 280px; width: 100%;">
-                            <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
-                                @if(request('user_page'))
-                                    <input type="hidden" name="user_page" value="{{ request('user_page') }}">
+                    <div class="search-box" style="max-width: 280px; width: 100%;">
+                        <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
+                            @if(request('user_page'))
+                                <input type="hidden" name="user_page" value="{{ request('user_page') }}">
+                            @endif
+                            @if(request('user_search'))
+                                <input type="hidden" name="user_search" value="{{ request('user_search') }}">
+                            @endif
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bx bx-search"></i></span>
+                                <input type="text" name="draft_search" id="draftSearchInput" class="form-control bg-light border-start-0" placeholder="Search by name, email..." value="{{ request('draft_search') }}">
+                                @if(request('draft_search'))
+                                    <a href="{{ request()->fullUrlWithQuery(['draft_search' => null, 'draft_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear search">
+                                        <i class="bx bx-x"></i>
+                                    </a>
                                 @endif
-                                @if(request('user_search'))
-                                    <input type="hidden" name="user_search" value="{{ request('user_search') }}">
-                                @endif
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bx bx-search"></i></span>
-                                    <input type="text" name="draft_search" id="draftSearchInput" class="form-control bg-light border-start-0" placeholder="Search by name, email..." value="{{ request('draft_search') }}">
-                                    @if(request('draft_search'))
-                                        <a href="{{ request()->fullUrlWithQuery(['draft_search' => null, 'draft_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear search">
-                                            <i class="bx bx-x"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -296,30 +284,24 @@
                         </h6>
                         <small class="text-muted">Users who created an account on the portal but haven't started filling their registration form</small>
                     </div>
-                    <div class="d-flex align-items-center flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary fw-semibold d-flex align-items-center gap-1.5 px-3 rounded-2 shadow-xs" onclick="openBulkReminderModal('users')">
-                            <i class="bx bx-bell"></i>
-                            <span>Remind All Signed-Up</span>
-                        </button>
-                        <div class="search-box" style="max-width: 280px; width: 100%;">
-                            <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
-                                @if(request('draft_page'))
-                                    <input type="hidden" name="draft_page" value="{{ request('draft_page') }}">
+                    <div class="search-box" style="max-width: 280px; width: 100%;">
+                        <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
+                            @if(request('draft_page'))
+                                <input type="hidden" name="draft_page" value="{{ request('draft_page') }}">
+                            @endif
+                            @if(request('draft_search'))
+                                <input type="hidden" name="draft_search" value="{{ request('draft_search') }}">
+                            @endif
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bx bx-search"></i></span>
+                                <input type="text" name="user_search" id="userSearchInput" class="form-control bg-light border-start-0" placeholder="Search by name, email..." value="{{ request('user_search') }}">
+                                @if(request('user_search'))
+                                    <a href="{{ request()->fullUrlWithQuery(['user_search' => null, 'user_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear search">
+                                        <i class="bx bx-x"></i>
+                                    </a>
                                 @endif
-                                @if(request('draft_search'))
-                                    <input type="hidden" name="draft_search" value="{{ request('draft_search') }}">
-                                @endif
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bx bx-search"></i></span>
-                                    <input type="text" name="user_search" id="userSearchInput" class="form-control bg-light border-start-0" placeholder="Search by name, email..." value="{{ request('user_search') }}">
-                                    @if(request('user_search'))
-                                        <a href="{{ request()->fullUrlWithQuery(['user_search' => null, 'user_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear search">
-                                            <i class="bx bx-x"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -433,80 +415,7 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- Modal 1: Bulk Reminder to Everyone / Target Audience                      -->
-<!-- ========================================================================= -->
-<div class="modal fade" id="bulkReminderModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <form action="{{ route('admin.send-incomplete-registration-reminder') }}" method="POST" id="bulkReminderForm" onsubmit="handleFormSubmit(this)">
-                @csrf
-                <div class="modal-header py-3.5 px-4" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                    <h5 class="modal-title fw-bold text-white mb-0 d-flex align-items-center gap-2">
-                        <i class="bx bx-mail-send fs-4"></i>
-                        <span>Send Registration Reminders</span>
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="alert alert-info border-0 bg-info bg-opacity-10 p-3 mb-3.5 rounded-3 text-dark d-flex gap-2.5 align-items-start">
-                        <i class="bx bx-shield-quarter text-info fs-4 flex-shrink-0 mt-0.5"></i>
-                        <div class="fs-7">
-                            <strong>Strict Policy (1 Email per User per Day):</strong> Each user can receive only <strong>one reminder email per day</strong>. Recipients who have already received a reminder today will be <strong>automatically skipped</strong> to prevent duplicate emails.
-                        </div>
-                    </div>
-
-                    <!-- Target Group Selection -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-dark fs-7 mb-2">Select Target Audience <span class="text-danger">*</span></label>
-                        <div class="d-flex flex-column gap-2">
-                            <label class="audience-option p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer" for="target_all">
-                                <input class="form-check-input mt-0" type="radio" name="target" id="target_all" value="all" checked>
-                                <div class="w-100">
-                                    <div class="fw-bold text-dark fs-7">All Incomplete Delegates (Drafts + Signed Up)</div>
-                                    <div class="extra-small text-muted">Total: {{ (method_exists($registrations, 'total') ? $registrations->total() : $registrations->count()) + (method_exists($usersWithoutReg, 'total') ? $usersWithoutReg->total() : $usersWithoutReg->count()) }} recipients</div>
-                                </div>
-                            </label>
-
-                            <label class="audience-option p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer" for="target_drafts">
-                                <input class="form-check-input mt-0" type="radio" name="target" id="target_drafts" value="drafts">
-                                <div class="w-100">
-                                    <div class="fw-bold text-dark fs-7">Only Draft / Incomplete Application Forms</div>
-                                    <div class="extra-small text-muted">Total: {{ method_exists($registrations, 'total') ? $registrations->total() : $registrations->count() }} recipients</div>
-                                </div>
-                            </label>
-
-                            <label class="audience-option p-3 border rounded-3 d-flex align-items-center gap-3 cursor-pointer" for="target_users">
-                                <input class="form-check-input mt-0" type="radio" name="target" id="target_users" value="users">
-                                <div class="w-100">
-                                    <div class="fw-bold text-dark fs-7">Only Signed Up Users (Form Not Started)</div>
-                                    <div class="extra-small text-muted">Total: {{ method_exists($usersWithoutReg, 'total') ? $usersWithoutReg->total() : $usersWithoutReg->count() }} recipients</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Custom Message Field -->
-                    <div class="mb-0">
-                        <label for="bulk_custom_message" class="form-label fw-bold text-dark fs-7 mb-1.5">
-                            Custom Note / Secretariat Message <small class="text-muted fw-normal">(Optional)</small>
-                        </label>
-                        <textarea class="form-control rounded-3" name="custom_message" id="bulk_custom_message" rows="3" placeholder="e.g. Early bird registration is closing soon. Please complete your submission today to lock in discounted fee rates."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light py-2.5 px-4 border-top">
-                    <button type="button" class="btn btn-secondary btn-sm px-3 rounded-2" data-bs-dismiss="modal" id="bulkCancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-warning text-dark btn-sm fw-bold px-3.5 py-1.5 rounded-2 d-flex align-items-center gap-1.5 shadow-sm" id="bulkSubmitBtn">
-                        <i class="bx bx-send"></i>
-                        <span id="bulkSubmitText">Send Reminder Emails</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================================================= -->
-<!-- Modal 2: Single Reminder Modal                                            -->
+<!-- Single Reminder Modal (Individual Only)                                   -->
 <!-- ========================================================================= -->
 <div class="modal fade" id="singleReminderModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -604,19 +513,6 @@
     background-color: #fbbf24 !important;
     color: #000000 !important;
 }
-.audience-option {
-    background-color: #f8fafc;
-    transition: all 0.2s ease;
-}
-.audience-option:hover {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1 !important;
-}
-.audience-option:has(input:checked) {
-    background-color: #fffbeb;
-    border-color: #f59e0b !important;
-    box-shadow: 0 0 0 1px #f59e0b;
-}
 .pagination {
     margin-bottom: 0;
 }
@@ -634,22 +530,6 @@
 
 @push('scripts')
 <script>
-function openBulkReminderModal(targetType) {
-    const modalEl = document.getElementById('bulkReminderModal');
-    if (!modalEl) return;
-
-    if (targetType === 'drafts') {
-        document.getElementById('target_drafts').checked = true;
-    } else if (targetType === 'users') {
-        document.getElementById('target_users').checked = true;
-    } else {
-        document.getElementById('target_all').checked = true;
-    }
-
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-}
-
 function openSingleReminderModal(type, id, name, email, status, sentTime) {
     const modalEl = document.getElementById('singleReminderModal');
     if (!modalEl) return;
@@ -670,14 +550,12 @@ function handleFormSubmit(form) {
     if (submitBtn && !submitBtn.disabled) {
         submitBtn.disabled = true;
         submitBtn.classList.add('disabled');
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1.5" role="status" aria-hidden="true"></span> Sending emails, please wait...';
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1.5" role="status" aria-hidden="true"></span> Sending email, please wait...';
         
-        // Disable cancel & close buttons to avoid closing or double-submission during batch dispatch
         form.querySelectorAll('button').forEach(btn => {
             btn.disabled = true;
         });
 
-        // Hide close button in header
         const closeBtn = form.closest('.modal-content')?.querySelector('.btn-close');
         if (closeBtn) closeBtn.style.pointerEvents = 'none';
     }
