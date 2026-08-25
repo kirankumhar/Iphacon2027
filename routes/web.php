@@ -174,6 +174,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/approved-regis', [AdminRegistrationController::class, 'approvedRegis'])->name('student-approved-regis');
     Route::post('/delete-regis', [AdminRegistrationController::class, 'deleteRegis'])->name('student-regis-delete');
     Route::post('/resend-submission-email', [AdminRegistrationController::class, 'resendSubmissionEmail'])->name('admin.resend-submission-email');
+    Route::post('/send-payment-reminder', [AdminRegistrationController::class, 'sendPaymentReminder'])->name('admin.send-payment-reminder');
 
     // Abstract Submissions Management
     Route::get('/abstracts', [AdminAbstractController::class, 'index'])->name('admin.abstracts.index');
