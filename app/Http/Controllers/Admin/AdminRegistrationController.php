@@ -232,7 +232,28 @@ class AdminRegistrationController extends Controller
             ->paginate(10, ['*'], 'user_page')
             ->withQueryString();
 
-        return view('admin.modules.registration.show-ind-incomplete-registration', compact('registrations', 'usersWithoutReg'));
+        // Fetch all reminders sent today to show status indicators
+        $todayReminders = \App\Models\ActivityLog::whereIn('action', ['ADMIN_SEND_PAYMENT_REMINDER', 'ADMIN_SEND_INCOMPLETE_REMINDER'])
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->get()
+            ->reduce(function ($carry, $log) {
+                $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true);
+                if (is_array($props)) {
+                    $time = $log->created_at->format('h:i A');
+                    if (!empty($props['registration_id'])) {
+                        $carry['reg_' . $props['registration_id']] = $time;
+                    }
+                    if (!empty($props['user_id'])) {
+                        $carry['user_' . $props['user_id']] = $time;
+                    }
+                    if (!empty($props['recipient_email'])) {
+                        $carry['email_' . strtolower(trim($props['recipient_email']))] = $time;
+                    }
+                }
+                return $carry;
+            }, []);
+
+        return view('admin.modules.registration.show-ind-incomplete-registration', compact('registrations', 'usersWithoutReg', 'todayReminders'));
     }
 
     public function internationalApprovedDelegates()
@@ -932,5 +953,301 @@ class AdminRegistrationController extends Controller
 
             return redirect()->back()->with('error', 'Failed to send payment reminder email: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Send Incomplete Registration Reminder Email
+     * STRICT ENFORCEMENT: Max 1 email per user/recipient per day (ek din me ek hi baar mail jayega).
+     */
+    public function sendIncompleteRegistrationReminder(Request $request)
+    {
+        $target = $request->input('target', 'all'); // 'all', 'drafts', 'users', 'single_reg', 'single_user'
+        $customMessage = trim($request->input('custom_message', ''));
+
+        // Fetch all emails, user_ids, and registration_ids that received a reminder today
+        $todayLogs = \App\Models\ActivityLog::whereIn('action', ['ADMIN_SEND_PAYMENT_REMINDER', 'ADMIN_SEND_INCOMPLETE_REMINDER'])
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->get();
+
+        $todaySentEmails = [];
+        $todaySentUserIds = [];
+        $todaySentRegIds = [];
+
+        foreach ($todayLogs as $log) {
+            $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true);
+            if (is_array($props)) {
+                if (!empty($props['recipient_email'])) {
+                    $todaySentEmails[] = strtolower(trim($props['recipient_email']));
+                }
+                if (!empty($props['user_id'])) {
+                    $todaySentUserIds[] = (string)$props['user_id'];
+                }
+                if (!empty($props['registration_id'])) {
+                    $todaySentRegIds[] = (string)$props['registration_id'];
+                }
+            }
+        }
+        $todaySentEmails = array_unique($todaySentEmails);
+        $todaySentUserIds = array_unique($todaySentUserIds);
+        $todaySentRegIds = array_unique($todaySentRegIds);
+
+        // Helper closure to check if user already received reminder today
+        $isSentToday = function ($email, $userId = null, $regId = null) use ($todaySentEmails, $todaySentUserIds, $todaySentRegIds) {
+            $clean = strtolower(trim($email ?? ''));
+            if ($clean !== '' && in_array($clean, $todaySentEmails)) {
+                return true;
+            }
+            if ($userId && in_array((string)$userId, $todaySentUserIds)) {
+                return true;
+            }
+            if ($regId && in_array((string)$regId, $todaySentRegIds)) {
+                return true;
+            }
+            return false;
+        };
+
+        // 1. Handle Single Delegate Registration
+        if ($target === 'single_reg') {
+            $regId = $request->input('registration_id');
+            $reg = Registration::with(['user', 'delegateCategory'])->find($regId);
+            if (!$reg || !$reg->user || empty($reg->user->email)) {
+                return redirect()->back()->with('error', 'Registration or delegate email not found.');
+            }
+
+            $email = strtolower(trim($reg->user->email));
+            if ($isSentToday($email, $reg->user_id, $reg->id)) {
+                return redirect()->back()->with('error', "Today's reminder has already been sent to {$email}. Only 1 reminder email is permitted per user per day.");
+            }
+
+            try {
+                Mail::send('emails.incomplete_registration_reminder', [
+                    'isDraft'        => true,
+                    'userPrefix'     => $reg->user->prefix,
+                    'userName'       => $reg->user->full_name,
+                    'userEmail'      => $reg->user->email,
+                    'delegateType'   => $reg->delegate_type ?? 'Indian',
+                    'categoryName'   => $reg->delegateCategory?->category_name ?? 'Delegate',
+                    'stepCompleted'  => $reg->step_completed ?? 1,
+                    'actionUrl'      => route('login'),
+                    'customMessage'  => $customMessage,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                        ->subject('IPHACON 2027 : Friendly Reminder - Please Complete Your Registration')
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                });
+
+                \App\Models\ActivityLog::record(
+                    'ADMIN_SEND_INCOMPLETE_REMINDER',
+                    "Sent Incomplete Registration Reminder Email to {$email}",
+                    [
+                        'registration_id' => $reg->id,
+                        'user_id'         => $reg->user_id,
+                        'recipient_email' => $email,
+                        'custom_message'  => $customMessage,
+                        'type'            => 'draft'
+                    ],
+                    \Illuminate\Support\Facades\Auth::guard('admin')->user()
+                );
+
+                return redirect()->back()->with('success', "Registration reminder email sent successfully to {$email}!");
+            } catch (\Exception $e) {
+                Log::error('Single draft reminder email failed: ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Failed to send email: ' . $e->getMessage());
+            }
+        }
+
+        // 2. Handle Single Signed-Up User
+        if ($target === 'single_user') {
+            $userId = $request->input('user_id');
+            $user = \App\Models\User::find($userId);
+            if (!$user || empty($user->email)) {
+                return redirect()->back()->with('error', 'User or user email not found.');
+            }
+
+            $email = strtolower(trim($user->email));
+            if ($isSentToday($email, $user->id, null)) {
+                return redirect()->back()->with('error', "Today's reminder has already been sent to {$email}. Only 1 reminder email is permitted per user per day.");
+            }
+
+            try {
+                Mail::send('emails.incomplete_registration_reminder', [
+                    'isDraft'        => false,
+                    'userPrefix'     => $user->prefix,
+                    'userName'       => $user->full_name,
+                    'userEmail'      => $user->email,
+                    'delegateType'   => $user->delegate_type ?? 'Indian',
+                    'categoryName'   => null,
+                    'stepCompleted'  => null,
+                    'actionUrl'      => route('login'),
+                    'customMessage'  => $customMessage,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                        ->subject('IPHACON 2027 : Welcome - Complete Your Delegate Registration')
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                });
+
+                \App\Models\ActivityLog::record(
+                    'ADMIN_SEND_INCOMPLETE_REMINDER',
+                    "Sent Registration Reminder Email to Signed-Up User {$email}",
+                    [
+                        'user_id'         => $user->id,
+                        'recipient_email' => $email,
+                        'custom_message'  => $customMessage,
+                        'type'            => 'signed_up_user'
+                    ],
+                    \Illuminate\Support\Facades\Auth::guard('admin')->user()
+                );
+
+                return redirect()->back()->with('success', "Registration reminder email sent successfully to {$email}!");
+            } catch (\Exception $e) {
+                Log::error('Single user reminder email failed: ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Failed to send email: ' . $e->getMessage());
+            }
+        }
+
+        // 3. Handle Bulk Sending ('all', 'drafts', 'users')
+        set_time_limit(0);
+
+        $recipients = collect();
+
+        if (in_array($target, ['all', 'drafts'])) {
+            $draftRegs = Registration::with(['user', 'delegateCategory'])
+                ->where(function ($q) {
+                    $q->where('status', 'Draft')
+                      ->orWhere('step_completed', '<', 4)
+                      ->orWhereNull('status');
+                })
+                ->where('is_deleted', '0')
+                ->get();
+
+            foreach ($draftRegs as $reg) {
+                if ($reg->user && !empty($reg->user->email) && filter_var($reg->user->email, FILTER_VALIDATE_EMAIL)) {
+                    $email = strtolower(trim($reg->user->email));
+                    $recipients->put($email, [
+                        'type'           => 'draft',
+                        'registration'   => $reg,
+                        'user'           => $reg->user,
+                        'userPrefix'     => $reg->user->prefix,
+                        'userName'       => $reg->user->full_name,
+                        'userEmail'      => $email,
+                        'userId'         => $reg->user_id,
+                        'regId'          => $reg->id,
+                        'delegateType'   => $reg->delegate_type ?? 'Indian',
+                        'categoryName'   => $reg->delegateCategory?->category_name ?? 'Delegate',
+                        'stepCompleted'  => $reg->step_completed ?? 1,
+                    ]);
+                }
+            }
+        }
+
+        if (in_array($target, ['all', 'users'])) {
+            $registeredUserIds = Registration::where('is_deleted', '0')->pluck('user_id')->toArray();
+            $users = \App\Models\User::whereNotIn('id', $registeredUserIds)->get();
+
+            foreach ($users as $user) {
+                if (!empty($user->email) && filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+                    $email = strtolower(trim($user->email));
+                    if (!$recipients->has($email)) {
+                        $recipients->put($email, [
+                            'type'           => 'signed_up_user',
+                            'registration'   => null,
+                            'user'           => $user,
+                            'userPrefix'     => $user->prefix,
+                            'userName'       => $user->full_name,
+                            'userEmail'      => $email,
+                            'userId'         => $user->id,
+                            'regId'          => null,
+                            'delegateType'   => $user->delegate_type ?? 'Indian',
+                            'categoryName'   => null,
+                            'stepCompleted'  => null,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if ($recipients->isEmpty()) {
+            return redirect()->back()->with('error', 'No eligible recipients found to send reminders.');
+        }
+
+        $sentCount = 0;
+        $skippedCount = 0;
+        $failedCount = 0;
+        $adminUser = \Illuminate\Support\Facades\Auth::guard('admin')->user();
+
+        foreach ($recipients as $email => $item) {
+            // STRICT CHECK: Skip if already sent today
+            if ($isSentToday($email, $item['userId'] ?? null, $item['regId'] ?? null)) {
+                $skippedCount++;
+                continue;
+            }
+
+            try {
+                $isDraft = ($item['type'] === 'draft');
+                $subject = $isDraft 
+                    ? 'IPHACON 2027 : Friendly Reminder - Please Complete Your Registration'
+                    : 'IPHACON 2027 : Welcome - Complete Your Delegate Registration';
+
+                Mail::send('emails.incomplete_registration_reminder', [
+                    'isDraft'        => $isDraft,
+                    'userPrefix'     => $item['userPrefix'],
+                    'userName'       => $item['userName'],
+                    'userEmail'      => $email,
+                    'delegateType'   => $item['delegateType'],
+                    'categoryName'   => $item['categoryName'],
+                    'stepCompleted'  => $item['stepCompleted'],
+                    'actionUrl'      => route('login'),
+                    'customMessage'  => $customMessage,
+                ], function ($message) use ($email, $subject) {
+                    $message->to($email)
+                        ->subject($subject)
+                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+                });
+
+                \App\Models\ActivityLog::record(
+                    'ADMIN_SEND_INCOMPLETE_REMINDER',
+                    "Sent Bulk Incomplete Registration Reminder Email to {$email}",
+                    [
+                        'registration_id' => $item['registration']?->id,
+                        'user_id'         => $item['user']?->id,
+                        'recipient_email' => $email,
+                        'custom_message'  => $customMessage,
+                        'type'            => $item['type']
+                    ],
+                    $adminUser
+                );
+
+                // Add to sent tracking for this batch
+                $todaySentEmails[] = $email;
+                if (!empty($item['userId'])) {
+                    $todaySentUserIds[] = (string)$item['userId'];
+                }
+                if (!empty($item['regId'])) {
+                    $todaySentRegIds[] = (string)$item['regId'];
+                }
+                $sentCount++;
+            } catch (\Exception $e) {
+                Log::error("Failed sending reminder email to {$email}: " . $e->getMessage());
+                $failedCount++;
+            }
+        }
+
+        $msgParts = [];
+        if ($sentCount > 0) {
+            $msgParts[] = "Successfully sent reminder emails to {$sentCount} recipient(s).";
+        }
+        if ($skippedCount > 0) {
+            $msgParts[] = "{$skippedCount} recipient(s) skipped (already sent today - max 1 email/day rule).";
+        }
+        if ($failedCount > 0) {
+            $msgParts[] = "{$failedCount} recipient(s) failed.";
+        }
+
+        $finalMsg = implode(' ', $msgParts);
+        if ($sentCount === 0 && $skippedCount > 0) {
+            return redirect()->back()->with('error', "All {$skippedCount} selected recipient(s) have already received a reminder email today. (Max 1 email per user per day).");
+        }
+
+        return redirect()->back()->with('success', $finalMsg ?: 'Reminder emails processed.');
     }
 }
