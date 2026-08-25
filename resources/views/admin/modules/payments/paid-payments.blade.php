@@ -40,11 +40,20 @@
                             <tr>
                                 <td class="ps-3 fw-medium text-muted">{{ $loop->iteration }}</td>
                                 <td>
-                                    <h6 class="mb-0 fw-semibold text-dark" style="font-size: 0.88rem;">
-                                        {{ $pay->registration?->user?->prefix }} {{ $pay->registration?->user?->full_name ?? 'N/A' }}
+                                    @php
+                                        $regTarget = $pay->registration?->registration_number ?? ($pay->registration?->acknowledgement_id ?? $pay->registration?->id);
+                                    @endphp
+                                    <h6 class="mb-0 fw-semibold" style="font-size: 0.88rem;">
+                                        @if($regTarget)
+                                            <a href="{{ route('show-registration-details', $regTarget) }}" class="text-dark text-decoration-none hover-primary">
+                                                {{ $pay->registration?->user?->prefix }} {{ $pay->registration?->user?->full_name ?? 'N/A' }}
+                                            </a>
+                                        @else
+                                            <span class="text-dark">{{ $pay->registration?->user?->prefix }} {{ $pay->registration?->user?->full_name ?? 'N/A' }}</span>
+                                        @endif
                                     </h6>
                                     <small class="text-muted extra-small font-monospace">
-                                        <i class="bx bx-hash me-0.5 text-muted"></i>{{ $pay->registration?->registration_number ?? 'N/A' }}
+                                        <i class="bx bx-hash me-0.5 text-muted"></i>{{ $pay->registration?->registration_number ?? ($pay->registration?->acknowledgement_id ?? 'N/A') }}
                                     </small>
                                 </td>
                                 <td>
@@ -111,4 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+@endpush
+
+@push('styles')
+<style>
+.hover-primary:hover {
+    color: #696cff !important;
+    text-decoration: underline !important;
+}
+</style>
 @endpush
