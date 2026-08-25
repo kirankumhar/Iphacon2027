@@ -438,6 +438,28 @@
 
                         <!-- Action Buttons Section -->
                         <div class="d-flex flex-column gap-2">
+                            @if($delegate->status !== 'Approved')
+                                @if(!empty($reminderSentTime))
+                                    <!-- Reminder Sent Today Button -->
+                                    <button type="button" class="btn btn-light border text-muted w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#paymentReminderModal" style="font-size: 0.825rem;" title="Reminder already sent today at {{ $reminderSentTime }}">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="bx bx-check-double fs-5 text-success"></i>
+                                            <span>Reminder Sent Today ({{ $reminderSentTime }})</span>
+                                        </span>
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 extra-small">Sent</span>
+                                    </button>
+                                @else
+                                    <!-- Send Payment Reminder Button -->
+                                    <button type="button" class="btn btn-outline-warning text-dark w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#paymentReminderModal" style="font-size: 0.825rem;">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="bx bx-bell fs-5 text-warning"></i>
+                                            <span>Send Payment Reminder</span>
+                                        </span>
+                                        <i class="bx bx-chevron-right text-muted"></i>
+                                    </button>
+                                @endif
+                            @endif
+
                             <!-- Send / Resend Confirmation Email Button -->
                             <button type="button" class="btn btn-outline-primary w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#resendEmailModal" style="font-size: 0.825rem;">
                                 <span class="d-flex align-items-center gap-2">
@@ -570,6 +592,88 @@
                     <button type="submit" class="btn btn-sm btn-primary fw-bold px-3 shadow-xs">
                         <i class="bx bx-send me-1"></i> Send Email Now
                     </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Send Payment Reminder Modal -->
+<div class="modal fade" id="paymentReminderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <form action="{{ route('admin.send-payment-reminder') }}" method="POST">
+                @csrf
+                <input type="hidden" name="registration_id" value="{{ $delegate->id }}">
+                <input type="hidden" name="acknowledgement_id" value="{{ $delegate->acknowledgement_id }}">
+
+                <div class="modal-header bg-warning bg-opacity-15 py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar avatar-sm bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                            <i class="bx bx-bell fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0 fs-6">Send Payment Reminder</h5>
+                            <span class="extra-small text-muted">Notify delegate to complete pending fee payment</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body py-3.5">
+                    @if(!empty($reminderSentTime))
+                    <div class="alert alert-warning border-warning" role="alert">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bx bx-error-circle fs-5 text-warning flex-shrink-0 mt-0.5"></i>
+                            <div class="extra-small">
+                                <strong>Reminder Already Sent Today:</strong> An email was already sent to this delegate today at <strong>{{ $reminderSentTime }}</strong>. As per policy, only <strong>1 email per user per day</strong> is permitted.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="extra-small text-muted">Delegate:</span>
+                            <span class="fw-bold text-dark extra-small">{{ $delegate->user?->prefix }} {{ $delegate->user?->full_name ?? 'Delegate' }}</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="extra-small text-muted">Ack ID:</span>
+                            <span class="badge bg-secondary font-monospace extra-small">{{ $delegate->acknowledgement_id ?? 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="extra-small text-muted">Pending Amount:</span>
+                            <span class="fw-bold text-danger extra-small">₹{{ number_format($delegate->total_amount, 2) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold extra-small text-dark">Recipient Email Address <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light"><i class="bx bx-envelope text-muted"></i></span>
+                            <input type="email" name="email" class="form-control" value="{{ $delegate->user?->email }}" required placeholder="Enter delegate email address">
+                        </div>
+                        <small class="text-muted extra-small mt-1 d-block">The payment reminder email will be delivered to this address.</small>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold extra-small text-dark">Custom Note / Remark <span class="text-muted fw-normal">(Optional)</span></label>
+                        <textarea name="custom_message" class="form-control form-control-sm" rows="2" placeholder="e.g. Kindly complete your pending payment to secure early bird rates."></textarea>
+                        <small class="text-muted extra-small mt-1 d-block">This note will appear prominently in the reminder email.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light border-top py-2.5">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @if(!empty($reminderSentTime))
+                        <button type="button" class="btn btn-sm btn-secondary opacity-50 px-3 shadow-xs" disabled>
+                            <i class="bx bx-block me-1"></i> Already Sent Today ({{ $reminderSentTime }})
+                        </button>
+                    @else
+                        <button type="submit" class="btn btn-sm btn-warning text-dark fw-bold px-3 shadow-xs">
+                            <i class="bx bx-send me-1"></i> Send Reminder Email
+                        </button>
+                    @endif
                 </div>
             </form>
         </div>
