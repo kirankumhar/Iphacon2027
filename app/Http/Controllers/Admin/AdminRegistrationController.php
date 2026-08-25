@@ -185,20 +185,52 @@ class AdminRegistrationController extends Controller
         return view('admin.modules.registration.show-ind-approved-registration', compact('registrations'));
     }
 
-    public function indianIncompleteDelegates()
+    public function indianIncompleteDelegates(Request $request)
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+        $draftSearch = trim($request->input('draft_search', ''));
+        $userSearch = trim($request->input('user_search', ''));
+
+        $registrationsQuery = Registration::with(['user', 'delegateCategory', 'latestPayment'])
             ->where(function ($q) {
                 $q->where('status', 'Draft')
                   ->orWhere('step_completed', '<', 4)
                   ->orWhereNull('status');
             })
-            ->where('is_deleted', '0')
-            ->latest()
-            ->get();
+            ->where('is_deleted', '0');
+
+        if (!empty($draftSearch)) {
+            $registrationsQuery->where(function ($q) use ($draftSearch) {
+                $q->whereHas('user', function ($uq) use ($draftSearch) {
+                    $uq->where('full_name', 'like', "%{$draftSearch}%")
+                       ->orWhere('email', 'like', "%{$draftSearch}%")
+                       ->orWhere('mobile_number', 'like', "%{$draftSearch}%");
+                })
+                ->orWhereHas('delegateCategory', function ($cq) use ($draftSearch) {
+                    $cq->where('category_name', 'like', "%{$draftSearch}%");
+                })
+                ->orWhere('delegate_type', 'like', "%{$draftSearch}%");
+            });
+        }
+
+        $registrations = $registrationsQuery->latest()
+            ->paginate(10, ['*'], 'draft_page')
+            ->withQueryString();
 
         $registeredUserIds = Registration::where('is_deleted', '0')->pluck('user_id')->toArray();
-        $usersWithoutReg = \App\Models\User::whereNotIn('id', $registeredUserIds)->latest()->get();
+        $usersWithoutRegQuery = \App\Models\User::whereNotIn('id', $registeredUserIds);
+
+        if (!empty($userSearch)) {
+            $usersWithoutRegQuery->where(function ($q) use ($userSearch) {
+                $q->where('full_name', 'like', "%{$userSearch}%")
+                   ->orWhere('email', 'like', "%{$userSearch}%")
+                   ->orWhere('mobile_number', 'like', "%{$userSearch}%")
+                   ->orWhere('delegate_type', 'like', "%{$userSearch}%");
+            });
+        }
+
+        $usersWithoutReg = $usersWithoutRegQuery->latest()
+            ->paginate(10, ['*'], 'user_page')
+            ->withQueryString();
 
         return view('admin.modules.registration.show-ind-incomplete-registration', compact('registrations', 'usersWithoutReg'));
     }

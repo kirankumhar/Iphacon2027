@@ -9,10 +9,10 @@
         </h5>
         <div class="d-flex gap-2">
             <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-7 fw-bold shadow-xs">
-                Draft Forms: {{ $registrations->count() }}
+                Draft Forms: {{ method_exists($registrations, 'total') ? $registrations->total() : $registrations->count() }}
             </span>
             <span class="badge bg-secondary text-white rounded-pill px-3 py-2 fs-7 fw-bold shadow-xs">
-                Signed Up (Not Started): {{ $usersWithoutReg->count() }}
+                Signed Up (Not Started): {{ method_exists($usersWithoutReg, 'total') ? $usersWithoutReg->total() : $usersWithoutReg->count() }}
             </span>
         </div>
     </div>
@@ -34,11 +34,24 @@
             <h6 class="mb-0 fw-bold text-dark">
                 <i class="bx bx-edit text-warning me-1.5"></i>Draft / Incomplete Application Forms
             </h6>
-            <div class="search-box" style="max-width: 300px; width: 100%;">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>
-                    <input type="text" id="draftSearchInput" class="form-control bg-light border-start-0" placeholder="Search draft by name, email...">
-                </div>
+            <div class="search-box" style="max-width: 320px; width: 100%;">
+                <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
+                    @if(request('user_page'))
+                        <input type="hidden" name="user_page" value="{{ request('user_page') }}">
+                    @endif
+                    @if(request('user_search'))
+                        <input type="hidden" name="user_search" value="{{ request('user_search') }}">
+                    @endif
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>
+                        <input type="text" name="draft_search" id="draftSearchInput" class="form-control bg-light border-start-0" placeholder="Search draft by name, email..." value="{{ request('draft_search') }}">
+                        @if(request('draft_search'))
+                            <a href="{{ request()->fullUrlWithQuery(['draft_search' => null, 'draft_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear filter">
+                                <i class="bx bx-x"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -57,7 +70,7 @@
                     <tbody>
                         @forelse ($registrations as $index => $reg)
                             <tr>
-                                <td class="ps-3 fw-bold text-muted">{{ $index + 1 }}</td>
+                                <td class="ps-3 fw-bold text-muted">{{ (method_exists($registrations, 'firstItem') && $registrations->firstItem()) ? ($registrations->firstItem() + $index) : ($index + 1) }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-md flex-shrink-0" style="width: 40px; height: 40px;">
@@ -105,7 +118,7 @@
                                 <td colspan="5" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bx bx-check-circle fs-1 mb-2 text-success"></i>
-                                        <p class="mb-0 fw-semibold">No draft / incomplete form submissions.</p>
+                                        <p class="mb-0 fw-semibold">No draft / incomplete form submissions found.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -114,6 +127,18 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination Footer for Draft Table -->
+        @if(method_exists($registrations, 'hasPages') && $registrations->hasPages())
+            <div class="card-footer bg-white py-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="extra-small text-muted">
+                    Showing <strong>{{ $registrations->firstItem() }}</strong> to <strong>{{ $registrations->lastItem() }}</strong> of <strong>{{ $registrations->total() }}</strong> entries
+                </div>
+                <div>
+                    {{ $registrations->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Card 2: Registered Users who haven't started registration form -->
@@ -122,11 +147,24 @@
             <h6 class="mb-0 fw-bold text-dark">
                 <i class="bx bx-user-plus text-secondary me-1.5"></i>Signed Up Users (Form Not Started)
             </h6>
-            <div class="search-box" style="max-width: 300px; width: 100%;">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>
-                    <input type="text" id="userSearchInput" class="form-control bg-light border-start-0" placeholder="Search user by name, email...">
-                </div>
+            <div class="search-box" style="max-width: 320px; width: 100%;">
+                <form method="GET" action="{{ route('indian-incomplete-delegates') }}">
+                    @if(request('draft_page'))
+                        <input type="hidden" name="draft_page" value="{{ request('draft_page') }}">
+                    @endif
+                    @if(request('draft_search'))
+                        <input type="hidden" name="draft_search" value="{{ request('draft_search') }}">
+                    @endif
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0"><i class="bx bx-search text-muted"></i></span>
+                        <input type="text" name="user_search" id="userSearchInput" class="form-control bg-light border-start-0" placeholder="Search user by name, email..." value="{{ request('user_search') }}">
+                        @if(request('user_search'))
+                            <a href="{{ request()->fullUrlWithQuery(['user_search' => null, 'user_page' => null]) }}" class="btn btn-outline-secondary btn-sm" title="Clear filter">
+                                <i class="bx bx-x"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -145,7 +183,7 @@
                     <tbody>
                         @forelse ($usersWithoutReg as $index => $u)
                             <tr>
-                                <td class="ps-3 fw-bold text-muted">{{ $index + 1 }}</td>
+                                <td class="ps-3 fw-bold text-muted">{{ (method_exists($usersWithoutReg, 'firstItem') && $usersWithoutReg->firstItem()) ? ($usersWithoutReg->firstItem() + $index) : ($index + 1) }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar avatar-sm rounded-circle bg-label-primary text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.85rem;">
@@ -195,36 +233,32 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination Footer for Signed Up Users Table -->
+        @if(method_exists($usersWithoutReg, 'hasPages') && $usersWithoutReg->hasPages())
+            <div class="card-footer bg-white py-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="extra-small text-muted">
+                    Showing <strong>{{ $usersWithoutReg->firstItem() }}</strong> to <strong>{{ $usersWithoutReg->lastItem() }}</strong> of <strong>{{ $usersWithoutReg->total() }}</strong> entries
+                </div>
+                <div>
+                    {{ $usersWithoutReg->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Search for Draft table
-    const draftSearch = document.getElementById('draftSearchInput');
-    const draftRows = document.querySelectorAll('#draftTable tbody tr');
-    if (draftSearch) {
-        draftSearch.addEventListener('keyup', function() {
-            const query = this.value.toLowerCase().trim();
-            draftRows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
-            });
-        });
-    }
-
-    // Search for User table
-    const userSearch = document.getElementById('userSearchInput');
-    const userRows = document.querySelectorAll('#usersTable tbody tr');
-    if (userSearch) {
-        userSearch.addEventListener('keyup', function() {
-            const query = this.value.toLowerCase().trim();
-            userRows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
-            });
-        });
-    }
-});
-</script>
+@push('styles')
+<style>
+.pagination {
+    margin-bottom: 0;
+}
+.pagination .page-item .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.65rem;
+}
+</style>
 @endpush
