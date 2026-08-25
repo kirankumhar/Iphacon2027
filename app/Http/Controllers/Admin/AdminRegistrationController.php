@@ -295,7 +295,28 @@ class AdminRegistrationController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('admin.modules.payments.pending-payments', compact('payments', 'pendingRegistrations'));
+        // Fetch all reminders sent today to show status indicators
+        $todayReminders = \App\Models\ActivityLog::where('action', 'ADMIN_SEND_PAYMENT_REMINDER')
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->get()
+            ->reduce(function ($carry, $log) {
+                $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true);
+                if (is_array($props)) {
+                    $time = $log->created_at->format('h:i A');
+                    if (!empty($props['registration_id'])) {
+                        $carry['reg_' . $props['registration_id']] = $time;
+                    }
+                    if (!empty($props['payment_id'])) {
+                        $carry['pay_' . $props['payment_id']] = $time;
+                    }
+                    if (!empty($props['recipient_email'])) {
+                        $carry['email_' . strtolower(trim($props['recipient_email']))] = $time;
+                    }
+                }
+                return $carry;
+            }, []);
+
+        return view('admin.modules.payments.pending-payments', compact('payments', 'pendingRegistrations', 'todayReminders'));
     }
 
     public function failedPayments()
@@ -562,7 +583,23 @@ class AdminRegistrationController extends Controller
               ->orWhere('id', $id);
         })->latest('created_at')->firstOrFail();
 
-        return view('admin.modules.registration.show-registration-details', compact('delegate'));
+        // Check if reminder was already sent today for this delegate
+        $todayReminder = \App\Models\ActivityLog::where('action', 'ADMIN_SEND_PAYMENT_REMINDER')
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->get()
+            ->first(function ($log) use ($delegate) {
+                $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true);
+                if (empty($props)) return false;
+                $email = strtolower(trim($delegate->user?->email ?? ''));
+                $propEmail = strtolower(trim($props['recipient_email'] ?? ''));
+                return (!empty($email) && $email === $propEmail)
+                    || (!empty($props['registration_id']) && (string)$props['registration_id'] === (string)$delegate->id)
+                    || (!empty($delegate->user_id) && !empty($props['user_id']) && (string)$props['user_id'] === (string)$delegate->user_id);
+            });
+
+        $reminderSentTime = $todayReminder ? $todayReminder->created_at->format('h:i A') : null;
+
+        return view('admin.modules.registration.show-registration-details', compact('delegate', 'reminderSentTime'));
     }
 
     public function resendSubmissionEmail(Request $request)
@@ -716,6 +753,152 @@ class AdminRegistrationController extends Controller
             ]);
 
             return redirect()->back()->with('error', 'Failed to send email: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send Payment Reminder / Complete Registration Email to Delegate
+     * Enforces strict limit: Max 1 email per user/email per day.
+     */
+    public function sendPaymentReminder(Request $request)
+    {
+        $regId = $request->input('registration_id');
+        $payId = $request->input('payment_id');
+        $ackNo = $request->input('acknowledgement_id');
+        $customEmail = trim($request->input('email') ?? '');
+        $customMessage = trim($request->input('custom_message') ?? '');
+
+        $registration = null;
+        $payment = null;
+
+        if ($regId) {
+            $registration = Registration::with(['user', 'delegateCategory', 'country', 'state', 'latestPayment', 'payments'])
+                ->find($regId);
+        } elseif ($payId) {
+            $payment = \App\Models\Payment::with(['registration.user', 'registration.delegateCategory', 'registration.country', 'registration.state'])
+                ->find($payId);
+            if ($payment) {
+                $registration = $payment->registration;
+            }
+        } elseif ($ackNo) {
+            $registration = Registration::with(['user', 'delegateCategory', 'country', 'state', 'latestPayment', 'payments'])
+                ->where('acknowledgement_id', $ackNo)
+                ->orWhere('registration_number', $ackNo)
+                ->first();
+        }
+
+        if (!$registration && !$payment) {
+            return redirect()->back()->with('error', 'Registration or Payment record not found.');
+        }
+
+        $recipientEmail = !empty($customEmail) ? $customEmail : ($registration?->user?->email ?? $payment?->registration?->user?->email);
+
+        if (empty($recipientEmail)) {
+            return redirect()->back()->with('error', 'No recipient email found. Please provide a valid email address.');
+        }
+
+        if (!filter_var($recipientEmail, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->with('error', 'Invalid email address provided.');
+        }
+
+        // =========================================================================
+        // STRICT CHECK: Only 1 reminder email per user/recipient per day
+        // =========================================================================
+        $cleanEmail = strtolower(trim($recipientEmail));
+        $alreadySentToday = \App\Models\ActivityLog::where('action', 'ADMIN_SEND_PAYMENT_REMINDER')
+            ->whereDate('created_at', \Carbon\Carbon::today())
+            ->get()
+            ->first(function ($log) use ($registration, $payment, $cleanEmail) {
+                $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true);
+                if (empty($props)) return false;
+
+                if (!empty($props['recipient_email']) && strtolower(trim($props['recipient_email'])) === $cleanEmail) {
+                    return true;
+                }
+
+                if ($registration && !empty($props['registration_id']) && (string)$props['registration_id'] === (string)$registration->id) {
+                    return true;
+                }
+
+                if ($registration && !empty($registration->user_id) && !empty($props['user_id']) && (string)$props['user_id'] === (string)$registration->user_id) {
+                    return true;
+                }
+
+                if ($payment && !empty($props['payment_id']) && (string)$props['payment_id'] === (string)$payment->id) {
+                    return true;
+                }
+
+                return false;
+            });
+
+        if ($alreadySentToday) {
+            $sentTime = $alreadySentToday->created_at->format('h:i A');
+            return redirect()->back()->with('error', "Today's reminder has already been sent to {$recipientEmail} at {$sentTime}. Only 1 reminder email is allowed per user per day (ek user ko ek din me sirf ek hi mail bheja ja sakta hai).");
+        }
+
+        try {
+            $userPrefix = $registration?->user?->prefix ?? '';
+            $userName = $registration?->user?->full_name ?? ($registration?->user?->name ?? 'Delegate');
+            $acknowledgementId = $registration?->acknowledgement_id ?? ($payment?->registration?->acknowledgement_id ?? 'N/A');
+            $categoryName = $registration?->delegateCategory?->category_name ?? ($payment?->registration?->delegateCategory?->category_name ?? 'Delegate');
+            $delegateType = $registration?->delegate_type ?? ($payment?->registration?->delegate_type ?? 'Indian');
+            $paymentStatus = $payment?->payment_status ?: ($registration?->status ?? 'Pending Payment');
+
+            // Calculate pending amount
+            $pendingAmount = $registration?->total_amount ?: ($payment?->total_amount ?: 0);
+            if (!$pendingAmount && $registration && method_exists($registration, 'calculateTotalAmount')) {
+                $pendingAmount = $registration->calculateTotalAmount();
+            }
+
+            $currencySymbol = ($delegateType === 'International' || $delegateType === 'Foreigner') ? '$' : '₹';
+            $paymentUrl = route('login');
+
+            Mail::send('emails.payment_reminder', [
+                'registration'      => $registration,
+                'payment'           => $payment,
+                'userPrefix'        => $userPrefix,
+                'userName'          => $userName,
+                'acknowledgementId' => $acknowledgementId,
+                'categoryName'      => $categoryName,
+                'delegateType'      => $delegateType,
+                'paymentStatus'     => $paymentStatus,
+                'pendingAmount'     => $pendingAmount,
+                'currencySymbol'    => $currencySymbol,
+                'paymentUrl'        => $paymentUrl,
+                'customMessage'     => $customMessage,
+            ], function ($message) use ($recipientEmail, $acknowledgementId) {
+                $message->to($recipientEmail)
+                    ->subject('IPHACON 2027 : Pending Payment Reminder / Complete Your Registration (' . ($acknowledgementId ?: 'IPHACON') . ')')
+                    ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
+            });
+
+            // Record Activity Log
+            \App\Models\ActivityLog::record(
+                'ADMIN_SEND_PAYMENT_REMINDER',
+                "Sent Payment Reminder Email to {$recipientEmail}. Ack ID: {$acknowledgementId}",
+                [
+                    'user_id'           => $registration?->user_id,
+                    'registration_id'   => $registration?->id,
+                    'payment_id'        => $payment?->id,
+                    'acknowledgement_id'=> $acknowledgementId,
+                    'recipient_email'   => $recipientEmail,
+                    'pending_amount'    => $pendingAmount,
+                    'custom_message'    => $customMessage,
+                ],
+                \Illuminate\Support\Facades\Auth::guard('admin')->user()
+            );
+
+            return redirect()->back()->with('success', "Payment reminder email successfully sent to {$recipientEmail}!");
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send payment reminder email: ' . $e->getMessage(), [
+                'registration_id' => $registration?->id,
+                'payment_id' => $payment?->id,
+                'email' => $recipientEmail,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to send payment reminder email: ' . $e->getMessage());
         }
     }
 }
