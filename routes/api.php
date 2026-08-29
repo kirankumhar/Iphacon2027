@@ -8,8 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/response', [App\Http\Controllers\PaymentController::class, 'response'])->name('response');
-
-
 Route::get('/delegate', [App\Http\Controllers\RegistrationController::class, 'getDelegateCount'])->name('delegate');
-
 Route::get('/workshop', [App\Http\Controllers\RegistrationController::class, 'getWorkshopCount'])->name('workshop');

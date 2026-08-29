@@ -23,3 +23,18 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+
+<IfModule mod_headers.c>
+    # Suppress Version and Technology Disclosure
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    # Clickjacking Protection (Disallow third-party framing)
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # MIME-Type Sniffing Protection
+    Header always set X-Content-Type-Options "nosniff"
+    # Cross-Site Scripting (XSS) Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

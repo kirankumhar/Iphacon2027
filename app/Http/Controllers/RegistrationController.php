@@ -239,7 +239,7 @@ class RegistrationController extends Controller
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
             'id_proof_type' => $isDraft ? 'nullable|string' : 'required|string',
             'id_proof_number' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
-            'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : ($isDraft ? 'nullable|file|mimes:jpg,jpeg,pdf|max:2500' : 'required|file|mimes:jpg,jpeg,pdf|max:2500')
+            'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : ($isDraft ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : 'required|file|mimes:pdf,jpg,jpeg,png|max:200')
         ];
 
         $messages = [
@@ -253,6 +253,10 @@ class RegistrationController extends Controller
             'pin_code.regex' => 'Indian PIN Code must be exactly 6 digits.',
             'pin_code.max' => 'International Zip Code must not exceed 10 characters.',
             'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
+            'id_proof_document.required' => 'Please upload your ID proof document to proceed.',
+            'id_proof_document.file' => 'ID proof document must be a valid file.',
+            'id_proof_document.mimes' => 'ID proof document must be a PDF, JPG, JPEG, or PNG file.',
+            'id_proof_document.max' => 'ID proof document size must not exceed 200KB.',
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
         ];
 

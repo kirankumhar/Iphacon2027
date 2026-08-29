@@ -378,13 +378,13 @@
                         </div>
 
                         <small class="text-muted extra-small d-block mt-3">
-                            JPG, JPEG or PDF • Max size: 2,500KB • Clear, readable document only
+                            PDF, JPG, JPEG or PNG • Max size: 200KB • Clear, readable document only
                         </small>
                     </div>
                     <!-- File input positioned off-screen but still focusable -->
                     <input type="file" id="id_proof_document" name="id_proof_document"
                         style="position: absolute; left: -9999px; opacity: 0;"
-                        accept="image/jpeg,image/jpg,application/pdf"
+                        accept="application/pdf,image/jpeg,image/jpg,image/png"
                         {{ $registration->id_proof_document_path ? '' : 'required' }}>
                     @error('id_proof_document')
                     <div class="text-danger extra-small mt-2">{{ $message }}</div>
@@ -450,6 +450,18 @@
                 const file = this.files[0];
                 if (!file) return;
 
+                const allowedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
+                const allowedImageExts = [".jpg", ".jpeg", ".png"];
+                const fileName = file.name.toLowerCase();
+                const isValidExt = allowedImageExts.some(ext => fileName.endsWith(ext));
+                const isValidType = allowedImageTypes.includes(file.type);
+
+                if (!isValidExt && !isValidType) {
+                    alert("Profile photo must be a JPG, JPEG, or PNG file!");
+                    this.value = "";
+                    return;
+                }
+
                 if (file.size > 500 * 1024) {
                     alert("Profile photo size must be less than 500KB!");
                     this.value = "";
@@ -477,13 +489,25 @@
                 const file = this.files[0];
                 if (!file) return;
 
-                if (file.size > 2500 * 1024) {
-                    alert("Document size must be less than 2,500KB (2.5MB)!");
+                const allowedDocTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+                const allowedDocExts = [".pdf", ".jpg", ".jpeg", ".png"];
+                const fileName = file.name.toLowerCase();
+                const isValidExt = allowedDocExts.some(ext => fileName.endsWith(ext));
+                const isValidType = allowedDocTypes.includes(file.type);
+
+                if (!isValidExt && !isValidType) {
+                    alert("ID Proof document must be a PDF, JPG, JPEG, or PNG file!");
                     this.value = "";
                     return;
                 }
 
-                const isPdf = file.type === "application/pdf" || file.name.endsWith(".pdf");
+                if (file.size > 200 * 1024) {
+                    alert("Document size must not exceed 200KB!");
+                    this.value = "";
+                    return;
+                }
+
+                const isPdf = file.type === "application/pdf" || fileName.endsWith(".pdf");
 
                 if (container) container.style.display = "block";
                 if (uploadPrompt) uploadPrompt.style.display = "none";

@@ -197,7 +197,7 @@
                                 <input type="file" class="form-control @error('id_proof_document') is-invalid @enderror"
                                        id="id_proof_document" name="id_proof_document"
                                        accept=".pdf,.jpg,.jpeg,.png" required>
-                                <small class="text-muted">Upload ID proof document (PDF, JPG, JPEG, PNG - Max 2MB)</small>
+                                <small class="text-muted">Upload ID proof document (PDF, JPG, JPEG, PNG - Max 200KB)</small>
                                 @error('id_proof_document')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

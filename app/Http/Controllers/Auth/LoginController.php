@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -17,14 +18,34 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $throttleKey = Str::transliterate(Str::lower($request->input('email', '')).'|'.$request->ip());
+        $maxAttempts = 5;
+        $decaySeconds = 3600; // 1 hour lockout
+
+        // Max 5 attempts allowed before lockout (1 hour)
+        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $timeText = $seconds >= 60 ? (ceil($seconds / 60).' minute(s)') : ($seconds.' second(s)');
+
+            \App\Models\ActivityLog::record(
+                'USER_LOGIN_LOCKED',
+                "Too many login attempts for {$request->email} from IP {$request->ip()}. Locked for {$seconds} seconds.",
+                ['email' => $request->email, 'ip' => $request->ip(), 'retry_after_seconds' => $seconds]
+            );
+
+            return back()->withErrors([
+                'email' => "Too many login attempts. Your account has been temporarily locked. Please try again in {$timeText}.",
+            ])->withInput($request->except('password'));
+        }
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8',
-            'captcha' => 'required|captcha'
+            'captcha' => 'required|captcha',
         ], [
             'captcha.captcha' => 'Invalid CAPTCHA. Please try again.',
             'email.required' => 'Email is required.',
-            'password.required' => 'Password is required.'
+            'password.required' => 'Password is required.',
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -33,8 +54,11 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
+            // Clear throttle on successful authentication
+            RateLimiter::clear($throttleKey);
+
             // Check if email is verified
-            if (!$user->hasVerifiedEmail()) {
+            if (! $user->hasVerifiedEmail()) {
                 Auth::logout();
                 \App\Models\ActivityLog::record(
                     'USER_LOGIN_FAILED',
@@ -44,14 +68,14 @@ class LoginController extends Controller
                 );
 
                 return back()->withErrors([
-                    'email' => 'Please verify your email address before logging in.'
+                    'email' => 'Please verify your email address before logging in.',
                 ]);
             }
 
             // Update last login
             $user->update([
                 'last_login' => now(),
-                'last_ip' => $request->ip()
+                'last_ip' => $request->ip(),
             ]);
 
             // Record Activity Log
@@ -64,8 +88,13 @@ class LoginController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard')->with('success', 'Welcome back, ' . $user->full_name . '!');
+            return redirect()->intended('dashboard')->with('success', 'Welcome back, '.$user->full_name.'!');
         }
+
+        // Increment failed attempts count (3600-second / 1-hour decay)
+        RateLimiter::hit($throttleKey, $decaySeconds);
+
+        $remaining = RateLimiter::retriesLeft($throttleKey, $maxAttempts);
 
         // Determine specific failure reason
         $existingUser = User::where('email', $request->email)->first();
@@ -73,12 +102,16 @@ class LoginController extends Controller
 
         \App\Models\ActivityLog::record(
             'USER_LOGIN_FAILED',
-            "Login failed for {$request->email}: {$reason}.",
-            ['email' => $request->email, 'reason' => $reason]
+            "Login failed for {$request->email}: {$reason}. Remaining attempts: {$remaining}.",
+            ['email' => $request->email, 'reason' => $reason, 'remaining_attempts' => $remaining]
         );
 
+        $errorMessage = $remaining > 0
+            ? "Invalid credentials. You have {$remaining} attempt(s) remaining before your account is temporarily locked for 1 hour (Max {$maxAttempts} attempts allowed)."
+            : 'Too many failed login attempts. Your account has been temporarily locked for 1 hour.';
+
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => $errorMessage,
         ])->withInput($request->except('password'));
     }
 
