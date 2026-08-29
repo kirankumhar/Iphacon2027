@@ -29,9 +29,9 @@ Route::post('register', [RegisterController::class, 'register']);
 
 // PASSWORD RESET ROUTES
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->middleware('guest')->name('password.request');
-Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware(['guest', 'throttle:5,1'])->name('password.email');
 Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
-Route::post('reset-password', [ResetPasswordController::class, 'reset'])->middleware('guest')->name('password.update');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->middleware(['guest', 'throttle:5,1'])->name('password.update');
 
 // Email verification routes
 Route::get('email/verify', [RegisterController::class, 'showVerificationNotice'])->name('verification.notice');
@@ -61,7 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
-    Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->middleware(['throttle:5,1'])->name('profile.update-password');
 
     // Abstract Submission routes
     Route::get('abstract-submission', [AbstractSubmissionController::class, 'create'])->name('abstract.create');
@@ -131,7 +131,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         ->name('admin.moderator.dashboard');
 
     Route::get('/profile/change-password', [DashboardController::class, 'getChangePassword'])->name('admin.profile.change-password');
-    Route::post('/update-password', [DashboardController::class, 'updatePassword'])->name('admin.user.update.password');
+    Route::post('/update-password', [DashboardController::class, 'updatePassword'])->middleware(['throttle:5,1'])->name('admin.user.update.password');
 
     // User Management - Admin & Super Admin
     Route::middleware('admin:users.view')->group(function () {
