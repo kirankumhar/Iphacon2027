@@ -281,17 +281,9 @@
             });
         });
     @else
-        @php
-            $gatewayData = json_encode([
-                'reg_id' => $registration->id,
-                'uid' => auth()->id(),
-            ]);
-            $encrypted = Crypt::encryptString($gatewayData);
-
-        @endphp
         // Redirect to payment gateway
         setTimeout(() => {
-            window.location.href = '{{ route('payment.gateway', $encrypted) }}';
+            window.location.href = '{{ route('payment.gateway') }}';
         }, 1000);
     @endif
 

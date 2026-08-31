@@ -229,17 +229,8 @@
                             <!-- Compact Navigation Action Bar -->
                             <div class="d-flex align-items-center justify-content-between pt-4 mt-4 border-top flex-wrap gap-2">
                                 <div>
-                                    @php
-                                        $stepData = json_encode([
-                                            'step' => $step - 1,
-                                            'uid' => auth()->id(),
-                                        ]);
-
-                                        $encryptedToken = Crypt::encryptString($stepData);
-                                    @endphp
-
                                     @if ($step > 1)
-                                        <a href="{{ route('registration.wizard', ['token' => $encryptedToken]) }}"
+                                        <a href="{{ route('registration.wizard', ['step' => $step - 1]) }}"
                                             class="btn btn-outline-secondary px-4 py-2 fw-semibold" style="border-radius: 10px;">
                                             <i class="fas fa-arrow-left me-2"></i>Previous Step
                                         </a>

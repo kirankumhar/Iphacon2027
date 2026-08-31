@@ -16,27 +16,18 @@ use Illuminate\Support\Facades\Mail;
 class PaymentController extends Controller
 {
 
-    public function gateway($encRegistrationId)
+    public function gateway()
     {
         $user = Auth::user();
 
-        $decrypted = Crypt::decryptString($encRegistrationId);
-        $stepData = json_decode($decrypted, true);
-
-        if (!isset($stepData['reg_id'], $stepData['uid'])) {
-            abort(404);
-        }
-
-        $registrationId = (int) $stepData['reg_id'];
-        $uid = (int) $stepData['uid'];
-
         $registration = Registration::where('user_id', $user->id)
-            ->where('id', $registrationId)
+            ->whereIn('status', ['Draft', 'Pending Payment'])
             ->with(['delegateCategory', 'country', 'state'])
+            ->latest()
             ->firstOrFail();
 
         // Check if registration is ready for payment
-        if ($registration->status !== 'Draft' && $registration->step_completed < 3) {
+        if ($registration->status !== 'Draft' && $registration->status !== 'Pending Payment' && $registration->step_completed < 3) {
             return redirect()->route('registration.create')
                 ->with('error', 'Please complete all registration steps before payment.');
         }
@@ -535,21 +526,13 @@ class PaymentController extends Controller
         }
     }
 
-    public function cmeGateway($encCmeAppId)
+    public function cmeGateway()
     {
         $user = Auth::user();
 
-        $decrypted = Crypt::decryptString($encCmeAppId);
-        $stepData = json_decode($decrypted, true);
-
-        if (!isset($stepData['cme_app_id'], $stepData['uid'])) {
-            abort(404);
-        }
-
-        $cmeAppId = (int) $stepData['cme_app_id'];
-
         $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)
-            ->where('id', $cmeAppId)
+            ->where('status', 'Pending Payment')
+            ->latest()
             ->firstOrFail();
 
         $registration = Registration::where('id', $cmeApp->registration_id)->first();

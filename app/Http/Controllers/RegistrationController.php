@@ -41,40 +41,19 @@ class RegistrationController extends Controller
             if ($existingRegistration?->status === 'Payment Submitted' || $existingRegistration?->status === 'Approved' || $existingRegistration?->status === 'Rejected') {
                 return redirect()->route('registration.index');
             } else if ($existingRegistration?->status === 'Pending Payment' && $user->delegate_type == 'Indian') {
-
-                $gatewayData = json_encode([
-                    'reg_id' => $existingRegistration->id,
-                    'uid' => auth()->id(),
-                ]);
-
-                $encrypted = Crypt::encryptString($gatewayData);
-
-                return redirect()->route('payment.gateway', $encrypted);
+                return redirect()->route('payment.gateway');
             } else {
+                $maxAllowedStep = max(1, min(4, (int)$existingRegistration->step_completed + 1));
                 if ($request->has('step')) {
-                    $targetStep = max(1, min(4, (int)$request->input('step')));
+                    $targetStep = min($maxAllowedStep, max(1, (int)$request->input('step')));
                 } else if (!empty($existingRegistration->revert_reason) || !empty($existingRegistration->reverted_at)) {
                     $targetStep = 1;
                 } else {
-                    $targetStep = max(1, min(4, (int)$existingRegistration->step_completed));
+                    $targetStep = $maxAllowedStep;
                 }
 
-                $stepData = json_encode([
-                    'step' => $targetStep,
-                    'uid' => auth()->id(),
-                ]);
+                return redirect()->route('registration.wizard', ['step' => $targetStep]);
             }
-        } else {
-            $stepData = json_encode([
-                'step' => 1,
-                'uid' => auth()->id(),
-            ]);
-        }
-
-        $encryptedToken = Crypt::encryptString($stepData);
-
-        if ($existingRegistration) {
-            return redirect()->route('registration.wizard', ['token' => $encryptedToken]);
         }
 
         // Create new draft registration
@@ -85,37 +64,38 @@ class RegistrationController extends Controller
             'city' => '',
         ]);
 
-        return redirect()->route('registration.wizard', ['token' => $encryptedToken]);
+        return redirect()->route('registration.wizard', ['step' => 1]);
     }
 
-    public function wizard(Request $request, $token)
+    public function wizard(Request $request, $step = null)
     {
-        try {
-            $decrypted = Crypt::decryptString($token);
-            $stepData = json_decode($decrypted, true);
-
-            if (!isset($stepData['step'], $stepData['uid'])) {
-                abort(404);
-            }
-
-            $step = (int) $stepData['step'];
-            $uid = (int) $stepData['uid'];
-        } catch (\Exception $e) {
-            abort(404);
-        }
-
         $user = auth()->user();
-
-        // Ensure token belongs to current user
-        if (!$user || $user->id !== $uid) {
-            abort(403, 'Unauthorized access.');
-        }
 
         $registration = Registration::where('user_id', $user->id)->first();
 
         if (!$registration || $registration->status !== 'Draft') {
             return redirect()->route('registration.create');
         }
+
+        $maxAllowedStep = max(1, min(4, (int)$registration->step_completed + 1));
+
+        if ($step !== null) {
+            $requestedStep = max(1, min(4, (int)$step));
+        } else if ($request->has('step')) {
+            $requestedStep = max(1, min(4, (int)$request->input('step')));
+        } else if (!empty($registration->revert_reason) || !empty($registration->reverted_at)) {
+            $requestedStep = 1;
+        } else {
+            $requestedStep = $maxAllowedStep;
+        }
+
+        // If user tries to access a step ahead of their completed progress, redirect back
+        if ($requestedStep > $maxAllowedStep) {
+            return redirect()->route('registration.wizard', ['step' => $maxAllowedStep])
+                ->with('error', 'Please complete step ' . $maxAllowedStep . ' first before proceeding.');
+        }
+
+        $step = $requestedStep;
 
         $countries = Country::active()->orderBy('country_name')->get();
         $states = State::active()->where('country_id', 1)->orderBy('state_name')->get();
@@ -130,6 +110,20 @@ class RegistrationController extends Controller
         $registration = Registration::where('user_id', $user->id)
             ->where('status', 'Draft')
             ->firstOrFail();
+
+        $step = (int) $step;
+        $maxAllowedStep = max(1, min(4, (int)$registration->step_completed + 1));
+
+        if ($step > $maxAllowedStep) {
+            if ($request->input('action') === 'save_draft') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please complete previous steps first.'
+                ], 422);
+            }
+            return redirect()->route('registration.wizard', ['step' => $maxAllowedStep])
+                ->with('error', 'Please complete previous steps first.');
+        }
 
         try {
             DB::beginTransaction();
@@ -169,19 +163,12 @@ class RegistrationController extends Controller
 
             $nextStep = $step + 1;
 
-            $stepData = json_encode([
-                'step' => $nextStep,
-                'uid' => auth()->id(),
-            ]);
-
-            $encryptedToken = Crypt::encryptString($stepData);
-
             if ($nextStep > 4) {
                 return redirect()->route('registration.show', $registration->id)
                     ->with('success', 'Registration completed successfully!');
             }
 
-            return redirect()->route('registration.wizard', ['token' => $encryptedToken])
+            return redirect()->route('registration.wizard', ['step' => $nextStep])
                 ->with('success', 'Step ' . $step . ' completed successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -647,15 +634,8 @@ class RegistrationController extends Controller
         $registration->step_completed = 4;
         $registration->save();
 
-        $gatewayData = json_encode([
-            'reg_id' => $registration->id,
-            'uid' => auth()->id(),
-        ]);
-
-        $encrypted = Crypt::encryptString($gatewayData);
-
         // Indian delegate - redirect to payment gateway
-        return redirect()->route('payment.gateway', $encrypted);
+        return redirect()->route('payment.gateway');
     }
 
     public function show($id)
@@ -735,15 +715,6 @@ class RegistrationController extends Controller
             ]
         );
 
-        $gatewayData = json_encode([
-            'cme_app_id' => $cmeApp->id,
-            'reg_id'     => $registration->id,
-            'uid'        => $user->id,
-            'cme_only'   => true
-        ]);
-
-        $encrypted = Crypt::encryptString($gatewayData);
-
-        return redirect()->route('cme.payment.gateway', $encrypted);
+        return redirect()->route('cme.payment.gateway');
     }
 }

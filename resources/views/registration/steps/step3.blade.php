@@ -1,8 +1,4 @@
 {{-- resources/views/registration/steps/step3.blade.php --}}
-@php
-    $step1Token = Crypt::encryptString(json_encode(['step' => 1, 'uid' => auth()->id()]));
-    $step2Token = Crypt::encryptString(json_encode(['step' => 2, 'uid' => auth()->id()]));
-@endphp
 
 <!-- Step 3 Header -->
 <div class="d-flex align-items-center justify-content-between mb-2.5 pb-2 border-bottom">
@@ -27,7 +23,7 @@
         <div class="card border rounded-3 h-100 shadow-sm">
             <div class="card-header bg-light py-2 px-3 d-flex align-items-center justify-content-between border-bottom">
                 <span class="fw-bold text-dark extra-small"><i class="fas fa-user text-primary me-1.5"></i>Personal & Contact Info</span>
-                <a href="{{ route('registration.wizard', ['token' => $step1Token]) }}" class="btn btn-sm btn-link p-0 extra-small text-decoration-none fw-semibold">
+                <a href="{{ route('registration.wizard', ['step' => 1]) }}" class="btn btn-sm btn-link p-0 extra-small text-decoration-none fw-semibold">
                     <i class="fas fa-edit me-1"></i>Edit
                 </a>
             </div>
@@ -99,7 +95,7 @@
             <div>
                 <div class="card-header bg-light py-2 px-3 d-flex align-items-center justify-content-between border-bottom">
                     <span class="fw-bold text-dark extra-small"><i class="fas fa-clipboard-list text-primary me-1.5"></i>Registration & Fee Details</span>
-                    <a href="{{ route('registration.wizard', ['token' => $step2Token]) }}" class="btn btn-sm btn-link p-0 extra-small text-decoration-none fw-semibold">
+                    <a href="{{ route('registration.wizard', ['step' => 2]) }}" class="btn btn-sm btn-link p-0 extra-small text-decoration-none fw-semibold">
                         <i class="fas fa-edit me-1"></i>Edit
                     </a>
                 </div>

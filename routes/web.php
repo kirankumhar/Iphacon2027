@@ -77,13 +77,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('registration/{id}/edit', [RegistrationController::class, 'edit'])->name('registration.edit');
     Route::put('registration/{id}', [RegistrationController::class, 'update'])->name('registration.update');
 
-    Route::get('registration/wizard/{token?}', [RegistrationController::class, 'wizard'])->name('registration.wizard');
-    Route::post('registration/wizard/{token}', [RegistrationController::class, 'storeStep'])->name('registration.store-step');
+    Route::get('registration/wizard/{step?}', [RegistrationController::class, 'wizard'])->name('registration.wizard');
+    Route::post('registration/wizard/{step}', [RegistrationController::class, 'storeStep'])->name('registration.store-step');
 
     // CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
     Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
-    Route::get('cme-payment/gateway/{encCmeAppId}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
+    Route::get('cme-payment/gateway', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
     Route::post('cme-payment/process/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'processCmePayment'])->name('cme.payment.process');
 
     Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
@@ -91,7 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // REGISTRATION PAYMENT ROUTES
 
-    Route::get('payment/gateway/{registration}', [App\Http\Controllers\PaymentController::class, 'gateway'])
+    Route::get('payment/gateway', [App\Http\Controllers\PaymentController::class, 'gateway'])
         ->name('payment.gateway');
 
     Route::post('payment/process/{registration}', [App\Http\Controllers\PaymentController::class, 'processPayment'])
