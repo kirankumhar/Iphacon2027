@@ -5,8 +5,10 @@
         <div class="form-section p-4">
             <div class="section-header d-flex align-items-center justify-content-between">
                 <div>
-                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-user-circle me-2"></i>Step 1: Personal & Contact Information</h5>
-                    <small class="text-white-50 extra-small">Please ensure all identity details match your government ID proof</small>
+                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-user-circle me-2"></i>Step 1: Personal & Contact
+                        Information</h5>
+                    <small class="text-white-50 extra-small">Please ensure all identity details match your government ID
+                        proof</small>
                 </div>
             </div>
 
@@ -16,15 +18,20 @@
                     <i class="fas fa-user form-icon"></i>Full Name<span class="required-star">*</span>
                 </label>
                 <div class="input-group">
-                    <select class="form-select flex-grow-0 @error('prefix') is-invalid @enderror" id="prefix" name="prefix"
-                        required style="width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                        <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.</option>
-                        <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.</option>
-                        <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.</option>
-                        <option value="Ms." {{ old('prefix', $user->prefix) == 'Ms.' ? 'selected' : '' }}>Ms.</option>
+                    <select class="form-select flex-grow-0 @error('prefix') is-invalid @enderror" id="prefix"
+                        name="prefix" required
+                        style="width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                        <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.
+                        </option>
+                        <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.
+                        </option>
+                        <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.
+                        </option>
+                        <option value="Ms." {{ old('prefix', $user->prefix) == 'Ms.' ? 'selected' : '' }}>Ms.
+                        </option>
                     </select>
-                    <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name"
-                        value="{{ old('full_name', $user->full_name) }}" required maxlength="50"
+                    <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name"
+                        name="full_name" value="{{ old('full_name', $user->full_name) }}" required maxlength="50"
                         pattern="[A-Za-z. ]{2,}" placeholder="Enter your full name"
                         oninput="this.value = this.value.replace(/[^A-Za-z. ]/g, '')"
                         style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
@@ -43,15 +50,18 @@
                     <i class="fas fa-id-badge form-icon"></i>Designation<span class="required-star">*</span>
                 </label>
                 @php
-                    $rawDesignation = old('designation', $registration->designation ?? $user->designation ?? '');
-                    $currentOtherDesignation = old('other_designation', $registration->other_designation ?? $user->other_designation ?? '');
+                    $rawDesignation = old('designation', $registration->designation ?? ($user->designation ?? ''));
+                    $currentOtherDesignation = old(
+                        'other_designation',
+                        $registration->other_designation ?? ($user->other_designation ?? ''),
+                    );
                     $standardDesignations = [
                         'Professor',
                         'Additional Professor',
                         'Associate Professor',
                         'Assistant Professor',
                         'Senior Resident',
-                        'Junior Resident'
+                        'Junior Resident',
                     ];
                     $currentDesignation = $rawDesignation;
                     if (!empty($rawDesignation) && !in_array($rawDesignation, $standardDesignations)) {
@@ -61,15 +71,25 @@
                         }
                     }
                 @endphp
-                <select class="form-select @error('designation') is-invalid @enderror" id="designation" name="designation"
-                    required onchange="handleDesignationChange()">
-                    <option value="" disabled {{ empty($currentDesignation) ? 'selected' : '' }}>Select Designation</option>
-                    <option value="Professor" {{ $currentDesignation == 'Professor' ? 'selected' : '' }}>Professor</option>
-                    <option value="Additional Professor" {{ $currentDesignation == 'Additional Professor' ? 'selected' : '' }}>Additional Professor</option>
-                    <option value="Associate Professor" {{ $currentDesignation == 'Associate Professor' ? 'selected' : '' }}>Associate Professor</option>
-                    <option value="Assistant Professor" {{ $currentDesignation == 'Assistant Professor' ? 'selected' : '' }}>Assistant Professor</option>
-                    <option value="Senior Resident" {{ $currentDesignation == 'Senior Resident' ? 'selected' : '' }}>Senior Resident</option>
-                    <option value="Junior Resident" {{ $currentDesignation == 'Junior Resident' ? 'selected' : '' }}>Junior Resident</option>
+                <select class="form-select @error('designation') is-invalid @enderror" id="designation"
+                    name="designation" required onchange="handleDesignationChange()">
+                    <option value="" disabled {{ empty($currentDesignation) ? 'selected' : '' }}>Select
+                        Designation</option>
+                    <option value="Professor" {{ $currentDesignation == 'Professor' ? 'selected' : '' }}>Professor
+                    </option>
+                    <option value="Additional Professor"
+                        {{ $currentDesignation == 'Additional Professor' ? 'selected' : '' }}>Additional Professor
+                    </option>
+                    <option value="Associate Professor"
+                        {{ $currentDesignation == 'Associate Professor' ? 'selected' : '' }}>Associate Professor
+                    </option>
+                    <option value="Assistant Professor"
+                        {{ $currentDesignation == 'Assistant Professor' ? 'selected' : '' }}>Assistant Professor
+                    </option>
+                    <option value="Senior Resident" {{ $currentDesignation == 'Senior Resident' ? 'selected' : '' }}>
+                        Senior Resident</option>
+                    <option value="Junior Resident" {{ $currentDesignation == 'Junior Resident' ? 'selected' : '' }}>
+                        Junior Resident</option>
                     <option value="Other" {{ $currentDesignation == 'Other' ? 'selected' : '' }}>Other</option>
                 </select>
                 @error('designation')
@@ -77,14 +97,14 @@
                 @enderror
 
                 <!-- Other Designation Text Field (conditional) -->
-                <div id="other_designation_container" class="mt-2 {{ $currentDesignation == 'Other' ? '' : 'd-none' }}">
+                <div id="other_designation_container"
+                    class="mt-2 {{ $currentDesignation == 'Other' ? '' : 'd-none' }}">
                     <label for="other_designation" class="form-label small text-muted mb-1">
                         Please specify your designation <span class="required-star text-danger">*</span>
                     </label>
                     <input type="text" class="form-control @error('other_designation') is-invalid @enderror"
-                        id="other_designation" name="other_designation"
-                        value="{{ $currentOtherDesignation }}" maxlength="100"
-                        placeholder="Enter your designation"
+                        id="other_designation" name="other_designation" value="{{ $currentOtherDesignation }}"
+                        maxlength="100" placeholder="Enter your designation"
                         {{ $currentDesignation == 'Other' ? 'required' : '' }}>
                     @error('other_designation')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -101,9 +121,12 @@
                         </label>
                         <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender"
                             required>
-                            <option value="" disabled {{ old('gender', $user->gender) ? '' : 'selected' }}>Select Gender</option>
-                            <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="" disabled {{ old('gender', $user->gender) ? '' : 'selected' }}>Select
+                                Gender</option>
+                            <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male
+                            </option>
+                            <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>
+                                Female</option>
                         </select>
                         @error('gender')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -129,9 +152,7 @@
                             }
                         @endphp
                         <input type="date" class="form-control @error('dob') is-invalid @enderror" id="dob"
-                            name="dob"
-                            value="{{ $dobVal }}"
-                            required max="{{ $maxDob18Years }}" />
+                            name="dob" value="{{ $dobVal }}" required max="{{ $maxDob18Years }}" />
                         <small id="ageDisplay" class="form-text text-muted"></small>
                         @error('dob')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -142,15 +163,17 @@
 
             <!-- Mobile Number, WhatsApp Number & Dietary Preference -->
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label class="form-label">
                             <i class="fas fa-phone form-icon"></i>Mobile Number<span class="required-star">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">{{ $user->mobile_country_code }}</span>
-                            <input type="tel" class="form-control @error('mobile_number') is-invalid @enderror" id="mobile_number" name="mobile_number"
-                                value="{{ old('mobile_number', $user->mobile_number) }}" required maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
+                            <input type="tel" class="form-control @error('mobile_number') is-invalid @enderror"
+                                id="mobile_number" name="mobile_number"
+                                value="{{ old('mobile_number', $user->mobile_number) }}" required
+                                maxlength="{{ auth()->user()->delegate_type == 'Indian' ? '10' : '18' }}"
                                 placeholder="Mobile number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         @error('mobile_number')
@@ -158,28 +181,34 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="whatsapp_number" class="form-label">
-                            <i class="fab fa-whatsapp text-success me-1"></i>WhatsApp Number<span class="required-star text-danger">*</span>
+                            <i class="fab fa-whatsapp text-success me-1"></i>WhatsApp Number<span
+                                class="required-star text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">{{ $user->mobile_country_code }}</span>
-                            <input type="tel" class="form-control @error('whatsapp_number') is-invalid @enderror" id="whatsapp_number" name="whatsapp_number"
-                                value="{{ old('whatsapp_number', $registration->whatsapp_number ?: $user->mobile_number) }}" required maxlength="{{(auth()->user()->delegate_type == 'Indian' ? '10' : '18')}}"
-                                placeholder="WhatsApp number" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="tel" class="form-control @error('whatsapp_number') is-invalid @enderror"
+                                id="whatsapp_number" name="whatsapp_number"
+                                value="{{ old('whatsapp_number', $registration->whatsapp_number ?: $user->mobile_number) }}"
+                                required maxlength="{{ auth()->user()->delegate_type == 'Indian' ? '10' : '18' }}"
+                                placeholder="WhatsApp number"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         @error('whatsapp_number')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="dietary_preference" class="form-label">
-                            <i class="fas fa-utensils form-icon"></i>Dietary Preference<span class="required-star">*</span>
+                            <i class="fas fa-utensils form-icon"></i>Dietary Preference<span
+                                class="required-star">*</span>
                         </label>
-                        <select name="dietary_preference" id="dietary_preference" class="form-select {{ $errors->has('dietary_preference') ? 'is-invalid' : '' }}" required>
+                        <select name="dietary_preference" id="dietary_preference"
+                            class="form-select {{ $errors->has('dietary_preference') ? 'is-invalid' : '' }}" required>
                             <option value="">Choose Preference</option>
                             <option value="Vegetarian"
                                 {{ old('dietary_preference', $registration->dietary_preference) == 'Vegetarian' ? 'selected' : '' }}>
@@ -202,9 +231,9 @@
                 <label for="address" class="form-label">
                     <i class="fas fa-home form-icon"></i>Address<span class="required-star">*</span>
                 </label>
-                <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="2" required maxlength="100"
-                    placeholder="Enter your complete address" oninput="this.value = this.value.replace(/[^A-Za-z0-9 ,\/-]/g, '')"
-                    pattern="[A-Za-z0-9 ,\/-]+">{{ old('address', $registration->address) }}</textarea>
+                <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="2"
+                    required maxlength="100" placeholder="Enter your complete address"
+                    oninput="this.value = this.value.replace(/[^A-Za-z0-9 ,\/-]/g, '')" pattern="[A-Za-z0-9 ,\/-]+">{{ old('address', $registration->address) }}</textarea>
                 @error('address')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -260,9 +289,10 @@
                         <label for="city" class="form-label">
                             <i class="fas fa-city form-icon"></i>City<span class="required-star">*</span>
                         </label>
-                        <input type="text" class="form-control @error('city') is-invalid @enderror" id="city" name="city"
-                            value="{{ old('city', $registration->city) }}" required maxlength="50"
-                            placeholder="Enter city" oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                        <input type="text" class="form-control @error('city') is-invalid @enderror"
+                            id="city" name="city" value="{{ old('city', $registration->city) }}" required
+                            maxlength="50" placeholder="Enter city"
+                            oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
                         @error('city')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -271,17 +301,21 @@
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="pin_code" class="form-label">
-                            <i class="fas fa-map-pin form-icon"></i>{{ auth()->user()->delegate_type == 'Indian' ? 'PIN Code' : 'Zip / Postal Code' }}<span class="required-star">*</span>
+                            <i
+                                class="fas fa-map-pin form-icon"></i>{{ auth()->user()->delegate_type == 'Indian' ? 'PIN Code' : 'Zip / Postal Code' }}<span
+                                class="required-star">*</span>
                         </label>
-                        @if(auth()->user()->delegate_type == 'Indian')
+                        @if (auth()->user()->delegate_type == 'Indian')
                             <input type="text" class="form-control @error('pin_code') is-invalid @enderror"
-                                id="pin_code" name="pin_code" value="{{ old('pin_code', $registration->pin_code) }}"
-                                required placeholder="6-digit PIN Code" maxlength="6" minlength="6"
+                                id="pin_code" name="pin_code"
+                                value="{{ old('pin_code', $registration->pin_code) }}" required
+                                placeholder="6-digit PIN Code" maxlength="6" minlength="6"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         @else
                             <input type="text" class="form-control @error('pin_code') is-invalid @enderror"
-                                id="pin_code" name="pin_code" value="{{ old('pin_code', $registration->pin_code) }}"
-                                required placeholder="Zip Code (max 10)" maxlength="10"
+                                id="pin_code" name="pin_code"
+                                value="{{ old('pin_code', $registration->pin_code) }}" required
+                                placeholder="Zip Code (max 10)" maxlength="10"
                                 oninput="this.value = this.value.replace(/[^A-Za-z0-9 -]/g, '')">
                         @endif
                         @error('pin_code')
@@ -302,7 +336,8 @@
             </h6>
 
             <div class="text-center">
-                <div class="photo-upload-area py-2 px-2" onclick="document.getElementById('photo').click()" style="cursor: pointer;">
+                <div class="photo-upload-area py-2 px-2" onclick="document.getElementById('photo').click()"
+                    style="cursor: pointer;">
                     <img id="photoPreview" class="photo-preview mb-1.5"
                         src="{{ $registration->photo_path ? asset('storage/' . $registration->photo_path) : asset('images/default-avatar.svg') }}"
                         alt="Profile photo"
@@ -318,7 +353,8 @@
                     style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png"
                     {{ $registration->photo_path ? '' : 'required' }}>
                 @error('photo')
-                <div class="text-danger extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
+                    <div class="text-danger extra-small mt-1"><i
+                            class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
         </div>
@@ -337,31 +373,32 @@
                     name="id_proof_type" required onchange="updateIdProofValidation()">
 
                     @if ($user->delegate_type == 'International')
-                    <option value="">Select ID Type</option>
-                    <option value="Passport"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Passport' ? 'selected' : '' }}>
-                        Passport</option>
-                    <option value="Driving License"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
-                        Driving Licence</option>
+                        <option value="">Select ID Type</option>
+                        <option value="Passport"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Passport' ? 'selected' : '' }}>
+                            Passport</option>
+                        <option value="Driving License"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
+                            Driving Licence</option>
                     @else
-                    <option value="">Select ID Type</option>
-                    <option value="Aadhaar"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Aadhaar' ? 'selected' : '' }}>
-                        Aadhaar Card
-                    </option>
-                    <option value="PAN"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'PAN' ? 'selected' : '' }}>PAN Card
-                    </option>
-                    <option value="Voter-ID"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Voter-ID' ? 'selected' : '' }}>
-                        Voter ID</option>
-                    <option value="Driving License"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
-                        Driving License</option>
-                    <option value="Passport"
-                        {{ old('id_proof_type', $registration->id_proof_type) == 'Passport' ? 'selected' : '' }}>
-                        Passport</option>
+                        <option value="">Select ID Type</option>
+                        <option value="Aadhaar"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Aadhaar' ? 'selected' : '' }}>
+                            Aadhaar Card
+                        </option>
+                        <option value="PAN"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'PAN' ? 'selected' : '' }}>PAN
+                            Card
+                        </option>
+                        <option value="Voter-ID"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Voter-ID' ? 'selected' : '' }}>
+                            Voter ID</option>
+                        <option value="Driving License"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Driving License' ? 'selected' : '' }}>
+                            Driving License</option>
+                        <option value="Passport"
+                            {{ old('id_proof_type', $registration->id_proof_type) == 'Passport' ? 'selected' : '' }}>
+                            Passport</option>
                     @endif
                 </select>
             </div>
@@ -373,38 +410,41 @@
                 <input type="text" class="form-control @error('id_proof_number') is-invalid @enderror"
                     id="id_proof_number" name="id_proof_number"
                     value="{{ old('id_proof_number', $registration->id_proof_number) }}"
-                    placeholder="Enter Aadhaar / PAN / ID Number" required
-                    oninput="formatIdProofNumber(this)">
+                    placeholder="Enter Aadhaar / PAN / ID Number" required oninput="formatIdProofNumber(this)">
                 @error('id_proof_number')
-                <div class="invalid-feedback d-block extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
+                    <div class="invalid-feedback d-block extra-small mt-1"><i
+                            class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group mb-0">
                 <label for="id_proof_document" class="form-label fw-bold text-dark">
-                    <i class="fas fa-file-shield text-primary me-1"></i>Upload ID Document <span class="required-star text-danger">*</span>
+                    <i class="fas fa-file-shield text-primary me-1"></i>Upload ID Document <span
+                        class="required-star text-danger">*</span>
                 </label>
 
                 <div class="text-center">
                     @php
-                    $docPath = $registration->id_proof_document_path
-                    ? asset('storage/' . $registration->id_proof_document_path)
-                    : '';
-                    $isPdf = $docPath && str_ends_with(strtolower($docPath), '.pdf');
-                    $hasDoc = !empty($registration->id_proof_document_path);
+                        $docPath = $registration->id_proof_document_path
+                            ? asset('storage/' . $registration->id_proof_document_path)
+                            : '';
+                        $isPdf = $docPath && str_ends_with(strtolower($docPath), '.pdf');
+                        $hasDoc = !empty($registration->id_proof_document_path);
                     @endphp
 
                     <div class="photo-upload-area" onclick="handleUploadAreaClick(event)">
-                        <div id="documentPreviewContainer" data-doc-path="{{ $docPath }}" data-is-pdf="{{ $isPdf ? 'true' : 'false' }}" style="display: {{ $hasDoc ? 'block' : 'none' }}">
+                        <div id="documentPreviewContainer" data-doc-path="{{ $docPath }}"
+                            data-is-pdf="{{ $isPdf ? 'true' : 'false' }}"
+                            style="display: {{ $hasDoc ? 'block' : 'none' }}">
 
                             <!-- Always keep img for preview -->
                             <img id="idProofPreview" alt="Document Preview" src="{{ $docPath }}"
-                                class="img-fluid rounded shadow-sm document-preview {{ ($hasDoc && !$isPdf) ? '' : 'd-none'}}"
+                                class="img-fluid rounded shadow-sm document-preview {{ $hasDoc && !$isPdf ? '' : 'd-none' }}"
                                 style="max-height:220px; object-fit:contain;">
 
                             <!-- PDF chip placeholder -->
                             <div id="pdfChip"
-                                class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light border shadow-sm {{ ($hasDoc && $isPdf) ? '' : 'd-none'}}">
+                                class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light border shadow-sm {{ $hasDoc && $isPdf ? '' : 'd-none' }}">
                                 <i class="fas fa-file-pdf text-danger"></i>
                                 <span class="fw-semibold">PDF Document Uploaded</span>
                             </div>
@@ -419,7 +459,8 @@
                             </div>
                         </div>
 
-                        <div id="docActionsPrompt" class="mt-3 d-flex flex-wrap justify-content-center gap-2" style="display: {{ $hasDoc ? 'flex' : 'none' }}">
+                        <div id="docActionsPrompt" class="mt-3 d-flex flex-wrap justify-content-center gap-2"
+                            style="display: {{ $hasDoc ? 'flex' : 'none' }}">
                             <button type="button"
                                 class="btn btn-success d-flex align-items-center gap-1.5 px-3 py-1.5 shadow-sm rounded-pill extra-small"
                                 title="Preview Document" onclick="openDocumentModal(event)">
@@ -442,7 +483,7 @@
                         accept="application/pdf,image/jpeg,image/jpg,image/png"
                         {{ $registration->id_proof_document_path ? '' : 'required' }}>
                     @error('id_proof_document')
-                    <div class="text-danger extra-small mt-2">{{ $message }}</div>
+                        <div class="text-danger extra-small mt-2">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
@@ -456,7 +497,8 @@
         <div class="modal-content border-0 shadow-lg rounded-3">
             <div class="modal-header bg-primary text-white py-3">
                 <h5 class="modal-title text-white mb-0"><i class="fas fa-user me-2"></i>Profile Photo Preview</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-3">
                 <img id="modalPhotoPreview" class="img-fluid rounded shadow-sm" alt="Profile Photo">
@@ -475,12 +517,15 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-3">
             <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title text-white mb-0"><i class="fas fa-id-card me-2"></i>Government ID Document Preview</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title text-white mb-0"><i class="fas fa-id-card me-2"></i>Government ID Document
+                    Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-3">
                 <img id="modalDocumentPreview" class="img-fluid d-none rounded shadow-sm" alt="Modal Preview">
-                <embed id="modalPdfPreview" class="w-100 d-none rounded" style="height:500px;" type="application/pdf">
+                <embed id="modalPdfPreview" class="w-100 d-none rounded" style="height:500px;"
+                    type="application/pdf">
             </div>
             <div class="modal-footer bg-light py-2">
                 <button type="button" class="btn btn-secondary btn-sm px-4 rounded-pill" data-bs-dismiss="modal">
@@ -620,7 +665,7 @@
         document.getElementById('photo').click();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const documentModal = document.getElementById('documentModal');
         if (documentModal && documentModal.parentElement !== document.body) {
             document.body.appendChild(documentModal);
@@ -631,7 +676,7 @@
         }
     });
 
-    document.addEventListener('hidden.bs.modal', function () {
+    document.addEventListener('hidden.bs.modal', function() {
         document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
         document.body.classList.remove('modal-open');
         document.body.style.overflow = '';
