@@ -212,7 +212,7 @@
 
             <!-- Country, State, City, PIN Code -->
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="country_id" class="form-label">
                             <i class="fas fa-globe form-icon"></i>Country<span class="required-star">*</span>
@@ -228,7 +228,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="state_id" class="form-label">
                             <i class="fas fa-map form-icon"></i>State<span class="required-star">*</span>
@@ -255,7 +255,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="city" class="form-label">
                             <i class="fas fa-city form-icon"></i>City<span class="required-star">*</span>
@@ -268,7 +268,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label for="pin_code" class="form-label">
                             <i class="fas fa-map-pin form-icon"></i>{{ auth()->user()->delegate_type == 'Indian' ? 'PIN Code' : 'Zip / Postal Code' }}<span class="required-star">*</span>
