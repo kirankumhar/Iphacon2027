@@ -336,8 +336,8 @@
                     <div class="info-value">{{ $registration->user?->prefix }} {{ $registration->user?->full_name ?? ($registration->full_name ?? 'N/A') }}</div>
                 </td>
                 <td>
-                    <div class="info-label">Email Address</div>
-                    <div class="info-value">{{ $registration->user?->email ?? 'N/A' }}</div>
+                    <div class="info-label">Designation</div>
+                    <div class="info-value">{{ $registration->designation === 'Other' ? ($registration->other_designation ?: 'Other') : ($registration->designation ?? $registration->user?->designation ?? 'N/A') }}</div>
                 </td>
                 <td>
                     <div class="info-label">Mobile Number</div>
@@ -350,12 +350,12 @@
                     <div class="info-value">{{ $registration->delegate_type }} - {{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
                 </td>
                 <td>
-                    <div class="info-label">Country & State</div>
-                    <div class="info-value">{{ $registration->country->country_name ?? 'India' }}, {{ $registration->state->state_name ?? $registration->other_state ?? 'N/A' }}</div>
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">{{ $registration->user?->email ?? 'N/A' }}</div>
                 </td>
                 <td>
-                    <div class="info-label">Transaction ID / Reference</div>
-                    <div class="info-value">{{ $registration->latestPayment->transaction_id ?? 'N/A' }}</div>
+                    <div class="info-label">Country & State</div>
+                    <div class="info-value">{{ $registration->country->country_name ?? 'India' }}, {{ $registration->state->state_name ?? $registration->other_state ?? 'N/A' }}</div>
                 </td>
             </tr>
         </table>

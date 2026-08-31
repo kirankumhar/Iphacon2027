@@ -37,6 +37,61 @@
                 @enderror
             </div>
 
+            <!-- Designation -->
+            <div class="form-group mb-3">
+                <label for="designation" class="form-label">
+                    <i class="fas fa-id-badge form-icon"></i>Designation<span class="required-star">*</span>
+                </label>
+                @php
+                    $rawDesignation = old('designation', $registration->designation ?? $user->designation ?? '');
+                    $currentOtherDesignation = old('other_designation', $registration->other_designation ?? $user->other_designation ?? '');
+                    $standardDesignations = [
+                        'Professor',
+                        'Additional Professor',
+                        'Associate Professor',
+                        'Assistant Professor',
+                        'Senior Resident',
+                        'Junior Resident'
+                    ];
+                    $currentDesignation = $rawDesignation;
+                    if (!empty($rawDesignation) && !in_array($rawDesignation, $standardDesignations)) {
+                        $currentDesignation = 'Other';
+                        if (empty($currentOtherDesignation)) {
+                            $currentOtherDesignation = $rawDesignation;
+                        }
+                    }
+                @endphp
+                <select class="form-select @error('designation') is-invalid @enderror" id="designation" name="designation"
+                    required onchange="handleDesignationChange()">
+                    <option value="" disabled {{ empty($currentDesignation) ? 'selected' : '' }}>Select Designation</option>
+                    <option value="Professor" {{ $currentDesignation == 'Professor' ? 'selected' : '' }}>Professor</option>
+                    <option value="Additional Professor" {{ $currentDesignation == 'Additional Professor' ? 'selected' : '' }}>Additional Professor</option>
+                    <option value="Associate Professor" {{ $currentDesignation == 'Associate Professor' ? 'selected' : '' }}>Associate Professor</option>
+                    <option value="Assistant Professor" {{ $currentDesignation == 'Assistant Professor' ? 'selected' : '' }}>Assistant Professor</option>
+                    <option value="Senior Resident" {{ $currentDesignation == 'Senior Resident' ? 'selected' : '' }}>Senior Resident</option>
+                    <option value="Junior Resident" {{ $currentDesignation == 'Junior Resident' ? 'selected' : '' }}>Junior Resident</option>
+                    <option value="Other" {{ $currentDesignation == 'Other' ? 'selected' : '' }}>Other</option>
+                </select>
+                @error('designation')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+
+                <!-- Other Designation Text Field (conditional) -->
+                <div id="other_designation_container" class="mt-2 {{ $currentDesignation == 'Other' ? '' : 'd-none' }}">
+                    <label for="other_designation" class="form-label small text-muted mb-1">
+                        Please specify your designation <span class="required-star text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control @error('other_designation') is-invalid @enderror"
+                        id="other_designation" name="other_designation"
+                        value="{{ $currentOtherDesignation }}" maxlength="100"
+                        placeholder="Enter your designation"
+                        {{ $currentDesignation == 'Other' ? 'required' : '' }}>
+                    @error('other_designation')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
             <!-- Gender and Date of Birth -->
             <div class="row">
                 <div class="col-md-6">
@@ -666,7 +721,23 @@
         }
     }
 
+    function handleDesignationChange() {
+        const select = document.getElementById('designation');
+        const container = document.getElementById('other_designation_container');
+        const otherInput = document.getElementById('other_designation');
+        if (!select || !container || !otherInput) return;
+
+        if (select.value === 'Other') {
+            container.classList.remove('d-none');
+            otherInput.setAttribute('required', 'required');
+        } else {
+            container.classList.add('d-none');
+            otherInput.removeAttribute('required');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         updateIdProofValidation();
+        handleDesignationChange();
     });
 </script>

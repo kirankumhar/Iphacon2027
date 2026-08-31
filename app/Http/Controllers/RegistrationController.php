@@ -211,6 +211,8 @@ class RegistrationController extends Controller
         $rules = [
             'prefix' => 'nullable|string|in:Dr.,Mr.,Mrs.,Prof.',
             'full_name' => 'nullable|string|max:100',
+            'designation' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
+            'other_designation' => ($request->designation === 'Other' && !$isDraft) ? 'required|string|max:100' : 'nullable|string|max:100',
             'gender' => 'nullable|in:Male,Female',
             'dob' => $isDraft ? 'nullable|date|before_or_equal:-18 years' : 'required|date|before_or_equal:-18 years',
             'mobile_number' => 'nullable|string|max:18',
@@ -230,6 +232,8 @@ class RegistrationController extends Controller
         ];
 
         $messages = [
+            'designation.required' => 'Please select your designation.',
+            'other_designation.required' => 'Please specify your designation.',
             'photo.required' => 'Please upload your profile photo to proceed.',
             'photo.image' => 'Profile photo must be a valid image file.',
             'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
@@ -276,6 +280,10 @@ class RegistrationController extends Controller
             $user->prefix = $request->prefix;
         if ($request->filled('full_name'))
             $user->full_name = $request->full_name;
+        if ($request->filled('designation')) {
+            $user->designation = $request->designation;
+            $user->other_designation = $request->designation === 'Other' ? $request->other_designation : null;
+        }
         if ($request->filled('gender'))
             $user->gender = $request->gender;
         if ($request->filled('dob'))
@@ -288,6 +296,10 @@ class RegistrationController extends Controller
         // Handle file uploads and registration updates
         $updateData = [];
 
+        if ($request->filled('designation')) {
+            $updateData['designation'] = $request->designation;
+            $updateData['other_designation'] = $request->designation === 'Other' ? $request->other_designation : null;
+        }
         if ($request->filled('address'))
             $updateData['address'] = $request->address;
         if ($request->filled('country_id'))

@@ -13,6 +13,8 @@ class Registration extends Model
 
     protected $fillable = [
         'user_id',
+        'designation',
+        'other_designation',
         'acknowledgement_id',
         'registration_number',
         'photo_path',

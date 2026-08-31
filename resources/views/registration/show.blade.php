@@ -122,6 +122,10 @@
                                     <span class="fw-semibold text-dark fs-6">{{ $registration->user->prefix }} {{ $registration->user->full_name }}</span>
                                 </div>
                                 <div class="col-sm-6">
+                                    <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Designation</span>
+                                    <span class="fw-semibold text-dark">{{ $registration->designation === 'Other' ? ($registration->other_designation ?: 'Other') : ($registration->designation ?? $registration->user->designation ?? 'N/A') }}</span>
+                                </div>
+                                <div class="col-sm-6">
                                     <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Gender & DOB</span>
                                     <span class="fw-semibold text-dark">{{ $registration->user->gender ?? 'N/A' }} | {{ $registration->user->date_of_birth ? \Carbon\Carbon::parse($registration->user->date_of_birth)->format('d M, Y') : 'N/A' }}</span>
                                 </div>

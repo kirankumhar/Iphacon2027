@@ -114,6 +114,14 @@
                                 <td class="fw-bold text-dark py-3 px-3.5">{{ $delegate->user?->prefix }} {{ $delegate->user?->full_name }}</td>
                             </tr>
                             <tr class="border-bottom border-light">
+                                <th class="text-muted fw-semibold py-3 px-3.5">Designation</th>
+                                <td class="fw-semibold text-dark py-3 px-3.5">
+                                    <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2">
+                                        <i class="bx bx-briefcase me-1 text-primary"></i>{{ $delegate->designation === 'Other' ? ($delegate->other_designation ?: 'Other') : ($delegate->designation ?? $delegate->user?->designation ?? 'Not Specified') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
                                 <th class="text-muted fw-semibold py-3 px-3.5">Gender &amp; Date of Birth</th>
                                 <td class="fw-semibold text-dark py-3 px-3.5">
                                     {{ $delegate->user?->gender ?? 'N/A' }} 

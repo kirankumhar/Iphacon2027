@@ -34,6 +34,15 @@
                             <td class="text-muted py-1" style="width: 38%;">Full Name:</td>
                             <td class="fw-bold text-dark py-1">{{ $user->prefix }} {{ $user->full_name }}</td>
                         </tr>
+                        @php
+                            $dispDesignation = ($registration->designation === 'Other' ? ($registration->other_designation ?: 'Other') : ($registration->designation ?? $user->designation ?? ''));
+                        @endphp
+                        @if($dispDesignation)
+                            <tr>
+                                <td class="text-muted py-1">Designation:</td>
+                                <td class="fw-semibold text-dark py-1">{{ $dispDesignation }}</td>
+                            </tr>
+                        @endif
                         <tr>
                             <td class="text-muted py-1">Email:</td>
                             <td class="py-1">
