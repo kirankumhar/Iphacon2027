@@ -33,7 +33,7 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('admin.login') }}">
+                        <form method="POST" action="{{ route('admin.login') }}" autocomplete="off">
                             @csrf
 
                             <!-- Username -->
@@ -49,6 +49,7 @@
                                         class="form-control border-start-0 @error('username') is-invalid @enderror"
                                         id="username" name="username" value="{{ old('username') }}"
                                         required autofocus placeholder="Enter admin username"
+                                        autocomplete="off"
                                         style="height: 45px; font-size: 0.9rem;">
                                 </div>
                                 @error('username')
@@ -69,6 +70,7 @@
                                         class="form-control border-start-0 border-end-0 @error('password') is-invalid @enderror"
                                         id="admin_password" name="password" required
                                         placeholder="Enter admin password"
+                                        autocomplete="off"
                                         style="height: 45px; font-size: 0.9rem;">
                                     <button class="btn btn-outline-secondary border-start-0 bg-light text-muted px-3" type="button"
                                         onclick="toggleAdminPassword()" style="height: 45px;">

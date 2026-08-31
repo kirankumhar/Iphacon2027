@@ -49,7 +49,7 @@
                                 </div>
                             @endif
 
-                            <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate>
+                            <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate autocomplete="off">
                                 @csrf
 
                                 <div class="row g-2.5">
@@ -66,7 +66,7 @@
                                             <input type="email"
                                                 class="form-control border-start-0 custom-input @error('email') is-invalid @enderror"
                                                 id="email" name="email" value="{{ old('email') }}" required autofocus
-                                                placeholder="e.g. doctor@hospital.com">
+                                                placeholder="e.g. doctor@hospital.com" autocomplete="off">
                                         </div>
                                         @error('email')
                                             <div class="invalid-feedback d-block extra-small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
@@ -91,7 +91,7 @@
                                             </span>
                                             <input type="password"
                                                 class="form-control border-start-0 border-end-0 custom-input @error('password') is-invalid @enderror"
-                                                id="password" name="password" required placeholder="Enter your password">
+                                                id="password" name="password" required placeholder="Enter your password" autocomplete="off">
                                             <button class="btn btn-light border border-start-0 text-muted px-2.5 toggle-pw-btn" type="button"
                                                 onclick="togglePassword()" title="Toggle visibility">
                                                 <i class="fas fa-eye extra-small" id="toggleIcon"></i>
