@@ -88,6 +88,19 @@ class LoginController extends Controller
 
             $request->session()->regenerate();
 
+            // Invalidate any previous/concurrent sessions on other devices for this user
+            try {
+                Auth::logoutOtherDevices($credentials['password']);
+                if (\Illuminate\Support\Facades\Schema::hasTable('sessions')) {
+                    \Illuminate\Support\Facades\DB::table('sessions')
+                        ->where('user_id', $user->id)
+                        ->where('id', '!=', $request->session()->getId())
+                        ->delete();
+                }
+            } catch (\Throwable $e) {
+                // Continue if session table not present
+            }
+
             return redirect()->intended('dashboard')->with('success', 'Welcome back, '.$user->full_name.'!');
         }
 

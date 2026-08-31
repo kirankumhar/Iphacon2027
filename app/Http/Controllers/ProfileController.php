@@ -110,6 +110,12 @@ class ProfileController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        try {
+            Auth::logoutOtherDevices($request->password);
+        } catch (\Throwable $e) {
+            // Continue
+        }
+
         return redirect()->route('profile.show')
             ->with('success', 'Password changed successfully!');
     }

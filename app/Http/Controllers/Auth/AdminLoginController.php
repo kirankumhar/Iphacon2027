@@ -136,6 +136,13 @@ class AdminLoginController extends Controller
 
         $request->session()->regenerate();
 
+        // Invalidate previous sessions on other devices for admin
+        try {
+            Auth::guard('admin')->logoutOtherDevices($password);
+        } catch (\Throwable $e) {
+            // Continue
+        }
+
         Log::info('Admin logged in successfully', [
             'username' => $username,
             'role' => $admin->role,
