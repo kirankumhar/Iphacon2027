@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>IPHACON Registration Acknowledgement Receipt - {{ $registration->registration_number ?? $registration->acknowledgement_id }}</title>
+    <title>IPHACON Registration Acknowledgement Receipt -
+        {{ $registration->registration_number ?? $registration->acknowledgement_id }}</title>
     <style>
         @page {
             margin: 10mm 10mm 10mm 10mm;
@@ -106,13 +107,13 @@
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             background: #F8FAFC;
             border: 1px solid #CBD5E1;
         }
 
         .info-table td {
-            padding: 6px 8px;
+            padding: 4.5px 6.5px;
             vertical-align: top;
             border-bottom: 1px solid #E2E8F0;
             border-right: 1px solid #E2E8F0;
@@ -127,15 +128,15 @@
         }
 
         .info-label {
-            font-size: 9px;
+            font-size: 8px;
             color: #64748B;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 2px;
+            margin-bottom: 1.5px;
         }
 
         .info-value {
-            font-size: 10.5px;
+            font-size: 9.5px;
             font-weight: bold;
             color: #0F172A;
         }
@@ -144,23 +145,23 @@
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .items-table th {
             background-color: #0288D1;
             color: #FFFFFF !important;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9.5px;
             text-transform: uppercase;
-            padding: 7px 8px;
+            padding: 6px 7px;
             border: 1px solid #0288D1;
         }
 
         .items-table td {
-            padding: 7px 8px;
+            padding: 5.5px 7px;
             border: 1px solid #CBD5E1;
-            font-size: 10px;
+            font-size: 9.5px;
         }
 
         .items-table tr:nth-child(even) {
@@ -171,7 +172,7 @@
             background-color: #E0F2FE !important;
             color: #01579B;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10.5px;
             border-top: 2px solid #0288D1 !important;
         }
 
@@ -191,8 +192,8 @@
         /* Footer */
         .footer-wrap {
             border-top: 1px solid #CBD5E1;
-            padding-top: 8px;
-            margin-top: 8px;
+            padding-top: 6px;
+            margin-top: 6px;
         }
 
         .footer-table {
@@ -201,7 +202,7 @@
         }
 
         .footer-left {
-            font-size: 9px;
+            font-size: 8.5px;
             color: #64748B;
             vertical-align: bottom;
         }
@@ -214,14 +215,14 @@
         .stamp-box {
             display: inline-block;
             border: 1px dashed #0288D1;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
             background-color: #F0F9FF;
             text-align: center;
         }
 
         .stamp-title {
-            font-size: 8.5px;
+            font-size: 8px;
             font-weight: bold;
             color: #01579B;
             text-transform: uppercase;
@@ -255,27 +256,33 @@
                     {{-- Left Logo (IPHACON Main Logo) --}}
                     <td class="logo-cell-left">
                         @if (file_exists(public_path('assets/img/logo/logo.png')))
-                            <img src="{{ public_path('assets/img/logo/logo.png') }}" class="header-logo" alt="IPHACON 2027">
+                            <img src="{{ public_path('assets/img/logo/logo.png') }}" class="header-logo"
+                                alt="IPHACON 2027">
                         @elseif (file_exists(public_path('shared/user/images/rimslogo.png')))
-                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo" alt="RIMS Logo">
+                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo"
+                                alt="RIMS Logo">
                         @endif
                     </td>
 
                     {{-- Center Logo (IPHA Emblem Logo) --}}
                     <td class="logo-cell-center">
                         @if (file_exists(public_path('assets/img/logo/ipha_logo.png')))
-                            <img src="{{ public_path('assets/img/logo/ipha_logo.png') }}" class="header-logo" alt="IPHA Emblem">
+                            <img src="{{ public_path('assets/img/logo/ipha_logo.png') }}" class="header-logo"
+                                alt="IPHA Emblem">
                         @elseif (file_exists(public_path('shared/user/images/iphacon_logo.png')))
-                            <img src="{{ public_path('shared/user/images/iphacon_logo.png') }}" class="header-logo" alt="IPHA Logo">
+                            <img src="{{ public_path('shared/user/images/iphacon_logo.png') }}" class="header-logo"
+                                alt="IPHA Logo">
                         @endif
                     </td>
 
                     {{-- Right Logo (RIMS Ranchi Logo) --}}
                     <td class="logo-cell-right">
                         @if (file_exists(public_path('shared/user/images/rimslogo.png')))
-                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo" alt="RIMS Logo">
+                            <img src="{{ public_path('shared/user/images/rimslogo.png') }}" class="header-logo"
+                                alt="RIMS Logo">
                         @elseif (file_exists(public_path('assets/img/logo/iphacon_logo.png')))
-                            <img src="{{ public_path('assets/img/logo/iphacon_logo.png') }}" class="header-logo" alt="IPHACON Logo">
+                            <img src="{{ public_path('assets/img/logo/iphacon_logo.png') }}" class="header-logo"
+                                alt="IPHACON Logo">
                         @endif
                     </td>
                 </tr>
@@ -286,43 +293,79 @@
                 <div class="brand-title">71<sup>st</sup> Annual National Conference of IPHA</div>
                 <div class="brand-subtitle">IPHACON 2027 | RIMS, RANCHI, JHARKHAND</div>
                 <div class="brand-meta">
-                    <strong>Dates:</strong> 12<sup>th</sup> - 14<sup>th</sup> March 2027 &nbsp;|&nbsp; <strong>Venue:</strong> Rajendra Institute of Medical Sciences (RIMS), Ranchi &nbsp;|&nbsp; <strong>Web:</strong> www.iphacon2027.com
+                    <strong>Dates:</strong> 12<sup>th</sup> - 14<sup>th</sup> March 2027 &nbsp;|&nbsp;
+                    <strong>Venue:</strong> Rajendra Institute of Medical Sciences (RIMS), Ranchi &nbsp;|&nbsp;
+                    <strong>Web:</strong> www.iphacon2027.com
                 </div>
             </div>
         </div>
 
         {{-- Document Title Badge - Fixed for Dompdf --}}
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
             <tr>
-                <td style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 12px; padding: 8px; text-align: center; text-transform: uppercase;">
+                <td
+                    style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 11.5px; padding: 6px 8px; text-align: center; text-transform: uppercase;">
                     IPHACON Registration Acknowledgement Receipt
                 </td>
             </tr>
         </table>
 
+        @php
+            $pay = $payment ?? $registration->latestPayment;
+            $abstractSub =
+                $registration->abstractSubmission ??
+                ($registration->user?->abstractSubmission ?? $registration->user?->abstractSubmissions?->first());
+            $dispDesignation =
+                $registration->designation === 'Other'
+                    ? ($registration->other_designation ?:
+                    'Other')
+                    : $registration->designation ?? ($registration->user?->designation ?? 'N/A');
+            $dispInstitute =
+                $registration->institution ??
+                ($registration->user?->institution ??
+                    ($abstractSub?->presenting_author_institution ??
+                        ($registration->user?->abstractSubmissions?->first()?->presenting_author_institution ??
+                            'N/A')));
+            $dispTxnId = $pay?->transaction_id ?? ($pay?->gateway_transaction_id ?? 'N/A');
+            $regDate = $registration->submitted_at
+                ? \Carbon\Carbon::parse($registration->submitted_at)->format('d M Y')
+                : ($registration->created_at
+                    ? \Carbon\Carbon::parse($registration->created_at)->format('d M Y')
+                    : 'N/A');
+            $gender = $registration->user?->gender ?? 'N/A';
+            $dietPref = $registration->dietary_preference ?? 'N/A';
+            $preConfWorkshop = $registration->participate_in_cme ? 'Yes' : 'No';
+            $abstractStatusText = $abstractSub
+                ? 'Yes' . ($abstractSub->acknowledgement_id ? ' (' . $abstractSub->acknowledgement_id . ')' : '')
+                : 'No';
+        @endphp
+
         {{-- Info Grid Table --}}
         <table class="info-table">
             <tr>
                 <td style="width: 25%;">
-                    <div class="info-label">Acknowledgement ID</div>
-                    <div class="info-value" style="color: #01579B; font-family: monospace; font-size: 11px;">
-                        {{ $registration->acknowledgement_id ?? ($applicationNumber ?? 'N/A') }}
-                    </div>
-                </td>
-                <td style="width: 25%;">
                     <div class="info-label">Registration Number</div>
-                    <div class="info-value" style="color: #0288D1; font-family: monospace; font-size: 11px;">
+                    <div class="info-value" style="color: #0288D1; font-family: monospace; font-size: 10.5px;">
                         {{ $registration->registration_number ?? ($registration->status === 'Approved' ? 'N/A' : 'Pending Approval') }}
                     </div>
                 </td>
                 <td style="width: 25%;">
-                    <div class="info-label">Receipt Issue Date</div>
-                    <div class="info-value">{{ now()->format('d M Y') }}</div>
+                    <div class="info-label">IPHACON ID</div>
+                    <div class="info-value" style="color: #01579B; font-family: monospace; font-size: 10.5px;">
+                        {{ $registration->membership_no ?: ($registration->ismm_membership_no ?: 'N/A') }}
+                    </div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="info-label">Date of Registration</div>
+                    <div class="info-value">{{ $regDate }}</div>
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Payment Status</div>
                     <div class="info-value">
-                        @if(($registration->latestPayment->payment_status ?? '') === 'Success' || ($registration->latestPayment->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
+                        @if (
+                            ($pay?->payment_status ?? '') === 'Success' ||
+                                ($pay?->payment_status ?? '') === 'PAID' ||
+                                $registration->status === 'Approved')
                             <span class="status-paid">PAID</span>
                         @else
                             <span class="status-pending">{{ strtoupper($registration->status ?? 'PENDING') }}</span>
@@ -331,31 +374,61 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td style="width: 25%;">
                     <div class="info-label">Delegate Name</div>
-                    <div class="info-value">{{ $registration->user?->prefix }} {{ $registration->user?->full_name ?? ($registration->full_name ?? 'N/A') }}</div>
+                    <div class="info-value">{{ $registration->user?->prefix }}
+                        {{ $registration->user?->full_name ?? ($registration->full_name ?? 'N/A') }}</div>
                 </td>
-                <td>
+                <td style="width: 25%;">
+                    <div class="info-label">Gender</div>
+                    <div class="info-value">{{ $gender }}</div>
+                </td>
+                <td style="width: 25%;">
                     <div class="info-label">Designation</div>
-                    <div class="info-value">{{ $registration->designation === 'Other' ? ($registration->other_designation ?: 'Other') : ($registration->designation ?? $registration->user?->designation ?? 'N/A') }}</div>
+                    <div class="info-value">{{ $dispDesignation }}</div>
                 </td>
-                <td>
+                <td style="width: 25%;">
                     <div class="info-label">Mobile Number</div>
-                    <div class="info-value">{{ $registration->user?->mobile_country_code }} {{ $registration->user?->mobile_number ?? 'N/A' }}</div>
+                    <div class="info-value">{{ $registration->user?->mobile_country_code }}
+                        {{ $registration->user?->mobile_number ?? 'N/A' }}</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="info-label">Delegate Category</div>
-                    <div class="info-value">{{ $registration->delegate_type }} - {{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
+                <td style="width: 25%;">
+                    <div class="info-label">Institute / Affiliation</div>
+                    <div class="info-value">{{ $dispInstitute }}</div>
                 </td>
-                <td>
+                <td style="width: 25%;">
                     <div class="info-label">Email Address</div>
                     <div class="info-value">{{ $registration->user?->email ?? 'N/A' }}</div>
                 </td>
-                <td>
+                <td style="width: 25%;">
+                    <div class="info-label">Delegate Category</div>
+                    <div class="info-value">{{ $registration->delegate_type }} -
+                        {{ $registration->delegateCategory->category_name ?? 'N/A' }}</div>
+                </td>
+                <td style="width: 25%;">
                     <div class="info-label">Country & State</div>
-                    <div class="info-value">{{ $registration->country->country_name ?? 'India' }}, {{ $registration->state->state_name ?? $registration->other_state ?? 'N/A' }}</div>
+                    <div class="info-value">{{ $registration->country->country_name ?? 'India' }},
+                        {{ $registration->state->state_name ?? ($registration->other_state ?? 'N/A') }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 25%;">
+                    <div class="info-label">Transaction ID</div>
+                    <div class="info-value" style="font-family: monospace; font-size: 10px;">{{ $dispTxnId }}</div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="info-label">Diet Preference</div>
+                    <div class="info-value">{{ $dietPref }}</div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="info-label">Pre-Conference Workshop</div>
+                    <div class="info-value">{{ $preConfWorkshop }}</div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="info-label">Abstract Submission</div>
+                    <div class="info-value">{{ $abstractStatusText }}</div>
                 </td>
             </tr>
         </table>
@@ -373,8 +446,12 @@
                 @if ($registration->delegate_type === 'International')
                     @php
                         $pay = $payment ?? $registration->latestPayment;
-                        $delFee = $pay ? (float)($pay->delegate_category_fee ?? 0) : (float)($registration->delegate_fee ?: 45000);
-                        $totalAmt = $pay ? (float)($pay->total_amount ?? 0) : (float)($registration->total_amount ?: 45000);
+                        $delFee = $pay
+                            ? (float) ($pay->delegate_category_fee ?? 0)
+                            : (float) ($registration->delegate_fee ?: 45000);
+                        $totalAmt = $pay
+                            ? (float) ($pay->total_amount ?? 0)
+                            : (float) ($registration->total_amount ?: 45000);
                     @endphp
                     <tr>
                         <td>Delegate Category Registration Fee</td>
@@ -390,25 +467,30 @@
                     @php
                         $pay = $payment ?? $registration->latestPayment;
                         if ($pay) {
-                            $delFee = (float)($pay->delegate_category_fee ?? 0);
-                            $cmeFee = (float)($pay->cme_fee ?? 0);
-                            $accFee = (float)($pay->accompanying_persons_fee ?? 0);
-                            $gstAmt = (float)($pay->gst_amount ?? 0);
-                            $totalAmt = (float)($pay->total_amount ?? 0);
+                            $delFee = (float) ($pay->delegate_category_fee ?? 0);
+                            $cmeFee = (float) ($pay->cme_fee ?? 0);
+                            $accFee = (float) ($pay->accompanying_persons_fee ?? 0);
+                            $gstAmt = (float) ($pay->gst_amount ?? 0);
+                            $totalAmt = (float) ($pay->total_amount ?? 0);
                         } else {
-                            $delFee = (float)($registration->delegate_fee ?? ($registration->delegateCategory->indian_fee ?? 0));
-                            $cmeFee = (float)($registration->cme_fee ?? 0);
-                            $accFee = (float)($registration->accompanying_fee ?? 0);
-                            $gstAmt = (float)($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
-                            $totalAmt = (float)($registration->total_amount ?? round($delFee + $cmeFee + $accFee + $gstAmt, 2));
+                            $delFee =
+                                (float) ($registration->delegate_fee ??
+                                    ($registration->delegateCategory->indian_fee ?? 0));
+                            $cmeFee = (float) ($registration->cme_fee ?? 0);
+                            $accFee = (float) ($registration->accompanying_fee ?? 0);
+                            $gstAmt =
+                                (float) ($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
+                            $totalAmt =
+                                (float) ($registration->total_amount ??
+                                    round($delFee + $cmeFee + $accFee + $gstAmt, 2));
                         }
                     @endphp
                     @if ($delFee > 0)
-                    <tr>
-                        <td>Delegate Registration Fee (Excl. GST)</td>
-                        <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
-                        <td style="text-align: center;">INR</td>
-                    </tr>
+                        <tr>
+                            <td>Delegate Registration Fee (Excl. GST)</td>
+                            <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
+                            <td style="text-align: center;">INR</td>
+                        </tr>
                     @endif
                     @if ($cmeFee > 0 || $registration->participate_in_cme)
                         <tr>
@@ -419,7 +501,8 @@
                     @endif
                     @if ($accFee > 0 || ($registration->accompanying_persons ?? 0) > 0)
                         <tr>
-                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))</td>
+                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))
+                            </td>
                             <td style="text-align: right;">&#8377;{{ number_format($accFee, 2) }}</td>
                             <td style="text-align: center;">INR</td>
                         </tr>
@@ -446,12 +529,14 @@
                         <strong>IPHACON 2027 Organizing Committee</strong><br>
                         Department of Community Medicine, RIMS, Ranchi, Jharkhand<br>
                         Email: info@iphacon2027.com &nbsp;|&nbsp; Web: www.iphacon2027.com<br>
-                        <span style="font-size: 8px; color: #94A3B8; margin-top: 3px; display: block;">* Computer-generated official receipt. No physical signature required.</span>
+                        <span style="font-size: 8px; color: #94A3B8; margin-top: 3px; display: block;">*
+                            Computer-generated official receipt. No physical signature required.</span>
                     </td>
                     <td class="footer-right">
                         <div class="stamp-box">
                             <div class="stamp-title">IPHACON 2027 VERIFIED</div>
-                            <div style="font-size: 8.5px; color: #16A34A; font-weight: bold; margin-top: 2px;">OFFICIAL RECEIPT</div>
+                            <div style="font-size: 8.5px; color: #16A34A; font-weight: bold; margin-top: 2px;">OFFICIAL
+                                RECEIPT</div>
                         </div>
                     </td>
                 </tr>

@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class SanitizeInput
+{
+    /**
+     * Handle an incoming request and sanitize input against script/HTML injection.
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        $input = $request->all();
+
+        array_walk_recursive($input, function (&$value, $key) {
+            if (is_string($value)) {
+                // Do not strip password fields
+                if (!in_array($key, ['password', 'password_confirmation', 'current_password'])) {
+                    $value = trim(strip_tags($value));
+                }
+            }
+        });
+
+        $request->merge($input);
+
+        return $next($request);
+    }
+}

@@ -207,31 +207,39 @@ class RegistrationController extends Controller
 
     private function validateAndStoreStep1(Request $request, Registration $registration, $isDraft = false)
     {
-        // Relaxed validation for draft saving
+        // Server-side allowlist validation
         $rules = [
-            'prefix' => 'nullable|string|in:Dr.,Mr.,Mrs.,Prof.',
-            'full_name' => 'nullable|string|max:100',
-            'designation' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
-            'other_designation' => ($request->designation === 'Other' && !$isDraft) ? 'required|string|max:100' : 'nullable|string|max:100',
+            'prefix' => 'nullable|string|in:Dr.,Mr.,Mrs.,Prof.,Ms.',
+            'full_name' => [$isDraft ? 'nullable' : 'required', 'string', 'max:100', 'regex:/^[A-Za-z.\s]+$/'],
+            'designation' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100|in:Professor,Additional Professor,Associate Professor,Assistant Professor,Senior Resident,Junior Resident,Other',
+            'other_designation' => ($request->designation === 'Other' && !$isDraft)
+                ? ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9\s.,\-\/()]+$/']
+                : ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9\s.,\-\/()]+$/'],
             'gender' => 'nullable|in:Male,Female',
             'dob' => $isDraft ? 'nullable|date|before_or_equal:-18 years' : 'required|date|before_or_equal:-18 years',
-            'mobile_number' => 'nullable|string|max:18',
+            'mobile_number' => ['nullable', 'string', 'max:18', 'regex:/^[0-9+\s\-]+$/'],
             'photo' => $registration->photo_path !== null ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : 'required|image|mimes:jpg,jpeg,png|max:500'),
-            'address' => $isDraft ? 'nullable|string|max:500' : 'required|string|max:500',
-            'state_id' => auth()->user()->delegate_type == 'Indian' ? ($isDraft ? 'nullable|integer' : 'required|integer') : ($isDraft ? 'nullable|string|max:50' : 'required|string|max:50'),
-            'city' => $isDraft ? 'nullable|string|max:100' : 'required|string|max:100',
+            'address' => [$isDraft ? 'nullable' : 'required', 'string', 'max:500', 'regex:/^[A-Za-z0-9\s,.\-\/#&():]+$/'],
+            'state_id' => auth()->user()->delegate_type == 'Indian' 
+                ? ($isDraft ? 'nullable|integer' : 'required|integer') 
+                : ($isDraft ? 'nullable|string|max:50|regex:/^[A-Za-z0-9\s.\-]+$/' : 'required|string|max:50|regex:/^[A-Za-z0-9\s.\-]+$/'),
+            'city' => [$isDraft ? 'nullable' : 'required', 'string', 'max:100', 'regex:/^[A-Za-z0-9\s.,\-\/]+$/'],
             'pin_code' => auth()->user()->delegate_type == 'Indian' 
                 ? ($isDraft ? 'nullable|string|regex:/^[0-9]{6}$/' : 'required|string|regex:/^[0-9]{6}$/') 
-                : ($isDraft ? 'nullable|string|max:10' : 'required|string|max:10'),
-            'whatsapp_country_code' => 'nullable|string',
-            'whatsapp_number' => $isDraft ? 'nullable|string|max:20' : 'required|string|max:20',
+                : ($isDraft ? 'nullable|string|max:10|regex:/^[A-Za-z0-9\s\-]+$/' : 'required|string|max:10|regex:/^[A-Za-z0-9\s\-]+$/'),
+            'whatsapp_country_code' => ['nullable', 'string', 'regex:/^\+?[0-9]{1,5}$/'],
+            'whatsapp_number' => [$isDraft ? 'nullable' : 'required', 'string', 'max:20', 'regex:/^[0-9+\s\-]+$/'],
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
-            'id_proof_type' => $isDraft ? 'nullable|string' : 'required|string',
-            'id_proof_number' => $isDraft ? 'nullable|string|max:50' : 'required|string|max:50',
+            'id_proof_type' => $isDraft ? 'nullable|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID' : 'required|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID',
+            'id_proof_number' => $isDraft ? 'nullable|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/' : 'required|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/',
             'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : ($isDraft ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : 'required|file|mimes:pdf,jpg,jpeg,png|max:200')
         ];
 
         $messages = [
+            'full_name.regex' => 'Full name contains invalid characters. Only letters, dots, and spaces are allowed.',
+            'address.regex' => 'Address contains invalid characters. Script tags and HTML elements are strictly prohibited.',
+            'city.regex' => 'City contains invalid characters.',
+            'other_designation.regex' => 'Designation contains invalid characters.',
             'designation.required' => 'Please select your designation.',
             'other_designation.required' => 'Please specify your designation.',
             'photo.required' => 'Please upload your profile photo to proceed.',
@@ -244,11 +252,13 @@ class RegistrationController extends Controller
             'pin_code.regex' => 'Indian PIN Code must be exactly 6 digits.',
             'pin_code.max' => 'International Zip Code must not exceed 10 characters.',
             'id_proof_number.required' => 'Please enter your ID Proof / Aadhaar / PAN number.',
+            'id_proof_number.regex' => 'ID proof number contains invalid characters.',
             'id_proof_document.required' => 'Please upload your ID proof document to proceed.',
             'id_proof_document.file' => 'ID proof document must be a valid file.',
             'id_proof_document.mimes' => 'ID proof document must be a PDF, JPG, JPEG, or PNG file.',
             'id_proof_document.max' => 'ID proof document size must not exceed 200KB.',
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
+            'whatsapp_number.regex' => 'WhatsApp number contains invalid characters.',
         ];
 
         // Specific validation for ID Proof Number based on ID Proof Type

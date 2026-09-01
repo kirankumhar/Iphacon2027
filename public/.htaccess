@@ -29,12 +29,22 @@
     # Suppress Version and Technology Disclosure
     Header unset X-Powered-By
     Header always unset X-Powered-By
+    Header unset Server
+    Header always unset Server
+
     # Clickjacking Protection (Disallow third-party framing)
     Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Content-Security-Policy "frame-ancestors 'self';"
+
     # MIME-Type Sniffing Protection
     Header always set X-Content-Type-Options "nosniff"
+
     # Cross-Site Scripting (XSS) Protection
     Header always set X-XSS-Protection "1; mode=block"
+
     # Referrer Policy
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions Policy
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>

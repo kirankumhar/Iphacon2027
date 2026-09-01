@@ -62,6 +62,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Registration::class);
     }
 
+    public function abstractSubmissions()
+    {
+        return $this->hasMany(AbstractSubmission::class);
+    }
+
+    public function abstractSubmission()
+    {
+        return $this->hasOne(AbstractSubmission::class)->latestOfMany();
+    }
+
     // Generate OTP for email verification
     public function generateOtp()
     {

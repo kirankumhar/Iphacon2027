@@ -127,6 +127,16 @@ class Registration extends Model
         return $this->hasOne(CmeApplication::class)->latestOfMany();
     }
 
+    public function abstractSubmissions()
+    {
+        return $this->hasMany(AbstractSubmission::class);
+    }
+
+    public function abstractSubmission()
+    {
+        return $this->hasOne(AbstractSubmission::class)->latestOfMany();
+    }
+
 
     // Helper methods
     public function calculateTotalAmount()
