@@ -15,6 +15,7 @@ class Registration extends Model
         'user_id',
         'designation',
         'other_designation',
+        'institution',
         'acknowledgement_id',
         'registration_number',
         'photo_path',

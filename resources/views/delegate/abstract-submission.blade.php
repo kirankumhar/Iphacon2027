@@ -330,7 +330,7 @@
                 <!-- Institution -->
                 <div class="col-md-6 col-lg-4">
                     <label class="form-label fw-bold text-dark small">Institution / Organization <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="presenting_author_institution" value="{{ old('presenting_author_institution', $abstract->presenting_author_institution ?? ($registration->institution ?? $registration->college ?? '')) }}" required placeholder="e.g. RIMS, Ranchi">
+                    <input type="text" class="form-control" name="presenting_author_institution" value="{{ old('presenting_author_institution', $abstract->presenting_author_institution ?? ($registration->institution ?? $registration->user?->institution ?? $registration->college ?? '')) }}" required placeholder="e.g. RIMS, Ranchi">
                 </div>
 
                 <!-- City -->

@@ -122,6 +122,12 @@
                                 </td>
                             </tr>
                             <tr class="border-bottom border-light">
+                                <th class="text-muted fw-semibold py-3 px-3.5">Institute / Affiliation</th>
+                                <td class="fw-semibold text-dark py-3 px-3.5">
+                                    <i class="bx bx-buildings me-1 text-primary"></i>{{ $delegate->institution ?? ($delegate->user?->institution ?? ($delegate->abstractSubmission?->presenting_author_institution ?? 'Not Specified')) }}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
                                 <th class="text-muted fw-semibold py-3 px-3.5">Gender &amp; Date of Birth</th>
                                 <td class="fw-semibold text-dark py-3 px-3.5">
                                     {{ $delegate->user?->gender ?? 'N/A' }} 

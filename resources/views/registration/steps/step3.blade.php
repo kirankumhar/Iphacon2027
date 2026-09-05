@@ -43,6 +43,15 @@
                                 <td class="fw-semibold text-dark py-1">{{ $dispDesignation }}</td>
                             </tr>
                         @endif
+                        @php
+                            $dispInstitute = $registration->institution ?? ($user->institution ?? ($user->abstractSubmission?->presenting_author_institution ?? ''));
+                        @endphp
+                        @if($dispInstitute)
+                            <tr>
+                                <td class="text-muted py-1">Institute:</td>
+                                <td class="fw-semibold text-dark py-1">{{ $dispInstitute }}</td>
+                            </tr>
+                        @endif
                         <tr>
                             <td class="text-muted py-1">Email:</td>
                             <td class="py-1">

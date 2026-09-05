@@ -215,6 +215,7 @@ class RegistrationController extends Controller
             'other_designation' => ($request->designation === 'Other' && !$isDraft)
                 ? ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9\s.,\-\/()]+$/']
                 : ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9\s.,\-\/()]+$/'],
+            'institution' => [$isDraft ? 'nullable' : 'required', 'string', 'max:255', 'regex:/^[A-Za-z0-9\s.,\-\/()&]+$/'],
             'gender' => 'nullable|in:Male,Female',
             'dob' => $isDraft ? 'nullable|date|before_or_equal:-18 years' : 'required|date|before_or_equal:-18 years',
             'mobile_number' => ['nullable', 'string', 'max:18', 'regex:/^[0-9+\s\-]+$/'],
@@ -242,6 +243,8 @@ class RegistrationController extends Controller
             'other_designation.regex' => 'Designation contains invalid characters.',
             'designation.required' => 'Please select your designation.',
             'other_designation.required' => 'Please specify your designation.',
+            'institution.required' => 'Please enter your institute, college, hospital or organization name.',
+            'institution.regex' => 'Institute name contains invalid characters.',
             'photo.required' => 'Please upload your profile photo to proceed.',
             'photo.image' => 'Profile photo must be a valid image file.',
             'photo.mimes' => 'Profile photo must be a JPG, JPEG, or PNG file.',
@@ -294,6 +297,8 @@ class RegistrationController extends Controller
             $user->designation = $request->designation;
             $user->other_designation = $request->designation === 'Other' ? $request->other_designation : null;
         }
+        if ($request->filled('institution'))
+            $user->institution = $request->institution;
         if ($request->filled('gender'))
             $user->gender = $request->gender;
         if ($request->filled('dob'))
@@ -310,6 +315,8 @@ class RegistrationController extends Controller
             $updateData['designation'] = $request->designation;
             $updateData['other_designation'] = $request->designation === 'Other' ? $request->other_designation : null;
         }
+        if ($request->filled('institution'))
+            $updateData['institution'] = $request->institution;
         if ($request->filled('address'))
             $updateData['address'] = $request->address;
         if ($request->filled('country_id'))

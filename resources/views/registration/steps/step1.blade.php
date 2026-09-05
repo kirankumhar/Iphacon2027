@@ -112,6 +112,28 @@
                 </div>
             </div>
 
+            <!-- Institute / Affiliation -->
+            <div class="form-group mb-3">
+                <label for="institution" class="form-label">
+                    <i class="fas fa-university form-icon"></i>Institute / Affiliation<span class="required-star">*</span>
+                </label>
+                @php
+                    $dispInstituteVal = old(
+                        'institution',
+                        $registration->institution ??
+                        ($user->institution ??
+                            ($user->abstractSubmission?->presenting_author_institution ??
+                                ($user->abstractSubmissions?->first()?->presenting_author_institution ?? '')))
+                    );
+                @endphp
+                <input type="text" class="form-control @error('institution') is-invalid @enderror"
+                    id="institution" name="institution" value="{{ $dispInstituteVal }}"
+                    maxlength="255" placeholder="Enter your institute, college, hospital or organization" required>
+                @error('institution')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+
             <!-- Gender and Date of Birth -->
             <div class="row">
                 <div class="col-md-6">
