@@ -305,7 +305,7 @@
             <tr>
                 <td
                     style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 11.5px; padding: 6px 8px; text-align: center; text-transform: uppercase;">
-                    IPHACON Registration Acknowledgement Receipt
+                    IPHACON 2027 Registration Acknowledgement Receipt
                 </td>
             </tr>
         </table>
@@ -344,13 +344,13 @@
         <table class="info-table">
             <tr>
                 <td style="width: 25%;">
-                    <div class="info-label">Registration Number</div>
+                    <div class="info-label">IPHACON Regn. No.</div>
                     <div class="info-value" style="color: #0288D1; font-family: monospace; font-size: 10.5px;">
                         {{ $registration->registration_number ?? ($registration->status === 'Approved' ? 'N/A' : 'Pending Approval') }}
                     </div>
                 </td>
                 <td style="width: 25%;">
-                    <div class="info-label">IPHACON ID</div>
+                    <div class="info-label">IPHA Membership No.</div>
                     <div class="info-value" style="color: #01579B; font-family: monospace; font-size: 10.5px;">
                         {{ $registration->membership_no ?: ($registration->ismm_membership_no ?: 'N/A') }}
                     </div>
