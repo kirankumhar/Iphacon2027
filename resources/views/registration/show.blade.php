@@ -206,6 +206,7 @@
                                         $cmeStatus = $registration->cmeApplication?->status;
                                         $isCmeApproved = $registration->participate_in_cme || $cmeStatus === 'Approved';
                                         $isCmePending = $cmeStatus === 'Payment Submitted';
+                                        $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
                                     @endphp
                                     @if ($isCmeApproved)
                                         <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating (Approved)</span>
@@ -215,15 +216,17 @@
                                                 <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
                                             </span>
                                         </div>
-                                    @elseif ($registration->status !== 'Rejected')
+                                    @elseif ($isRegistrationPaid)
                                         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                                             <span class="fw-semibold text-muted small">Not Registered</span>
                                             <a href="{{ route('cme.apply') }}" class="btn btn-sm btn-outline-success px-2.5 py-0.5 fw-semibold rounded-pill shadow-xs" style="font-size: 0.76rem;">
                                                 <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
                                             </a>
                                         </div>
-                                    @else
+                                    @elseif ($registration->status === 'Rejected')
                                         <span class="fw-semibold text-muted small">Not Eligible (Registration Rejected)</span>
+                                    @else
+                                        <span class="fw-semibold text-muted small">Available after registration payment</span>
                                     @endif
                                 </div>
                                 <div class="col-sm-6">

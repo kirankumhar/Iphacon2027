@@ -701,14 +701,24 @@ class RegistrationController extends Controller
         $user = Auth::user();
         $registration = Registration::where('user_id', $user->id)->latest()->first();
 
-        if (!$registration) {
+        if (!$registration || $registration->status === 'Draft') {
             return redirect()->route('registration.create')
-                ->with('error', 'Please complete your main conference registration first before applying for CME Workshop.');
+                ->with('error', 'Please complete your main conference registration first before applying for Pre-Conference Workshop.');
+        }
+
+        if ($registration->status === 'Pending Payment') {
+            return redirect()->route('registration.index')
+                ->with('error', 'Please complete your registration payment first before applying for Pre-Conference Workshop.');
         }
 
         if ($registration->status === 'Rejected') {
             return redirect()->route('registration.index')
-                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for CME Workshop.');
+                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for Pre-Conference Workshop.');
+        }
+
+        if (!in_array($registration->status, ['Approved', 'Payment Submitted'])) {
+            return redirect()->route('registration.index')
+                ->with('error', 'Please complete your registration and payment first before applying for Pre-Conference Workshop.');
         }
 
         $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
@@ -721,9 +731,24 @@ class RegistrationController extends Controller
         $user = Auth::user();
         $registration = Registration::where('user_id', $user->id)->latest()->firstOrFail();
 
+        if ($registration->status === 'Draft') {
+            return redirect()->route('registration.create')
+                ->with('error', 'Please complete your main conference registration first before applying for Pre-Conference Workshop.');
+        }
+
+        if ($registration->status === 'Pending Payment') {
+            return redirect()->route('registration.index')
+                ->with('error', 'Please complete your registration payment first before applying for Pre-Conference Workshop.');
+        }
+
         if ($registration->status === 'Rejected') {
             return redirect()->route('registration.index')
-                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for CME Workshop.');
+                ->with('error', 'Your registration status is Rejected. Rejected delegates cannot apply for Pre-Conference Workshop.');
+        }
+
+        if (!in_array($registration->status, ['Approved', 'Payment Submitted'])) {
+            return redirect()->route('registration.index')
+                ->with('error', 'Please complete your registration and payment first before applying for Pre-Conference Workshop.');
         }
 
         if (!$request->has('participate_in_cme')) {

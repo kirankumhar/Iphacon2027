@@ -73,6 +73,10 @@
                                                         $stBg = '#E1F0FF';
                                                         $stFg = '#2D69FF';
                                                         $stTxt = 'Draft';
+                                                    } elseif ($registration->status === 'Pending Payment') {
+                                                        $stBg = '#FFF7ED';
+                                                        $stFg = '#EA580C';
+                                                        $stTxt = 'Pending Payment';
                                                     }
                                                 @endphp
                                                 <span class="badge px-3 py-1.5 fw-semibold" style="background-color: {{ $stBg }}; color: {{ $stFg }}; border-radius: 20px;">
@@ -88,8 +92,9 @@
                                                     $cmeSt = $registration->cmeApplication?->status;
                                                     $isCmeApproved = $registration->participate_in_cme || $cmeSt === 'Approved';
                                                     $isCmePending = $cmeSt === 'Payment Submitted';
+                                                    $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
                                                 @endphp
-                                                @if(!$isCmeApproved && !$isCmePending && $registration->status !== 'Rejected')
+                                                @if($isRegistrationPaid && !$isCmeApproved && !$isCmePending)
                                                     <a href="{{ route('cme.apply') }}" class="btn btn-sm btn-outline-success px-2.5 py-1 fw-semibold me-1" style="border-radius: 6px;">
                                                         <i class="fas fa-microscope me-1"></i>Apply for Pre-Conference Workshop
                                                     </a>
@@ -101,6 +106,10 @@
                                                 @if($registration->status === 'Draft')
                                                     <a href="{{ route('registration.create') }}" class="btn btn-sm btn-primary px-3 py-1 fw-semibold" style="background: #2D69FF; border: none; border-radius: 6px;">
                                                         <i class="fas fa-edit me-1"></i>Edit
+                                                    </a>
+                                                @elseif($registration->status === 'Pending Payment')
+                                                    <a href="{{ route('payment.gateway') }}" class="btn btn-sm btn-warning px-3 py-1 fw-semibold text-dark" style="border-radius: 6px;">
+                                                        <i class="fas fa-credit-card me-1"></i>Pay Now
                                                     </a>
                                                 @elseif($registration->status === 'Approved')
                                                     <a href="{{ route('delgate.download.receipt', $registration->registration_number) }}" class="btn btn-sm btn-success px-3 py-1 fw-semibold" style="border-radius: 6px;">

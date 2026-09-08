@@ -147,8 +147,9 @@
                                     $cmeSt = $registration->cmeApplication?->status;
                                     $isCmeApproved = $registration->participate_in_cme || $cmeSt === 'Approved';
                                     $isCmePending = $cmeSt === 'Payment Submitted';
+                                    $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
                                 @endphp
-                                @if(!$isCmeApproved && !$isCmePending && $registration->status !== 'Rejected')
+                                @if($isRegistrationPaid && !$isCmeApproved && !$isCmePending)
                                     <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
                                         <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
                                     </a>
