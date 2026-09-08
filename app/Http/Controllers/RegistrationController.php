@@ -233,7 +233,7 @@ class RegistrationController extends Controller
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
             'id_proof_type' => $isDraft ? 'nullable|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID' : 'required|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID',
             'id_proof_number' => $isDraft ? 'nullable|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/' : 'required|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/',
-            'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : ($isDraft ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:200' : 'required|file|mimes:pdf,jpg,jpeg,png|max:200')
+            'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500' : 'required|file|mimes:pdf,jpg,jpeg,png|max:500')
         ];
 
         $messages = [
@@ -259,7 +259,7 @@ class RegistrationController extends Controller
             'id_proof_document.required' => 'Please upload your ID proof document to proceed.',
             'id_proof_document.file' => 'ID proof document must be a valid file.',
             'id_proof_document.mimes' => 'ID proof document must be a PDF, JPG, JPEG, or PNG file.',
-            'id_proof_document.max' => 'ID proof document size must not exceed 200KB.',
+            'id_proof_document.max' => 'ID proof document size must not exceed 500KB.',
             'whatsapp_number.required' => 'Please enter your WhatsApp number.',
             'whatsapp_number.regex' => 'WhatsApp number contains invalid characters.',
         ];

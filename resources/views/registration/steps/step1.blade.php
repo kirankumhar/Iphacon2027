@@ -496,7 +496,7 @@
                         </div>
 
                         <small class="text-muted extra-small d-block mt-3">
-                            PDF, JPG, JPEG or PNG • Max size: 200KB • Clear, readable document only
+                            PDF, JPG, JPEG or PNG • Max size: 500KB • Clear, readable document only
                         </small>
                     </div>
                     <!-- File input positioned off-screen but still focusable -->
@@ -623,8 +623,8 @@
                     return;
                 }
 
-                if (file.size > 200 * 1024) {
-                    alert("Document size must not exceed 200KB!");
+                if (file.size > 500 * 1024) {
+                    alert("Document size must not exceed 500KB!");
                     this.value = "";
                     return;
                 }
