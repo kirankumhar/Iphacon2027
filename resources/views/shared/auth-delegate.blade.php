@@ -68,14 +68,16 @@
 
     <div class="page-wrapper">
         <!-- Thin Conference Topbar -->
-        <div class="header-top conference-topbar text-white py-2" style="background: linear-gradient(90deg, #01579B 0%, #00897B 100%); font-size: 0.82rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.15);">
+        <div class="header-top conference-topbar text-white py-2"
+            style="background: linear-gradient(90deg, #01579B 0%, #00897B 100%); font-size: 0.82rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.15);">
             <div class="auto-container px-3">
                 <div class="row align-items-center justify-content-between">
                     <!-- Conference Title -->
                     <div class="col-md-7 col-12 text-center text-md-start mb-1 mb-md-0">
                         <span class="d-inline-flex align-items-center gap-2">
                             <i class="fas fa-stethoscope text-warning"></i>
-                            <span>71<sup>st</sup> Annual National Conference of the Indian Public Health Association (IPHACON 2027)</span>
+                            <span>71<sup>st</sup> Annual National Conference of the Indian Public Health Association
+                                (IPHACON 2027)</span>
                         </span>
                     </div>
 
@@ -95,12 +97,15 @@
             <!-- End Header Top -->
             <div class="header-lower">
                 <div class="auto-container">
-                    <div class="row align-items-center text-center">
+                    <div class="row align-items-center text-center mb-3">
 
                         <!-- Left Logo (IPHACON) -->
-                        <div class="col-lg-3 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-start align-items-center">
+                        <div
+                            class="col-lg-3 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-start align-items-center">
                             <a href="https://www.iphacon2027.com/index.php" title="IPHACON 2027">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo" title="IPHACON 2027 Logo" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="IPHACON 2027 Logo"
+                                    title="IPHACON 2027 Logo" class="img-fluid"
+                                    style="max-height: 80px; object-fit: contain;">
                             </a>
                         </div>
 
@@ -118,12 +123,17 @@
                         </div>
 
                         <!-- Right Logos (IPHA & RIMS) -->
-                        <div class="col-lg-4 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-end align-items-center gap-3">
+                        <div
+                            class="col-lg-4 col-md-3 col-12 mb-2 mb-lg-0 d-flex justify-content-center justify-content-lg-end align-items-center gap-3">
                             <a href="https://www.iphacon2027.com/index.php" title="IPHA Logo">
-                                <img src="{{ asset('assets/img/logo/iphacon_logo.png') }}" alt="IPHA Logo" title="IPHA Logo" class="img-fluid" style="max-height: 75px; width: auto; object-fit: contain;">
+                                <img src="{{ asset('assets/img/logo/iphacon_logo.png') }}" alt="IPHA Logo"
+                                    title="IPHA Logo" class="img-fluid"
+                                    style="max-height: 75px; width: auto; object-fit: contain;">
                             </a>
                             <a href="https://www.iphacon2027.com/index.php" title="RIMS Logo">
-                                <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo" title="RIMS Logo" class="img-fluid" style="max-height: 75px; width: auto; object-fit: contain;">
+                                <img src="{{ asset('shared/user/images/rimslogo.png') }}" alt="RIMS Logo"
+                                    title="RIMS Logo" class="img-fluid"
+                                    style="max-height: 75px; width: auto; object-fit: contain;">
                             </a>
                         </div>
 
@@ -178,7 +188,8 @@
 
                                         <!-- Submit Abstract -->
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('abstract.create') }}" title="Submit Abstract">
+                                            <a class="nav-link" href="{{ route('abstract.create') }}"
+                                                title="Submit Abstract">
                                                 Submit Abstract
                                             </a>
                                         </li>
@@ -208,9 +219,12 @@
 
                                         <!-- Logout (Pushed to Right End) -->
                                         <li class="nav-item ms-auto my-1">
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="btn nav-logout-btn d-inline-flex align-items-center gap-2" title="Logout from Delegate Portal">
+                                                <button type="submit"
+                                                    class="btn nav-logout-btn d-inline-flex align-items-center gap-2"
+                                                    title="Logout from Delegate Portal">
                                                     <i class="fas fa-sign-out-alt"></i>
                                                     <span>Logout</span>
                                                 </button>
@@ -237,9 +251,9 @@
                 <div class="auto-container">
                     <div class="main-box">
                         <div class="logo-box">
-                            <div class="logo"><a href="https://www.iphacon2027.com/index.php" aria-label="Iphacon 2027 Home"><img
-                                        src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
-                                        title="Iphacon 2027 Logo"></a>
+                            <div class="logo"><a href="https://www.iphacon2027.com/index.php"
+                                    aria-label="Iphacon 2027 Home"><img src="{{ asset('assets/img/logo/logo.png') }}"
+                                        alt="Iphacon 2027 Logo" title="Iphacon 2027 Logo"></a>
                             </div>
                             <div class="upper-right">
                                 <div class="search-box">
@@ -255,8 +269,9 @@
             </div>
 
             <div class="mobile-header" role="complementary">
-                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img src="{{ asset('assets/img/logo/logo.png') }}"
-                            alt="Iphacon 2027 Logo" title="Iphacon 2027 Logo"></a></div>
+                <div class="logo"><a href="https://www.iphacon2027.com/index.php"><img
+                            src="{{ asset('assets/img/logo/logo.png') }}" alt="Iphacon 2027 Logo"
+                            title="Iphacon 2027 Logo"></a></div>
                 <div class="nav-outer clearfix">
                     <div class="outer-box">
                         <div class="search-box">
@@ -314,14 +329,14 @@
             <div class="form-back-drop"></div>
 
             @hasSection('show-page-title')
-            <!--Page Title-->
-            <section class="page-title">
-                <div class="anim-icons full-width">
-                    <span class="icon icon-bull-eye"></span>
-                    <span class="icon icon-dotted-circle"></span>
-                </div>
-            </section>
-            <!--End Page Title-->
+                <!--Page Title-->
+                <section class="page-title">
+                    <div class="anim-icons full-width">
+                        <span class="icon icon-bull-eye"></span>
+                        <span class="icon icon-dotted-circle"></span>
+                    </div>
+                </section>
+                <!--End Page Title-->
             @endif
 
             <!-- About Section Two -->
@@ -332,20 +347,30 @@
             </section>
         </main>
 
-      <footer class="footer-area">
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 align-self-center">
-                        <p class="copyright-text">
-                            &copy; Copyright <?php echo date("Y"); ?> <a href="{{ url('/') }}"> IPHACON 2027 </a> All Rights Reserved.
-                        </p>
+        <footer class="footer-area">
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <p class="copyright-text">
+                                &copy; Copyright <?php echo date('Y'); ?> <a href="{{ url('/') }}"> IPHACON 2027 </a>
+                                All Rights Reserved.
+                            </p>
+                        </div>
+                        <div class="col-md-6 align-self-center text-md-end text-center">
+                            <p class="copyright-text"> Technology Partner : <a
+                                    aria-label="RIMS Ranchi - External site that opens in a new window"
+                                    href="https://www.computered.in/" target="_blank" title="COMPUTER Ed."
+                                    onclick="return confirm('You are being redirected to an external website. Please note that this website is not responsible for external websites content & privacy policies.');">
+                                    <img src="{{ asset('images/ced.png') }}" alt="COMPUTER Ed."
+                                        style="width:30px;height:30px;vertical-align:middle;"> <span
+                                        style="font-size:15px;color:#cad90a;font-family:old-bookmark;"> <b>COMPUTER
+                                            Ed.</b> </span> </a> </p>
+                        </div>
                     </div>
-                   <div class="col-md-6 align-self-center text-md-end text-center"> <p class="copyright-text"> Technology Partner : <a aria-label="RIMS Ranchi - External site that opens in a new window" href="https://www.computered.in/" target="_blank" title="COMPUTER Ed." onclick="return confirm('You are being redirected to an external website. Please note that this website is not responsible for external websites content & privacy policies.');"> <img src="{{ asset('images/ced.png') }}" alt="COMPUTER Ed." style="width:30px;height:30px;vertical-align:middle;"> <span style="font-size:15px;color:#cad90a;font-family:old-bookmark;"> <b>COMPUTER Ed.</b> </span> </a> </p> </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
 
     </div>
@@ -361,6 +386,7 @@
             line-height: 40px !important;
             font-size: 18px !important;
         }
+
         .scroll-to-top:hover {
             background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
             color: #ffffff !important;
@@ -395,20 +421,20 @@
                     "extendedTimeOut": "2000"
                 };
 
-                @if(Session::has('success'))
+                @if (Session::has('success'))
                     toastr.success("{!! addslashes(Session::get('success')) !!}", "Success");
                 @endif
-                @if(Session::has('error'))
+                @if (Session::has('error'))
                     toastr.error("{!! addslashes(Session::get('error')) !!}", "Error");
                 @endif
-                @if(Session::has('info'))
+                @if (Session::has('info'))
                     toastr.info("{!! addslashes(Session::get('info')) !!}", "Notice");
                 @endif
-                @if(Session::has('warning'))
+                @if (Session::has('warning'))
                     toastr.warning("{!! addslashes(Session::get('warning')) !!}", "Warning");
                 @endif
-                @if(isset($errors) && $errors->any())
-                    @foreach($errors->all() as $error)
+                @if (isset($errors) && $errors->any())
+                    @foreach ($errors->all() as $error)
                         toastr.error("{!! addslashes($error) !!}", "Validation Error");
                     @endforeach
                 @endif
