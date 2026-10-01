@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'sbiepay' => [
+        'mid'            => env('SBIEPAY_MID', '1000003'),
+        'api_key'        => env('SBIEPAY_API_KEY'),
+        'api_secret'     => env('SBIEPAY_API_SECRET'),
+        'encryption_key' => env('SBIEPAY_ENCRYPTION_KEY'),
+        'env'            => env('SBIEPAY_ENV', 'SANDBOX'), // 'LIVE' or 'SANDBOX'
+        'return_url'     => env('SBIEPAY_RETURN_URL'),
+    ],
+
 ];

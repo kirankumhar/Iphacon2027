@@ -1,0 +1,32 @@
+{
+    "name": "sbiepay/epay-php-sdk",
+    "description": "The official PHP SDK for SBI ePay",
+    "license": "http://www.apache.org/licenses/LICENSE-2.0",
+    "autoload": {
+        "psr-4": {
+            "Sbiepay\\": "src/"
+        }
+    },
+    "scripts": {
+        "build:prod": "php build.php prod"
+    },
+    "keywords": [
+        "sbiepay",
+        "payment",
+        "gateway",
+        "sdk",
+        "api"
+    ],
+    "authors": [
+        {
+            "name": "State Bank of India",
+            "email": "support.sbiepay@sbi.co.in",
+            "homepage": "https://epay.sbi.bank.in/secure/home"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "guzzlehttp/guzzle": "^7.9",
+        "caseyamcl/guzzle_retry_middleware": "^2.13"
+    }
+}

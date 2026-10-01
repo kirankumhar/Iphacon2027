@@ -5,12 +5,20 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/sbiepay-sdk"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "caseyamcl/guzzle_retry_middleware": "^2.13",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "mews/captcha": "^3.4"
+        "mews/captcha": "^3.4",
+        "sbiepay/epay-php-sdk": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -25,7 +33,9 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Sbiepay\\": "packages/sbiepay-sdk/src/",
+            "GuzzleRetry\\": "vendor/caseyamcl/guzzle_retry_middleware/src/"
         }
     },
     "autoload-dev": {

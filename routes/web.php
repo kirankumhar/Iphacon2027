@@ -23,6 +23,7 @@ Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/', [RegisterController::class, 'showRegistrationForm']);
 Route::view('/maintenance', 'errors.503')->name('maintenance');
+Route::view('/404', 'errors.404')->name('404');
 
 // Delegate Registration routes
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -46,6 +47,13 @@ Route::post('email/verification-notification', [RegisterController::class, 'rese
 
 // CAPTCHA route (if using mews/captcha package)
 Route::get('captcha/{config?}', '\Mews\Captcha\CaptchaController@getCaptcha')->name('captcha');
+
+// SBI ePay Callback Route
+Route::match(['get', 'post'], 'payment/sbi/response', [App\Http\Controllers\PaymentController::class, 'sbiResponse'])
+    ->name('payment.sbi.response');
+
+Route::get('payment/failed/{registration?}', [App\Http\Controllers\PaymentController::class, 'failed'])
+    ->name('payment.failed');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
@@ -84,27 +92,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
     Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
-    Route::get('cme-payment/gateway', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
+    Route::get('cme-payment/gateway/{encCmeAppId?}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
+    Route::get('cme-payment/sbi/initiate/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'initiateCmeSbiPayment'])->name('cme.payment.sbi.initiate');
     Route::post('cme-payment/process/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'processCmePayment'])->name('cme.payment.process');
 
-    Route::get('/delegate-download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
+    Route::get('/delegate-download-receipt/{registration_number}/{type?}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])
         ->name('delgate.download.receipt');
 
     // REGISTRATION PAYMENT ROUTES
-
-    Route::get('payment/gateway', [App\Http\Controllers\PaymentController::class, 'gateway'])
+    Route::get('payment/gateway/{registration?}', [App\Http\Controllers\PaymentController::class, 'gateway'])
         ->name('payment.gateway');
+
+    Route::get('payment/sbi/initiate/{registration}', [App\Http\Controllers\PaymentController::class, 'initiateSbiPayment'])
+        ->name('payment.sbi.initiate');
 
     Route::post('payment/process/{registration}', [App\Http\Controllers\PaymentController::class, 'processPayment'])
         ->name('payment.process');
 
     Route::get('payment/success/{registration}', [App\Http\Controllers\PaymentController::class, 'success'])
         ->name('payment.success');
-
-    //  Route::post('response', [App\Http\Controllers\PaymentController::class, 'response'])->name('response');
-
-    Route::get('payment/failed/{registration}', [App\Http\Controllers\PaymentController::class, 'failed'])
-        ->name('payment.failed');
 
     // API route for states
     Route::get('api/states/{country}', function ($countryId) {

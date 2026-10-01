@@ -1,0 +1,50 @@
+:root{
+  --navy:#0a1a33; --navy-2:#102848; --gold:#e0b45a; --teal:#2ec4b6;
+  --text:#eaf0f8; --muted:#9db0c9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Poppins","Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(60vmax 60vmax at 85% -10%,rgba(46,196,182,.28),transparent 60%),
+    radial-gradient(50vmax 50vmax at -10% 110%,rgba(224,180,90,.22),transparent 60%),
+    linear-gradient(160deg,var(--navy),var(--navy-2));
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;overflow:hidden;
+}
+.card{
+  width:min(640px,100%);
+  padding:clamp(28px,6vw,56px);
+  border-radius:24px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 30px 80px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.brand{
+  font-family:"Poppins",sans-serif;font-weight:700;
+  font-size:1.05rem;letter-spacing:.08em;color:var(--gold);
+  margin-bottom:24px;text-transform:uppercase;
+}
+h1{
+  font-family:"Poppins",sans-serif;font-weight:700;
+  font-size:clamp(1.85rem,5.5vw,2.75rem);line-height:1.2;margin-bottom:18px;
+  letter-spacing:-0.02em;
+}
+p{font-family:"Roboto","Poppins",sans-serif;color:var(--muted);line-height:1.65;font-size:1rem;max-width:52ch}
+.bar{
+  margin:32px 0 26px;height:6px;border-radius:99px;
+  background:rgba(255,255,255,.12);overflow:hidden;
+}
+.bar span{
+  display:block;height:100%;width:38%;border-radius:99px;
+  background:linear-gradient(90deg,var(--teal),var(--gold));
+  animation:slide 2.6s ease-in-out infinite alternate;
+}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(163%)}}
+.contact{font-size:.95rem;color:var(--muted)}
+.contact a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(224,180,90,.4);transition:color .2s ease,border-color .2s ease}
+.contact a:hover,.contact a:focus-visible{color:var(--teal);border-color:var(--teal);outline:none}
+@media (prefers-reduced-motion:reduce){.bar span{animation:none;width:60%}}

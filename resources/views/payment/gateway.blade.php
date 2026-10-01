@@ -1,219 +1,590 @@
 @extends('shared.auth-delegate')
-@section('title', 'Payment - Scan QR Code')
+@section('title', 'Payment - Registration Fee')
 
 @section('delegate-content')
-    <div class="container py-2">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="card shadow border-0" style="border-radius: 12px;">
-                    <div class="card-header text-center py-2.5 px-3"
-                        style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 12px 12px 0 0;">
-                        <h5 class="text-white mb-0 fw-bold">
-                            <i class="fas fa-qrcode me-2"></i>Payment - Scan QR Code
-                        </h5>
+    <style>
+        .payment-checkout-container {
+            max-width: 1060px;
+            margin: 0 auto;
+        }
+        .hero-header-card {
+            background: linear-gradient(135deg, #1e293b 0%, #2e3192 60%, #4a5bcc 100%);
+            border-radius: 16px 16px 0 0;
+            color: #ffffff;
+        }
+        .method-card {
+            border-radius: 16px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .method-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        }
+        .method-card-sbi {
+            border: 2px solid #2e3192 !important;
+            background: #ffffff;
+        }
+        .method-card-qr {
+            border: 2px solid #059669 !important;
+            background: #ffffff;
+        }
+        .method-header-sbi {
+            background: linear-gradient(135deg, #2e3192, #3b82f6);
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 13px 13px 0 0;
+        }
+        .method-header-qr {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 13px 13px 0 0;
+        }
+        .qr-frame-box {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 16px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .qr-frame-box img {
+            max-width: 220px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .divider-or {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 32px 0;
+        }
+        .divider-or::before,
+        .divider-or::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px dashed #cbd5e1;
+        }
+        .divider-or span {
+            padding: 8px 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .pill-badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .payment-channel-badge {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .step-bubble {
+            width: 28px;
+            height: 28px;
+            background: #059669;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .btn-sbi-pay {
+            background: linear-gradient(135deg, #2e3192 0%, #1d4ed8 100%);
+            border: none;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 17px;
+            box-shadow: 0 6px 20px rgba(46, 49, 146, 0.35);
+            transition: all 0.2s ease;
+        }
+        .btn-sbi-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 49, 146, 0.45);
+            color: #ffffff;
+        }
+        .btn-qr-submit {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border: none;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-qr-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+            color: #ffffff;
+        }
+    </style>
+
+    <div class="container py-3">
+        <div class="payment-checkout-container">
+
+            <!-- Main Container Card -->
+            <div class="card shadow-lg border-0" style="border-radius: 16px;">
+                
+                <!-- Hero Header (Compact) -->
+                <div class="hero-header-card px-3 px-md-4 py-2.5 py-md-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2.5">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="badge bg-warning text-dark px-2.5 py-0.5 rounded-pill fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">
+                                    STEP 4 OF 4 • FINAL STEP
+                                </span>
+                                <span class="text-white-50" style="font-size: 11px;"><i class="fas fa-shield-alt text-success me-1"></i>256-Bit SSL Secured</span>
+                            </div>
+                            <h4 class="text-white mb-0.5 fw-bold d-flex align-items-center" style="font-size: 1.25rem;">
+                                <i class="fas fa-credit-card me-2 text-warning fs-5"></i>Registration Payment Checkout
+                            </h4>
+                            <p class="text-white-50 mb-0" style="font-size: 0.78rem;">
+                                IPHACON 2027 • 16th National Biennial Conference, RIMS Ranchi
+                            </p>
+                        </div>
+                        <div class="text-md-end px-3 py-2 rounded-3 shadow-sm d-flex flex-column justify-content-center" style="background: #ffffff !important; border: 1px solid #e2e8f0; min-width: 210px;">
+                            <span class="d-block text-muted text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 10.5px; margin-bottom: 1px;">Total Payable Amount</span>
+                            @php
+                                $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                                $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
+                                $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
+                                $subtotalBase = $catBase + $cmeBase + $accBase;
+                                $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
+                                $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                            @endphp
+                            <div class="fw-bolder" style="color: #2e3192; font-size: 1.5rem; line-height: 1.15;">
+                                @if ($registration->delegate_type === 'International')
+                                    ₹45,000.00 <span class="fw-normal text-muted" style="font-size: 0.75rem;">INR</span>
+                                @else
+                                    ₹{{ number_format($totalAmt, 2) }} <span class="fw-normal text-muted" style="font-size: 0.75rem;">INR</span>
+                                @endif
+                            </div>
+                            <small class="text-success fw-bold d-block" style="font-size: 10.5px; margin-top: 1px;">
+                                <i class="fas fa-check-circle me-1"></i>(Inclusive of 18% GST)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-3 p-md-4 bg-light">
+
+                    <!-- Session / Alert Messages -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert" style="border-radius: 12px; background: #ecfdf5; border-left: 5px solid #10b981 !important;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-success">Success</h6>
+                                    <div class="text-dark small">{{ session('success') }}</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert" style="border-radius: 12px; background: #fef2f2; border-left: 5px solid #ef4444 !important;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-circle text-danger fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-danger">Payment Error</h6>
+                                    <div class="text-dark small">{{ session('error') }}</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert" style="border-radius: 12px; background: #fef2f2; border-left: 5px solid #ef4444 !important;">
+                            <div class="d-flex">
+                                <i class="fas fa-exclamation-triangle text-danger fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1 fw-bold text-danger">Please correct the following:</h6>
+                                    <ul class="mb-0 ps-3 small text-dark">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    <!-- Delegate Quick Info Bar -->
+                    <div class="card border-0 bg-white shadow-sm mb-4" style="border-radius: 14px;">
+                        <div class="card-body py-3 px-4">
+                            <div class="row align-items-center g-3 text-dark">
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Delegate Name</small>
+                                    <span class="fw-bold text-primary">{{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? '' }}</span>
+                                </div>
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Registration No</small>
+                                    <span class="fw-bold font-monospace text-dark">{{ $registration->registration_number ?: ('REF#' . $registration->id) }}</span>
+                                </div>
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Category</small>
+                                    <span class="fw-bold text-dark">{{ $registration->delegateCategory->category_name ?? 'N/A' }}</span>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Delegate Type</small>
+                                    <span class="badge bg-primary-subtle text-primary fw-bold px-2.5 py-1 rounded-pill">{{ $registration->delegate_type }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="card-body p-3 p-md-4">
-
-                        <!-- Session / Alert Messages -->
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
-                                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <!-- ========================================================================= -->
+                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION)                        -->
+                    <!-- ========================================================================= -->
+                    <div class="method-card method-card-sbi shadow-sm mb-4">
+                        <div class="method-header-sbi d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-white text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                    <i class="fas fa-bolt text-warning fs-5"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-bold text-white">OPTION 1: Instant Online Payment (SBI ePay)</h5>
+                                    <small class="text-white-50">State Bank of India Official Payment Gateway</small>
+                                </div>
                             </div>
-                        @endif
-
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
-                                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning text-dark pill-badge fw-bold shadow-sm">
+                                    <i class="fas fa-star me-1"></i>RECOMMENDED
+                                </span>
+                                <span class="badge bg-white text-primary pill-badge fw-bold shadow-sm">
+                                    <i class="fas fa-check-circle text-success me-1"></i>INSTANT CONFIRMATION
+                                </span>
                             </div>
-                        @endif
+                        </div>
 
-                        @if ($errors->any())
-                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 10px;">
-                                <i class="fas fa-exclamation-triangle me-2"></i><strong>Attention Required:</strong>
-                                <ul class="mb-0 mt-1 ps-3">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
+                        <div class="card-body p-4 bg-white">
+                            <div class="row align-items-center g-4">
+                                <!-- Benefits & Channels -->
+                                <div class="col-lg-7">
+                                    <h6 class="fw-bold text-dark mb-3">
+                                        <i class="fas fa-shield-alt text-primary me-2"></i>Pay Instantly with Any Bank or Method
+                                    </h6>
+                                    <ul class="list-unstyled mb-3 text-secondary small">
+                                        <li class="mb-2 d-flex align-items-start gap-2">
+                                            <i class="fas fa-check-circle text-success mt-1"></i>
+                                            <span><strong>Instant Registration Approval:</strong> Your status is automatically updated and receipt is generated immediately.</span>
+                                        </li>
+                                        <li class="mb-2 d-flex align-items-start gap-2">
+                                            <i class="fas fa-check-circle text-success mt-1"></i>
+                                            <span><strong>Zero Manual Effort:</strong> No need to copy UTR numbers or wait 24-48 hours for admin verification.</span>
+                                        </li>
+                                        <li class="mb-0 d-flex align-items-start gap-2">
+                                            <i class="fas fa-check-circle text-success mt-1"></i>
+                                            <span><strong>100% Bank Grade Security:</strong> Processed on SBI ePay 256-bit encrypted checkout.</span>
+                                        </li>
+                                    </ul>
 
-                        <div class="row g-4">
-                            <!-- Left Column: Payment Summary & QR Code Image -->
-                            <div class="col-lg-6">
-                                <div class="card border shadow-sm h-100" style="border-radius: 12px;">
-                                    <div class="card-header bg-primary text-white py-3">
-                                        <h5 class="mb-0 fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i>Payment Details & QR Code</h5>
+                                    <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                                        <span class="payment-channel-badge"><i class="fas fa-credit-card text-primary"></i> Credit / Debit Cards</span>
+                                        <span class="payment-channel-badge"><i class="fas fa-university text-success"></i> Net Banking (50+ Banks)</span>
+                                        <span class="payment-channel-badge"><i class="fas fa-mobile-alt text-info"></i> UPI / QR</span>
+                                        <span class="payment-channel-badge"><i class="fas fa-wallet text-warning"></i> Wallets</span>
                                     </div>
-                                    <div class="card-body p-4 text-center">
+                                </div>
 
-                                        @php
-                                            $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
-                                            $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
-                                            $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                                            $subtotalBase = $catBase + $cmeBase + $accBase;
-                                            $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                                            $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
-                                        @endphp
+                                <!-- Action CTA Box -->
+                                <div class="col-lg-5">
+                                    <div class="p-4 bg-light rounded-4 border text-center shadow-sm">
+                                        <small class="text-muted d-block text-uppercase fw-semibold mb-1" style="font-size: 11px;">Amount to Pay Online</small>
+                                        <h3 class="fw-bolder text-primary mb-3">
+                                            @if ($registration->delegate_type === 'International')
+                                                ₹45,000.00
+                                            @else
+                                                ₹{{ number_format($totalAmt, 2) }}
+                                            @endif
+                                        </h3>
+                                        
+                                        <a href="{{ route('payment.sbi.initiate', $registration->id) }}" class="btn btn-sbi-pay w-100 mb-2 text-white">
+                                            <i class="fas fa-lock me-2"></i>Pay Online with SBI ePay <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
 
-                                        <!-- Amount Badge -->
-                                        <div class="mb-3">
-                                            <span class="badge bg-success fs-5 px-4 py-2.5 rounded-pill shadow-sm">
-                                                Total Payable:
-                                                @if ($registration->delegate_type === 'International')
-                                                    ₹45,000.00 INR
-                                                @else
-                                                    ₹{{ number_format($totalAmt, 2) }} INR
-                                                @endif
-                                            </span>
-                                        </div>
-
-                                        <!-- QR Code Image -->
-                                        <div class="p-3 bg-light rounded-3 border d-inline-block shadow-sm my-2">
-                                            <img src="{{ asset('images/payment/qr_code_13Aug2026.jpeg') }}" 
-                                                 onerror="this.onerror=null; this.src='{{ asset('public/images/payment/qr_code_13Aug2026.jpeg') }}';" 
-                                                 alt="Payment QR Code" class="img-fluid rounded" style="max-width: 220px; height: auto;">
-                                        </div>
-
-                                        <p class="mt-2 mb-1 fw-bold text-dark fs-6">
-                                            <i class="fas fa-camera me-1 text-primary"></i>Scan QR Code to Pay
+                                        <p class="text-muted mb-0" style="font-size: 11px;">
+                                            <i class="fas fa-info-circle me-1"></i>You will be securely redirected to the SBI ePay portal.
                                         </p>
-                                        <p class="text-muted small mb-3">Use GPay, PhonePe, Paytm, BHIM or any UPI app</p>
-
-                                        <!-- Summary Table -->
-                                        <div class="table-responsive text-start mt-3">
-                                            <table class="table table-bordered align-middle small mb-0">
-                                                @if ($registration->delegate_type === 'International')
-                                                    <tr>
-                                                        <td><strong>Delegate Category (Foreign)</strong></td>
-                                                        <td class="text-end fw-bold">₹45,000.00</td>
-                                                    </tr>
-                                                @else
-                                                    <tr>
-                                                        <td><strong>Delegate Category (Base Price)</strong></td>
-                                                        <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
-                                                    </tr>
-                                                    @if ($registration->participate_in_cme)
-                                                        <tr>
-                                                            <td><strong>CME/Workshop Participation</strong></td>
-                                                            <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
-                                                        </tr>
-                                                    @endif
-                                                    @if (($registration->accompanying_persons ?? 0) > 0)
-                                                        <tr>
-                                                            <td><strong>Accompanying Persons ({{ $registration->accompanying_persons }})</strong></td>
-                                                            <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
-                                                        </tr>
-                                                    @endif
-                                                    <tr>
-                                                        <td><strong>GST Amount (18%)</strong></td>
-                                                        <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>
-                                                    </tr>
-                                                    <tr class="table-success fw-bold">
-                                                        <td><strong>Total Amount Payable</strong></td>
-                                                        <td class="text-end">₹{{ number_format($totalAmt, 2) }}</td>
-                                                    </tr>
-                                                @endif
-                                            </table>
-                                        </div>
-
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Right Column: Upload Payment Receipt Form -->
-                            <div class="col-lg-6">
-                                <div class="card border-success border-2 shadow-sm h-100" style="border-radius: 12px;">
-                                    <div class="card-header bg-success text-white py-3">
-                                        <h5 class="mb-0 fw-bold"><i class="fas fa-upload me-2"></i>Upload Payment Proof</h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        <div class="alert alert-warning small mb-3" style="border-radius: 8px;">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            <strong>Payment Steps:</strong>
-                                            <ol class="mb-0 ps-3 mt-1">
-                                                <li>Scan QR Code on the left and complete payment.</li>
-                                                <li>Enter the 12-digit UTR / Transaction ID below.</li>
-                                                <li>Upload screenshot/receipt of successful payment.</li>
-                                            </ol>
+                    <!-- OR DIVIDER -->
+                    <div class="divider-or">
+                        <span>OR PAY VIA UPI QR CODE / BANK TRANSFER</span>
+                    </div>
+
+                    <!-- ========================================================================= -->
+                    <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (DEDICATED SECTION)                 -->
+                    <!-- ========================================================================= -->
+                    <div class="method-card method-card-qr shadow-sm mb-4">
+                        <div class="method-header-qr d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-white text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                    <i class="fas fa-qrcode text-success fs-5"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-bold text-white">OPTION 2: Pay via UPI QR Code & Upload Payment Proof</h5>
+                                    <small class="text-white-50">Direct Scan & Pay or NEFT / RTGS Transfer</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-white text-success pill-badge fw-bold shadow-sm">
+                                <i class="fas fa-clock text-warning me-1"></i>MANUAL VERIFICATION REQUIRED
+                            </span>
+                        </div>
+
+                        <div class="card-body p-4 bg-white">
+                            <div class="row g-4">
+                                
+                                <!-- Left Sub-Column: QR Code & Bank Transfer Details -->
+                                <div class="col-lg-5 text-center border-end-lg">
+                                    <div class="p-3 bg-light rounded-4 border mb-3">
+                                        <h6 class="fw-bold text-dark mb-2">
+                                            <i class="fas fa-camera text-success me-1"></i>Scan QR Code to Pay
+                                        </h6>
+                                        <p class="text-muted small mb-3">
+                                            Scan using <strong>GPay, PhonePe, Paytm, BHIM</strong> or any UPI App
+                                        </p>
+
+                                        <!-- QR Code Display Box -->
+                                        <div class="qr-frame-box mb-2">
+                                            <img src="{{ asset('images/payment/qr_code_13Aug2026.jpeg') }}" 
+                                                 onerror="this.onerror=null; this.src='{{ asset('public/images/payment/qr_code_13Aug2026.jpeg') }}';" 
+                                                 alt="IPHACON 2027 Payment QR Code" 
+                                                 class="img-fluid shadow-sm">
                                         </div>
 
-                                        <form id="paymentProcessForm" method="POST" action="{{ route('payment.process', $registration->id) }}" enctype="multipart/form-data">
-                                            @csrf
+                                        <div class="mt-2">
+                                            <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold" style="font-size: 13px;">
+                                                Pay Exact: ₹{{ number_format($totalAmt, 2) }}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                            <div class="mb-3">
-                                                <label for="transaction_id" class="form-label fw-semibold">
-                                                    Transaction ID / UTR Number <span class="text-danger">*</span>
-                                                </label>
+                                    <!-- Direct Bank Details Accordion -->
+                                    {{-- <div class="accordion" id="bankDetailsAccordion">
+                                        <div class="accordion-item border rounded-3 overflow-hidden">
+                                            <h2 class="accordion-header" id="headingBank">
+                                                <button class="accordion-button collapsed py-2 px-3 bg-light text-dark fw-bold small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBank">
+                                                    <i class="fas fa-university text-primary me-2"></i>Prefer NEFT / RTGS / IMPS? View Bank Details
+                                                </button>
+                                            </h2>
+                                            <div id="collapseBank" class="accordion-collapse collapse" data-bs-parent="#bankDetailsAccordion">
+                                                <div class="accordion-body text-start p-3 small bg-white">
+                                                    <table class="table table-sm table-borderless mb-0">
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Account Name:</td>
+                                                            <td class="fw-bold text-dark">IPHACON 2027</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Account No:</td>
+                                                            <td class="fw-bold text-primary font-monospace">925020005721245</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">IFSC Code:</td>
+                                                            <td class="fw-bold text-dark font-monospace">UTIB0000183</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Bank Name:</td>
+                                                            <td class="text-dark">Axis Bank</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Branch:</td>
+                                                            <td class="text-dark">Main Road Ranchi Branch</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> --}}
+                                </div>
+
+                                <!-- Right Sub-Column: Payment Proof Upload Form -->
+                                <div class="col-lg-7">
+                                    <div class="p-3 bg-light rounded-4 border mb-3">
+                                        <h6 class="fw-bold text-dark mb-2">
+                                            <i class="fas fa-list-ol text-success me-2"></i>Follow 3 Simple Steps:
+                                        </h6>
+                                        <div class="d-flex align-items-start gap-2 mb-2">
+                                            <span class="step-bubble">1</span>
+                                            <span class="small text-secondary">Scan QR code on the left & complete the payment of <strong>₹{{ number_format($totalAmt, 2) }}</strong>.</span>
+                                        </div>
+                                        <div class="d-flex align-items-start gap-2 mb-2">
+                                            <span class="step-bubble">2</span>
+                                            <span class="small text-secondary">Note down the <strong>12-digit UTR / UPI Transaction Reference Number</strong>.</span>
+                                        </div>
+                                        <div class="d-flex align-items-start gap-2">
+                                            <span class="step-bubble">3</span>
+                                            <span class="small text-secondary">Enter UTR & upload the payment screenshot below, then click submit.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Proof Upload Form -->
+                                    <form id="paymentProcessForm" method="POST" action="{{ route('payment.process', $registration->id) }}" enctype="multipart/form-data" class="bg-white p-3 rounded-4 border">
+                                        @csrf
+
+                                        <div class="mb-3">
+                                            <label for="transaction_id" class="form-label fw-bold text-dark small">
+                                                Transaction ID / UTR Number <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light text-muted"><i class="fas fa-receipt"></i></span>
                                                 <input type="text"
                                                     class="form-control @error('transaction_id') is-invalid @enderror"
                                                     id="transaction_id" name="transaction_id"
-                                                    placeholder="Enter 12-digit UTR or Transaction ID"
-                                                    value="{{ old('transaction_id') }}" required style="border-radius: 8px; padding: 10px;">
-                                                <small class="text-muted">Example: 420192837465</small>
-                                                @error('transaction_id')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
+                                                    placeholder="Enter 12-digit UTR or Transaction Ref"
+                                                    value="{{ old('transaction_id') }}" required style="padding: 10px;">
                                             </div>
+                                            <small class="text-muted d-block mt-1" style="font-size: 11px;">Example: 420192837465 or UPI/Bank Reference Number</small>
+                                            @error('transaction_id')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-4">
-                                                <label for="payment_receipt" class="form-label fw-semibold">
-                                                    Upload Receipt / Screenshot <span class="text-danger">*</span>
-                                                </label>
+                                        <div class="mb-4">
+                                            <label for="payment_receipt" class="form-label fw-bold text-dark small">
+                                                Upload Payment Receipt / Screenshot <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light text-muted"><i class="fas fa-file-upload"></i></span>
                                                 <input type="file"
                                                     class="form-control @error('payment_receipt') is-invalid @enderror"
                                                     id="payment_receipt" name="payment_receipt"
-                                                    accept=".pdf,.jpg,.jpeg,.png" required style="border-radius: 8px; padding: 10px;">
-                                                <small class="text-muted">Allowed formats: PDF, JPG, JPEG, PNG (Max 5MB)</small>
-                                                @error('payment_receipt')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
+                                                    accept=".pdf,.jpg,.jpeg,.png" required style="padding: 10px;">
                                             </div>
-
-                                            <button type="submit" id="submitPaymentBtn" class="btn btn-success btn-lg w-100 fw-bold shadow-sm" style="border-radius: 8px;">
-                                                <i class="fas fa-check-circle me-2"></i>Submit Payment Details
-                                            </button>
-                                        </form>
-
-                                        <div class="alert alert-info mt-4 mb-0 small" style="border-radius: 8px;">
-                                            <i class="fas fa-clock me-1"></i>
-                                            After submission, your registration status will be updated and verified by the organizing team.
+                                            <small class="text-muted d-block mt-1" style="font-size: 11px;">Allowed formats: PDF, JPG, JPEG, PNG (Max size: 5MB)</small>
+                                            @error('payment_receipt')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
+
+                                        <button type="submit" id="submitPaymentBtn" class="btn btn-qr-submit w-100">
+                                            <i class="fas fa-check-circle me-2"></i>Submit Payment Proof for Verification
+                                        </button>
+                                    </form>
+
+                                    <div class="d-flex align-items-center gap-2 mt-3 text-muted small px-1">
+                                        <i class="fas fa-info-circle text-primary"></i>
+                                        <span>Manual verification takes <strong>24 to 48 hours</strong> by the organizing team.</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Registration Info Summary -->
-                        <div class="row justify-content-center mt-4">
-                            <div class="col-12">
-                                <div class="card bg-light border-0 shadow-sm" style="border-radius: 12px;">
-                                    <div class="card-header bg-white border-bottom fw-bold text-dark">
-                                        <i class="fas fa-user-check me-2 text-primary"></i>Registration Information
-                                    </div>
-                                    <div class="card-body p-3.5">
-                                        <div class="row g-2">
-                                            <div class="col-md-6">
-                                                <p class="mb-1"><strong>Full Name:</strong> {{ $registration->user->prefix ?? '' }} {{ $registration->user->full_name ?? '' }}</p>
-                                                <p class="mb-0"><strong>Email:</strong> {{ $registration->user->email ?? '' }}</p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p class="mb-1"><strong>Delegate Type:</strong> {{ $registration->delegate_type }}</p>
-                                                <p class="mb-0"><strong>Category:</strong> {{ $registration->delegateCategory->category_name ?? 'N/A' }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
+
+                    <!-- ========================================================================= -->
+                    <!-- SECTION 3: ITEMISED FEE BREAKDOWN SUMMARY                                 -->
+                    <!-- ========================================================================= -->
+                    <div class="card border-0 bg-white shadow-sm mt-4" style="border-radius: 14px;">
+                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold text-dark">
+                                <i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Itemized Fee Breakdown
+                            </h6>
+                            <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill">
+                                Reference: {{ $registration->registration_number ?: ('REG#' . $registration->id) }}
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Description</th>
+                                            <th class="text-center">Rate / Details</th>
+                                            <th class="text-end">Amount (INR)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($registration->delegate_type === 'International')
+                                            <tr>
+                                                <td>
+                                                    <strong>Delegate Registration (International / Foreign)</strong>
+                                                    <div class="text-muted small">Category: {{ $registration->delegateCategory->category_name ?? 'Foreign Delegate' }}</div>
+                                                </td>
+                                                <td class="text-center">Fixed Rate</td>
+                                                <td class="text-end fw-bold">₹45,000.00</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td>
+                                                    <strong>Delegate Category Base Fee</strong>
+                                                    <div class="text-muted small">{{ $registration->delegateCategory->category_name ?? 'Indian Delegate' }}</div>
+                                                </td>
+                                                <td class="text-center">Base Price</td>
+                                                <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
+                                            </tr>
+                                            @if ($registration->participate_in_cme)
+                                                <tr>
+                                                    <td>
+                                                        <strong>Pre-Conference CME / Workshop Participation</strong>
+                                                        <div class="text-muted small">Specialized training workshop</div>
+                                                    </td>
+                                                    <td class="text-center">Optional Add-on</td>
+                                                    <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
+                                                </tr>
+                                            @endif
+                                            @if (($registration->accompanying_persons ?? 0) > 0)
+                                                <tr>
+                                                    <td>
+                                                        <strong>Accompanying Person(s)</strong>
+                                                        <div class="text-muted small">{{ $registration->accompanying_persons }} person(s) @ ₹5,000 each</div>
+                                                    </td>
+                                                    <td class="text-center">{{ $registration->accompanying_persons }} × ₹5,000</td>
+                                                    <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
+                                                </tr>
+                                            @endif
+                                            <tr class="table-light">
+                                                <td colspan="2" class="text-end"><strong>Subtotal:</strong></td>
+                                                <td class="text-end">₹{{ number_format($subtotalBase, 2) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class="text-end text-warning"><strong>GST (18% Applicable):</strong></td>
+                                                <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>
+                                            </tr>
+                                            <tr class="table-primary fw-bolder fs-6">
+                                                <td colspan="2" class="text-end">Total Amount Payable:</td>
+                                                <td class="text-end text-primary">₹{{ number_format($totalAmt, 2) }}</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -225,7 +596,7 @@
                 const btn = document.getElementById('submitPaymentBtn');
                 if (btn && !btn.disabled) {
                     btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting Proof...';
                     form.submit();
                 }
             });

@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->validateCsrfTokens(except: [
+            'payment/sbi/response',
+            'payment/sbi/*',
+        ]);
         $middleware->authenticateSessions();
         $middleware->append(SanitizeInput::class);
         $middleware->append(SecurityHeaders::class);
