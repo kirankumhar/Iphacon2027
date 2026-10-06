@@ -392,11 +392,10 @@
                     <select class="form-select form-select-sm @error('pre_conference_topic') is-invalid @enderror"
                         name="pre_conference_topic" id="pre_conference_topic"
                         style="font-size: 0.84rem; padding: 7px 12px; line-height: 1.45; border-color: #CBD5E1;">
-                        <option value="">-- Click to choose a Pre-Conference Topic --</option>
+                        <option value="" {{ old('pre_conference_topic', $registration->pre_conference_topic) === null ? 'selected' : '' }} disabled>-- Select Pre-Conference Topic --</option>
                         @foreach (\App\Models\Registration::PRE_CONFERENCE_TOPICS as $idx => $topic)
                             <option value="{{ $topic }}"
                                 {{ old('pre_conference_topic', $registration->pre_conference_topic) === $topic ? 'selected' : '' }}>
-                                {{-- {{ $idx + 1 }}.  --}}
                                 {{ $topic }}
                             </option>
                         @endforeach
