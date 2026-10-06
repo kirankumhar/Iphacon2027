@@ -15,6 +15,7 @@ class CmeApplication extends Model
         'cme_fee',
         'gst_amount',
         'total_amount',
+        'pre_conference_topic',
         'transaction_id',
         'payment_receipt_path',
         'status',

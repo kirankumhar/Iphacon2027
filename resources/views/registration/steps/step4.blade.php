@@ -159,8 +159,16 @@
                         </tr>
                         @if ($registration->participate_in_cme)
                             <tr>
-                                <td><strong>Pre-Conference Workshop Participation</strong></td>
-                                <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
+                                <td>
+                                    <strong>Pre-Conference Workshop Participation</strong>
+                                    @php $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
+                                    @if($chosenTopic)
+                                        <div class="text-secondary small mt-0.5" style="font-size: 0.8rem;">
+                                            <i class="fas fa-book-reader text-primary me-1"></i><strong>Topic:</strong> {{ $chosenTopic }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="text-end align-top">₹{{ number_format($cmeBase, 2) }}</td>
                             </tr>
                         @endif
                         @if (($registration->accompanying_persons ?? 0) > 0)

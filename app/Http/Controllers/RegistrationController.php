@@ -396,11 +396,21 @@ class RegistrationController extends Controller
             ];
         }
 
+        $participateInCme = $request->boolean('participate_in_cme') || $request->participate_in_cme == 1;
+
+        if ($participateInCme) {
+            $rules['pre_conference_topic'] = [$isDraft ? 'nullable' : 'required', 'string', \Illuminate\Validation\Rule::in(Registration::PRE_CONFERENCE_TOPICS)];
+        } else {
+            $rules['pre_conference_topic'] = 'nullable|string';
+        }
+
         $messages = [
             'ismm_membership_no.required' => 'IPHA Membership Number is required for IPHA Member category.',
             'ismm_membership_no.regex' => 'IPHA Membership Number can only contain letters, numbers, hyphens (-), and underscores (_).',
             'delegate_category_id.required' => 'Please select your delegate category.',
             'ismm_membership_no.max' => 'IPHA Membership Number cannot exceed 50 characters.',
+            'pre_conference_topic.required' => 'Please select a Pre-Conference Workshop topic.',
+            'pre_conference_topic.in' => 'Please select a valid Pre-Conference Workshop topic from the list.',
         ];
 
         $request->validate($rules, $messages);
@@ -411,9 +421,10 @@ class RegistrationController extends Controller
                 'delegate_type' => 'Indian',
                 'delegate_category_id' => $request->delegate_category_id,
                 'accompanying_persons' => $request->accompanying_persons ?? 0,
-                'participate_in_cme' => $request->participate_in_cme ?? false,
+                'participate_in_cme' => $participateInCme,
+                'pre_conference_topic' => $participateInCme ? $request->pre_conference_topic : null,
                 'membership_no' => $request->delegate_category_id == 1 ? $request->ismm_membership_no : null,
-                'cme_fee' => $request->participate_in_cme ? 2000 : 0,
+                'cme_fee' => $participateInCme ? 2000 : 0,
                 'accompanying_fee' => $request->accompanying_persons ? 5000 : 0,
             ];
         } else {
@@ -422,9 +433,10 @@ class RegistrationController extends Controller
                 'delegate_type' => 'International',
                 'delegate_category_id' => 6, // Foreign Delegates category
                 'accompanying_persons' => $request->accompanying_persons ?? 0,
-                'participate_in_cme' => $request->participate_in_cme ?? false,
+                'participate_in_cme' => $participateInCme,
+                'pre_conference_topic' => $participateInCme ? $request->pre_conference_topic : null,
                 'membership_no' => null,
-                'cme_fee' => $request->participate_in_cme ? 2000 : 0,
+                'cme_fee' => $participateInCme ? 2000 : 0,
                 'accompanying_fee' => $request->accompanying_persons ? 5000 : 0,
             ];
         }
@@ -752,8 +764,15 @@ class RegistrationController extends Controller
         }
 
         if (!$request->has('participate_in_cme')) {
-            return redirect()->back()->with('error', 'Please check the Pre-Conference CME Workshop box to proceed.');
+            return redirect()->back()->with('error', 'Please check the Pre-Conference Workshop box to proceed.');
         }
+
+        $request->validate([
+            'pre_conference_topic' => ['required', 'string', \Illuminate\Validation\Rule::in(Registration::PRE_CONFERENCE_TOPICS)],
+        ], [
+            'pre_conference_topic.required' => 'Please select a Pre-Conference Workshop topic.',
+            'pre_conference_topic.in' => 'Please select a valid Pre-Conference Workshop topic from the list.',
+        ]);
 
         // Create or get CME Application in Pending Payment state
         $cmeApp = \App\Models\CmeApplication::updateOrCreate(
@@ -766,8 +785,13 @@ class RegistrationController extends Controller
                 'cme_fee' => 2000.00,
                 'gst_amount' => 360.00,
                 'total_amount' => 2360.00,
+                'pre_conference_topic' => $request->pre_conference_topic,
             ]
         );
+
+        $registration->update([
+            'pre_conference_topic' => $request->pre_conference_topic,
+        ]);
 
         return redirect()->route('cme.payment.gateway');
     }

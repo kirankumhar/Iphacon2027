@@ -326,6 +326,39 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Pre-Conference Workshop Topic Selection Row -->
+            <div class="row g-2.5 mt-1 mb-2" id="pre_conference_topic_wrapper" style="{{ old('participate_in_cme', $registration->participate_in_cme) == 1 ? '' : 'display: none;' }}">
+                <div class="col-12">
+                    <div class="p-3 rounded border shadow-xs" style="background-color: #F8FAFC; border-left: 4px solid #0288D1 !important;">
+                        <div class="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-2">
+                            <label for="pre_conference_topic" class="form-label fw-bold text-dark mb-0 extra-small">
+                                <i class="fas fa-book-reader text-primary me-1"></i>Select Pre-Conference Workshop Topic <span class="text-danger">*</span>
+                            </label>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-0.5 rounded-pill extra-small">
+                                1 Topic Required
+                            </span>
+                        </div>
+                        <p class="text-muted extra-small mb-2" style="font-size: 0.78rem;">
+                            Delegates opting for the Pre-Conference Workshop must choose one topic from the list below:
+                        </p>
+                        <select class="form-select form-select-sm @error('pre_conference_topic') is-invalid @enderror" 
+                                name="pre_conference_topic" 
+                                id="pre_conference_topic"
+                                style="font-size: 0.84rem; padding: 7px 12px; line-height: 1.45; border-color: #CBD5E1;">
+                            <option value="">-- Click to choose a Pre-Conference Topic --</option>
+                            @foreach(\App\Models\Registration::PRE_CONFERENCE_TOPICS as $idx => $topic)
+                                <option value="{{ $topic }}" {{ old('pre_conference_topic', $registration->pre_conference_topic) === $topic ? 'selected' : '' }}>
+                                    {{ $idx + 1 }}. {{ $topic }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('pre_conference_topic')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -370,6 +403,7 @@
 
             setTimeout(function() {
                 handleCategoryChange();
+                togglePreConferenceTopic();
                 bindEventHandlers();
                 calculateTotal();
             }, 100);
@@ -392,8 +426,24 @@
             });
 
             $('input[name="participate_in_cme"]').off('change.calculation').on('change.calculation', function() {
+                togglePreConferenceTopic();
                 calculateTotal();
             });
+        }
+
+        function togglePreConferenceTopic() {
+            var isCme = $('#cme_yes').is(':checked');
+            var $wrapper = $('#pre_conference_topic_wrapper');
+            var $select = $('#pre_conference_topic');
+
+            if (isCme) {
+                $wrapper.slideDown(200);
+                $select.prop('required', true);
+            } else {
+                $wrapper.slideUp(200);
+                $select.prop('required', false);
+                $select.val('');
+            }
         }
 
         function handleCategoryChange() {

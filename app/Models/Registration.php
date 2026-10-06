@@ -38,6 +38,7 @@ class Registration extends Model
         'accompanying_persons',
         'accompanying_fee',
         'participate_in_cme',
+        'pre_conference_topic',
         'cme_fee',
         'total_amount',
         'membership_no',
@@ -75,6 +76,25 @@ class Registration extends Model
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
     ];
+
+    public const PRE_CONFERENCE_TOPICS = [
+        'Teaching Public Health Creatively: Transforming Learning Through Gamification & Interactive Digital Tools',
+        'Field Epidemiology in Action: Basics of Outbreak Investigations & Response',
+        'From Data to Prediction: Regression Modelling for Public Health & Applied Sciences',
+        'Spatio-Temporal Data Analysis and AI Applications in Public Health',
+        'From Surveillance to Forecasting: A Hands-on Workshop on Infectious Disease Modelling',
+        'PG to PRO: A Comprehensive Toolkit and Skill Transfer Workshop for MD Community Medicine Residents (Research | Service | Career | Leadership | Well-being)',
+        'Meta Analysis',
+        'Implementation Research',
+        'Sample Size calculation and Analysis-hands on',
+        'AI-ready Infectious DIsease Modelling for Zoonotic and Vector Borne Disease Control',
+        'Survival analysis',
+    ];
+
+    public static function getPreConferenceTopics(): array
+    {
+        return self::PRE_CONFERENCE_TOPICS;
+    }
 
     /**
      * Model boot handler

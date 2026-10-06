@@ -248,6 +248,14 @@
                                 <td class="py-3 px-3.5">
                                     @if($delegate->participate_in_cme)
                                         <span class="badge bg-success px-3 py-1 rounded-pill"><i class="bx bx-check me-1"></i> Participating</span>
+                                        @php
+                                            $adminTopic = $delegate->pre_conference_topic ?: $delegate->cmeApplication?->pre_conference_topic;
+                                        @endphp
+                                        @if($adminTopic)
+                                            <div class="mt-2 p-2 rounded-2 bg-light border small text-dark fw-semibold" style="font-size: 0.82rem;">
+                                                <i class="bx bx-book-open text-primary me-1"></i><strong>Workshop Topic:</strong> {{ $adminTopic }}
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="badge bg-light text-muted border px-2.5 py-1">No</span>
                                     @endif

@@ -251,7 +251,13 @@
                         @endif
                         <tr>
                           <td class="label">Pre-Conference Workshop</td>
-                          <td class="value">{{ $registration->participate_in_cme ? 'Yes (Enrolled)' : 'No' }}</td>
+                          @php $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
+                          <td class="value">
+                            {{ $registration->participate_in_cme ? 'Yes (Enrolled)' : 'No' }}
+                            @if($registration->participate_in_cme && $chosenTopic)
+                              <br><small style="color: #0288D1; font-weight: 600;">Topic: {{ $chosenTopic }}</small>
+                            @endif
+                          </td>
                         </tr>
                         @php
                           $payRec = $payment ?? $registration->latestPayment;
