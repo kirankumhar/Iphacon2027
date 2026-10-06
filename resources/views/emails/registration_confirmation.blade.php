@@ -312,7 +312,15 @@
                           @endif
                           @if ($cmeFee > 0 || $registration->participate_in_cme)
                           <tr>
-                            <td class="label">Pre-Conference Workshop Fee</td>
+                            <td class="label">
+                              Pre-Conference Workshop Fee
+                              @php $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
+                              @if($chosenTopic)
+                                <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">
+                                  Topic: {{ $chosenTopic }}
+                                </div>
+                              @endif
+                            </td>
                             <td class="value">₹{{ number_format($cmeFee, 2) }}</td>
                           </tr>
                           @endif

@@ -569,6 +569,13 @@ class PaymentController extends Controller
                 'submitted_at'         => now(),
             ]);
 
+            if ($cmeApp->pre_conference_topic && $cmeApp->registration) {
+                $cmeApp->registration->update([
+                    'participate_in_cme' => true,
+                    'pre_conference_topic' => $cmeApp->pre_conference_topic,
+                ]);
+            }
+
             // Check if CME payment already exists to prevent duplicates
             $payment = Payment::where('registration_id', $cmeApp->registration_id)
                 ->where(function($q) use ($request) {

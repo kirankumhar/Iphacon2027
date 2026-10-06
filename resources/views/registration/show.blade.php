@@ -207,14 +207,25 @@
                                         $isCmeApproved = $registration->participate_in_cme || $cmeStatus === 'Approved';
                                         $isCmePending = $cmeStatus === 'Payment Submitted';
                                         $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
+                                        $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic;
                                     @endphp
                                     @if ($isCmeApproved)
                                         <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating (Approved)</span>
+                                        @if($chosenTopic)
+                                            <div class="mt-1 small text-dark fw-semibold" style="font-size: 0.8rem; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 6px; padding: 4px 8px;">
+                                                <i class="fas fa-book-reader text-success me-1"></i><strong>Topic:</strong> {{ $chosenTopic }}
+                                            </div>
+                                        @endif
                                     @elseif ($isCmePending)
-                                        <div class="d-flex align-items-center gap-2 mt-1">
-                                            <span class="badge bg-warning text-dark border px-2 py-1 rounded-pill small">
+                                        <div class="d-flex flex-column gap-1 mt-1">
+                                            <span class="badge bg-warning text-dark border px-2 py-1 rounded-pill small w-fit">
                                                 <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
                                             </span>
+                                            @if($chosenTopic)
+                                                <div class="small text-muted" style="font-size: 0.78rem;">
+                                                    <i class="fas fa-book-reader text-primary me-1"></i><strong>Topic:</strong> {{ $chosenTopic }}
+                                                </div>
+                                            @endif
                                         </div>
                                     @elseif ($isRegistrationPaid)
                                         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">

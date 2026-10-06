@@ -429,6 +429,18 @@ class AdminRegistrationController extends Controller
                 'admin_verified' => true
             ]);
 
+            if ($registration->cmeApplication) {
+                $registration->cmeApplication->update([
+                    'status' => 'Approved',
+                    'approved_at' => now(),
+                ]);
+                if (!empty($registration->cmeApplication->pre_conference_topic) && empty($registration->pre_conference_topic)) {
+                    $registration->pre_conference_topic = $registration->cmeApplication->pre_conference_topic;
+                    $registration->participate_in_cme = true;
+                    $registration->save();
+                }
+            }
+
             // Generate Registration Receipt PDF & Save
             $pdfPath = null;
             try {

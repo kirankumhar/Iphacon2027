@@ -68,9 +68,18 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small" style="font-size: 0.72rem;">
-                                        <i class="fas fa-graduation-cap me-1"></i>Pre-Conference Workshop
-                                    </span>
+                                    @php
+                                        $cmeTopic = $reg->pre_conference_topic ?: $reg->cmeApplication?->pre_conference_topic;
+                                    @endphp
+                                    @if($cmeTopic)
+                                        <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 mb-1 fw-semibold text-wrap text-start extra-small" style="max-width: 340px; line-height: 1.35; font-size: 0.74rem;">
+                                            <i class="fas fa-book-reader me-1"></i>{{ $cmeTopic }}
+                                        </div>
+                                    @else
+                                        <span class="badge bg-light text-secondary border px-2.5 py-0.5 mb-1 fw-medium extra-small" style="font-size: 0.72rem;">
+                                            <i class="fas fa-graduation-cap me-1"></i>Pre-Conference Workshop
+                                        </span>
+                                    @endif
                                     <div class="fw-medium text-dark extra-small" style="font-size: 0.78rem;">
                                         {{ $reg->delegateCategory?->category_name ?? 'Delegate' }} ({{ $reg->delegate_type ?? 'Indian' }})
                                     </div>
