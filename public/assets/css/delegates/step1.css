@@ -131,3 +131,13 @@
         color: #2D69FF;
         margin-right: 6px;
     }
+
+    .visually-hidden-file-input {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+    }
+
+    .max-h-220px {
+        max-height: 220px !important;
+    }

@@ -219,3 +219,239 @@
         margin-right: 0.4rem !important;
     }
 }
+
+/* --- CSP Compliance Helper Classes --- */
+/* Password Strength Indicator */
+.pw-strength-text {
+    font-size: 0.72rem;
+}
+
+.pw-length-badge {
+    font-size: 0.7rem;
+}
+
+.pw-progress {
+    height: 5px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.pw-strength-bar {
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.pw-strength-bar.is-danger {
+    width: 30%;
+    background-color: #dc3545 !important;
+}
+
+.pw-strength-bar.is-short-0 {
+    width: 0%;
+    background-color: #dc3545 !important;
+}
+
+.pw-strength-bar.is-short-1 {
+    width: 8%;
+    background-color: #dc3545 !important;
+}
+
+.pw-strength-bar.is-short-2 {
+    width: 15%;
+    background-color: #dc3545 !important;
+}
+
+.pw-strength-bar.is-short-3 {
+    width: 25%;
+    background-color: #dc3545 !important;
+}
+
+.pw-strength-bar.is-weak {
+    width: 45%;
+    background-color: #ffc107 !important;
+}
+
+.pw-strength-bar.is-good {
+    width: 75%;
+    background-color: #0dcaf0 !important;
+}
+
+.pw-strength-bar.is-strong {
+    width: 100%;
+    background-color: #198754 !important;
+}
+
+.pw-requirements {
+    font-size: 0.68rem;
+}
+
+/* Captcha Layout */
+.captcha-hint {
+    font-size: 0.72rem;
+}
+
+.captcha-img-wrapper {
+    min-height: 42px;
+}
+
+.captcha-img {
+    height: 38px;
+    object-fit: contain;
+    max-width: 100%;
+}
+
+.captcha-input {
+    height: 42px;
+    font-size: 0.95rem;
+}
+
+/* Country Dropdown Locked State (eliminates inline style manipulation) */
+.country-select-locked {
+    pointer-events: none !important;
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+    cursor: not-allowed !important;
+}
+
+/* Micro icons */
+.icon-chevron-xs {
+    font-size: 0.65rem;
+}
+
+/* Registration Wizard Stepper */
+.wizard-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+.wizard-header {
+    background: linear-gradient(135deg, #0288D1 0%, #01579B 60%, #00897B 100%);
+    padding: 14px 20px;
+    border-bottom: 3px solid #FF6B00;
+}
+.stepper-container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 680px;
+    margin: 10px auto 2px auto;
+}
+.stepper-line-bg {
+    position: absolute;
+    top: 16px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.25);
+    z-index: 1;
+}
+.stepper-line-fill {
+    position: absolute;
+    top: 16px;
+    left: 10%;
+    height: 3px;
+    background: #FF6B00;
+    z-index: 1;
+    transition: width 0.4s ease;
+}
+.stepper-w-0 { width: 0%; }
+.stepper-w-27 { width: 27%; }
+.stepper-w-54 { width: 54%; }
+.stepper-w-80 { width: 80%; }
+
+.step-node {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none !important;
+}
+.step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+.step-node.completed .step-circle {
+    background: #4BAA7D;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+.step-node.active .step-circle {
+    background: #FF6B00;
+    border-color: #ffffff;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.35);
+    transform: scale(1.08);
+}
+.step-label {
+    margin-top: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+    white-space: nowrap;
+}
+.step-node.active .step-label {
+    color: #ffffff;
+    font-weight: 700;
+}
+.step-node.completed .step-label {
+    color: #E0F2FE;
+}
+.compact-form-body {
+    padding: 22px 28px;
+}
+@media (max-width: 576px) {
+    .compact-form-body {
+        padding: 16px 14px;
+    }
+    .step-label {
+        font-size: 0.68rem;
+    }
+    .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.78rem;
+    }
+    .stepper-line-bg, .stepper-line-fill {
+        top: 14px;
+    }
+}
+
+.alert-reverted-warning {
+    border-radius: 12px !important;
+    background: #FFFBEB !important;
+    border-left: 5px solid #F59E0B !important;
+}
+.line-height-14 {
+    line-height: 1.4 !important;
+}
+.letter-spacing-03 {
+    letter-spacing: 0.3px !important;
+}
+.border-left-primary-3 {
+    border-left: 3px solid #2D69FF !important;
+}
+.fee-summary-box {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+.fee-total-box {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+.text-total-amount {
+    color: #DCFFF0 !important;
+}

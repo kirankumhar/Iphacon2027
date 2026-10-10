@@ -1,0 +1,270 @@
+/**
+ * Admin CSP Stylesheet (IPHACON 2027)
+ * Consolidates all admin module styles and utility classes.
+ */
+
+@import url('moderator-dashboard.css');
+
+/* Menu Styles */
+#layout-menu.bg-menu-theme {
+    background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%) !important;
+    box-shadow: 4px 0 25px rgba(15, 23, 42, 0.15);
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-inner .menu-header {
+    position: relative;
+    padding: 14px 18px 6px 18px !important;
+    margin-top: 4px;
+}
+.menu-inner .menu-header-text {
+    font-size: 0.64rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.2px !important;
+    text-transform: uppercase;
+    color: #64748B !important;
+}
+
+.menu-inner .menu-item .menu-link {
+    margin: 2px 10px !important;
+    padding: 8.5px 12px !important;
+    border-radius: 10px !important;
+    color: #94A3B8 !important;
+    font-weight: 500 !important;
+    font-size: 0.83rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-inner .menu-item .menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: #F8FAFC !important;
+    transform: translateX(3px);
+}
+
+.menu-inner .menu-item.active > .menu-link,
+.menu-inner .menu-item.open > .menu-link {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+.menu-inner .menu-item.active > .menu-link {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+.menu-inner .menu-icon {
+    font-size: 1.15rem !important;
+    margin-right: 10px !important;
+    color: #94A3B8;
+    transition: all 0.2s ease;
+}
+.menu-inner .menu-item .menu-link:hover .menu-icon {
+    color: #38BDF8 !important;
+}
+.menu-inner .menu-item.active > .menu-link .menu-icon {
+    color: #FFFFFF !important;
+}
+
+.menu-inner .menu-sub {
+    background: transparent !important;
+    margin: 4px 0 6px 22px !important;
+    padding: 0 0 0 12px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.menu-inner .menu-sub .menu-item .menu-link {
+    margin: 1.5px 0 !important;
+    padding: 6.5px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 450 !important;
+    color: #94A3B8 !important;
+    border-radius: 8px !important;
+}
+.menu-inner .menu-sub .menu-item .menu-link::before {
+    display: none !important;
+    content: none !important;
+}
+.menu-inner .menu-sub .menu-item .menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #F1F5F9 !important;
+}
+.menu-inner .menu-sub .menu-item.active > .menu-link {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #60A5FA !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-left: 2px solid #3B82F6;
+}
+
+.menu-item.menu-toggle > .menu-link::after {
+    content: "\ea50";
+    font-family: "boxicons" !important;
+    font-size: 1.1rem;
+    margin-left: auto;
+    transition: transform 0.2s ease;
+    color: #64748B;
+}
+.menu-item.open > .menu-link::after {
+    transform: rotate(90deg);
+    color: #38BDF8;
+}
+
+.sidebar-user-footer {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px;
+    transition: all 0.25s ease-in-out;
+}
+.sidebar-user-footer:hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Menu Colors & Utilities */
+.text-sky-400 { color: #38BDF8 !important; }
+.text-emerald-400 { color: #34D399 !important; }
+.text-blue-400 { color: #60A5FA !important; }
+.text-amber-400 { color: #FBBF24 !important; }
+.text-pink-400 { color: #F472B6 !important; }
+.avatar-36 { width: 36px !important; height: 36px !important; }
+.sidebar-user-name { font-size: 0.8rem !important; line-height: 1.2 !important; }
+.sidebar-user-role { font-size: 0.65rem !important; letter-spacing: 0.3px !important; }
+.btn-logout-compact { font-size: 0.75rem !important; white-space: nowrap !important; }
+
+/* Dashboard Styles */
+.hero-banner-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #2563EB 100%) !important;
+    color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25) !important;
+}
+.admin-stat-card {
+    background: #ffffff;
+    border-radius: 16px !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+.stat-top-bar {
+    height: 4px;
+}
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.1) !important;
+    border-color: rgba(37, 99, 235, 0.3) !important;
+}
+.admin-stat-card .stat-icon-box {
+    transition: transform 0.3s ease;
+}
+.admin-stat-card:hover .stat-icon-box {
+    transform: scale(1.1) rotate(-4deg);
+}
+.shortcut-card {
+    background: #FFFFFF;
+    border-color: #E2E8F0 !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.shortcut-card:hover {
+    background: #F8FAFC !important;
+    border-color: #2563EB !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08) !important;
+}
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #10B981;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse-animation 2s infinite;
+}
+@keyframes pulse-animation {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Moderator Dashboard */
+.moderator-hero-card {
+    transition: all 0.3s ease;
+}
+.moderator-stat-card {
+    background: #ffffff;
+    border-radius: 16px !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+.moderator-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 32px rgba(15, 82, 186, 0.12) !important;
+    border-color: rgba(15, 82, 186, 0.3) !important;
+}
+.moderator-stat-card .stat-icon-box {
+    transition: transform 0.3s ease;
+}
+.moderator-stat-card:hover .stat-icon-box {
+    transform: scale(1.1) rotate(-3deg);
+}
+.action-hub-card {
+    border-radius: 12px !important;
+    background: #ffffff;
+    transition: all 0.25s ease !important;
+}
+.action-hub-card:hover {
+    transform: translateY(-3px);
+    border-color: #0288D1 !important;
+    box-shadow: 0 8px 20px rgba(2, 136, 209, 0.12) !important;
+}
+
+/* User Profile Header */
+.user-profile-header-banner img {
+    width: 100%;
+    object-fit: cover;
+    height: 120px;
+}
+.user-profile-header {
+    margin-top: -2rem;
+}
+.user-profile-header .user-profile-img {
+    border: 5px solid;
+    width: 120px;
+}
+.light-style .user-profile-header .user-profile-img {
+    border-color: #fff;
+}
+.dark-style .user-profile-header .user-profile-img {
+    border-color: #2b2c40;
+}
+@media(max-width: 767.98px) {
+    .user-profile-header-banner img {
+        height: 150px;
+    }
+    .user-profile-header .user-profile-img {
+        width: 100px;
+    }
+}
+
+/* Abstract Decision Cards */
+.decision-option-card:hover {
+    border-color: #0288D1 !important;
+    background-color: #F8FAFC;
+}
+.decision-option-card.active-oral {
+    border-color: #10B981 !important;
+    background-color: #ECFDF5;
+}
+.decision-option-card.active-paper {
+    border-color: #0288D1 !important;
+    background-color: #F0F9FF;
+}
+.decision-option-card.active-reject {
+    border-color: #EF4444 !important;
+    background-color: #FEF2F2;
+}
+
+/* Lightbox Styling */
+.media-lightbox-content {
+    transition: transform 0.2s ease-in-out;
+}

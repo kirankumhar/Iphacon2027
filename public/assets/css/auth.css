@@ -1,0 +1,126 @@
+/**
+ * Auth CSS (IPHACON 2027)
+ * Centralizes styles for login, admin-login, forgot-password, reset-password, and email verification.
+ */
+.login-page-wrapper {
+    background: linear-gradient(135deg, #f4f7fc 0%, #e9eef8 50%, #f0f4fd 100%);
+    min-height: 85vh;
+}
+
+.login-card {
+    border-radius: 16px !important;
+    box-shadow: 0 15px 35px -10px rgba(30, 37, 94, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.card-accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff9900 0%, #2e3192 50%, #00c6ff 100%);
+}
+
+.card-header-auth {
+    background: linear-gradient(135deg, #161b40 0%, #1e255e 50%, #2e3192 100%) !important;
+    border-bottom: none;
+}
+
+.header-bg-glow {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(74, 91, 204, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+
+.header-badge-pill {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(4px);
+}
+
+.header-badge-pill span {
+    color: #ffffff !important;
+}
+
+.text-white-80 {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+}
+
+.extra-small {
+    font-size: 0.78rem;
+}
+
+/* Modern Input Groups & Controls */
+.modern-input-group {
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.modern-input-group:focus-within {
+    box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.15);
+}
+
+.custom-input {
+    height: 40px;
+    font-size: 0.88rem;
+    border-color: #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.custom-input:focus {
+    border-color: #2e3192;
+    box-shadow: none;
+}
+
+.toggle-pw-btn {
+    border-color: #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.toggle-pw-btn:hover {
+    background-color: #e2e8f0 !important;
+    color: #1e255e !important;
+}
+
+.custom-checkbox:checked {
+    background-color: #2e3192;
+    border-color: #2e3192;
+}
+
+.card-rounded-20-blur {
+    border-radius: 20px !important;
+    backdrop-filter: blur(10px);
+}
+
+.rounded-top-4 {
+    border-radius: 20px 20px 0 0 !important;
+}
+
+.btn-gradient-primary-lg {
+    background: linear-gradient(135deg, #2e3192, #4a5bcc) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
+}
+
+.otp-input-control {
+    font-size: 1.35rem !important;
+    letter-spacing: 7px !important;
+    padding-right: 42px !important;
+}
+
+@media (max-width: 575.98px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+}

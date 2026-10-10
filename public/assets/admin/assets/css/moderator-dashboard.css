@@ -1,0 +1,321 @@
+/**
+ * Moderator Dashboard Dedicated Stylesheet (IPHACON 2027)
+ * Path: public/assets/admin/assets/css/moderator-dashboard.css
+ * CSP Compliant - All inline styles migrated to external CSS classes.
+ */
+
+/* 1. Moderator Hero Banner */
+.mod-hero-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 40%, #0F52BA 100%) !important;
+    color: #FFFFFF !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 30px rgba(15, 82, 186, 0.22) !important;
+}
+
+.mod-badge-primary {
+    background-color: #38BDF8 !important;
+    color: #0F172A !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+}
+
+.mod-badge-ghost {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #E2E8F0 !important;
+    border-radius: 20px !important;
+    font-size: 0.7rem !important;
+}
+
+.mod-hero-title {
+    letter-spacing: -0.3px !important;
+}
+
+.mod-hero-desc {
+    color: #94A3B8 !important;
+    font-size: 0.875rem !important;
+    max-width: 680px !important;
+}
+
+.mod-btn-hero-light {
+    border-radius: 25px !important;
+    font-size: 0.825rem !important;
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+}
+
+.mod-btn-hero-info {
+    border-radius: 25px !important;
+    font-size: 0.825rem !important;
+    background: #0288D1 !important;
+    border: none !important;
+}
+
+/* 2. Primary Stat Cards & Top Accent Borders */
+.mod-card-accent-info {
+    height: 4px;
+    background: linear-gradient(90deg, #0288D1 0%, #00897B 100%);
+}
+
+.mod-card-accent-warning {
+    height: 4px;
+    background: linear-gradient(90deg, #FF6B00 0%, #E65100 100%);
+}
+
+.mod-card-accent-amber {
+    height: 4px;
+    background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+}
+
+.mod-card-accent-success {
+    height: 4px;
+    background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+/* Stat Icon Boxes */
+.mod-icon-box-info {
+    width: 48px;
+    height: 48px;
+    background-color: #E0F2FE !important;
+    color: #0288D1 !important;
+}
+
+.mod-icon-box-warning {
+    width: 48px;
+    height: 48px;
+    background-color: #FFF3E0 !important;
+    color: #FF6B00 !important;
+}
+
+.mod-icon-box-amber {
+    width: 48px;
+    height: 48px;
+    background-color: #FEF3C7 !important;
+    color: #D97706 !important;
+}
+
+.mod-icon-box-success {
+    width: 48px;
+    height: 48px;
+    background-color: #DCFFF0 !important;
+    color: #059669 !important;
+}
+
+/* Stat Counter Badges */
+.mod-counter-badge-info {
+    background-color: #E0F2FE !important;
+    color: #0288D1 !important;
+}
+
+.mod-counter-badge-warning {
+    background-color: #FFF3E0 !important;
+    color: #FF6B00 !important;
+}
+
+.mod-counter-badge-amber {
+    background-color: #FEF3C7 !important;
+    color: #B45309 !important;
+}
+
+.mod-counter-badge-success {
+    background-color: #DCFFF0 !important;
+    color: #059669 !important;
+}
+
+/* Stat Card Typography */
+.mod-stat-subtitle {
+    letter-spacing: 0.5px !important;
+    font-size: 0.72rem !important;
+}
+
+.mod-stat-title {
+    font-size: 1.05rem !important;
+}
+
+.mod-stat-desc {
+    font-size: 0.78rem !important;
+}
+
+/* Stat Card Action Buttons */
+.mod-btn-card-info {
+    background-color: #E0F2FE !important;
+    color: #0288D1 !important;
+    border: 1px solid #BAE6FD !important;
+    font-size: 0.8rem !important;
+}
+
+.mod-btn-card-warning {
+    background-color: #FF6B00 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-size: 0.8rem !important;
+}
+
+.mod-btn-card-warning-disabled {
+    background-color: #FFF3E0 !important;
+    color: #FF6B00 !important;
+    border: none !important;
+    font-size: 0.8rem !important;
+}
+
+.mod-btn-card-amber {
+    background-color: #FEF3C7 !important;
+    color: #B45309 !important;
+    border: 1px solid #FDE68A !important;
+    font-size: 0.8rem !important;
+}
+
+.mod-btn-card-success {
+    background-color: #DCFFF0 !important;
+    color: #059669 !important;
+    border: 1px solid #A7F3D0 !important;
+    font-size: 0.8rem !important;
+}
+
+/* 3. Moderation Action Hub */
+.mod-rounded-16 {
+    border-radius: 16px !important;
+}
+
+.mod-hub-header-icon {
+    width: 38px;
+    height: 38px;
+    background-color: #E8F2FF !important;
+    color: #013069 !important;
+}
+
+.mod-hub-header-icon i {
+    color: #013069 !important;
+}
+
+.mod-hub-header-title {
+    font-size: 1rem !important;
+}
+
+.mod-hub-item-title {
+    font-size: 0.9rem !important;
+}
+
+.mod-hub-icon-info {
+    width: 50px;
+    height: 50px;
+    background-color: #E0F2FE !important;
+    color: #0288D1 !important;
+}
+
+.mod-hub-icon-info i {
+    color: #0288D1 !important;
+}
+
+.mod-hub-icon-teal {
+    width: 50px;
+    height: 50px;
+    background-color: #E0F7FA !important;
+    color: #00897B !important;
+}
+
+.mod-hub-icon-teal i {
+    color: #00897B !important;
+}
+
+.mod-hub-icon-orange {
+    width: 50px;
+    height: 50px;
+    background-color: #FFF3E0 !important;
+    color: #FF6B00 !important;
+}
+
+.mod-hub-icon-orange i {
+    color: #FF6B00 !important;
+}
+
+.mod-hub-icon-amber {
+    width: 50px;
+    height: 50px;
+    background-color: #FEF3C7 !important;
+    color: #D97706 !important;
+}
+
+.mod-hub-icon-amber i {
+    color: #D97706 !important;
+}
+
+.mod-hub-icon-emerald {
+    width: 50px;
+    height: 50px;
+    background-color: #DCFFF0 !important;
+    color: #059669 !important;
+}
+
+.mod-hub-icon-emerald i {
+    color: #059669 !important;
+}
+
+/* 4. Recent Abstracts Table */
+.mod-table-header-icon {
+    color: #FF6B00 !important;
+}
+
+.mod-table-header-title {
+    font-size: 0.95rem !important;
+}
+
+.mod-btn-manage-abstracts {
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    color: #E65100 !important;
+    border-color: #FFB74D !important;
+}
+
+.mod-abstract-title-truncate {
+    max-width: 190px !important;
+}
+
+.mod-status-oral {
+    background-color: #059669 !important;
+    color: #FFFFFF !important;
+    font-size: 0.68rem !important;
+}
+
+.mod-status-paper {
+    background-color: #0288D1 !important;
+    color: #FFFFFF !important;
+    font-size: 0.68rem !important;
+}
+
+.mod-status-rejected {
+    background-color: #DC2626 !important;
+    color: #FFFFFF !important;
+    font-size: 0.68rem !important;
+}
+
+.mod-btn-action-view {
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+}
+
+.mod-btn-action-split {
+    border-radius: 6px !important;
+}
+
+.mod-action-dropdown-menu {
+    border-radius: 12px !important;
+    font-size: 0.78rem !important;
+}
+
+.mod-dropdown-item-oral,
+.mod-dropdown-item-oral i,
+.mod-dropdown-item-oral span {
+    color: #059669 !important;
+}
+
+.mod-dropdown-item-paper,
+.mod-dropdown-item-paper i,
+.mod-dropdown-item-paper span {
+    color: #0288D1 !important;
+}
+
+.mod-dropdown-item-reject,
+.mod-dropdown-item-reject i,
+.mod-dropdown-item-reject span {
+    color: #DC2626 !important;
+}

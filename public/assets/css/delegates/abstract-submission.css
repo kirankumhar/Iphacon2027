@@ -1,0 +1,178 @@
+.abstract-hero {
+    background: linear-gradient(135deg, #013069 0%, #0d47a1 60%, #1565c0 100%);
+    border-radius: 18px;
+    color: #ffffff;
+    box-shadow: 0 10px 28px rgba(1, 48, 105, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+.abstract-avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.abstract-avatar-placeholder {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3.5px solid rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.instructions-card {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1.5px solid #fde68a;
+    border-radius: 16px;
+}
+.form-section-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+.section-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0d47a1;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+.section-title {
+    color: #013069;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+.co-author-box {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 16px;
+    position: relative;
+}
+.btn-remove-author {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: #ef4444;
+    background: transparent;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.word-counter-badge {
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+.badge-within-limit {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+.badge-exceeded-limit {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    padding: 10px 14px;
+    font-size: 0.92rem;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #0d47a1;
+    box-shadow: 0 0 0 0.2rem rgba(13, 71, 161, 0.18);
+}
+.custom-radio-card {
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+.custom-radio-card:hover {
+    border-color: #0d47a1;
+    background: #f0f7ff;
+}
+.form-check-input:checked + .custom-radio-card {
+    border-color: #0d47a1;
+    background: #e8f2ff;
+    box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.2);
+}
+.mode-select-card {
+    border: 2px solid #E2E8F0;
+    background: #FFFFFF;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.mode-select-card:hover {
+    border-color: #94A3B8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+.mode-check-badge {
+    font-size: 1.15rem;
+    color: #CBD5E1;
+    transition: all 0.2s ease;
+}
+.mode-radio-input:checked + .mode-card-oral {
+    border-color: #2563EB;
+    background: #EFF6FF;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+}
+.mode-radio-input:checked + .mode-card-oral .mode-check-badge {
+    color: #2563EB;
+}
+.mode-radio-input:checked + .mode-card-poster {
+    border-color: #16A34A;
+    background: #F0FDF4;
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.15);
+}
+.mode-radio-input:checked + .mode-card-poster .mode-check-badge {
+    color: #16A34A;
+}
+.mode-radio-input:checked + .mode-card-nopref {
+    border-color: #9333EA;
+    background: #FAF5FF;
+    box-shadow: 0 4px 16px rgba(147, 51, 234, 0.15);
+}
+.mode-radio-input:checked + .mode-card-nopref .mode-check-badge {
+    color: #9333EA;
+}
+.countdown-unit-box {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    min-width: 68px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.countdown-number {
+    font-size: 1.45rem;
+    line-height: 1.1;
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+}
+.modal {
+    z-index: 1060 !important;
+}
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+.modal-dialog {
+    z-index: 1065 !important;
+}
