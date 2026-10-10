@@ -45,13 +45,13 @@
                                 <div class="col-6">
                                     <span class="text-muted d-block" style="font-size: 0.72rem;">Delegate Name</span>
                                     <span class="fw-semibold text-dark text-truncate d-block">
-                                        {{ $registration->user->name ?? 'N/A' }}
+                                        {{ $registration->user->full_name ?? $registration->user->name ?? 'N/A' }}
                                     </span>
                                 </div>
                                 <div class="col-6">
                                     <span class="text-muted d-block" style="font-size: 0.72rem;">Category</span>
                                     <span class="fw-semibold text-dark text-truncate d-block">
-                                        {{ $registration->delegateCategory->name ?? 'Indian Delegate' }}
+                                        {{ $registration->delegateCategory->category_name ?? $registration->delegateCategory->name ?? 'Indian Delegate' }}
                                     </span>
                                 </div>
                                 <div class="col-6 pt-1 border-top">
