@@ -424,7 +424,15 @@
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Pre-Conference Workshop</div>
-                    <div class="info-value">{{ $preConfWorkshop }}</div>
+                    <div class="info-value">
+                        @php $preConfTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
+                        {{ $preConfWorkshop }}
+                        @if($registration->participate_in_cme && $preConfTopic)
+                            <div style="font-size: 7.5px; line-height: 1.15; color: #475569; margin-top: 2px;">
+                                {{ $preConfTopic }}
+                            </div>
+                        @endif
+                    </div>
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Abstract Submission</div>

@@ -144,8 +144,15 @@
                             </tr>
                             @if ($registration->participate_in_cme)
                                 <tr>
-                                    <td class="text-muted py-1">Pre-Conference Workshop:</td>
-                                    <td class="fw-semibold text-success py-1 text-end">+ ₹{{ number_format($cmeBase, 2) }}</td>
+                                    <td class="text-muted py-1">
+                                        <div>Pre-Conference Workshop:</div>
+                                        @if($registration->pre_conference_topic)
+                                            <div class="text-secondary extra-small fw-normal mt-0.5" style="font-size: 0.74rem;">
+                                                <i class="fas fa-book-reader text-primary me-1"></i><strong>Topic:</strong> {{ $registration->pre_conference_topic }}
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="fw-semibold text-success py-1 text-end align-top">+ ₹{{ number_format($cmeBase, 2) }}</td>
                                 </tr>
                             @endif
                             @if (($registration->accompanying_persons ?? 0) > 0)

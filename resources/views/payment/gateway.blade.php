@@ -547,7 +547,14 @@
                                                 <tr>
                                                     <td>
                                                         <strong>Pre-Conference CME / Workshop Participation</strong>
-                                                        <div class="text-muted small">Specialized training workshop</div>
+                                                        @php $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
+                                                        @if($chosenTopic)
+                                                            <div class="text-secondary small mt-0.5" style="font-size: 0.78rem;">
+                                                                <i class="fas fa-book-reader text-primary me-1"></i><strong>Topic:</strong> {{ $chosenTopic }}
+                                                            </div>
+                                                        @else
+                                                            <div class="text-muted small">Specialized training workshop</div>
+                                                        @endif
                                                     </td>
                                                     <td class="text-center">Optional Add-on</td>
                                                     <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>

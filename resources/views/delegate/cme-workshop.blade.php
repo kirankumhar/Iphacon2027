@@ -91,6 +91,31 @@
                                     </div>
                                 </label>
                             </div>
+
+                            {{-- Topic Selection --}}
+                            <div class="mt-3 pt-3 border-top" id="cmeTopicSection">
+                                <label for="pre_conference_topic" class="form-label fw-bold text-dark small mb-1">
+                                    <i class="fas fa-book-reader text-primary me-1"></i>Select Pre-Conference Workshop Topic <span class="text-danger">*</span>
+                                </label>
+                                <p class="text-muted extra-small mb-2" style="font-size: 0.8rem;">
+                                    Please choose one topic from the available workshops below:
+                                </p>
+                                <select class="form-select @error('pre_conference_topic') is-invalid @enderror" 
+                                        name="pre_conference_topic" 
+                                        id="pre_conference_topic" 
+                                        required 
+                                        style="font-size: 0.88rem; padding: 10px 14px; border-color: #CBD5E1;">
+                                    <option value="">-- Choose Pre-Conference Topic --</option>
+                                    @foreach(\App\Models\Registration::PRE_CONFERENCE_TOPICS as $idx => $t)
+                                        <option value="{{ $t }}" {{ old('pre_conference_topic', $cmeApp?->pre_conference_topic ?? $registration->pre_conference_topic) === $t ? 'selected' : '' }}>
+                                            {{ $idx + 1 }}. {{ $t }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('pre_conference_topic')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Price Breakdown Summary Box --}}
@@ -140,16 +165,28 @@ function toggleCmePricing() {
     const unselected = document.getElementById('unselectedMessage');
     const btnSubmit = document.getElementById('btnSubmitPayment');
     const cmeBox = document.getElementById('cmeBox');
+    const topicSection = document.getElementById('cmeTopicSection');
+    const topicSelect = document.getElementById('pre_conference_topic');
 
     if (cb.checked) {
         breakdown.classList.remove('d-none');
         unselected.classList.add('d-none');
+        if (topicSection) topicSection.classList.remove('d-none');
+        if (topicSelect) {
+            topicSelect.disabled = false;
+            topicSelect.required = true;
+        }
         btnSubmit.disabled = false;
         cmeBox.style.borderColor = '#10B981';
         cmeBox.style.background = '#ECFDF5';
     } else {
         breakdown.classList.add('d-none');
         unselected.classList.remove('d-none');
+        if (topicSection) topicSection.classList.add('d-none');
+        if (topicSelect) {
+            topicSelect.disabled = true;
+            topicSelect.required = false;
+        }
         btnSubmit.disabled = true;
         cmeBox.style.borderColor = '#E2E8F0';
         cmeBox.style.background = '#F8FAFC';
