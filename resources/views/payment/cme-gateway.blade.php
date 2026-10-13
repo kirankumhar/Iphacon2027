@@ -224,8 +224,9 @@
                         </div>
                     @endif
 
+                    {{-- 
                     <!-- ========================================================================= -->
-                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION)                        -->
+                    <!-- SECTION 1: SBI ONLINE PAYMENT (TEMPORARILY COMMENTED OUT)                 -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-sbi shadow-sm mb-4">
                         <div class="method-header-sbi d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -299,6 +300,8 @@
                     <div class="divider-or">
                         <span>OR PAY VIA UPI QR CODE / DIRECT TRANSFER</span>
                     </div>
+                    --}}
+
 
                     <!-- ========================================================================= -->
                     <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (DEDICATED SECTION)                 -->
