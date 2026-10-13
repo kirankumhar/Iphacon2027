@@ -83,7 +83,9 @@ class SBIEPayClient
                 'logging'       => $logging,
                 'base_uri'      => $baseUrl,
                 'verify'        => false,
+                'domain'        => $credentials['domain'] ?? 'https://iphacon2027.com',
             ];
+
 
             // Initialize modules
             $this->customer = new Customer($this->client, $this->config);

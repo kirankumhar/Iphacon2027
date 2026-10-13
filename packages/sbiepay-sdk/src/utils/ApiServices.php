@@ -35,10 +35,16 @@ class ApiServices
 
             Logger::log($this->config['logging'], Constants::get("logTitles.accessTokenSuccess"), $response);
 
+            $domain = $this->config['domain'] ?? 'https://iphacon2027.com';
             return [
                 'Content-Type'  => 'application/json',
                 'Authorization' => 'Bearer ' . $response['data'][0],
+                'x-referrer'    => $domain,
+                'X-Referrer'    => $domain,
+                'Referer'       => $domain,
+                'Origin'        => $domain,
             ];
+
         } catch (SBIEpayException $e) {
             Logger::log($this->config['logging'], Constants::get("logTitles.accessTokenError"), $e->getMessage());
             throw $e;

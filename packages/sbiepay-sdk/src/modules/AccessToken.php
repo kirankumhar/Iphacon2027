@@ -98,13 +98,19 @@ class AccessToken
      */
     private function buildHeaders(): array
     {
+        $domain = $this->config['domain'] ?? 'https://iphacon2027.com';
         return [
             'Content-Type'            => 'application/json',
             'Accept'                  => 'application/json',
             'Merchant-API-Key-Id'     => $this->apiKey,
             'Merchant-API-Key-Secret' => $this->apiSecret,
+            'x-referrer'              => $domain,
+            'X-Referrer'              => $domain,
+            'Referer'                 => $domain,
+            'Origin'                  => $domain,
         ];
     }
+
 
     /**
      * Create a Guzzle client with retry middleware.

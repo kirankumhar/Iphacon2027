@@ -42,6 +42,8 @@ return [
         'encryption_key' => env('SBIEPAY_ENCRYPTION_KEY'),
         'env'            => env('SBIEPAY_ENV', 'SANDBOX'), // 'LIVE' or 'SANDBOX'
         'return_url'     => env('SBIEPAY_RETURN_URL'),
+        'domain'         => env('SBIEPAY_DOMAIN', 'https://iphacon2027.com'),
     ],
+
 
 ];

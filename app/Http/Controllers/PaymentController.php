@@ -70,7 +70,9 @@ class PaymentController extends Controller
             'apiKey'        => config('services.sbiepay.api_key'),
             'apiSecret'     => config('services.sbiepay.api_secret'),
             'encryptionKey' => config('services.sbiepay.encryption_key'),
+            'domain'        => config('services.sbiepay.domain', 'https://iphacon2027.com'),
         ], config('services.sbiepay.env', 'SANDBOX'), 'JSON', true);
+
     }
 
     /**
