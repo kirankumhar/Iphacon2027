@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Crypt;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Sbiepay\SBIEPayClient;
+use App\Services\PaymentLogService;
 
 class PaymentController extends Controller
 {
@@ -181,6 +182,10 @@ class PaymentController extends Controller
 
         if ($registration->status === 'Approved') {
             \Log::warning('[SBI ePay] Registration already approved for ID: ' . $registration->id);
+            PaymentLogService::warning('INITIATE_SKIPPED', 'Registration is already approved', [
+                'registration_id' => $registration->id,
+                'user_id' => $user->id,
+            ]);
             return redirect()->route('payment.success', ['registration' => $registration->registration_number ?? $registration->id])
                 ->with('success', 'Registration is already approved.');
         }
@@ -188,6 +193,10 @@ class PaymentController extends Controller
         $totalAmount = (float) ($registration->total_amount ?: $registration->calculateTotalAmount());
         if ($totalAmount <= 0) {
             \Log::error('[SBI ePay] Invalid payable amount: ' . $totalAmount);
+            PaymentLogService::error('INVALID_AMOUNT', 'Payable amount is invalid or zero', [
+                'registration_id' => $registration->id,
+                'amount' => $totalAmount,
+            ]);
             return redirect()->back()->with('error', 'Invalid payable amount.');
         }
 
@@ -210,6 +219,14 @@ class PaymentController extends Controller
             ];
 
             \Log::info('[SBI ePay] Creating Order with Payload:', $orderDetails);
+            PaymentLogService::info('INITIATE_ORDER', 'Initiating SBI payment order', [
+                'orderRef'        => $orderRef,
+                'registration_id' => $registration->id,
+                'user_id'         => $user->id,
+                'user_email'      => $user->email,
+                'amount'          => $totalAmount,
+                'payload'         => $orderDetails,
+            ]);
 
             $response = $sbiClient->order->create($orderDetails);
 
@@ -229,6 +246,15 @@ class PaymentController extends Controller
                     'sbiOrderRefNumber' => $sbiOrderRef,
                     'orderHash'         => $orderHash,
                     'transactionUrl'    => $transactionUrl,
+                ]);
+
+                PaymentLogService::info('ORDER_CREATED', 'SBI Order Created Successfully', [
+                    'orderRef'          => $orderRef,
+                    'sbiOrderRef'       => $sbiOrderRef,
+                    'orderHash'         => $orderHash,
+                    'transactionUrl'    => $transactionUrl,
+                    'registration_id'   => $registration->id,
+                    'amount'            => $totalAmount,
                 ]);
 
                 // Create initial pending payment record for reconciliation/tracking
@@ -254,6 +280,11 @@ class PaymentController extends Controller
 
             \Log::error('[SBI ePay] Order Creation Failed. Response: ' . json_encode($response));
             $errMsg = $response['errors'][0]['errorMessage'] ?? 'Failed to initiate SBI payment.';
+            PaymentLogService::error('ORDER_CREATE_FAILED', "Order creation rejected: {$errMsg}", [
+                'orderRef'        => $orderRef,
+                'registration_id' => $registration->id,
+                'response'        => $response,
+            ]);
             return redirect()->back()->with('error', 'Payment Gateway Error: ' . $errMsg);
 
         } catch (\Throwable $e) {
@@ -263,9 +294,15 @@ class PaymentController extends Controller
                 'line'    => $e->getLine(),
                 'trace'   => $e->getTraceAsString(),
             ]);
+            PaymentLogService::error('INITIATE_EXCEPTION', $e->getMessage(), [
+                'registration_id' => $registration->id ?? null,
+                'file'            => $e->getFile(),
+                'line'            => $e->getLine(),
+            ]);
             return redirect()->back()->with('error', 'Error initiating SBI payment: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Initiate Online Payment for CME Workshop with SBI ePay
@@ -330,6 +367,14 @@ class PaymentController extends Controller
             ];
 
             \Log::info('[SBI ePay CME] Creating CME Order with Payload:', $orderDetails);
+            PaymentLogService::info('INITIATE_CME_ORDER', 'Initiating CME payment order', [
+                'orderRef'   => $orderRef,
+                'cmeAppId'   => $cmeApp->id,
+                'user_id'    => $user->id,
+                'user_email' => $user->email,
+                'amount'     => $totalAmount,
+                'payload'    => $orderDetails,
+            ]);
 
             $response = $sbiClient->order->create($orderDetails);
 
@@ -349,6 +394,14 @@ class PaymentController extends Controller
                     'sbiOrderRefNumber' => $sbiOrderRef,
                     'orderHash'         => $orderHash,
                     'transactionUrl'    => $transactionUrl,
+                ]);
+
+                PaymentLogService::info('CME_ORDER_CREATED', 'SBI CME Order Created Successfully', [
+                    'orderRef'       => $orderRef,
+                    'sbiOrderRef'    => $sbiOrderRef,
+                    'transactionUrl' => $transactionUrl,
+                    'cmeAppId'       => $cmeApp->id,
+                    'amount'         => $totalAmount,
                 ]);
 
                 // Create initial pending payment record for CME reconciliation/tracking
@@ -378,6 +431,11 @@ class PaymentController extends Controller
 
             \Log::error('[SBI ePay CME] Order Creation Failed: ' . json_encode($response));
             $errMsg = $response['errors'][0]['errorMessage'] ?? 'Failed to initiate CME payment.';
+            PaymentLogService::error('CME_ORDER_CREATE_FAILED', "CME Order creation rejected: {$errMsg}", [
+                'orderRef' => $orderRef,
+                'cmeAppId' => $cmeApp->id,
+                'response' => $response,
+            ]);
             return redirect()->back()->with('error', 'Payment Gateway Error: ' . $errMsg);
 
         } catch (\Throwable $e) {
@@ -387,9 +445,15 @@ class PaymentController extends Controller
                 'line'    => $e->getLine(),
                 'trace'   => $e->getTraceAsString(),
             ]);
+            PaymentLogService::error('CME_INITIATE_EXCEPTION', $e->getMessage(), [
+                'cmeAppId' => $cmeApp->id ?? null,
+                'file'     => $e->getFile(),
+                'line'     => $e->getLine(),
+            ]);
             return redirect()->back()->with('error', 'Error initiating CME payment: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Handle SBI ePay Callback / Response
@@ -403,6 +467,12 @@ class PaymentController extends Controller
             'query'   => $request->query(),
             'body'    => $request->all(),
             'raw'     => $request->getContent(),
+        ]);
+
+        PaymentLogService::info('CALLBACK_RECEIVED', 'SBI Callback response received', [
+            'method' => $request->method(),
+            'url'    => $request->fullUrl(),
+            'params' => $request->all(),
         ]);
 
         try {
@@ -426,8 +496,14 @@ class PaymentController extends Controller
             }
 
             \Log::info('SBI ePay Decrypted Callback Data:', (array) $data);
+            PaymentLogService::info('CALLBACK_DECRYPTED', 'SBI Callback decrypted', [
+                'data' => (array) $data,
+            ]);
 
             if (!$data) {
+                PaymentLogService::error('CALLBACK_DECRYPT_EMPTY', 'Unable to decrypt or parse SBI response', [
+                    'rawPayload' => substr((string)$rawPayload, 0, 500),
+                ]);
                 return redirect()->route('payment.failed')
                     ->with('error', 'Unable to process payment response.');
             }
@@ -645,10 +721,25 @@ class PaymentController extends Controller
                         \Log::error('CME Confirmation Email failed in SBI response: ' . $mailEx->getMessage());
                     }
 
+                    PaymentLogService::info('CME_PAYMENT_SUCCESS', "CME Workshop Payment successful for Order: {$orderRef}", [
+                        'orderRef'    => $orderRef,
+                        'sbiOrderRef' => $sbiOrderRef,
+                        'cmeAppId'    => $cmeApp->id,
+                        'amount'      => $amount > 0 ? $amount : 2360.00,
+                    ]);
+
                     return redirect()->route('registration.index')
                         ->with('success', 'Pre-Conference Workshop payment received successfully via SBI ePay! A confirmation email with receipt has been sent.');
                 } else {
                     \Log::warning('SBI ePay CME Payment Failed for CME ID: ' . $cmeApp->id . ', Status: ' . $status . ', Reason: ' . $failureReason);
+
+                    PaymentLogService::warning('CME_PAYMENT_FAILED', "CME Workshop Payment Failed for Order: {$orderRef}: {$failureReason}", [
+                        'orderRef'      => $orderRef,
+                        'sbiOrderRef'   => $sbiOrderRef,
+                        'cmeAppId'      => $cmeApp->id,
+                        'status'        => $status,
+                        'failureReason' => $failureReason,
+                    ]);
 
                     Payment::updateOrCreate(
                         [
@@ -798,10 +889,28 @@ class PaymentController extends Controller
                     }
                 }
 
+                PaymentLogService::info('PAYMENT_SUCCESS', "Delegate Payment successful for Order: {$orderRef}", [
+                    'orderRef'            => $orderRef,
+                    'sbiOrderRef'         => $sbiOrderRef,
+                    'registration_id'     => $delegate->id,
+                    'registration_number' => $delegate->registration_number,
+                    'amount'              => $payAmount,
+                    'user_id'             => $delegate->user_id,
+                    'email'               => $delegate->user?->email,
+                ]);
+
                 return redirect()->route('payment.success', ['registration' => $delegate->registration_number])
                     ->with('success', 'Payment Received Successfully via SBI ePay!');
             } else {
                 \Log::warning('SBI ePay Payment Failed for Registration ID: ' . $delegate->id . ', Status: ' . $status . ', Reason: ' . $failureReason);
+                PaymentLogService::warning('PAYMENT_FAILED', "Delegate Payment Failed for Order: {$orderRef}: {$failureReason}", [
+                    'orderRef'        => $orderRef,
+                    'sbiOrderRef'     => $sbiOrderRef,
+                    'status'          => $status,
+                    'failureReason'   => $failureReason,
+                    'registration_id' => $delegate->id,
+                    'amount'          => $payAmount,
+                ]);
 
                 Payment::updateOrCreate(
                     [
@@ -839,10 +948,16 @@ class PaymentController extends Controller
 
         } catch (\Throwable $e) {
             \Log::error('SBI ePay Callback Exception: ' . $e->getMessage());
+            PaymentLogService::error('CALLBACK_EXCEPTION', $e->getMessage(), [
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+                'trace' => substr($e->getTraceAsString(), 0, 1000),
+            ]);
             return redirect()->route('payment.failed')
                 ->with('error', 'Error processing SBI payment response: ' . $e->getMessage());
         }
     }
+
 
 
     public function processPayment(Request $request, $registrationId)

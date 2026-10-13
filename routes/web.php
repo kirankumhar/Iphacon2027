@@ -167,6 +167,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::get('/pending-payments', [AdminRegistrationController::class, 'pendingPayments'])->name('pending-payments');
     Route::get('/paid-payments', [AdminRegistrationController::class, 'paidPayments'])->name('paid-payments');
     Route::get('/failed-payments', [AdminRegistrationController::class, 'failedPayments'])->name('failed-payments');
+    Route::get('/payment-logs', [\App\Http\Controllers\Admin\PaymentLogController::class, 'index'])->name('admin.payment-logs');
+    Route::get('/payment-logs/download/{file}', [\App\Http\Controllers\Admin\PaymentLogController::class, 'download'])->name('admin.payment-logs.download');
     Route::get('/submitted-delegates', [AdminRegistrationController::class, 'submittedDelegates'])->name('submitted-delegates');
     Route::get('/international-payment-submitted-delegates', [AdminRegistrationController::class, 'internationalPaymentSubmittedDelegates'])->name('international-payment-submitted-delegates');
     Route::get('/indian-approved-delegates', [AdminRegistrationController::class, 'approvedIndDelegates'])->name('indian-approved-delegates');

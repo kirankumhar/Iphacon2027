@@ -271,7 +271,7 @@
     @if (!optional(auth('admin')->user())->isModerator())
         <!-- Transactions Dropdown -->
         @php
-            $isTxActive = request()->routeIs('pending-payments') || request()->routeIs('paid-payments') || request()->routeIs('failed-payments');
+            $isTxActive = request()->routeIs('pending-payments') || request()->routeIs('paid-payments') || request()->routeIs('failed-payments') || request()->routeIs('admin.payment-logs*');
         @endphp
         <li class="menu-item {{ $isTxActive ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -292,6 +292,11 @@
                 <li class="menu-item {{ request()->routeIs('failed-payments') ? 'active' : '' }}">
                     <a href="{{ Route::has('failed-payments') ? route('failed-payments') : '#' }}" class="menu-link">
                         <div>Failed Payments</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('admin.payment-logs*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.payment-logs') }}" class="menu-link">
+                        <div>Payment Logs</div>
                     </a>
                 </li>
             </ul>
