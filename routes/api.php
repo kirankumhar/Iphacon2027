@@ -10,7 +10,3 @@ Route::get('/user', function (Request $request) {
 Route::post('/response', [App\Http\Controllers\PaymentController::class, 'response'])->name('response');
 Route::get('/delegate', [App\Http\Controllers\RegistrationController::class, 'getDelegateCount'])->name('delegate');
 Route::get('/workshop', [App\Http\Controllers\RegistrationController::class, 'getWorkshopCount'])->name('workshop');
-
-// SBI ePay Key & Connectivity Diagnostic Test API
-Route::get('/sbi/check-keys', [App\Http\Controllers\SbiTestController::class, 'checkKeys'])->name('api.sbi.check-keys');
-

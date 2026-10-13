@@ -55,10 +55,6 @@ Route::match(['get', 'post'], 'payment/sbi/response', [App\Http\Controllers\Paym
 Route::get('payment/failed/{registration?}', [App\Http\Controllers\PaymentController::class, 'failed'])
     ->name('payment.failed');
 
-// SBI Key & Connectivity Test Route
-Route::get('sbi-test', [App\Http\Controllers\SbiTestController::class, 'checkKeys'])->name('sbi.test');
-
-
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard route
     Route::get('dashboard', function () {
