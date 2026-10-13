@@ -57,7 +57,6 @@ Route::get('payment/failed/{registration?}', [App\Http\Controllers\PaymentContro
 
 // SBI Key & Connectivity Test Route
 Route::get('sbi-test', [App\Http\Controllers\SbiTestController::class, 'checkKeys'])->name('sbi.test');
-Route::match(['get', 'post'], 'sbi-create-order', [App\Http\Controllers\SbiTestController::class, 'createTestOrder'])->name('sbi.create-order');
 
 
 Route::middleware(['auth', 'verified'])->group(function () {

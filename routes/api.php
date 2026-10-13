@@ -14,7 +14,3 @@ Route::get('/workshop', [App\Http\Controllers\RegistrationController::class, 'ge
 // SBI ePay Key & Connectivity Diagnostic Test API
 Route::get('/sbi/check-keys', [App\Http\Controllers\SbiTestController::class, 'checkKeys'])->name('api.sbi.check-keys');
 
-// Direct Gateway Hit POST API - Creates Order and returns Payment Page URL
-Route::match(['get', 'post'], '/sbi/create-order', [App\Http\Controllers\SbiTestController::class, 'createTestOrder'])->name('api.sbi.create-order');
-
-
