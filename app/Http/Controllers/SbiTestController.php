@@ -233,6 +233,87 @@ class SbiTestController extends Controller
     }
 
     /**
+     * Hit SBI ePay Order Create API directly with dummy/custom payload
+     * and return the payment redirection URL.
+     */
+    public function createTestOrder(Request $request)
+    {
+        $currentEnv = strtoupper(config('services.sbiepay.env', 'LIVE'));
+        $mid = config('services.sbiepay.mid');
+        $apiKey = config('services.sbiepay.api_key');
+        $apiSecret = config('services.sbiepay.api_secret');
+        $encKey = config('services.sbiepay.encryption_key');
+
+        $amount = (float) ($request->input('amount') ?? 10.00);
+        $orderRef = $request->input('order_ref') ?? ('TEST' . time());
+        $returnUrl = $request->input('return_url') ?? (config('services.sbiepay.return_url') ?: url('/payment/sbi/response'));
+        $customerName = $request->input('customer_name') ?? 'Test Delegate';
+        $customerEmail = $request->input('customer_email') ?? 'test@iphacon2027.com';
+
+        $payload = [
+            'mId'            => $mid,
+            'currencyCode'   => 'INR',
+            'orderAmount'    => $amount,
+            'orderRefNumber' => $orderRef,
+            'otherDetails'   => json_encode([
+                'name'         => $customerName,
+                'email'        => $customerEmail,
+                'is_test'      => true,
+                'initiated_at' => now()->toIso8601String(),
+            ]),
+            'returnUrl'      => $returnUrl,
+        ];
+
+        try {
+            $sbiClient = new \Sbiepay\SBIEPayClient([
+                'apiKey'        => $apiKey,
+                'apiSecret'     => $apiSecret,
+                'encryptionKey' => $encKey,
+            ], $currentEnv, 'JSON', true);
+
+            $response = $sbiClient->order->create($payload);
+
+            if (is_string($response)) {
+                $response = json_decode($response, true);
+            }
+
+            if (isset($response['status']) && (int)$response['status'] === 1 && !empty($response['data'][0]['transactionUrl'])) {
+                $transactionUrl = $response['data'][0]['transactionUrl'];
+                $sbiOrderRef = $response['data'][0]['sbiOrderRefNumber'] ?? null;
+                $orderHash = $response['data'][0]['orderHash'] ?? null;
+
+                return response()->json([
+                    'status'               => 'SUCCESS',
+                    'message'              => 'SBI ePay order created successfully!',
+                    'payment_url'          => $transactionUrl,
+                    'order_ref_number'     => $orderRef,
+                    'sbi_order_ref_number' => $sbiOrderRef,
+                    'order_hash'           => $orderHash,
+                    'amount'               => $amount,
+                    'currency'             => 'INR',
+                    'environment'          => $currentEnv,
+                    'raw_response'         => $response,
+                ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            }
+
+            return response()->json([
+                'status'       => 'FAILED',
+                'message'      => 'SBI ePay rejected order creation.',
+                'error'        => $response['errors'][0]['errorMessage'] ?? 'Unknown gateway error',
+                'raw_response' => $response,
+            ], 400, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status'    => 'FAILED',
+                'message'   => 'Exception during SBI order creation: ' . $e->getMessage(),
+                'file'      => $e->getFile(),
+                'line'      => $e->getLine(),
+            ], 500, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+    }
+
+    /**
      * Mask sensitive strings (show first 3 and last 3 chars)
      */
     private function maskString(?string $str): string
@@ -247,3 +328,4 @@ class SbiTestController extends Controller
         return substr($str, 0, 3) . str_repeat('*', $len - 6) . substr($str, -3);
     }
 }
+

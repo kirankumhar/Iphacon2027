@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'payment/sbi/response',
             'payment/sbi/*',
+            'sbi-create-order',
+            'sbi/*',
         ]);
         $middleware->authenticateSessions();
         $middleware->append(SanitizeInput::class);
