@@ -24,6 +24,10 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         $countries = Country::active()->orderBy('country_name')->get();
         return view('conference-registration', compact('countries'));
     }

@@ -260,9 +260,8 @@
                         </div>
                     </div>
 
-                    {{-- 
                     <!-- ========================================================================= -->
-                    <!-- SECTION 1: SBI ONLINE PAYMENT (TEMPORARILY COMMENTED OUT)                 -->
+                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION)                        -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-sbi shadow-sm mb-4">
                         <div class="method-header-sbi d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -332,7 +331,7 @@
                                         </a>
 
                                         <p class="text-muted mb-0" style="font-size: 11px;">
-                                            <i class="fas fa-info-circle me-1"></i>You will be securely redirected to the SBI ePay portal.
+                                             <i class="fas fa-info-circle me-1"></i>You will be securely redirected to the SBI ePay portal.
                                         </p>
                                     </div>
                                 </div>
@@ -344,7 +343,6 @@
                     <div class="divider-or">
                         <span>OR PAY VIA UPI QR CODE / BANK TRANSFER</span>
                     </div>
-                    --}}
 
 
                     <!-- ========================================================================= -->

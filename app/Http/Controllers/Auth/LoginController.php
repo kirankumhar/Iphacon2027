@@ -13,6 +13,10 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -101,7 +105,9 @@ class LoginController extends Controller
                 // Continue if session table not present
             }
 
-            return redirect()->intended('dashboard')->with('success', 'Welcome back, '.$user->full_name.'!');
+            session()->forget('url.intended');
+
+            return redirect()->route('dashboard')->with('success', 'Welcome back, '.$user->full_name.'!');
         }
 
         // Increment failed attempts count (3600-second / 1-hour decay)
