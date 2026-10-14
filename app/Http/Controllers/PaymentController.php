@@ -622,42 +622,45 @@ class PaymentController extends Controller
                 }
 
                 if ($isSuccess) {
-                    $cmeApp->update([
-                        'status'         => 'Approved',
-                        'transaction_id' => $sbiOrderRef ?? $orderRef,
-                        'submitted_at'   => now(),
-                        'approved_at'    => now(),
-                    ]);
+                    $payment = null;
+                    DB::transaction(function () use ($cmeApp, $orderRef, $sbiOrderRef, $rawGatewayResponse, $amount, &$payment) {
+                        $cmeApp->update([
+                            'status'         => 'Approved',
+                            'transaction_id' => $sbiOrderRef ?? $orderRef,
+                            'submitted_at'   => now(),
+                            'approved_at'    => now(),
+                        ]);
 
-                    $payment = Payment::updateOrCreate(
-                        [
-                            'registration_id' => $cmeApp->registration_id,
-                            'gateway_transaction_id' => $orderRef,
-                        ],
-                        [
-                            'delegate_category_fee'    => 0.00,
-                            'accompanying_persons_fee' => 0.00,
-                            'cme_fee'                  => 2000.00,
-                            'gst_amount'               => 360.00,
-                            'total_amount'             => $amount > 0 ? $amount : 2360.00,
-                            'currency'                 => 'INR',
-                            'transaction_id'           => $sbiOrderRef ?? $orderRef,
-                            'gateway_transaction_id'   => $orderRef,
-                            'payment_method'           => 'SBI_ePay',
-                            'payment_status'           => 'Success',
-                            'gateway_response'         => $rawGatewayResponse,
-                            'admin_verified'           => true,
-                            'payment_date'             => now(),
-                        ]
-                    );
+                        $payment = Payment::updateOrCreate(
+                            [
+                                'registration_id' => $cmeApp->registration_id,
+                                'gateway_transaction_id' => $orderRef,
+                            ],
+                            [
+                                'delegate_category_fee'    => 0.00,
+                                'accompanying_persons_fee' => 0.00,
+                                'cme_fee'                  => 2000.00,
+                                'gst_amount'               => 360.00,
+                                'total_amount'             => $amount > 0 ? $amount : 2360.00,
+                                'currency'                 => 'INR',
+                                'transaction_id'           => $sbiOrderRef ?? $orderRef,
+                                'gateway_transaction_id'   => $orderRef,
+                                'payment_method'           => 'SBI_ePay',
+                                'payment_status'           => 'Success',
+                                'gateway_response'         => $rawGatewayResponse,
+                                'admin_verified'           => true,
+                                'payment_date'             => now(),
+                            ]
+                        );
 
-                    $delegate = Registration::find($cmeApp->registration_id);
-                    if ($delegate) {
-                        $delegate->participate_in_cme = 1;
-                        $delegate->cme_fee = 2000.00;
-                        $delegate->updateAmounts();
-                        $delegate->save();
-                    }
+                        $delegate = Registration::find($cmeApp->registration_id);
+                        if ($delegate) {
+                            $delegate->participate_in_cme = 1;
+                            $delegate->cme_fee = 2000.00;
+                            $delegate->updateAmounts();
+                            $delegate->save();
+                        }
+                    });
 
                     // Generate CME Workshop PDF Receipt & Send Confirmation Email
                     $cmeReceiptPath = null;
@@ -743,31 +746,33 @@ class PaymentController extends Controller
                         'failureReason' => $failureReason,
                     ]);
 
-                    Payment::updateOrCreate(
-                        [
-                            'registration_id' => $cmeApp->registration_id,
-                            'gateway_transaction_id' => $orderRef,
-                        ],
-                        [
-                            'delegate_category_fee'    => 0.00,
-                            'accompanying_persons_fee' => 0.00,
-                            'cme_fee'                  => 2000.00,
-                            'gst_amount'               => 360.00,
-                            'total_amount'             => $amount > 0 ? $amount : 2360.00,
-                            'currency'                 => 'INR',
-                            'transaction_id'           => $sbiOrderRef ?? $orderRef,
-                            'gateway_transaction_id'   => $orderRef,
-                            'payment_method'           => 'SBI_ePay',
-                            'payment_status'           => $isCancelled ? 'CANCELLED' : 'Failed',
-                            'gateway_response'         => $rawGatewayResponse,
-                            'admin_verified'           => false,
-                            'payment_date'             => now(),
-                        ]
-                    );
+                    DB::transaction(function () use ($cmeApp, $orderRef, $sbiOrderRef, $amount, $isCancelled, $rawGatewayResponse) {
+                        Payment::updateOrCreate(
+                            [
+                                'registration_id' => $cmeApp->registration_id,
+                                'gateway_transaction_id' => $orderRef,
+                            ],
+                            [
+                                'delegate_category_fee'    => 0.00,
+                                'accompanying_persons_fee' => 0.00,
+                                'cme_fee'                  => 2000.00,
+                                'gst_amount'               => 360.00,
+                                'total_amount'             => $amount > 0 ? $amount : 2360.00,
+                                'currency'                 => 'INR',
+                                'transaction_id'           => $sbiOrderRef ?? $orderRef,
+                                'gateway_transaction_id'   => $orderRef,
+                                'payment_method'           => 'SBI_ePay',
+                                'payment_status'           => $isCancelled ? 'CANCELLED' : 'Failed',
+                                'gateway_response'         => $rawGatewayResponse,
+                                'admin_verified'           => false,
+                                'payment_date'             => now(),
+                            ]
+                        );
 
-                    if ($cmeApp->status !== 'Approved') {
-                        $cmeApp->update(['status' => 'Pending Payment']);
-                    }
+                        if ($cmeApp->status !== 'Approved') {
+                            $cmeApp->update(['status' => 'Pending Payment']);
+                        }
+                    });
 
                     return redirect()->route('payment.failed', [
                         'type' => 'cme',
@@ -811,50 +816,54 @@ class PaymentController extends Controller
             }
 
             if ($isSuccess) {
-                $payment = Payment::updateOrCreate(
-                    [
-                        'registration_id' => $delegate->id,
-                        'gateway_transaction_id' => $orderRef,
-                    ],
-                    [
-                        'delegate_category_fee' => $delFee,
-                        'accompanying_persons_fee' => $accFee,
-                        'cme_fee' => $cmeFee,
-                        'gst_amount' => $gstAmt,
-                        'total_amount' => $payAmount,
-                        'currency' => 'INR',
-                        'transaction_id' => $sbiOrderRef ?? $orderRef,
-                        'gateway_transaction_id' => $orderRef,
-                        'payment_method' => 'SBI_ePay',
-                        'payment_status' => 'Success',
-                        'gateway_response' => $rawGatewayResponse,
-                        'admin_verified' => true,
-                        'payment_date' => now(),
-                    ]
-                );
-
-                $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
-                if (empty($delegate->acknowledgement_id)) {
-                    $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
-                }
-
+                $payment = null;
                 $wasAlreadyApproved = ($delegate->status === 'Approved');
 
-                $delegate->updateAmounts();
-                if ($payAmount > 0) {
-                    $delegate->total_amount = $payAmount;
-                }
-                $delegate->status = "Approved";
-                $delegate->submitted_at = $delegate->submitted_at ?? now();
-                $delegate->registration_number = $registrationNo;
-                $delegate->approved_at = $delegate->approved_at ?? now();
-                $delegate->save();
+                DB::transaction(function () use ($delegate, $orderRef, $delFee, $accFee, $cmeFee, $gstAmt, $payAmount, $sbiOrderRef, $rawGatewayResponse, &$payment) {
+                    $payment = Payment::updateOrCreate(
+                        [
+                            'registration_id' => $delegate->id,
+                            'gateway_transaction_id' => $orderRef,
+                        ],
+                        [
+                            'delegate_category_fee' => $delFee,
+                            'accompanying_persons_fee' => $accFee,
+                            'cme_fee' => $cmeFee,
+                            'gst_amount' => $gstAmt,
+                            'total_amount' => $payAmount,
+                            'currency' => 'INR',
+                            'transaction_id' => $sbiOrderRef ?? $orderRef,
+                            'gateway_transaction_id' => $orderRef,
+                            'payment_method' => 'SBI_ePay',
+                            'payment_status' => 'Success',
+                            'gateway_response' => $rawGatewayResponse,
+                            'admin_verified' => true,
+                            'payment_date' => now(),
+                        ]
+                    );
+
+                    $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
+                    if (empty($delegate->acknowledgement_id)) {
+                        $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
+                    }
+
+                    $delegate->updateAmounts();
+                    if ($payAmount > 0) {
+                        $delegate->total_amount = $payAmount;
+                    }
+                    $delegate->status = "Approved";
+                    $delegate->submitted_at = $delegate->submitted_at ?? now();
+                    $delegate->registration_number = $registrationNo;
+                    $delegate->approved_at = $delegate->approved_at ?? now();
+                    $delegate->save();
+                });
 
                 // Send emails and generate PDF receipt if not already done
                 if (!$wasAlreadyApproved || empty($delegate->registration_pdf_path)) {
                     try {
                         $pdf = PDF::loadView('pdfs.registration', [
-                            'registration' => $delegate,
+                            'registration'      => $delegate,
+                            'payment'           => $payment,
                             'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
                         ])->setPaper('a4', 'portrait')
                             ->setOption('margin-top', 10)
@@ -875,7 +884,11 @@ class PaymentController extends Controller
                         ]);
 
                         if ($delegate->user && $delegate->user->email) {
-                            Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
+                            Mail::send('emails.registration_confirmation', [
+                                'registration'   => $delegate,
+                                'payment'        => $payment,
+                                'registrationID' => $delegate->registration_number
+                            ], function ($message) use ($delegate, $path) {
                                 $message->to($delegate->user->email)
                                     ->subject('IPHACON 2027 : Delegate Registration Confirmation')
                                     ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
@@ -917,32 +930,34 @@ class PaymentController extends Controller
                     'amount'          => $payAmount,
                 ]);
 
-                Payment::updateOrCreate(
-                    [
-                        'registration_id' => $delegate->id,
-                        'gateway_transaction_id' => $orderRef,
-                    ],
-                    [
-                        'delegate_category_fee'    => $delFee,
-                        'accompanying_persons_fee' => $accFee,
-                        'cme_fee'                  => $cmeFee,
-                        'gst_amount'               => $gstAmt,
-                        'total_amount'             => $payAmount,
-                        'currency'                 => 'INR',
-                        'transaction_id'           => $sbiOrderRef ?? $orderRef,
-                        'gateway_transaction_id'   => $orderRef,
-                        'payment_method'           => 'SBI_ePay',
-                        'payment_status'           => $isCancelled ? 'CANCELLED' : 'Failed',
-                        'gateway_response'         => $rawGatewayResponse,
-                        'admin_verified'           => false,
-                        'payment_date'             => now(),
-                    ]
-                );
+                DB::transaction(function () use ($delegate, $orderRef, $delFee, $accFee, $cmeFee, $gstAmt, $payAmount, $sbiOrderRef, $isCancelled, $rawGatewayResponse) {
+                    Payment::updateOrCreate(
+                        [
+                            'registration_id' => $delegate->id,
+                            'gateway_transaction_id' => $orderRef,
+                        ],
+                        [
+                            'delegate_category_fee'    => $delFee,
+                            'accompanying_persons_fee' => $accFee,
+                            'cme_fee'                  => $cmeFee,
+                            'gst_amount'               => $gstAmt,
+                            'total_amount'             => $payAmount,
+                            'currency'                 => 'INR',
+                            'transaction_id'           => $sbiOrderRef ?? $orderRef,
+                            'gateway_transaction_id'   => $orderRef,
+                            'payment_method'           => 'SBI_ePay',
+                            'payment_status'           => $isCancelled ? 'CANCELLED' : 'Failed',
+                            'gateway_response'         => $rawGatewayResponse,
+                            'admin_verified'           => false,
+                            'payment_date'             => now(),
+                        ]
+                    );
 
-                if ($delegate->status !== 'Approved') {
-                    $delegate->status = 'Pending Payment';
-                    $delegate->save();
-                }
+                    if ($delegate->status !== 'Approved') {
+                        $delegate->status = 'Pending Payment';
+                        $delegate->save();
+                    }
+                });
 
                 return redirect()->route('payment.failed', [
                     'registration' => $delegate->id,
