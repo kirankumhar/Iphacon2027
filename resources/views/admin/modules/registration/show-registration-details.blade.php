@@ -311,6 +311,38 @@
                 </div>
                 <div class="card-body p-3.5">
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
+                        <span class="text-muted extra-small fw-semibold">Mode of Payment</span>
+                        @php
+                            $detMethod = $delegate->latestPayment?->payment_method;
+                        @endphp
+                        <div>
+                            @if($detMethod === 'SBI_ePay')
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
+                                    <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
+                                </span>
+                            @elseif($detMethod === 'QR_Code')
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
+                                    <i class="bx bx-qr-scan me-1"></i>QR Code
+                                </span>
+                            @elseif($detMethod)
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
+                                    <i class="bx bx-wallet me-1"></i>{{ str_replace('_', ' ', $detMethod) }}
+                                </span>
+                            @elseif($delegate->latestPayment?->gateway_transaction_id)
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
+                                    <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
+                                </span>
+                            @elseif($delegate->latestPayment?->payment_receipt_path)
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
+                                    <i class="bx bx-qr-scan me-1"></i>QR Code
+                                </span>
+                            @else
+                                <span class="text-muted extra-small">N/A</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
                         <span class="text-muted extra-small fw-semibold">Transaction Reference ID</span>
                         <span class="fw-bold font-monospace text-dark extra-small">{{ $delegate->latestPayment?->transaction_id ?? 'N/A' }}</span>
                     </div>

@@ -85,6 +85,36 @@
                                     <div class="fw-semibold text-dark fs-6 mb-1">
                                         ₹{{ number_format($reg->total_amount ?: $reg->calculateTotalAmount(), 2) }}
                                     </div>
+                                    @php
+                                        $method = $reg->latestPayment?->payment_method;
+                                    @endphp
+                                    <div class="mb-1">
+                                        @if($method === 'SBI_ePay')
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
+                                            </span>
+                                        @elseif($method === 'QR_Code')
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-qr-scan me-1"></i>QR Code
+                                            </span>
+                                        @elseif($method)
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-wallet me-1"></i>{{ str_replace('_', ' ', $method) }}
+                                            </span>
+                                        @elseif($reg->latestPayment?->gateway_transaction_id)
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
+                                            </span>
+                                        @elseif($reg->latestPayment?->payment_receipt_path)
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-qr-scan me-1"></i>QR Code
+                                            </span>
+                                        @else
+                                            <span class="badge bg-light text-muted border extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
+                                                <i class="bx bx-help-circle me-1"></i>Mode: N/A
+                                            </span>
+                                        @endif
+                                    </div>
                                     @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
                                         <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-2 px-2.5 py-0.5 extra-small fw-medium">
                                             <i class="bx bx-file me-1"></i>Receipt: {{ $reg->latestPayment->transaction_id ?? 'View' }}
@@ -99,9 +129,14 @@
                                     </span>
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary py-1 px-2.5 fw-medium rounded-2" title="View Full Details">
-                                        <i class="bx bx-show me-1"></i>Details
-                                    </a>
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary py-1 px-2 fw-medium rounded-2" title="View Full Details">
+                                            <i class="bx bx-show me-0.5"></i>Details
+                                        </a>
+                                        <a href="{{ route('download.receipt', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-outline-success py-1 px-2 fw-medium rounded-2" title="Download Official Receipt PDF">
+                                            <i class="bx bx-download me-0.5"></i>PDF
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

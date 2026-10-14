@@ -611,7 +611,12 @@ class AdminRegistrationController extends Controller
 
         $delegate = Registration::with([
             'user',
-            'latestPayment'
+            'latestPayment',
+            'delegateCategory',
+            'country',
+            'state',
+            'abstractSubmission',
+            'cmeApplication'
         ])->where(function($q) use ($id) {
             $q->where('registration_number', $id)
               ->orWhere('acknowledgement_id', $id)

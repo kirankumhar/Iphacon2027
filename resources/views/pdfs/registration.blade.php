@@ -327,6 +327,21 @@
                         ($registration->user?->abstractSubmissions?->first()?->presenting_author_institution ??
                             'N/A')));
             $dispTxnId = $pay?->transaction_id ?? ($pay?->gateway_transaction_id ?? 'N/A');
+            $dispPayMode = 'N/A';
+            if (!empty($pay?->payment_method)) {
+                $dispPayMode = match ($pay->payment_method) {
+                    'SBI_ePay' => 'Online (SBI ePay)',
+                    'QR_Code' => 'UPI / QR Code',
+                    default => str_replace('_', ' ', $pay->payment_method),
+                };
+            } elseif (!empty($pay?->gateway_transaction_id)) {
+                $dispPayMode = 'Online (SBI ePay)';
+            } elseif (!empty($pay?->payment_receipt_path)) {
+                $dispPayMode = 'UPI / QR Code';
+            } elseif ($registration->status === 'Approved') {
+                $dispPayMode = 'Online / Verified';
+            }
+
             $regDate = $registration->submitted_at
                 ? \Carbon\Carbon::parse($registration->submitted_at)->format('d M Y')
                 : ($registration->created_at
@@ -415,6 +430,10 @@
             </tr>
             <tr>
                 <td style="width: 25%;">
+                    <div class="info-label">Mode of Payment</div>
+                    <div class="info-value" style="color: #0288D1;">{{ $dispPayMode }}</div>
+                </td>
+                <td style="width: 25%;">
                     <div class="info-label">Transaction ID</div>
                     <div class="info-value" style="font-family: monospace; font-size: 10px;">{{ $dispTxnId }}</div>
                 </td>
@@ -423,20 +442,20 @@
                     <div class="info-value">{{ $dietPref }}</div>
                 </td>
                 <td style="width: 25%;">
+                    <div class="info-label">Abstract Submission</div>
+                    <div class="info-value">{{ $abstractStatusText }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="width: 100%;">
                     <div class="info-label">Pre-Conference Workshop</div>
                     <div class="info-value">
                         @php $preConfTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
                         {{ $preConfWorkshop }}
                         @if($registration->participate_in_cme && $preConfTopic)
-                            <div style="font-size: 7.5px; line-height: 1.15; color: #475569; margin-top: 2px;">
-                                {{ $preConfTopic }}
-                            </div>
+                            &nbsp;&mdash;&nbsp; <span style="font-weight: normal; color: #475569;">{{ $preConfTopic }}</span>
                         @endif
                     </div>
-                </td>
-                <td style="width: 25%;">
-                    <div class="info-label">Abstract Submission</div>
-                    <div class="info-value">{{ $abstractStatusText }}</div>
                 </td>
             </tr>
         </table>
