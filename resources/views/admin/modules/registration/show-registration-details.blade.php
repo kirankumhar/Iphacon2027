@@ -396,13 +396,21 @@
 
                     <hr class="my-3 text-muted opacity-50">
 
-                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: {{ $delegate->status === 'Approved' ? '#F0FDF4; border: 1px solid #BBF7D0;' : '#F8FAFC; border: 1px solid #E2E8F0;' }}">
+                    @php
+                        $payRec = $delegate->latestPayment;
+                        $isPaid = ($delegate->status === 'Approved' || in_array(strtolower($payRec?->payment_status ?? ''), ['success', 'paid', 'approved']));
+                        $actualPaidAmt = ($payRec && (float)$payRec->total_amount > 0)
+                            ? (float)$payRec->total_amount
+                            : (float)($delegate->total_amount ?: $delegate->calculateTotalAmount());
+                    @endphp
+
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: {{ $isPaid ? '#F0FDF4; border: 1px solid #BBF7D0;' : '#F8FAFC; border: 1px solid #E2E8F0;' }}">
                         <div>
-                            <span class="text-muted extra-small d-block">{{ $delegate->status === 'Approved' ? 'Total Amount Paid' : 'Total Payable Amount' }}</span>
-                            <strong class="{{ $delegate->status === 'Approved' ? 'text-success' : 'text-dark' }} small">Incl. All Taxes &amp; GST</strong>
+                            <span class="text-muted extra-small d-block">{{ $isPaid ? 'Total Amount Paid' : 'Total Payable Amount' }}</span>
+                            <strong class="{{ $isPaid ? 'text-success' : 'text-dark' }} small">Incl. All Taxes &amp; GST</strong>
                         </div>
-                        <h4 class="{{ $delegate->status === 'Approved' ? 'text-success' : 'text-primary' }} mb-0 fw-extrabold" style="letter-spacing: -0.5px;">
-                            {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($delegate->total_amount ?: $delegate->calculateTotalAmount(), 2) }}
+                        <h4 class="{{ $isPaid ? 'text-success' : 'text-primary' }} mb-0 fw-extrabold" style="letter-spacing: -0.5px;">
+                            {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($actualPaidAmt, 2) }}
                         </h4>
                     </div>
                 </div>

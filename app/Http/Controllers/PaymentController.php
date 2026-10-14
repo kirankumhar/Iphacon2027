@@ -841,6 +841,9 @@ class PaymentController extends Controller
                 $wasAlreadyApproved = ($delegate->status === 'Approved');
 
                 $delegate->updateAmounts();
+                if ($payAmount > 0) {
+                    $delegate->total_amount = $payAmount;
+                }
                 $delegate->status = "Approved";
                 $delegate->submitted_at = $delegate->submitted_at ?? now();
                 $delegate->registration_number = $registrationNo;

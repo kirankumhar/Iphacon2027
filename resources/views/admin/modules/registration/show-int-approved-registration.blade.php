@@ -82,13 +82,17 @@
                                      </div>
                                  </td>
                                  <td>
+                                     @php
+                                         $payRec = $reg->latestPayment;
+                                         $actualPaidAmount = ($payRec && (float)$payRec->total_amount > 0)
+                                             ? (float)$payRec->total_amount
+                                             : (float)($reg->total_amount ?: 45000);
+                                         $method = $payRec?->payment_method;
+                                     @endphp
                                      <div class="extra-small text-muted mb-0.5 fw-semibold"><i class="bx bx-check-circle text-success me-0.5"></i>Total Paid:</div>
                                      <div class="fw-bold text-dark fs-6 mb-1">
-                                         ₹45,000.00 INR
+                                         ₹{{ number_format($actualPaidAmount, 2) }} INR
                                      </div>
-                                     @php
-                                         $method = $reg->latestPayment?->payment_method;
-                                     @endphp
                                      <div class="mb-1">
                                          @if($method === 'SBI_ePay')
                                              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
