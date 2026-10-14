@@ -82,7 +82,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="fw-semibold text-dark fs-6 mb-1">
+                                    <div class="extra-small text-muted mb-0.5 fw-semibold"><i class="bx bx-check-circle text-success me-0.5"></i>Total Paid:</div>
+                                    <div class="fw-bold text-dark fs-6 mb-1">
                                         ₹{{ number_format($reg->total_amount ?: $reg->calculateTotalAmount(), 2) }}
                                     </div>
                                     @php
