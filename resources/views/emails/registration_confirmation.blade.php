@@ -252,10 +252,13 @@
                             @endif
                           </td>
                         </tr>
-                        @if($registration->latestPayment?->transaction_id)
+                        @php
+                          $emailPay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
+                        @endphp
+                        @if($emailPay?->transaction_id)
                         <tr>
                           <td class="label">Transaction Reference</td>
-                          <td class="value"><span style="font-family: monospace;">{{ $registration->latestPayment->transaction_id }}</span></td>
+                          <td class="value"><span style="font-family: monospace;">{{ $emailPay->transaction_id }}</span></td>
                         </tr>
                         @endif
                       </table>
@@ -276,7 +279,7 @@
                     <td class="card-body">
                       <table role="presentation" class="info-table" cellspacing="0" cellpadding="0">
                         @php
-                          $pay = $payment ?? $registration->latestPayment;
+                          $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
                           $isForeign = ($registration->delegate_type === 'International');
                           
                           if ($pay) {
@@ -310,7 +313,7 @@
                             <td class="value">₹{{ number_format($delFee, 2) }}</td>
                           </tr>
                           @endif
-                          @if ($cmeFee > 0 || $registration->participate_in_cme)
+                          @if ($cmeFee > 0)
                           <tr>
                             <td class="label">
                               Pre-Conference Workshop Fee
@@ -324,7 +327,7 @@
                             <td class="value">₹{{ number_format($cmeFee, 2) }}</td>
                           </tr>
                           @endif
-                          @if ($accFee > 0 || ($registration->accompanying_persons ?? 0) > 0)
+                          @if ($accFee > 0)
                           <tr>
                             <td class="label">Accompanying Persons ({{ $registration->accompanying_persons ?? 0 }})</td>
                             <td class="value">₹{{ number_format($accFee, 2) }}</td>

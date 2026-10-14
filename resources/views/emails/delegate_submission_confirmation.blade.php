@@ -260,7 +260,7 @@
                           </td>
                         </tr>
                         @php
-                          $payRec = $payment ?? $registration->latestPayment;
+                          $payRec = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
                           $isPaid = in_array(strtoupper($payRec?->payment_status ?? ''), ['PAID', 'SUCCESS', 'APPROVED', 'COMPLETED']) || strtolower($registration->status ?? '') === 'approved';
                         @endphp
                         <tr>

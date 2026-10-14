@@ -1091,7 +1091,9 @@ class PaymentController extends Controller
                         $ackPdf = null;
                         try {
                             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdfs.registration', [
-                                'registration' => $registration,
+                                'registration'      => $registration,
+                                'payment'           => $payment,
+                                'receiptTitle'      => 'IPHACON 2027 Registration Acknowledgement Receipt',
                                 'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
                             ])->setPaper('a4', 'portrait')
                                 ->setOption('margin-top', 10)
@@ -1340,5 +1342,13 @@ class PaymentController extends Controller
         }
 
         return view('payment.failed', compact('registration', 'cmeApp', 'failedPayment', 'txn', 'reason', 'type'));
+    }
+
+    /**
+     * Alias for sbiResponse to support /api/response route
+     */
+    public function response(Request $request)
+    {
+        return $this->sbiResponse($request);
     }
 }

@@ -245,7 +245,10 @@
     <div class="pdf-box">
 
         {{-- Watermark --}}
-        @if (($registration->latestPayment->payment_status ?? '') === 'Success' || $registration->status === 'Approved')
+        @php
+            $payForWatermark = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
+        @endphp
+        @if (($payForWatermark->payment_status ?? '') === 'Success' || ($payForWatermark->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
             <div class="watermark">PAID RECEIPT</div>
         @endif
 
@@ -305,13 +308,13 @@
             <tr>
                 <td
                     style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 11.5px; padding: 6px 8px; text-align: center; text-transform: uppercase;">
-                    IPHACON 2027 Registration Acknowledgement Receipt
+                    {{ $receiptTitle ?? 'IPHACON 2027 Registration Acknowledgement Receipt' }}
                 </td>
             </tr>
         </table>
 
         @php
-            $pay = $payment ?? $registration->latestPayment;
+            $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
             $abstractSub =
                 $registration->abstractSubmission ??
                 ($registration->user?->abstractSubmission ?? $registration->user?->abstractSubmissions?->first());
@@ -505,7 +508,7 @@
             <tbody>
                 @if ($registration->delegate_type === 'International')
                     @php
-                        $pay = $payment ?? $registration->latestPayment;
+                        $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
                         $delFee = $pay
                             ? (float) ($pay->delegate_category_fee ?? 0)
                             : (float) ($registration->delegate_fee ?: 45000);
@@ -525,7 +528,7 @@
                     </tr>
                 @else
                     @php
-                        $pay = $payment ?? $registration->latestPayment;
+                        $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
                         if ($pay) {
                             $delFee = (float) ($pay->delegate_category_fee ?? 0);
                             $cmeFee = (float) ($pay->cme_fee ?? 0);
@@ -552,14 +555,14 @@
                             <td style="text-align: center;">INR</td>
                         </tr>
                     @endif
-                    @if ($cmeFee > 0 || $registration->participate_in_cme)
+                    @if ($cmeFee > 0)
                         <tr>
                             <td>Pre-Conference Workshop Participation Fee</td>
                             <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
                             <td style="text-align: center;">INR</td>
                         </tr>
                     @endif
-                    @if ($accFee > 0 || ($registration->accompanying_persons ?? 0) > 0)
+                    @if ($accFee > 0)
                         <tr>
                             <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))
                             </td>

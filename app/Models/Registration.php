@@ -143,6 +143,78 @@ class Registration extends Model
         return $this->hasOne(Payment::class)->orderByDesc('id');
     }
 
+    /**
+     * Primary Conference Registration Payment
+     * (Excludes standalone CME payments where delegate fee is 0)
+     */
+    public function conferencePayment()
+    {
+        return $this->hasOne(Payment::class)
+            ->where(function ($q) {
+                $q->where('delegate_category_fee', '>', 0)
+                  ->orWhere(function ($sub) {
+                      $sub->where(function ($w) {
+                          $w->whereNull('cme_fee')->orWhere('cme_fee', 0);
+                      })->where('total_amount', '>', 0);
+                  });
+            })
+            ->orderByDesc('id');
+    }
+
+    /**
+     * Standalone Pre-Conference Workshop (CME) Payment
+     */
+    public function cmePayment()
+    {
+        return $this->hasOne(Payment::class)
+            ->where('cme_fee', '>', 0)
+            ->where(function ($q) {
+                $q->where('delegate_category_fee', 0)
+                  ->orWhereNull('delegate_category_fee');
+            })
+            ->orderByDesc('id');
+    }
+
+    /**
+     * Effective primary registration payment accessor
+     */
+    public function getPrimaryPaymentAttribute()
+    {
+        return $this->conferencePayment ?: $this->latestPayment;
+    }
+
+    /**
+     * Total amount successfully paid across all approved / verified payments
+     */
+    public function totalPaidAmount(): float
+    {
+        $paid = (float) $this->payments()
+            ->where(function ($q) {
+                $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                  ->orWhere('admin_verified', true);
+            })
+            ->sum('total_amount');
+
+        if ($paid > 0) {
+            return $paid;
+        }
+
+        // Fallback to conference payment if recorded
+        if ($this->conferencePayment && (float)$this->conferencePayment->total_amount > 0) {
+            return (float) $this->conferencePayment->total_amount;
+        }
+
+        return (float) ($this->total_amount ?: $this->calculateTotalAmount());
+    }
+
+    /**
+     * Check if user has a separate standalone CME payment
+     */
+    public function hasSeparateCmePayment(): bool
+    {
+        return $this->cmePayment()->exists();
+    }
+
     public function cmeApplication()
     {
         return $this->hasOne(CmeApplication::class)->latestOfMany();

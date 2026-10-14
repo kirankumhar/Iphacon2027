@@ -127,15 +127,18 @@
                                             {{ $reg->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($reg->total_amount, 2) }}
                                         </div>
                                         <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                                            @if ($reg->latestPayment?->transaction_id)
+                                            @php
+                                                $subPay = $reg->conferencePayment ?? $reg->latestPayment;
+                                            @endphp
+                                            @if ($subPay?->transaction_id)
                                                 <span class="badge font-monospace extra-small px-2 py-0.5"
                                                     style="background-color: #F8FAFC; color: #475569; border: 1px solid #E2E8F0; font-size: 0.70rem;">
                                                     <i class="bx bx-receipt text-primary me-0.5"></i>Txn ID:
-                                                    {{ $reg->latestPayment->transaction_id }}
+                                                    {{ $subPay->transaction_id }}
                                                 </span>
                                             @endif
-                                            @if ($reg->latestPayment?->payment_receipt_path)
-                                                <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}"
+                                            @if ($subPay?->payment_receipt_path)
+                                                <a href="{{ asset('storage/' . $subPay->payment_receipt_path) }}"
                                                     target="_blank"
                                                     class="extra-small text-primary text-decoration-none fw-semibold"
                                                     style="font-size: 0.72rem;">
@@ -146,7 +149,7 @@
                                     </td>
                                     <td>
                                         @php
-                                            $hasPaymentProof = !empty($reg->latestPayment?->payment_receipt_path) || !empty($reg->latestPayment?->transaction_id);
+                                            $hasPaymentProof = !empty($subPay?->payment_receipt_path) || !empty($subPay?->transaction_id) || !empty($reg->latestPayment?->payment_receipt_path) || !empty($reg->latestPayment?->transaction_id);
                                             $isPaymentDone = ($reg->status === 'Payment Submitted') || ($hasPaymentProof && $reg->status !== 'Pending Payment');
                                         @endphp
                                         @if ($isPaymentDone)
