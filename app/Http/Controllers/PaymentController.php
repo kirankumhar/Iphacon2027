@@ -1263,7 +1263,10 @@ class PaymentController extends Controller
         $registration = Registration::where('user_id', $user->id)
             ->where(function ($q) use ($registrationId) {
                 $q->where('registration_number', $registrationId)
-                  ->orWhere('id', $registrationId);
+                  ->orWhere('acknowledgement_id', $registrationId);
+                if (is_numeric($registrationId)) {
+                    $q->orWhere('id', (int) $registrationId);
+                }
             })
             ->with(['delegateCategory', 'country', 'state', 'payments'])
             ->firstOrFail();

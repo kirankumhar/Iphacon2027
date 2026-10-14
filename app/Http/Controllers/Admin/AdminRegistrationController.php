@@ -518,9 +518,11 @@ class AdminRegistrationController extends Controller
         $reason = $request->input('reason') ?? $request->input('rejection_reason') ?? $request->input('revert_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('id', $regNo)
-              ->orWhere('registration_number', $regNo)
+            $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->first();
 
         if ($reg) {
@@ -559,9 +561,11 @@ class AdminRegistrationController extends Controller
         $reason = $request->input('reason') ?? $request->input('revert_reason') ?? $request->input('rejection_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('id', $regNo)
-              ->orWhere('registration_number', $regNo)
+            $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->first();
 
         if ($reg) {
@@ -599,8 +603,10 @@ class AdminRegistrationController extends Controller
 
         Registration::where(function($q) use ($regNo) {
             $q->where('registration_number', $regNo)
-              ->orWhere('acknowledgement_id', $regNo)
-              ->orWhere('id', $regNo);
+              ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->update([
             'is_deleted' => '1',
             'deleted_datetime' => date('Y-m-d H:i:s')
@@ -625,9 +631,11 @@ class AdminRegistrationController extends Controller
             'cmeApplication'
         ])->where(function($q) use ($id) {
             $q->where('registration_number', $id)
-              ->orWhere('acknowledgement_id', $id)
-              ->orWhere('id', $id);
-        })->latest('created_at')->firstOrFail();
+              ->orWhere('acknowledgement_id', $id);
+            if (is_numeric($id)) {
+                $q->orWhere('id', (int) $id);
+            }
+        })->firstOrFail();
 
         if ($delegate->status !== 'Approved') {
             return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
@@ -671,9 +679,11 @@ class AdminRegistrationController extends Controller
             'abstractSubmission'
         ])->where(function($q) use ($id) {
             $q->where('registration_number', $id)
-              ->orWhere('acknowledgement_id', $id)
-              ->orWhere('id', $id);
-        })->latest('created_at')->firstOrFail();
+              ->orWhere('acknowledgement_id', $id);
+            if (is_numeric($id)) {
+                $q->orWhere('id', (int) $id);
+            }
+        })->firstOrFail();
 
         // Check if reminder was already sent today for this delegate
         $todayReminder = \App\Models\ActivityLog::where('action', 'ADMIN_SEND_PAYMENT_REMINDER')
