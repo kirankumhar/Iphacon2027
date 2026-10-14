@@ -1009,11 +1009,14 @@ class PaymentController extends Controller
                 $totalAmount = $registration->total_amount ?: round($subtotal + $gstAmount, 2);
             }
 
-            // Check if payment already exists for this registration to prevent duplicate records
+            // Check if delegate payment already exists for this registration to prevent duplicate records
             $payment = Payment::where('registration_id', $registration->id)
                 ->where(function($q) use ($request) {
                     $q->where('transaction_id', $request->transaction_id)
-                      ->orWhereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION']);
+                      ->orWhere(function($subQ) {
+                          $subQ->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION'])
+                               ->where('delegate_category_fee', '>', 0);
+                      });
                 })
                 ->latest()
                 ->first();
@@ -1186,11 +1189,17 @@ class PaymentController extends Controller
                 ]);
             }
 
-            // Check if CME payment already exists to prevent duplicates
+            // Check if standalone CME payment already exists to prevent duplicate records
             $payment = Payment::where('registration_id', $cmeApp->registration_id)
                 ->where(function($q) use ($request) {
                     $q->where('transaction_id', $request->transaction_id)
-                      ->orWhere('cme_fee', '>', 0);
+                      ->orWhere(function($subQ) {
+                          $subQ->where('cme_fee', '>', 0)
+                               ->where(function($delQ) {
+                                   $delQ->where('delegate_category_fee', 0)
+                                        ->orWhereNull('delegate_category_fee');
+                               });
+                      });
                 })
                 ->whereIn('payment_status', ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION'])
                 ->latest()
