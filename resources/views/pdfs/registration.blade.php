@@ -342,6 +342,35 @@
                 $dispPayMode = 'Online / Verified';
             }
 
+            if ($registration->delegate_type === 'International') {
+                $delFee = $pay
+                    ? (float) ($pay->delegate_category_fee ?? 0)
+                    : (float) ($registration->delegate_fee ?: 45000);
+                $totalAmt = $pay
+                    ? (float) ($pay->total_amount ?? 0)
+                    : (float) ($registration->total_amount ?: 45000);
+            } else {
+                if ($pay && (float) ($pay->total_amount ?? 0) > 0) {
+                    $delFee = (float) ($pay->delegate_category_fee ?? 0);
+                    $cmeFee = (float) ($pay->cme_fee ?? 0);
+                    $accFee = (float) ($pay->accompanying_persons_fee ?? 0);
+                    $gstAmt = (float) ($pay->gst_amount ?? 0);
+                    $totalAmt = (float) ($pay->total_amount ?? 0);
+                } else {
+                    $delFee =
+                        (float) ($registration->delegate_fee ??
+                            ($registration->delegateCategory->indian_fee ?? 0));
+                    $cmeFee = (float) ($registration->cme_fee ?? 0);
+                    $accFee = (float) ($registration->accompanying_fee ?? 0);
+                    $gstAmt =
+                        (float) ($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
+                    $totalAmt =
+                        (float) ($registration->total_amount ??
+                            round($delFee + $cmeFee + $accFee + $gstAmt, 2));
+                }
+            }
+            $dispTotalAmount = '₹' . number_format($totalAmt, 2);
+
             $regDate = $registration->submitted_at
                 ? \Carbon\Carbon::parse($registration->submitted_at)->format('d M Y')
                 : ($registration->created_at
@@ -430,24 +459,24 @@
             </tr>
             <tr>
                 <td style="width: 25%;">
+                    <div class="info-label">Total Amount Paid</div>
+                    <div class="info-value" style="color: #16A34A; font-weight: bold; font-size: 11px;">{{ $dispTotalAmount }}</div>
+                </td>
+                <td style="width: 25%;">
                     <div class="info-label">Mode of Payment</div>
                     <div class="info-value" style="color: #0288D1;">{{ $dispPayMode }}</div>
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Transaction ID</div>
-                    <div class="info-value" style="font-family: monospace; font-size: 10px;">{{ $dispTxnId }}</div>
+                    <div class="info-value" style="font-family: monospace; font-size: 9.5px;">{{ $dispTxnId }}</div>
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Diet Preference</div>
                     <div class="info-value">{{ $dietPref }}</div>
                 </td>
-                <td style="width: 25%;">
-                    <div class="info-label">Abstract Submission</div>
-                    <div class="info-value">{{ $abstractStatusText }}</div>
-                </td>
             </tr>
             <tr>
-                <td colspan="4" style="width: 100%;">
+                <td colspan="3" style="width: 75%;">
                     <div class="info-label">Pre-Conference Workshop</div>
                     <div class="info-value">
                         @php $preConfTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
@@ -456,6 +485,10 @@
                             &nbsp;&mdash;&nbsp; <span style="font-weight: normal; color: #475569;">{{ $preConfTopic }}</span>
                         @endif
                     </div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="info-label">Abstract Submission</div>
+                    <div class="info-value">{{ $abstractStatusText }}</div>
                 </td>
             </tr>
         </table>

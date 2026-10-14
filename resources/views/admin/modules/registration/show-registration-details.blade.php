@@ -396,13 +396,13 @@
 
                     <hr class="my-3 text-muted opacity-50">
 
-                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #E2E8F0;">
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: {{ $delegate->status === 'Approved' ? '#F0FDF4; border: 1px solid #BBF7D0;' : '#F8FAFC; border: 1px solid #E2E8F0;' }}">
                         <div>
-                            <span class="text-muted extra-small d-block">Total Payable Amount</span>
-                            <strong class="text-dark small">Incl. All Taxes &amp; GST</strong>
+                            <span class="text-muted extra-small d-block">{{ $delegate->status === 'Approved' ? 'Total Amount Paid' : 'Total Payable Amount' }}</span>
+                            <strong class="{{ $delegate->status === 'Approved' ? 'text-success' : 'text-dark' }} small">Incl. All Taxes &amp; GST</strong>
                         </div>
-                        <h4 class="text-primary mb-0 fw-extrabold" style="letter-spacing: -0.5px;">
-                            {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($delegate->total_amount, 2) }}
+                        <h4 class="{{ $delegate->status === 'Approved' ? 'text-success' : 'text-primary' }} mb-0 fw-extrabold" style="letter-spacing: -0.5px;">
+                            {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($delegate->total_amount ?: $delegate->calculateTotalAmount(), 2) }}
                         </h4>
                     </div>
                 </div>
