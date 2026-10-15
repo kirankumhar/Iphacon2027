@@ -1,4 +1,5 @@
-@extends('shared.index')
+@extends('shared.auth-delegate')
+@section('title', 'Edit Profile')
 @php
     $inner_title = 'Delegate Edit Profile';
 @endphp
@@ -7,16 +8,16 @@
         <div class="col-md-10">
             <div class="card shadow-lg border-0" style="border-radius: 15px;">
                 <div class="card-header d-flex justify-content-between align-items-center py-4"
-                    style="background: linear-gradient(135deg, #2e3192, #4a5bcc); border-radius: 15px 15px 0 0;">
-                    <h3 class="text-white mb-0 fw-bold">
+                    style="background: linear-gradient(135deg, #013069, #0288D1); border-radius: 15px 15px 0 0;">
+                    <h4 class="text-white mb-0 fw-bold">
                         <i class="fas fa-user-edit me-2"></i>Edit Profile
-                    </h3>
+                    </h4>
                     <a href="{{ route('profile.show') }}" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-arrow-left me-1"></i>Back to Profile
                     </a>
                 </div>
 
-                <div class="card-body p-5">
+                <div class="card-body p-4 p-md-5">
                     <form method="POST" action="{{ route('profile.update') }}">
                         @csrf
                         @method('PUT')
@@ -24,7 +25,7 @@
                         <!-- Full Name Row -->
                         <div class="row mb-3 align-items-center">
                             <div class="col-md-3">
-                                <label for="full_name" class="form-label fw-semibold" style="color:#2e3192">
+                                <label for="full_name" class="form-label fw-semibold" style="color:#013069">
                                     <i class="fas fa-user me-1"></i>Full Name<span class="text-danger">*</span>
                                 </label>
                             </div>
@@ -32,14 +33,10 @@
                                 <select class="form-select form-select-sm @error('prefix') is-invalid @enderror"
                                     id="prefix" name="prefix" required style="border-radius: 8px;">
                                     <option value="" disabled>Prefix</option>
-                                    <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.
-                                    </option>
-                                    <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.
-                                    </option>
-                                    <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>
-                                        Mrs.</option>
-                                    <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>
-                                        Prof.</option>
+                                    <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.</option>
+                                    <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.</option>
+                                    <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
+                                    <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.</option>
                                 </select>
                                 @error('prefix')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -49,11 +46,55 @@
                                 <input type="text"
                                     class="form-control form-control-sm @error('full_name') is-invalid @enderror"
                                     id="full_name" name="full_name" value="{{ old('full_name', $user->full_name) }}"
-                                    required pattern="[A-Za-z ]{2,}" placeholder="Enter your full name"
+                                    required placeholder="Enter your full name"
                                     style="border-radius: 8px;" />
                                 @error('full_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+                        </div>
+
+                        <!-- Designation & Institution Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <label for="designation" class="form-label fw-semibold" style="color:#013069">
+                                            <i class="fas fa-briefcase me-1"></i>Designation
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text"
+                                            class="form-control form-control-sm @error('designation') is-invalid @enderror"
+                                            id="designation" name="designation"
+                                            value="{{ old('designation', $user->designation) }}"
+                                            placeholder="e.g. Associate Professor"
+                                            style="border-radius: 8px;" />
+                                        @error('designation')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row align-items-center">
+                                    <div class="col-md-5">
+                                        <label for="institution" class="form-label fw-semibold" style="color:#013069">
+                                            <i class="fas fa-university me-1"></i>Institution
+                                        </label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <input type="text"
+                                            class="form-control form-control-sm @error('institution') is-invalid @enderror"
+                                            id="institution" name="institution"
+                                            value="{{ old('institution', $user->institution) }}"
+                                            placeholder="e.g. AIIMS / RIMS / Medical College"
+                                            style="border-radius: 8px;" />
+                                        @error('institution')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
