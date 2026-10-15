@@ -67,7 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Profile routes
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
-    // Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
     Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->middleware(['throttle:5,1'])->name('profile.update-password');

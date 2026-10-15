@@ -15,8 +15,24 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $user->load('country');
-        return view('profile.show', compact('user'));
+        $user->load([
+            'country',
+            'registrations' => function ($q) {
+                $q->with(['country', 'state', 'delegateCategory', 'payments' => function ($p) {
+                    $p->orderByDesc('id');
+                }, 'cmeApplication'])->orderByDesc('id');
+            },
+            'abstractSubmissions' => function ($q) {
+                $q->orderByDesc('id');
+            }
+        ]);
+
+        $registration = $user->registrations->first();
+        $abstractSubmissions = $user->abstractSubmissions;
+        $latestAbstract = $abstractSubmissions->first();
+        $countries = Country::active()->orderBy('country_name')->get();
+
+        return view('profile.show', compact('user', 'registration', 'abstractSubmissions', 'latestAbstract', 'countries'));
     }
 
     public function edit()
@@ -33,7 +49,9 @@ class ProfileController extends Controller
 
         $request->validate([
             'prefix' => 'required|in:Dr.,Mr.,Mrs.,Prof.',
-            'full_name' => 'required|string|min:2|max:255|regex:/^[A-Za-z\s]+$/',
+            'full_name' => 'required|string|min:2|max:255|regex:/^[A-Za-z\s\.]+$/',
+            'designation' => 'nullable|string|max:255',
+            'institution' => 'nullable|string|max:255',
             'gender' => 'required|in:Male,Female',
             'date_of_birth' => 'required|date|before:-18 years',
             'mobile_country_code' => 'required|string|exists:countries,phone_code',
@@ -58,12 +76,28 @@ class ProfileController extends Controller
         $user->update([
             'prefix' => $request->prefix,
             'full_name' => $request->full_name,
+            'designation' => $request->designation,
+            'institution' => $request->institution,
             'gender' => $request->gender,
             'date_of_birth' => $request->date_of_birth,
             'country_id' => $country ? $country->id : $user->country_id,
             'mobile_country_code' => $request->mobile_country_code,
             'mobile_number' => $request->mobile_number,
         ]);
+
+        // Sync designation and institution with registration if empty on registration
+        if ($user->registrations()->exists()) {
+            if (!empty($request->designation)) {
+                $user->registrations()->where(function ($q) {
+                    $q->whereNull('designation')->orWhere('designation', '');
+                })->update(['designation' => $request->designation]);
+            }
+            if (!empty($request->institution)) {
+                $user->registrations()->where(function ($q) {
+                    $q->whereNull('institution')->orWhere('institution', '');
+                })->update(['institution' => $request->institution]);
+            }
+        }
 
         return redirect()->route('profile.show')
             ->with('success', 'Profile updated successfully!');
