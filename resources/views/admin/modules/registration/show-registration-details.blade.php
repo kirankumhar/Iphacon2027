@@ -304,80 +304,168 @@
         <div class="col-lg-5">
             <!-- Financial Breakdown Card -->
             <div class="card mb-4 shadow-sm border-0 rounded-3 overflow-hidden">
-                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-                        <i class="bx bx-calculator text-primary fs-5"></i>Financial &amp; Payment Summary
-                    </h6>
-                </div>
-                <div class="card-body p-3.5">
+                <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-primary" style="background: rgba(45, 105, 255, 0.08); width: 32px; height: 32px;">
+                            <i class="bx bx-calculator fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.92rem;">Financial &amp; Payment Summary</h6>
+                            <span class="text-muted extra-small" style="font-size: 0.72rem;">Fee breakdown &amp; payment verification</span>
+                        </div>
+                    </div>
                     @php
                         $primaryPay = $delegate->conferencePayment ?? $delegate->latestPayment;
                         $detMethod = $primaryPay?->payment_method;
+                        $actualPaidAmt = $delegate->totalPaidAmount();
+                        $isPaid = ($delegate->status === 'Approved' || in_array(strtolower($primaryPay?->payment_status ?? ''), ['success', 'paid', 'approved']));
                     @endphp
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
-                        <span class="text-muted extra-small fw-semibold">Mode of Payment</span>
-                        <div>
-                            @if($detMethod === 'SBI_ePay')
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
-                                    <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
+                    @if($isPaid)
+                        <span class="badge px-2.5 py-1 rounded-pill extra-small fw-bold d-flex align-items-center gap-1" style="background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0;">
+                            <i class="bx bx-check-circle fs-6"></i>PAID
+                        </span>
+                    @elseif($delegate->status === 'Payment Submitted' || !empty($primaryPay?->payment_receipt_path))
+                        <span class="badge px-2.5 py-1 rounded-pill extra-small fw-bold d-flex align-items-center gap-1" style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
+                            <i class="bx bx-time fs-6"></i>VERIFICATION
+                        </span>
+                    @else
+                        <span class="badge px-2.5 py-1 rounded-pill extra-small fw-bold d-flex align-items-center gap-1" style="background-color: #F1F5F9; color: #475569; border: 1px solid #CBD5E1;">
+                            <i class="bx bx-error-circle fs-6"></i>PENDING
+                        </span>
+                    @endif
+                </div>
+
+                <div class="card-body p-3.5">
+                    <!-- Primary Transaction & Gateway Tile -->
+                    <div class="p-3 rounded-3 mb-3 border shadow-2xs position-relative overflow-hidden" style="background: linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%); border-color: #E2E8F0 !important;">
+                        <!-- Header Row: Method & Verification -->
+                        <div class="d-flex justify-content-between align-items-center mb-2.5 pb-2 border-bottom border-light">
+                            <div class="d-flex align-items-center gap-2">
+                                @if($detMethod === 'SBI_ePay' || $primaryPay?->gateway_transaction_id)
+                                    <div class="rounded-2 p-1.5 text-white d-flex align-items-center justify-content-center shadow-2xs" style="background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%); width: 30px; height: 30px;">
+                                        <i class="bx bx-credit-card fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark extra-small" style="line-height: 1.2;">Online (SBI ePay)</span>
+                                        <span class="text-muted extra-small" style="font-size: 0.68rem;">Payment Gateway</span>
+                                    </div>
+                                @elseif($detMethod === 'QR_Code' || $primaryPay?->payment_receipt_path)
+                                    <div class="rounded-2 p-1.5 text-white d-flex align-items-center justify-content-center shadow-2xs" style="background: linear-gradient(135deg, #059669 0%, #10B981 100%); width: 30px; height: 30px;">
+                                        <i class="bx bx-qr-scan fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark extra-small" style="line-height: 1.2;">Offline UPI / QR Code</span>
+                                        <span class="text-muted extra-small" style="font-size: 0.68rem;">Receipt Upload Proof</span>
+                                    </div>
+                                @elseif($detMethod)
+                                    <div class="rounded-2 p-1.5 text-white d-flex align-items-center justify-content-center shadow-2xs" style="background: linear-gradient(135deg, #475569 0%, #64748B 100%); width: 30px; height: 30px;">
+                                        <i class="bx bx-wallet fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark extra-small" style="line-height: 1.2;">{{ str_replace('_', ' ', $detMethod) }}</span>
+                                        <span class="text-muted extra-small" style="font-size: 0.68rem;">Direct Payment</span>
+                                    </div>
+                                @else
+                                    <div class="rounded-2 p-1.5 text-muted d-flex align-items-center justify-content-center bg-light border" style="width: 30px; height: 30px;">
+                                        <i class="bx bx-wallet fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark extra-small" style="line-height: 1.2;">Not Submitted Yet</span>
+                                        <span class="text-muted extra-small" style="font-size: 0.68rem;">Awaiting Payment</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div>
+                                @if($isPaid)
+                                    <span class="badge extra-small px-2.5 py-1 rounded-pill fw-bold" style="background: #DCFCE7; color: #15803D; font-size: 0.72rem; border: 1px solid #BBF7D0;">
+                                        <i class="bx bx-check-double me-0.5"></i>Confirmed
+                                    </span>
+                                @elseif($primaryPay?->payment_status === 'Failed')
+                                    <span class="badge extra-small px-2.5 py-1 rounded-pill fw-bold" style="background: #FEE2E2; color: #B91C1C; font-size: 0.72rem; border: 1px solid #FECACA;">
+                                        <i class="bx bx-x me-0.5"></i>Failed
+                                    </span>
+                                @else
+                                    <span class="badge extra-small px-2.5 py-1 rounded-pill fw-bold" style="background: #FEF3C7; color: #B45309; font-size: 0.72rem; border: 1px solid #FDE68A;">
+                                        <i class="bx bx-time-five me-0.5"></i>{{ $primaryPay?->payment_status ?: 'Unpaid' }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Transaction Reference & Timestamp Grid -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-sm-6">
+                                <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">Transaction Reference / UTR</span>
+                                <span class="font-monospace fw-bold text-dark extra-small d-inline-block text-truncate" style="max-width: 100%;" title="{{ $primaryPay?->transaction_id ?? 'N/A' }}">
+                                    {{ $primaryPay?->transaction_id ?: 'N/A' }}
                                 </span>
-                            @elseif($detMethod === 'QR_Code')
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
-                                    <i class="bx bx-qr-scan me-1"></i>QR Code
+                            </div>
+                            @if($primaryPay?->gateway_transaction_id)
+                            <div class="col-sm-6">
+                                <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">SBI Order Ref ID</span>
+                                <span class="font-monospace fw-semibold text-primary extra-small d-inline-block text-truncate" style="max-width: 100%;" title="{{ $primaryPay->gateway_transaction_id }}">
+                                    {{ $primaryPay->gateway_transaction_id }}
                                 </span>
-                            @elseif($detMethod)
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
-                                    <i class="bx bx-wallet me-1"></i>{{ str_replace('_', ' ', $detMethod) }}
+                            </div>
+                            @endif
+                            @if($primaryPay?->payment_date || $primaryPay?->created_at)
+                            <div class="col-sm-6">
+                                <span class="text-muted extra-small d-block mb-0.5" style="font-size: 0.72rem;">Payment Timestamp</span>
+                                <span class="fw-semibold text-dark extra-small">
+                                    <i class="bx bx-calendar text-muted me-0.5"></i>{{ \Carbon\Carbon::parse($primaryPay->payment_date ?: $primaryPay->created_at)->format('d M, Y h:i A') }}
                                 </span>
-                            @elseif($primaryPay?->gateway_transaction_id)
-                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
-                                    <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
-                                </span>
-                            @elseif($primaryPay?->payment_receipt_path)
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
-                                    <i class="bx bx-qr-scan me-1"></i>QR Code
-                                </span>
-                            @else
-                                <span class="text-muted extra-small">N/A</span>
+                            </div>
                             @endif
                         </div>
+
+                        <!-- Screenshot Attachment Preview Tile -->
+                        @if($primaryPay && $primaryPay->payment_receipt_path)
+                            @php
+                                $receiptUrl = asset('storage/' . $primaryPay->payment_receipt_path);
+                                $isReceiptPdf = str_ends_with(strtolower($primaryPay->payment_receipt_path), '.pdf');
+                            @endphp
+                            <div class="p-2 rounded-2 border d-flex align-items-center justify-content-between bg-white mt-2 shadow-2xs" style="border-color: #E2E8F0 !important;">
+                                <div class="d-flex align-items-center gap-2 text-truncate me-2">
+                                    <div class="rounded-circle p-1 text-primary bg-primary-subtle d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">
+                                        <i class="{{ $isReceiptPdf ? 'bx bxs-file-pdf text-danger' : 'bx bx-image text-primary' }} fs-6"></i>
+                                    </div>
+                                    <div class="text-truncate">
+                                        <span class="fw-bold text-dark extra-small d-block text-truncate" style="font-size: 0.76rem;">Payment Receipt Proof</span>
+                                        <span class="text-muted extra-small" style="font-size: 0.68rem;">{{ $isReceiptPdf ? 'PDF Receipt Slip' : 'Uploaded Screenshot' }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
+                                    <button type="button" class="btn btn-xs btn-primary py-1 px-2.5 rounded-pill fw-semibold extra-small d-flex align-items-center gap-1 shadow-2xs"
+                                        onclick="openMediaLightbox('{{ $receiptUrl }}', '{{ $isReceiptPdf ? 'pdf' : 'image' }}', 'Payment Receipt - Txn #{{ $primaryPay->transaction_id }}')">
+                                        <i class="bx bx-show fs-6"></i><span>Preview</span>
+                                    </button>
+                                    <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;" title="Open full screen in new tab">
+                                        <i class="bx bx-export" style="font-size: 0.72rem;"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
-                        <span class="text-muted extra-small fw-semibold">Transaction Reference ID</span>
-                        <span class="fw-bold font-monospace text-dark extra-small">{{ $primaryPay?->transaction_id ?? 'N/A' }}</span>
-                    </div>
-
-                    @if($primaryPay && $primaryPay->payment_receipt_path)
-                    @php
-                        $receiptUrl = asset('storage/' . $primaryPay->payment_receipt_path);
-                        $isReceiptPdf = str_ends_with(strtolower($primaryPay->payment_receipt_path), '.pdf');
-                    @endphp
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
-                        <span class="extra-small fw-semibold text-dark"><i class="bx bx-file text-primary me-1"></i>Payment Screenshot</span>
-                        <div class="d-flex align-items-center gap-1">
-                            <button type="button" class="btn btn-xs btn-outline-primary py-1 px-3 fw-bold rounded-pill"
-                                onclick="openMediaLightbox('{{ $receiptUrl }}', '{{ $isReceiptPdf ? 'pdf' : 'image' }}', 'Payment Receipt - Txn #{{ $primaryPay->transaction_id }}')">
-                                <i class="bx bx-show me-1"></i>View Lightbox
-                            </button>
-                            <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-xs btn-light text-secondary rounded-pill px-2.5 py-1 fw-semibold" title="Open in new tab">
-                                <i class="bx bx-export"></i>
-                            </a>
-                        </div>
-                    </div>
-                    @endif
-
+                    <!-- Dedicated Standalone CME Workshop Addon Card -->
                     @php
                         $cmePay = $delegate->cmePayment;
                         $cmeApp = $delegate->cmeApplication;
                         $hasSeparateCme = $cmePay || $cmeApp;
                     @endphp
                     @if($hasSeparateCme)
-                    <div class="p-2.5 rounded-2 mb-3 border" style="background-color: #F8FAFC; border-color: #E2E8F0 !important;">
-                        <div class="d-flex justify-content-between align-items-center mb-1.5">
-                            <span class="extra-small fw-bold text-dark d-flex align-items-center gap-1">
-                                <i class="bx bx-certification text-success"></i>Pre-Conference Workshop Payment
-                            </span>
+                    <div class="p-3 rounded-3 mb-3 border shadow-2xs position-relative overflow-hidden" style="background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%); border-color: #BBF7D0 !important;">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1.5 border-bottom border-success border-opacity-15">
+                            <div class="d-flex align-items-center gap-1.5">
+                                <div class="rounded-2 p-1 text-success d-flex align-items-center justify-content-center" style="background: rgba(16, 185, 129, 0.15); width: 26px; height: 26px;">
+                                    <i class="bx bx-certification fs-6"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-bold text-dark extra-small d-block" style="font-size: 0.82rem; line-height: 1.2;">Pre-Conference Workshop (CME)</span>
+                                    <span class="text-muted extra-small" style="font-size: 0.68rem;">Standalone Add-on Registration</span>
+                                </div>
+                            </div>
                             @php
                                 $isCmeApproved = $delegate->isCmeApproved();
                                 $isCmePendingVerification = $delegate->isCmePendingVerification();
@@ -398,35 +486,44 @@
                                     $cmeStatusText = 'PAYMENT PENDING';
                                 }
                             @endphp
-                            <span class="badge {{ $cmeBadgeClass }} extra-small px-2 py-0.5 rounded-pill fw-semibold">
+                            <span class="badge {{ $cmeBadgeClass }} extra-small px-2 py-0.5 rounded-pill fw-bold" style="font-size: 0.7rem;">
                                 {{ $cmeStatusText }}
                             </span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-1 extra-small">
-                            <span class="text-muted">CME Topic:</span>
-                            <span class="fw-semibold text-dark text-truncate" style="max-width: 200px;" title="{{ $delegate->cme_topic ?? 'N/A' }}">{{ $delegate->cme_topic ?? 'N/A' }}</span>
+
+                        <div class="d-flex flex-column gap-1.5 mb-2 extra-small">
+                            @if($delegate->cme_topic)
+                            <div class="p-2 rounded-2 bg-white border border-success border-opacity-25 d-flex align-items-start gap-2 shadow-2xs">
+                                <i class="fas fa-book-reader text-success mt-0.5"></i>
+                                <div>
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.68rem;">Selected Workshop Topic:</span>
+                                    <strong class="text-dark" style="font-size: 0.78rem;">{{ $delegate->cme_topic }}</strong>
+                                </div>
+                            </div>
+                            @endif
+                            <div class="d-flex justify-content-between align-items-center pt-0.5">
+                                <span class="text-muted">CME UTR / Txn ID:</span>
+                                <span class="font-monospace fw-bold text-dark">{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? 'N/A') }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">CME Fee + 18% GST:</span>
+                                <strong class="text-success font-monospace">₹{{ number_format($cmePay?->total_amount ?? 2360, 2) }}</strong>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-1 extra-small">
-                            <span class="text-muted">CME Txn ID:</span>
-                            <span class="font-monospace fw-semibold text-dark">{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? 'N/A') }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center extra-small">
-                            <span class="text-muted">CME Amount:</span>
-                            <span class="fw-bold text-dark">₹{{ number_format($cmePay?->total_amount ?? 2360, 2) }}</span>
-                        </div>
+
                         @php
                             $cmeReceipt = $cmePay?->payment_receipt_path ?: $cmeApp?->payment_receipt_path;
                         @endphp
                         @if($cmeReceipt || ($cmeApp && !$isCmeApproved))
-                            <div class="mt-2 pt-1 border-top border-light d-flex justify-content-end align-items-center gap-1.5 flex-wrap">
+                            <div class="pt-2 border-top border-success border-opacity-15 d-flex justify-content-end align-items-center gap-1.5 flex-wrap">
                                 @if($cmeReceipt)
                                     @php
                                         $cmeReceiptUrl = asset('storage/' . $cmeReceipt);
                                         $isCmePdf = str_ends_with(strtolower($cmeReceipt), '.pdf');
                                     @endphp
-                                    <button type="button" class="btn btn-xs btn-outline-info py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                    <button type="button" class="btn btn-xs btn-outline-success py-1 px-2.5 rounded-pill fw-semibold extra-small d-flex align-items-center gap-1"
                                         onclick="openMediaLightbox('{{ $cmeReceiptUrl }}', '{{ $isCmePdf ? 'pdf' : 'image' }}', 'CME Receipt - Txn #{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? '') }}')">
-                                        <i class="bx bx-show me-1"></i>View CME Receipt
+                                        <i class="bx bx-show fs-6"></i>View Proof
                                     </button>
                                 @endif
 
@@ -434,12 +531,12 @@
                                     <form action="{{ route('admin.cme.approve') }}" method="POST" class="d-inline m-0">
                                         @csrf
                                         <input type="hidden" name="cme_app_id" value="{{ $cmeApp->id }}">
-                                        <button type="submit" class="btn btn-xs btn-success py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                        <button type="submit" class="btn btn-xs btn-success py-1 px-2.5 rounded-pill fw-bold extra-small shadow-2xs d-flex align-items-center gap-1"
                                             onclick="return confirm('Approve Pre-Conference Workshop for this delegate?')">
-                                            <i class="bx bx-check me-0.5"></i>Approve CME
+                                            <i class="bx bx-check fs-6"></i>Approve CME
                                         </button>
                                     </form>
-                                    <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                    <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 rounded-pill fw-semibold extra-small"
                                         data-bs-toggle="modal" data-bs-target="#rejectCmeModal">
                                         <i class="bx bx-x me-0.5"></i>Reject
                                     </button>
@@ -449,56 +546,84 @@
                     </div>
                     @endif
 
-                    <hr class="my-2.5 text-muted opacity-25">
-
-                    <div class="d-flex justify-content-between mb-2 extra-small">
-                        <span class="text-muted">Delegate Category Base Fee</span>
-                        <span class="fw-semibold text-dark">{{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($delegate->delegate_fee, 2) }}</span>
-                    </div>
-
-                    @if($delegate->participate_in_cme)
-                    <div class="d-flex justify-content-between mb-2 extra-small">
-                        <span class="text-muted">Pre-Conference Workshop Fee</span>
-                        <span class="fw-semibold text-dark">₹{{ number_format($delegate->cme_fee ?: 2000, 2) }}</span>
-                    </div>
-                    @endif
-
-                    @if($delegate->accompanying_persons > 0)
-                    <div class="d-flex justify-content-between mb-2 extra-small">
-                        <span class="text-muted">Accompanying Persons ({{ $delegate->accompanying_persons }})</span>
-                        <span class="fw-semibold text-dark">₹{{ number_format($delegate->accompanying_fee ?: ($delegate->accompanying_persons * 5000), 2) }}</span>
-                    </div>
-                    @endif
-
-                    @if($delegate->delegate_type != 'International')
-                    <div class="d-flex justify-content-between mb-2 extra-small">
-                        <span class="text-muted">GST Amount (18%)</span>
-                        <span class="fw-bold text-warning">+ ₹{{ number_format($delegate->gst_amount, 2) }}</span>
-                    </div>
-                    @endif
-
-                    <hr class="my-3 text-muted opacity-50">
-
-                    @php
-                        $actualPaidAmt = $delegate->totalPaidAmount();
-                        $isPaid = ($delegate->status === 'Approved' || in_array(strtolower($primaryPay?->payment_status ?? ''), ['success', 'paid', 'approved']));
-                    @endphp
-
-                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: {{ $isPaid ? '#F0FDF4; border: 1px solid #BBF7D0;' : '#F8FAFC; border: 1px solid #E2E8F0;' }}">
-                        <div>
-                            <span class="text-muted extra-small d-block">{{ $isPaid ? 'Total Amount Paid' : 'Total Payable Amount' }}</span>
-                            <strong class="{{ $isPaid ? 'text-success' : 'text-dark' }} small">Incl. All Taxes &amp; GST</strong>
+                    <!-- Itemized Fee Breakdown Card -->
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-muted extra-small fw-bold text-uppercase d-flex align-items-center gap-1" style="letter-spacing: 0.5px; font-size: 0.7rem;">
+                                <i class="bx bx-list-ol text-primary"></i>Itemized Fee Breakdown
+                            </span>
+                            <span class="badge bg-light text-secondary border extra-small px-2 py-0.5 rounded-pill font-monospace">18% GST Applicable</span>
                         </div>
-                        <h4 class="{{ $isPaid ? 'text-success' : 'text-primary' }} mb-0 fw-extrabold" style="letter-spacing: -0.5px;">
-                            {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($actualPaidAmt, 2) }}
-                        </h4>
-                    </div>
-                    @if($delegate->hasSeparateCmePayment() && $delegate->conferencePayment)
-                        <div class="mt-2 text-muted extra-small d-flex align-items-center gap-1">
-                            <i class="bx bx-info-circle text-primary"></i>
-                            <span>Incl. Registration (₹{{ number_format($delegate->conferencePayment->total_amount, 2) }}) + Pre-Conference Workshop (₹{{ number_format($delegate->cmePayment->total_amount, 2) }})</span>
+                        <div class="rounded-3 p-2.5 border shadow-2xs" style="background-color: #F8FAFC; border-color: #E2E8F0 !important;">
+                            <!-- Category Base Fee -->
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-light extra-small">
+                                <span class="text-muted d-flex align-items-center gap-1.5">
+                                    <i class="bx bx-user-pin text-primary"></i>
+                                    <span>Category: <strong>{{ $delegate->delegateCategory?->category_name ?? 'Delegate' }}</strong> ({{ $delegate->delegate_type }})</span>
+                                </span>
+                                <span class="fw-bold text-dark font-monospace">{{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($delegate->delegate_fee, 2) }}</span>
+                            </div>
+
+                            <!-- Pre-Conference Workshop Fee (if bundled in main registration) -->
+                            @if($delegate->participate_in_cme)
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-light extra-small">
+                                <span class="text-muted d-flex align-items-center gap-1.5">
+                                    <i class="bx bx-certification text-success"></i>
+                                    <span>Pre-Conference Workshop Fee</span>
+                                </span>
+                                <span class="fw-bold text-dark font-monospace">₹{{ number_format($delegate->cme_fee ?: 2000, 2) }}</span>
+                            </div>
+                            @endif
+
+                            <!-- Accompanying Persons Fee -->
+                            @if($delegate->accompanying_persons > 0)
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-light extra-small">
+                                <span class="text-muted d-flex align-items-center gap-1.5">
+                                    <i class="bx bx-group text-info"></i>
+                                    <span>Accompanying Persons ({{ $delegate->accompanying_persons }} × ₹5,000)</span>
+                                </span>
+                                <span class="fw-bold text-dark font-monospace">₹{{ number_format($delegate->accompanying_fee ?: ($delegate->accompanying_persons * 5000), 2) }}</span>
+                            </div>
+                            @endif
+
+                            <!-- GST (18%) -->
+                            @if($delegate->delegate_type != 'International')
+                            <div class="d-flex justify-content-between align-items-center py-1.5 extra-small">
+                                <span class="text-muted d-flex align-items-center gap-1.5">
+                                    <i class="bx bx-receipt text-warning"></i>
+                                    <span>GST (18% Statutory Rate)</span>
+                                </span>
+                                <span class="fw-bold text-warning font-monospace">+ ₹{{ number_format($delegate->gst_amount, 2) }}</span>
+                            </div>
+                            @endif
                         </div>
-                    @endif
+                    </div>
+
+                    <!-- Grand Total Banner -->
+                    <div class="p-3 rounded-3 position-relative overflow-hidden shadow-xs" style="background: {{ $isPaid ? 'linear-gradient(135deg, #065F46 0%, #047857 100%)' : 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)' }}; color: #ffffff;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                                    <i class="{{ $isPaid ? 'bx bx-check-double' : 'bx bx-info-circle' }} fs-5" style="color: {{ $isPaid ? '#6EE7B7' : '#94A3B8' }};"></i>
+                                    <span class="fw-bold text-uppercase extra-small" style="letter-spacing: 0.5px; font-size: 0.74rem; color: {{ $isPaid ? '#D1FAE5' : '#E2E8F0' }};">
+                                        {{ $isPaid ? 'Total Amount Verified & Paid' : 'Total Payable Amount' }}
+                                    </span>
+                                </div>
+                                <span class="extra-small" style="font-size: 0.7rem; color: {{ $isPaid ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.55)' }};">Inclusive of 18% GST &amp; all applicable taxes</span>
+                            </div>
+                            <div class="text-end">
+                                <h3 class="mb-0 fw-extrabold text-white font-monospace" style="letter-spacing: -0.5px; font-size: 1.6rem;">
+                                    {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($actualPaidAmt, 2) }}
+                                </h3>
+                            </div>
+                        </div>
+                        @if($delegate->hasSeparateCmePayment() && $delegate->conferencePayment)
+                            <div class="mt-2 pt-2 border-top border-white border-opacity-15 extra-small d-flex align-items-center justify-content-between text-white-50" style="font-size: 0.72rem;">
+                                <span><i class="bx bx-layers me-1 text-white-50"></i>Main Reg: ₹{{ number_format($delegate->conferencePayment->total_amount, 2) }}</span>
+                                <span>+ Workshop: ₹{{ number_format($delegate->cmePayment->total_amount, 2) }}</span>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
