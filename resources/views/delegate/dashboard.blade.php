@@ -3,15 +3,19 @@
 
     <div class="container py-3">
         <!-- Welcome Hero Banner -->
-        <div class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #013069 0%, #0d47a1 50%, #0288D1 100%); margin-bottom: 2rem !important; box-shadow: 0 10px 28px rgba(1, 48, 105, 0.18) !important;">
+        <div class="card border-0 shadow-sm overflow-hidden mb-4"
+            style="border-radius: 16px; background: linear-gradient(135deg, #013069 0%, #0d47a1 50%, #0288D1 100%); margin-bottom: 2rem !important; box-shadow: 0 10px 28px rgba(1, 48, 105, 0.18) !important;">
             <div class="card-body py-3.5 px-3 px-md-4 text-white position-relative">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
                         <div class="d-flex align-items-center gap-2 mb-1.5">
-                            <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-bold shadow-xs" style="font-size: 0.73rem;">
+                            <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.73rem;">
                                 <i class="fas fa-id-badge me-1"></i>{{ Auth::user()->delegate_type ?? 'Delegate' }}
                             </span>
-                            <span class="badge bg-success bg-opacity-90 text-white px-3 py-1 rounded-pill fw-semibold shadow-xs" style="font-size: 0.73rem;">
+                            <span
+                                class="badge bg-success bg-opacity-90 text-white px-3 py-1 rounded-pill fw-semibold shadow-xs"
+                                style="font-size: 0.73rem;">
                                 <i class="fas fa-check-circle me-1"></i>Verified Account
                             </span>
                         </div>
@@ -23,15 +27,15 @@
                         </p>
                     </div>
                     <!-- <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                        @if(!$registration)
-                            <a href="{{ route('registration.create') }}" class="btn btn-warning btn-sm fw-bold px-3.5 py-2 shadow-sm btn-capsule" style="background: #FF6B00; border: none; color: #ffffff; font-size: 0.85rem;">
+                        @if (!$registration)
+<a href="{{ route('registration.create') }}" class="btn btn-warning btn-sm fw-bold px-3.5 py-2 shadow-sm btn-capsule" style="background: #FF6B00; border: none; color: #ffffff; font-size: 0.85rem;">
                                 <i class="fas fa-paper-plane me-1.5"></i>Register Now
                             </a>
-                        @else
-                            <a href="{{ route('abstract.create') }}" class="btn btn-light btn-sm fw-bold text-primary px-3.5 py-2 shadow-sm btn-capsule" style="font-size: 0.85rem; color: #0d47a1 !important;">
+@else
+<a href="{{ route('abstract.create') }}" class="btn btn-light btn-sm fw-bold text-primary px-3.5 py-2 shadow-sm btn-capsule" style="font-size: 0.85rem; color: #0d47a1 !important;">
                                 <i class="fas fa-file-alt me-1.5"></i>Submit / View Abstract
                             </a>
-                        @endif
+@endif
                     </div> -->
                 </div>
             </div>
@@ -39,21 +43,26 @@
 
         <!-- Session & Alert Messages -->
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold shadow-xs" role="alert" style="border-radius: 12px; background-color: #DCFFF0; border-color: #6EE7B7; color: #065F46;">
+            <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold shadow-xs"
+                role="alert"
+                style="border-radius: 12px; background-color: #DCFFF0; border-color: #6EE7B7; color: #065F46;">
                 <i class="fas fa-check-circle me-2 fs-6"></i>{{ session('success') }}
                 <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold shadow-xs" role="alert" style="border-radius: 12px; background-color: #FEE2E2; border-color: #FCA5A5; color: #991B1B;">
+            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold shadow-xs"
+                role="alert"
+                style="border-radius: 12px; background-color: #FEE2E2; border-color: #FCA5A5; color: #991B1B;">
                 <i class="fas fa-exclamation-circle me-2 fs-6"></i>{{ session('error') }}
                 <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small shadow-xs" role="alert" style="border-radius: 12px;">
+            <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small shadow-xs" role="alert"
+                style="border-radius: 12px;">
                 <i class="fas fa-exclamation-triangle me-2"></i><strong>Attention Required:</strong>
                 <ul class="mb-0 mt-1 ps-3">
                     @foreach ($errors->all() as $error)
@@ -65,10 +74,17 @@
         @endif
 
         <!-- Reverted Alert Banner for Delegate -->
-        @if ($registration && !empty($registration->revert_reason) && ($registration->status === 'Draft' || $registration->status === 'Reverted' || !empty($registration->reverted_at)))
-            <div class="alert alert-warning border-0 shadow-sm p-3.5 mb-4 position-relative overflow-hidden" style="border-radius: 16px; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-left: 5px solid #F59E0B !important;">
+        @if (
+            $registration &&
+                !empty($registration->revert_reason) &&
+                ($registration->status === 'Draft' ||
+                    $registration->status === 'Reverted' ||
+                    !empty($registration->reverted_at)))
+            <div class="alert alert-warning border-0 shadow-sm p-3.5 mb-4 position-relative overflow-hidden"
+                style="border-radius: 16px; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-left: 5px solid #F59E0B !important;">
                 <div class="d-flex align-items-start gap-3">
-                    <div class="rounded-circle p-2.5 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 42px; height: 42px; background-color: #FDE68A; color: #B45309;">
+                    <div class="rounded-circle p-2.5 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                        style="width: 42px; height: 42px; background-color: #FDE68A; color: #B45309;">
                         <i class="fas fa-exclamation-triangle fs-5"></i>
                     </div>
                     <div class="flex-grow-1">
@@ -76,9 +92,12 @@
                             <h6 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">
                                 Action Required: Application Reverted for Modification
                             </h6>
-                            @if($registration->reverted_at)
-                                <span class="badge bg-warning bg-opacity-25 text-dark font-monospace extra-small px-2.5 py-1 rounded-pill border border-warning" style="font-size: 0.72rem;">
-                                    <i class="far fa-clock me-1"></i>{{ \Carbon\Carbon::parse($registration->reverted_at)->format('d M Y, h:i A') }}
+                            @if ($registration->reverted_at)
+                                <span
+                                    class="badge bg-warning bg-opacity-25 text-dark font-monospace extra-small px-2.5 py-1 rounded-pill border border-warning"
+                                    style="font-size: 0.72rem;">
+                                    <i
+                                        class="far fa-clock me-1"></i>{{ \Carbon\Carbon::parse($registration->reverted_at)->format('d M Y, h:i A') }}
                                 </span>
                             @endif
                         </div>
@@ -86,10 +105,14 @@
                             <strong>Admin Remarks / Reason:</strong> "{{ $registration->revert_reason }}"
                         </p>
                         <div class="d-flex align-items-center gap-2 mt-2">
-                            <a href="{{ route('registration.create') }}" class="btn btn-sm btn-warning text-dark fw-bold px-3.5 py-1.5 shadow-xs rounded-pill" style="font-size: 0.82rem;">
+                            <a href="{{ route('registration.create') }}"
+                                class="btn btn-sm btn-warning text-dark fw-bold px-3.5 py-1.5 shadow-xs rounded-pill"
+                                style="font-size: 0.82rem;">
                                 <i class="fas fa-edit me-1.5"></i>Update &amp; Resubmit Application
                             </a>
-                            <a href="{{ route('registration.index') }}" class="btn btn-sm btn-outline-secondary fw-semibold px-3 py-1.5 rounded-pill" style="font-size: 0.82rem;">
+                            <a href="{{ route('registration.index') }}"
+                                class="btn btn-sm btn-outline-secondary fw-semibold px-3 py-1.5 rounded-pill"
+                                style="font-size: 0.82rem;">
                                 View Full Details
                             </a>
                         </div>
@@ -107,18 +130,26 @@
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box" style="width: 44px; height: 44px; background: #E8F2FF; color: #0d47a1;">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box"
+                                    style="width: 44px; height: 44px; background: #E8F2FF; color: #0d47a1;">
                                     <i class="fas fa-edit fs-5"></i>
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">Registration</h6>
-                                    <span class="badge bg-light text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-pill" style="font-size: 0.7rem;">Conference Portal</span>
+                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">Registration
+                                    </h6>
+                                    <span
+                                        class="badge bg-light text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-pill"
+                                        style="font-size: 0.7rem;">Conference Portal</span>
                                 </div>
                             </div>
-                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Register for sessions, workshops & accompanying details.</p>
+                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Register
+                                for sessions, workshops & accompanying details.</p>
                         </div>
-                        <a href="{{ route('registration.create') }}" class="btn btn-primary btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #013069, #0d47a1); border: none;">
-                            {{ $registration ? 'Update Details' : 'Register Now' }} <i class="fas fa-arrow-right ms-1"></i>
+                        <a href="{{ route('registration.create') }}"
+                            class="btn btn-primary btn-sm btn-capsule w-100 py-2 shadow-xs"
+                            style="background: linear-gradient(135deg, #013069, #0d47a1); border: none;">
+                            {{ $registration ? 'Update Details' : 'Register Now' }} <i
+                                class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -131,38 +162,54 @@
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box" style="width: 44px; height: 44px; background: #E0F2FE; color: #0288D1;">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box"
+                                    style="width: 44px; height: 44px; background: #E0F2FE; color: #0288D1;">
                                     <i class="fas fa-receipt fs-5"></i>
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">My Registrations</h6>
-                                    <span class="badge bg-light text-info border border-info border-opacity-25 extra-small px-2 py-0.5 rounded-pill" style="font-size: 0.7rem; color: #0288D1 !important;">Status & Receipt PDF</span>
+                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">My
+                                        Registrations</h6>
+                                    <span
+                                        class="badge bg-light text-info border border-info border-opacity-25 extra-small px-2 py-0.5 rounded-pill"
+                                        style="font-size: 0.7rem; color: #0288D1 !important;">Status & Receipt
+                                        PDF</span>
                                 </div>
                             </div>
-                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">View registration status, payment & download PDF receipt.</p>
+                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">View
+                                registration status, payment & download PDF receipt.</p>
                         </div>
                         <div class="d-flex flex-column gap-1.5">
-                            @if($registration)
+                            @if ($registration)
                                 @php
                                     $isCmeApproved = $registration->isCmeApproved();
                                     $isCmePending = $registration->isCmePendingVerification();
-                                    $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
+                                    $isRegistrationPaid = in_array($registration->status, [
+                                        'Approved',
+                                        'Payment Submitted',
+                                    ]);
                                 @endphp
-                                @if($isRegistrationPaid && !$isCmeApproved && !$isCmePending)
-                                    <a href="{{ route('cme.apply') }}" class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold" style="font-size: 0.8rem;">
+                                @if ($isRegistrationPaid && !$isCmeApproved && !$isCmePending)
+                                    <a href="{{ route('cme.apply') }}"
+                                        class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
+                                        style="font-size: 0.8rem;">
                                         <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
                                     </a>
                                 @elseif($isCmePending)
-                                    <div class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
+                                    <div
+                                        class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
+                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification
+                                        Pending
                                     </div>
                                 @elseif($isCmeApproved)
-                                    <div class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
+                                    <div
+                                        class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
                                         <i class="fas fa-check-circle me-1"></i>Pre-Conference Workshop Enrolled
                                     </div>
                                 @endif
                             @endif
-                            <a href="{{ route('registration.index') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">
+                            <a href="{{ route('registration.index') }}"
+                                class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs"
+                                style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">
                                 View Details <i class="fas fa-arrow-right ms-1"></i>
                             </a>
                         </div>
@@ -177,26 +224,37 @@
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box" style="width: 44px; height: 44px; background: #FFF3E0; color: #FF6B00;">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box"
+                                    style="width: 44px; height: 44px; background: #FFF3E0; color: #FF6B00;">
                                     <i class="fas fa-file-alt fs-5"></i>
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">Abstract Submission</h6>
-                                    <span class="badge bg-light text-warning border border-warning border-opacity-25 extra-small px-2 py-0.5 rounded-pill" style="font-size: 0.7rem; color: #E65100 !important;">Oral & Poster</span>
+                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">Abstract
+                                        Submission</h6>
+                                    <span
+                                        class="badge bg-light text-warning border border-warning border-opacity-25 extra-small px-2 py-0.5 rounded-pill"
+                                        style="font-size: 0.7rem; color: #E65100 !important;">Oral & Poster</span>
                                 </div>
                             </div>
-                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Submit scientific abstract for Oral or Poster presentation.</p>
+                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Submit
+                                scientific abstract for Oral or Poster presentation.</p>
                         </div>
                         <div class="d-flex flex-column gap-1.5">
-                            @if($abstract)
-                                <a href="{{ route('abstract.show', $abstract->id) }}" class="btn btn-outline-warning btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold text-dark" style="font-size: 0.8rem; border-color: #FF6B00;">
+                            @if ($abstract)
+                                <a href="{{ route('abstract.show', $abstract->id) }}"
+                                    class="btn btn-outline-warning btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold text-dark"
+                                    style="font-size: 0.8rem; border-color: #FF6B00;">
                                     <i class="fas fa-eye me-1 text-warning"></i>View Abstract Details
                                 </a>
-                                <a href="{{ route('abstract.create') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
+                                <a href="{{ route('abstract.create') }}"
+                                    class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs"
+                                    style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
                                     Edit Abstract <i class="fas fa-edit ms-1"></i>
                                 </a>
                             @else
-                                <a href="{{ route('abstract.create') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
+                                <a href="{{ route('abstract.create') }}"
+                                    class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs"
+                                    style="background: linear-gradient(135deg, #FF6B00, #E65100); border: none;">
                                     Submit Abstract <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             @endif
@@ -212,17 +270,24 @@
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box" style="width: 44px; height: 44px; background: #E8F5E9; color: #2E7D32;">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 card-icon-box"
+                                    style="width: 44px; height: 44px; background: #E8F5E9; color: #2E7D32;">
                                     <i class="fas fa-user-cog fs-5"></i>
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">My Profile</h6>
-                                    <span class="badge bg-light text-success border border-success border-opacity-25 extra-small px-2 py-0.5 rounded-pill" style="font-size: 0.7rem;">Account Settings</span>
+                                    <h6 class="fw-bold text-dark mb-0.5" style="letter-spacing: -0.2px;">My Profile
+                                    </h6>
+                                    <span
+                                        class="badge bg-light text-success border border-success border-opacity-25 extra-small px-2 py-0.5 rounded-pill"
+                                        style="font-size: 0.7rem;">Account Settings</span>
                                 </div>
                             </div>
-                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Manage personal profile, email, and security settings.</p>
+                            <p class="text-secondary small mb-3" style="font-size: 0.82rem; line-height: 1.4;">Manage
+                                personal profile, email, and security settings.</p>
                         </div>
-                        <a href="{{ route('profile.show') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #2E7D32, #00897B); border: none;">
+                        <a href="{{ route('profile.show') }}"
+                            class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs"
+                            style="background: linear-gradient(135deg, #2E7D32, #00897B); border: none;">
                             My Profile <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -232,13 +297,17 @@
 
         <!-- Detailed Submitted Abstract Card (If Abstract Exists) -->
         @if ($abstract)
-            <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden" style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
+            <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden"
+                style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
                 <!-- Top Accent Line -->
-                <div style="height: 4px; background: linear-gradient(90deg, #FF6B00 0%, #FF8800 50%, #0d47a1 100%);"></div>
+                <div style="height: 4px; background: linear-gradient(90deg, #FF6B00 0%, #FF8800 50%, #0d47a1 100%);">
+                </div>
 
-                <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div
+                    class="card-header bg-white py-3 px-3.5 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div class="d-flex align-items-center gap-2.5">
-                        <div class="rounded-circle text-warning p-2 d-flex align-items-center justify-content-center shadow-xs" style="width: 38px; height: 38px; color: #FF6B00 !important; background: #FFF3E0;">
+                        <div class="rounded-circle text-warning p-2 d-flex align-items-center justify-content-center shadow-xs"
+                            style="width: 38px; height: 38px; color: #FF6B00 !important; background: #FFF3E0;">
 
                         </div>
                         <div>
@@ -246,17 +315,20 @@
                                 Submitted Abstract Details
                             </h6>
                             <small class="text-muted extra-small" style="font-size: 0.76rem;">
-                                Abstract ID: <strong class="text-primary font-monospace ms-1 fs-6">{{ $abstract->acknowledgement_id ?? ($registration?->registration_number ? ($abstract->presentation_mode === 'Poster Presentation' ? 'IPHA-PP-' : 'IPHA-OP-') . $registration->registration_number : 'Draft') }}</strong>
+                                Abstract ID: <strong
+                                    class="text-primary font-monospace ms-1 fs-6">{{ $abstract->acknowledgement_id ?? ($registration?->registration_number ? ($abstract->presentation_mode === 'Poster Presentation' ? 'IPHA-PP-' : 'IPHA-OP-') . $registration->registration_number : 'Draft') }}</strong>
                             </small>
                         </div>
                     </div>
                     <div>
                         @if ($abstract->status === 'Submitted' || !empty($abstract->acknowledgement_id))
-                            <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold shadow-xs" style="font-size: 0.74rem; background-color: #10B981 !important;">
+                            <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.74rem; background-color: #10B981 !important;">
                                 <i class="fas fa-check-circle me-1"></i>SUBMITTED
                             </span>
                         @else
-                            <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold shadow-xs" style="font-size: 0.74rem;">
+                            <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.74rem;">
                                 <i class="fas fa-edit me-1"></i>DRAFT SAVED
                             </span>
                         @endif
@@ -264,63 +336,77 @@
                 </div>
 
                 <div class="card-body p-3.5">
-                    <h5 class="fw-bold text-primary mb-3" style="letter-spacing: -0.3px; font-size: 1.1rem; line-height: 1.35;">
+                    <h5 class="fw-bold text-primary mb-3"
+                        style="letter-spacing: -0.3px; font-size: 1.1rem; line-height: 1.35;">
                         {{ $abstract->abstract_title ?: 'Untitled Abstract' }}
                     </h5>
 
                     <div class="row g-2.5 mb-3">
                         <div class="col-12 col-md-4">
                             <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-white text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px;">
+                                <div class="rounded-circle bg-white text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px;">
                                     <i class="fas fa-microphone-alt text-primary" style="font-size: 0.85rem;"></i>
                                 </div>
                                 <div class="overflow-hidden">
-                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presentation Mode</span>
-                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presentation_mode ?? 'Not Specified' }}</strong>
+                                    <span class="text-muted extra-small d-block"
+                                        style="font-size: 0.7rem;">Presentation Mode</span>
+                                    <strong class="text-dark d-block text-truncate"
+                                        style="font-size: 0.82rem;">{{ $abstract->presentation_mode ?? 'Not Specified' }}</strong>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-white text-info p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px;">
+                                <div class="rounded-circle bg-white text-info p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px;">
                                     <i class="fas fa-user-tag text-info" style="font-size: 0.85rem;"></i>
                                 </div>
                                 <div class="overflow-hidden">
-                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenter Category</span>
-                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presenter_category ?? 'N/A' }}</strong>
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenter
+                                        Category</span>
+                                    <strong class="text-dark d-block text-truncate"
+                                        style="font-size: 0.82rem;">{{ $abstract->presenter_category ?? 'N/A' }}</strong>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-white text-warning p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 32px; height: 32px; color: #FF6B00 !important;">
+                                <div class="rounded-circle bg-white text-warning p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px; color: #FF6B00 !important;">
                                     <i class="fas fa-user" style="font-size: 0.85rem;"></i>
                                 </div>
                                 <div class="overflow-hidden">
-                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenting Author</span>
-                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">{{ $abstract->presenting_author_name }}</strong>
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Presenting
+                                        Author</span>
+                                    <strong class="text-dark d-block text-truncate"
+                                        style="font-size: 0.82rem;">{{ $abstract->presenting_author_name }}</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    @if(!empty($abstract->conference_theme))
+                    @if (!empty($abstract->conference_theme))
                         <div class="mb-3 p-2.5 bg-light rounded-3 border d-flex align-items-center gap-2">
                             <i class="fas fa-tag text-warning flex-shrink-0" style="font-size: 0.9rem;"></i>
                             <div class="overflow-hidden">
-                                <span class="text-muted extra-small d-block" style="font-size: 0.68rem;">Conference Theme</span>
-                                <strong class="text-dark extra-small d-block text-truncate" style="font-size: 0.8rem;">{{ $abstract->conference_theme }}</strong>
+                                <span class="text-muted extra-small d-block" style="font-size: 0.68rem;">Conference
+                                    Theme</span>
+                                <strong class="text-dark extra-small d-block text-truncate"
+                                    style="font-size: 0.8rem;">{{ $abstract->conference_theme }}</strong>
                             </div>
                         </div>
                     @endif
 
-                    @if(!empty($abstract->keywords))
+                    @if (!empty($abstract->keywords))
                         <div class="mb-3">
                             <div class="d-flex gap-1.5 flex-wrap align-items-center">
                                 <span class="text-muted extra-small me-1" style="font-size: 0.74rem;">Keywords:</span>
-                                @foreach(explode(',', $abstract->keywords) as $kw)
-                                    @if(trim($kw))
-                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2" style="font-size: 0.74rem;">
+                                @foreach (explode(',', $abstract->keywords) as $kw)
+                                    @if (trim($kw))
+                                        <span
+                                            class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2"
+                                            style="font-size: 0.74rem;">
                                             #{{ trim($kw) }}
                                         </span>
                                     @endif
@@ -331,9 +417,12 @@
 
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top flex-wrap gap-2">
                         <span class="text-muted extra-small" style="font-size: 0.78rem;">
-                            <i class="far fa-clock me-1 text-primary"></i>Submission Date: {{ $abstract->updated_at ? $abstract->updated_at->format('d M Y, h:i A') : 'N/A' }}
+                            <i class="far fa-clock me-1 text-primary"></i>Submission Date:
+                            {{ $abstract->updated_at ? $abstract->updated_at->format('d M Y, h:i A') : 'N/A' }}
                         </span>
-                        <a href="{{ route('abstract.create') }}" class="btn btn-sm btn-primary btn-capsule px-3.5 py-1.5 shadow-xs" style="background: linear-gradient(135deg, #013069, #0d47a1); border: none; font-size: 0.82rem;">
+                        <a href="{{ route('abstract.create') }}"
+                            class="btn btn-sm btn-primary btn-capsule px-3.5 py-1.5 shadow-xs"
+                            style="background: linear-gradient(135deg, #013069, #0d47a1); border: none; font-size: 0.82rem;">
                             <i class="fas fa-external-link-alt me-1.5"></i>View Abstract Details
                         </a>
                     </div>
@@ -342,23 +431,26 @@
         @endif
 
         <!-- Info Notice Section -->
-        <div class="p-3.5 rounded-3 bg-white shadow-sm border mt-3" style="border-radius: 16px !important;">
+        <div class="p-3 rounded-3 bg-white shadow-sm border mt-3" style="border-radius: 16px !important;">
             <div class="row align-items-center">
                 <div class="col-lg-8 mb-2 mb-lg-0">
                     <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width: 44px; height: 44px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center me-3 flex-shrink-0"
+                            style="width: 44px; height: 44px;">
                             <i class="fas fa-calendar-alt fs-5 text-primary"></i>
                         </div>
                         <div>
                             <h6 class="fw-bold mb-0.5 text-dark small">Important Conference Schedule</h6>
-                            <p class="text-muted mb-0" style="font-size: 0.82rem;">IPHACON 2027 Main Conference: <strong>12th - 14th March 2027</strong> | Venue: <strong>RIMS, Ranchi</strong></p>
+                            <p class="text-muted mb-0" style="font-size: 0.82rem;">IPHACON 2027 Main Conference:
+                                <strong>12th - 14th March 2027</strong> | Venue: <strong>RIMS, Ranchi</strong></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <span class="text-muted" style="font-size: 0.82rem;">
-                        <i class="fas fa-headset me-1 text-primary"></i>Support: 
-                        <a href="mailto:iphacon2027@gmail.com" class="text-decoration-none fw-bold text-primary">iphacon2027@gmail.com</a>
+                        <i class="fas fa-headset me-1 text-primary"></i>Support:
+                        <a href="mailto:iphacon2027@gmail.com"
+                            class="text-decoration-none fw-bold text-primary">iphacon2027@gmail.com</a>
                     </span>
                 </div>
             </div>
@@ -372,23 +464,28 @@
             transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
             border: 1px solid rgba(226, 232, 240, 0.9) !important;
         }
+
         .dashboard-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 16px 32px rgba(2, 136, 209, 0.12) !important;
             border-color: rgba(2, 136, 209, 0.3) !important;
         }
+
         .dashboard-card .card-icon-box {
             transition: transform 0.3s ease;
         }
+
         .dashboard-card:hover .card-icon-box {
             transform: scale(1.1) rotate(-4deg);
         }
+
         .btn-capsule {
             border-radius: 25px !important;
             font-weight: 700 !important;
             letter-spacing: 0.3px;
             transition: all 0.25s ease !important;
         }
+
         .btn-capsule:hover {
             transform: translateY(-1.5px);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
