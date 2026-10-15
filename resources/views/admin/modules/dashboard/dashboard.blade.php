@@ -1,7 +1,7 @@
 @extends('admin.layouts.main')
 
 @section('admin-content')
-    <div class="container-xxl flex-grow-1 mt-3.5 mb-4">
+    <div class="container-xxl flex-grow-1 mt-3 mb-4">
         <!-- Welcome Hero Banner -->
         <div class="card mb-4 overflow-hidden border-0 shadow-sm position-relative hero-banner-card">
             <div class="card-body py-4 px-3 px-md-4 position-relative z-2">
@@ -27,13 +27,13 @@
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <a href="{{ route('indian-approved-delegates') }}"
-                            class="btn btn-sm btn-light fw-bold shadow-xs px-3.5 py-2 btn-capsule d-flex align-items-center gap-1.5"
+                            class="btn btn-sm btn-light fw-bold shadow-xs px-3 py-2 btn-capsule d-flex align-items-center gap-1.5"
                             style="border-radius: 25px; font-size: 0.825rem; color: #0F172A !important;">
                             <i class="bx bx-list-check text-primary fs-5"></i> View Registrations
                         </a>
                         @if (Route::has('admin.abstracts.index'))
                             <a href="{{ route('admin.abstracts.index') }}"
-                                class="btn btn-sm btn-primary fw-bold text-white shadow-xs px-3.5 py-2 btn-capsule d-flex align-items-center gap-1.5"
+                                class="btn btn-sm btn-primary fw-bold text-white shadow-xs px-3 py-2 btn-capsule d-flex align-items-center gap-1.5"
                                 style="border-radius: 25px; font-size: 0.825rem; background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); border: none;">
                                 <i class="bx bx-file-find fs-5"></i> Manage Abstracts
                             </a>
@@ -44,12 +44,12 @@
         </div>
 
         <!-- Metric Stat Cards Grid (4 Columns) -->
-        <div class="row g-3.5 mb-4">
+        <div class="row g-3 mb-4">
             <!-- 1. Indian Approved Delegates Card -->
             <div class="col-sm-6 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm admin-stat-card overflow-hidden position-relative">
                     <div class="stat-top-bar" style="background: linear-gradient(90deg, #10B981 0%, #059669 100%);"></div>
-                    <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center stat-icon-box"
@@ -79,14 +79,14 @@
             <div class="col-sm-6 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm admin-stat-card overflow-hidden position-relative">
                     <div class="stat-top-bar" style="background: linear-gradient(90deg, #F59E0B 0%, #EA580C 100%);"></div>
-                    <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center stat-icon-box"
                                     style="width: 48px; height: 48px; background-color: #FEF3C7; color: #D97706;">
                                     <i class="bx bx-time-five fs-3"></i>
                                 </div>
-                                <span class="badge px-3 py-1.5 fs-6 fw-bold rounded-pill shadow-xs"
+                                <span class="badge px-3 py-1 fs-6 fw-bold rounded-pill shadow-xs"
                                     style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
                                     {{ number_format($appliedCount) }}
                                 </span>
@@ -109,7 +109,7 @@
             <div class="col-sm-6 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm admin-stat-card overflow-hidden position-relative">
                     <div class="stat-top-bar" style="background: linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%);"></div>
-                    <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center stat-icon-box"
@@ -139,7 +139,7 @@
             <div class="col-sm-6 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm admin-stat-card overflow-hidden position-relative">
                     <div class="stat-top-bar" style="background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);"></div>
-                    <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center stat-icon-box"
@@ -175,7 +175,7 @@
         </div>
 
         <!-- Quick Actions & System Modules Panel -->
-        <div class="row g-3.5 mb-4">
+        <div class="row g-3 mb-4">
             <!-- Left Side: Quick Navigation Shortcuts -->
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100">
@@ -184,7 +184,7 @@
                             <i class="bx bx-grid-alt text-primary fs-5"></i>Quick Navigation &amp; Management Shortcuts
                         </h6>
                     </div>
-                    <div class="card-body p-3.5">
+                    <div class="card-body p-3">
                         <div class="row g-3">
                             <div class="col-sm-6 col-md-4">
                                 <a href="{{ route('submitted-delegates') }}"
@@ -291,7 +291,7 @@
                             IPHACON 2027
                         </span>
                     </div>
-                    <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="card-body p-3 d-flex flex-column justify-content-between">
                         <div>
                             <!-- Event Title Header -->
                             <div class="p-3 mb-3 rounded-3 border"
