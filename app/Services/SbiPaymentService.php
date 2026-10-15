@@ -229,7 +229,8 @@ class SbiPaymentService
             $cmeApp = CmeApplication::where('registration_id', $payment->registration_id)->latest()->first();
         }
 
-        DB::transaction(function () use ($payment, $cmeApp, $sbiOrderRef, $rawGatewayResponse, $amount) {
+        $delegate = null;
+        DB::transaction(function () use ($payment, $cmeApp, $sbiOrderRef, $rawGatewayResponse, $amount, &$delegate) {
             if ($cmeApp) {
                 $cmeApp->update([
                     'status'         => 'Approved',
@@ -261,12 +262,16 @@ class SbiPaymentService
             }
         });
 
+        if (!$delegate && $payment->registration_id) {
+            $delegate = Registration::find($payment->registration_id);
+        }
+
         // Generate CME Workshop PDF Receipt & Send Confirmation Email
         $cmeReceiptPath = null;
         try {
             if ($delegate) {
                 $delegate->loadMissing(['user', 'delegateCategory', 'country', 'state']);
-                $pdf = PDF::loadView('pdfs.registration', [
+                $pdf = Pdf::loadView('pdfs.registration', [
                     'registration'      => $delegate,
                     'payment'           => $payment,
                     'receiptTitle'      => 'IPHACON 2027 Pre-Conference Workshop Receipt',
