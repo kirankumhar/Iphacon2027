@@ -144,9 +144,8 @@
                         <div class="d-flex flex-column gap-1.5">
                             @if($registration)
                                 @php
-                                    $cmeSt = $registration->cmeApplication?->status;
-                                    $isCmeApproved = $registration->participate_in_cme || $cmeSt === 'Approved';
-                                    $isCmePending = $cmeSt === 'Payment Submitted';
+                                    $isCmeApproved = $registration->isCmeApproved();
+                                    $isCmePending = $registration->isCmePendingVerification();
                                     $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
                                 @endphp
                                 @if($isRegistrationPaid && !$isCmeApproved && !$isCmePending)

@@ -303,8 +303,11 @@ class AdminRegistrationController extends Controller
 
     public function cmeDelegates()
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
-            ->where('participate_in_cme', 1)
+        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment', 'cmeApplication', 'cmePayment'])
+            ->where(function ($q) {
+                $q->where('participate_in_cme', 1)
+                  ->orWhereHas('cmeApplication');
+            })
             ->where('is_deleted', '0')
             ->latest()
             ->get();
@@ -423,22 +426,40 @@ class AdminRegistrationController extends Controller
             $registration->approved_at = now();
             $registration->save();
 
-            // Also update associated payment records status to PAID
-            $registration->payments()->update([
-                'payment_status' => 'PAID',
-                'admin_verified' => true
-            ]);
+            // Update associated conference / bundled payment records status to PAID
+            // (Do NOT blindly mark standalone pending CME payments as PAID)
+            $registration->payments()
+                ->where(function ($q) {
+                    $q->where('delegate_category_fee', '>', 0)
+                      ->orWhere('accompanying_persons_fee', '>', 0)
+                      ->orWhere(function ($sub) {
+                          $sub->where('cme_fee', 0)->orWhereNull('cme_fee');
+                      });
+                })
+                ->update([
+                    'payment_status' => 'PAID',
+                    'admin_verified' => true
+                ]);
 
-            if ($registration->cmeApplication) {
+            // Only approve CME application if proof was already submitted or previously approved
+            // (Do NOT approve unpaid "Pending Payment" CME applications)
+            if ($registration->cmeApplication && in_array($registration->cmeApplication->status, ['Payment Submitted', 'Approved'])) {
                 $registration->cmeApplication->update([
                     'status' => 'Approved',
                     'approved_at' => now(),
                 ]);
-                if (!empty($registration->cmeApplication->pre_conference_topic) && empty($registration->pre_conference_topic)) {
+
+                // Sync standalone CME payment record to PAID
+                $registration->cmePayment()?->update([
+                    'payment_status' => 'PAID',
+                    'admin_verified' => true
+                ]);
+
+                if (!empty($registration->cmeApplication->pre_conference_topic)) {
                     $registration->pre_conference_topic = $registration->cmeApplication->pre_conference_topic;
-                    $registration->participate_in_cme = true;
-                    $registration->save();
                 }
+                $registration->participate_in_cme = true;
+                $registration->save();
             }
 
             // Generate Registration Receipt PDF & Save
@@ -637,15 +658,17 @@ class AdminRegistrationController extends Controller
             }
         })->firstOrFail();
 
-        if ($delegate->status !== 'Approved') {
-            return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
-        }
-
         if ($type === 'cme') {
+            if (!$delegate->isCmeApproved()) {
+                return redirect()->back()->with('error', 'Pre-Conference Workshop receipt can only be downloaded after the workshop payment is approved.');
+            }
             $payment = $delegate->cmePayment ?? $delegate->latestPayment;
             $receiptTitle = 'IPHACON 2027 Pre-Conference Workshop Receipt';
             $filename = "Workshop_Receipt_{$id}.pdf";
         } else {
+            if ($delegate->status !== 'Approved') {
+                return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
+            }
             $payment = $delegate->conferencePayment ?? $delegate->latestPayment;
             $receiptTitle = 'IPHACON 2027 Registration Acknowledgement Receipt';
             $filename = "Receipt-{$id}.pdf";
@@ -1299,4 +1322,72 @@ class AdminRegistrationController extends Controller
 
         return redirect()->back()->with('success', $finalMsg ?: 'Reminder emails processed.');
     }
+
+    /**
+     * Approve standalone Pre-Conference Workshop payment proof
+     */
+    public function approveCmePayment(Request $request)
+    {
+        $request->validate([
+            'cme_app_id' => 'required|exists:cme_applications,id'
+        ]);
+
+        $cmeApp = \App\Models\CmeApplication::with('registration')->findOrFail($request->cme_app_id);
+        $registration = $cmeApp->registration;
+
+        $cmeApp->update([
+            'status' => 'Approved',
+            'approved_at' => now(),
+        ]);
+
+        if ($registration) {
+            $registration->cmePayment()?->update([
+                'payment_status' => 'PAID',
+                'admin_verified' => true
+            ]);
+
+            $registration->participate_in_cme = true;
+            if (!empty($cmeApp->pre_conference_topic)) {
+                $registration->pre_conference_topic = $cmeApp->pre_conference_topic;
+            }
+            $registration->save();
+        }
+
+        return redirect()->back()->with('success', 'Pre-Conference Workshop payment verified and approved successfully.');
+    }
+
+    /**
+     * Reject standalone Pre-Conference Workshop payment proof
+     */
+    public function rejectCmePayment(Request $request)
+    {
+        $request->validate([
+            'cme_app_id' => 'required|exists:cme_applications,id',
+            'rejection_reason' => 'nullable|string|max:500'
+        ]);
+
+        $cmeApp = \App\Models\CmeApplication::with('registration')->findOrFail($request->cme_app_id);
+        $registration = $cmeApp->registration;
+
+        $cmeApp->update([
+            'status' => 'Rejected',
+            'rejection_reason' => $request->rejection_reason ?: 'Payment proof verification failed.',
+        ]);
+
+        if ($registration) {
+            $registration->cmePayment()?->update([
+                'payment_status' => 'Failed',
+                'admin_verified' => false
+            ]);
+
+            // Only unset participate_in_cme if not bundled with initial conference registration
+            if (!$registration->conferencePayment || (float)$registration->conferencePayment->cme_fee == 0) {
+                $registration->participate_in_cme = false;
+                $registration->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Pre-Conference Workshop payment rejected.');
+    }
 }
+

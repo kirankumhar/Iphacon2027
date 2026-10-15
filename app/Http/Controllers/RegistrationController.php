@@ -733,6 +733,16 @@ class RegistrationController extends Controller
                 ->with('error', 'Please complete your registration and payment first before applying for Pre-Conference Workshop.');
         }
 
+        if ($registration->isCmeApproved()) {
+            return redirect()->route('registration.index')
+                ->with('info', 'You are already enrolled and approved for the Pre-Conference Workshop.');
+        }
+
+        if ($registration->isCmePendingVerification()) {
+            return redirect()->route('registration.index')
+                ->with('info', 'Your Pre-Conference Workshop payment proof is already submitted and pending verification.');
+        }
+
         $cmeApp = \App\Models\CmeApplication::where('registration_id', $registration->id)->latest()->first();
 
         return view('delegate.cme-workshop', compact('registration', 'user', 'cmeApp'));
@@ -761,6 +771,16 @@ class RegistrationController extends Controller
         if (!in_array($registration->status, ['Approved', 'Payment Submitted'])) {
             return redirect()->route('registration.index')
                 ->with('error', 'Please complete your registration and payment first before applying for Pre-Conference Workshop.');
+        }
+
+        if ($registration->isCmeApproved()) {
+            return redirect()->route('registration.index')
+                ->with('info', 'You are already enrolled and approved for the Pre-Conference Workshop.');
+        }
+
+        if ($registration->isCmePendingVerification()) {
+            return redirect()->route('registration.index')
+                ->with('info', 'Your Pre-Conference Workshop payment proof is already submitted and pending verification.');
         }
 
         if (!$request->has('participate_in_cme')) {

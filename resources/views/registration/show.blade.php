@@ -203,11 +203,10 @@
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block fw-bold" style="font-size: 0.75rem;">Pre-Conference Workshop</span>
                                     @php
-                                        $cmeStatus = $registration->cmeApplication?->status;
-                                        $isCmeApproved = $registration->participate_in_cme || $cmeStatus === 'Approved';
-                                        $isCmePending = $cmeStatus === 'Payment Submitted';
+                                        $isCmeApproved = $registration->isCmeApproved();
+                                        $isCmePending = $registration->isCmePendingVerification();
                                         $isRegistrationPaid = in_array($registration->status, ['Approved', 'Payment Submitted']);
-                                        $chosenTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic;
+                                        $chosenTopic = $registration->cme_topic;
                                     @endphp
                                     @if ($isCmeApproved)
                                         <span class="fw-bold text-success"><i class="fas fa-check-circle me-1"></i>Participating (Approved)</span>
@@ -408,25 +407,33 @@
                             {{-- Dedicated CME Workshop Payment Details --}}
                             @php
                                 $cmeApp = $registration->cmeApplication;
+                                $cmePay = $registration->cmePayment;
+                                $hasCmeRecord = $cmeApp || $cmePay;
                             @endphp
-                            @if($cmeApp)
+                            @if($hasCmeRecord)
                                 <div class="mt-4 pt-3 border-top border-light">
                                     <div class="d-flex align-items-center justify-content-between mb-2.5">
                                         <h6 class="fw-bold text-dark mb-0 small d-flex align-items-center gap-1.5">
                                             <i class="fas fa-stethoscope text-success"></i> Pre-Conference Workshop Payment Details
                                         </h6>
                                         @php
-                                            $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
-                                            $cmeStatusText = 'Pending for Verification';
-                                            if ($cmeApp->status === 'Approved' || $registration->status === 'Approved') {
+                                            $isCmeApproved = $registration->isCmeApproved();
+                                            $isCmePendingVerification = $registration->isCmePendingVerification();
+                                            $isCmePendingPayment = $registration->isCmePendingPayment();
+                                            $isCmeRejected = ($cmeApp?->status === 'Rejected') || ($cmePay?->payment_status === 'Failed');
+
+                                            if ($isCmeApproved) {
                                                 $cmeBadgeClass = 'bg-success-subtle text-success border-success';
                                                 $cmeStatusText = 'PAID';
-                                            } elseif ($cmeApp->status === 'Rejected') {
+                                            } elseif ($isCmeRejected) {
                                                 $cmeBadgeClass = 'bg-danger-subtle text-danger border-danger';
                                                 $cmeStatusText = 'Rejected';
-                                            } elseif ($cmeApp->status === 'Pending Payment') {
+                                            } elseif ($isCmePendingPayment) {
                                                 $cmeBadgeClass = 'bg-info-subtle text-info border-info';
                                                 $cmeStatusText = 'Payment Pending';
+                                            } else {
+                                                $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
+                                                $cmeStatusText = 'Under Verification';
                                             }
                                         @endphp
                                         <span class="badge {{ $cmeBadgeClass }} border px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
@@ -443,19 +450,27 @@
                                         </div>
                                         <div class="d-flex justify-content-between mb-1.5">
                                             <span class="text-muted">Transaction ID / UTR:</span>
-                                            <span class="fw-bold text-dark">{{ $cmeApp->transaction_id ?: 'N/A' }}</span>
+                                            <span class="fw-bold text-dark">{{ $cmeApp?->transaction_id ?: ($cmePay?->transaction_id ?: 'N/A') }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-1.5">
                                             <span class="text-muted">Submitted Date:</span>
-                                            <span class="fw-semibold text-dark">{{ $cmeApp->submitted_at ? $cmeApp->submitted_at->format('d M, Y h:i A') : 'N/A' }}</span>
+                                            <span class="fw-semibold text-dark">{{ $cmeApp?->submitted_at ? $cmeApp->submitted_at->format('d M, Y h:i A') : ($cmePay?->created_at ? $cmePay->created_at->format('d M, Y h:i A') : 'N/A') }}</span>
                                         </div>
-                                        @if($cmeApp->payment_receipt_path)
-                                            <div class="mt-2 text-end">
-                                                <a href="{{ asset('storage/' . $cmeApp->payment_receipt_path) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1" style="font-size: 0.75rem;">
-                                                    <i class="fas fa-file-invoice me-1"></i>View CME Payment Receipt
+                                        @php
+                                            $receiptPath = $cmeApp?->payment_receipt_path ?: $cmePay?->payment_receipt_path;
+                                        @endphp
+                                        <div class="mt-2 text-end d-flex justify-content-end gap-2 flex-wrap">
+                                            @if($receiptPath)
+                                                <a href="{{ asset('storage/' . $receiptPath) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1" style="font-size: 0.75rem;">
+                                                    <i class="fas fa-file-invoice me-1"></i>View Uploaded Receipt
                                                 </a>
-                                            </div>
-                                        @endif
+                                            @endif
+                                            @if($isCmeApproved)
+                                                <a href="{{ route('delgate.download.receipt', ['registration_number' => $registration->registration_number ?? ($registration->acknowledgement_id ?? $registration->id), 'type' => 'cme']) }}" class="btn btn-sm btn-success rounded-pill px-3 py-1 text-white fw-semibold" style="font-size: 0.75rem;">
+                                                    <i class="fas fa-download me-1"></i>Download Workshop Receipt PDF
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             @endif

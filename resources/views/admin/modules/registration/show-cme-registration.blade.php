@@ -85,13 +85,26 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if(strtolower($reg->status) === 'approved')
-                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #DCFCE7; color: #0F172A; border: 1px solid #BBF7D0;">
+                                    @php
+                                        $isApproved = $reg->isCmeApproved();
+                                        $isPendingVerification = $reg->isCmePendingVerification();
+                                        $isRejected = ($reg->cmeApplication?->status === 'Rejected') || ($reg->cmePayment?->payment_status === 'Failed');
+                                    @endphp
+                                    @if($isApproved)
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0;">
                                             <i class="bx bx-check-circle me-1"></i>APPROVED
                                         </span>
+                                    @elseif($isRejected)
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA;">
+                                            <i class="bx bx-x-circle me-1"></i>REJECTED
+                                        </span>
+                                    @elseif($isPendingVerification)
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
+                                            <i class="bx bx-time-five me-1"></i>VERIFICATION PENDING
+                                        </span>
                                     @else
-                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEF3C7; color: #0F172A; border: 1px solid #FDE68A;">
-                                            {{ strtoupper($reg->status ?? 'PENDING') }}
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #E0F2FE; color: #075985; border: 1px solid #BAE6FD;">
+                                            <i class="bx bx-time-five me-1"></i>PAYMENT PENDING
                                         </span>
                                     @endif
                                 </td>

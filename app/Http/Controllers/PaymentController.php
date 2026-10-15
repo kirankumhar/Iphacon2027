@@ -1209,7 +1209,6 @@ class PaymentController extends Controller
 
             if ($cmeApp->pre_conference_topic && $cmeApp->registration) {
                 $cmeApp->registration->update([
-                    'participate_in_cme' => true,
                     'pre_conference_topic' => $cmeApp->pre_conference_topic,
                 ]);
             }
@@ -1240,7 +1239,7 @@ class PaymentController extends Controller
                 'currency'                 => 'INR',
                 'transaction_id'           => $request->transaction_id,
                 'payment_method'           => 'QR_Code',
-                'payment_status'           => 'Pending',
+                'payment_status'           => 'Payment Submitted',
                 'payment_receipt_path'     => $receiptPath,
                 'admin_verified'           => false
             ];
