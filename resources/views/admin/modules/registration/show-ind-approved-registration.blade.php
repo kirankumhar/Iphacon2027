@@ -159,9 +159,9 @@
         box-shadow: 0 3px 8px rgba(45, 105, 255, 0.25);
     }
     .btn-action-pdf {
-        background: #F0FDF4;
-        color: #166534;
-        border: 1px solid #BBF7D0;
+        background: #EFF6FF;
+        color: #1D4ED8;
+        border: 1px solid #BFDBFE;
         font-size: 0.75rem;
         font-weight: 600;
         padding: 5px 12px;
@@ -173,10 +173,30 @@
         text-decoration: none;
     }
     .btn-action-pdf:hover {
-        background: #16A34A;
+        background: #2563EB;
         color: #FFFFFF;
-        border-color: #16A34A;
-        box-shadow: 0 3px 8px rgba(22, 163, 74, 0.25);
+        border-color: #2563EB;
+        box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+    }
+    .btn-action-cme-pdf {
+        background: #ECFDF5;
+        color: #047857;
+        border: 1px solid #A7F3D0;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 20px;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+    }
+    .btn-action-cme-pdf:hover {
+        background: #059669;
+        color: #FFFFFF;
+        border-color: #059669;
+        box-shadow: 0 3px 8px rgba(5, 150, 105, 0.25);
     }
     .search-input-pill {
         border-radius: 30px !important;
@@ -258,29 +278,34 @@
             <table class="table delegate-table align-middle mb-0" id="approvedDelegatesTable">
                 <thead>
                     <tr>
-                        <th class="ps-4 text-center" style="width: 5%;">#</th>
-                        <th style="width: 32%;">Delegate</th>
-                        <th style="width: 22%;">Category</th>
-                        <th style="width: 17%;">Paid Amount</th>
+                        <th class="ps-4 text-center" style="width: 4%;">#</th>
+                        <th style="width: 28%;">Delegate</th>
+                        <th style="width: 18%;">Category</th>
+                        <th style="width: 18%;">Paid Amount</th>
                         <th style="width: 12%;">Approved Date</th>
-                        <th class="pe-4 text-end" style="width: 12%;">Actions</th>
+                        <th class="pe-4 text-end" style="width: 20%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($registrations as $index => $reg)
                         @php
                             $user = $reg->user;
-                            $payRec = $reg->latestPayment;
-                            $paidAmount = ($payRec && (float)$payRec->total_amount > 0)
-                                ? (float)$payRec->total_amount
-                                : (float)($reg->total_amount ?: $reg->calculateTotalAmount());
-                            $method = $payRec?->payment_method;
+                            $totalPaid = $reg->totalPaidAmount();
+                            $confPay = $reg->conferencePayment;
+                            $cmePay = $reg->cmePayment;
                             $hasCme = $reg->isCmeApproved();
                             $regNum = $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id);
                             $approvedDate = $reg->approved_at 
                                 ? \Carbon\Carbon::parse($reg->approved_at)->format('d M, Y') 
                                 : ($reg->created_at ? \Carbon\Carbon::parse($reg->created_at)->format('d M, Y') : 'N/A');
                             $initials = strtoupper(substr($user?->full_name ?? 'D', 0, 1));
+
+                            $activePayments = $reg->payments->filter(function($p) {
+                                return in_array(strtoupper($p->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']) || $p->admin_verified;
+                            });
+                            if ($activePayments->isEmpty() && $reg->latestPayment) {
+                                $activePayments = collect([$reg->latestPayment]);
+                            }
                         @endphp
                         <tr class="delegate-row">
                             <td class="ps-4 text-center fw-semibold text-muted" style="font-size: 0.8rem;">
@@ -325,26 +350,45 @@
                             <td>
                                 <div>
                                     <div class="fw-bold text-dark" style="font-size: 0.95rem; line-height: 1.2;">
-                                        ₹{{ number_format($paidAmount, 2) }}
+                                        ₹{{ number_format($totalPaid, 2) }}
                                     </div>
-                                    <div class="mt-1">
-                                        @if($method === 'SBI_ePay' || $payRec?->gateway_transaction_id)
-                                            <span class="badge-pay-sbi" title="Paid via State Bank of India ePay Gateway">
-                                                <i class="bx bx-credit-card"></i>SBI ePay
-                                            </span>
-                                        @elseif($method === 'QR_Code' || $payRec?->payment_receipt_path)
-                                            <span class="badge-pay-qr" title="Paid via UPI QR Code Transfer">
-                                                <i class="bx bx-qr-scan"></i>UPI QR
-                                            </span>
-                                        @elseif($method)
-                                            <span class="badge-pay-other">
-                                                <i class="bx bx-wallet"></i>{{ str_replace('_', ' ', $method) }}
-                                            </span>
-                                        @else
-                                            <span class="badge-pay-other">
-                                                <i class="bx bx-check"></i>Verified
-                                            </span>
-                                        @endif
+                                    @if($confPay && $cmePay && (float)$confPay->total_amount > 0 && (float)$cmePay->total_amount > 0)
+                                        <div class="mt-1 d-flex flex-wrap gap-1 align-items-center" style="font-size: 0.72rem; line-height: 1.2;">
+                                            <span class="badge bg-light text-dark border px-1.5 py-0.5" title="Main Conference Registration Fee">Reg: ₹{{ number_format($confPay->total_amount, 0) }}</span>
+                                            <span class="text-muted">+</span>
+                                            <span class="badge bg-light text-success border border-success-subtle px-1.5 py-0.5" title="Pre-Conference Workshop Fee">CME: ₹{{ number_format($cmePay->total_amount, 0) }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="mt-1 d-flex flex-wrap gap-1">
+                                        @php
+                                            $methodsShown = [];
+                                        @endphp
+                                        @foreach($activePayments as $p)
+                                            @php
+                                                $m = $p->payment_method;
+                                                $key = $m ?: ($p->gateway_transaction_id ? 'SBI_ePay' : ($p->payment_receipt_path ? 'QR_Code' : 'Verified'));
+                                            @endphp
+                                            @if(!in_array($key, $methodsShown))
+                                                @php $methodsShown[] = $key; @endphp
+                                                @if($key === 'SBI_ePay' || $p->gateway_transaction_id)
+                                                    <span class="badge-pay-sbi" title="Paid via State Bank of India ePay Gateway">
+                                                        <i class="bx bx-credit-card"></i>SBI ePay
+                                                    </span>
+                                                @elseif($key === 'QR_Code' || $p->payment_receipt_path)
+                                                    <span class="badge-pay-qr" title="Paid via UPI QR Code Transfer">
+                                                        <i class="bx bx-qr-scan"></i>UPI QR
+                                                    </span>
+                                                @elseif($m)
+                                                    <span class="badge-pay-other">
+                                                        <i class="bx bx-wallet"></i>{{ str_replace('_', ' ', $m) }}
+                                                    </span>
+                                                @else
+                                                    <span class="badge-pay-other">
+                                                        <i class="bx bx-check"></i>Verified
+                                                    </span>
+                                                @endif
+                                            @endif
+                                        @endforeach
                                     </div>
                                 </div>
                             </td>
@@ -359,13 +403,22 @@
                                 </div>
                             </td>
                             <td class="pe-4 text-end">
-                                <div class="d-inline-flex align-items-center gap-1.5">
+                                <div class="d-inline-flex flex-wrap justify-content-end align-items-center gap-1.5">
                                     <a href="{{ route('show-registration-details', $regNum) }}" class="btn-action-view" title="View Full Details">
                                         <i class="bx bx-show"></i>Details
                                     </a>
-                                    <a href="{{ route('download.receipt', $regNum) }}" target="_blank" class="btn-action-pdf" title="Download Official Receipt PDF">
-                                        <i class="bx bxs-file-pdf"></i>PDF
-                                    </a>
+                                    @if($hasCme)
+                                        <a href="{{ route('download.receipt', ['registration_number' => $regNum, 'type' => 'conference']) }}" target="_blank" class="btn-action-pdf" title="Download Main Conference Registration Receipt PDF">
+                                            <i class="bx bxs-file-pdf"></i>Reg Receipt
+                                        </a>
+                                        <a href="{{ route('download.receipt', ['registration_number' => $regNum, 'type' => 'cme']) }}" target="_blank" class="btn-action-cme-pdf" title="Download Pre-Conference Workshop Receipt PDF">
+                                            <i class="bx bxs-file-pdf"></i>CME Receipt
+                                        </a>
+                                    @else
+                                        <a href="{{ route('download.receipt', ['registration_number' => $regNum, 'type' => 'conference']) }}" target="_blank" class="btn-action-pdf" title="Download Official Receipt PDF">
+                                            <i class="bx bxs-file-pdf"></i>Receipt
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

@@ -109,9 +109,16 @@
                                     @endif
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
-                                        <i class="bx bx-show me-1"></i> Details
-                                    </a>
+                                    <div class="d-inline-flex align-items-center gap-1.5">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
+                                            <i class="bx bx-show me-1"></i> Details
+                                        </a>
+                                        @if($isApproved)
+                                            <a href="{{ route('download.receipt', ['registration_number' => $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id), 'type' => 'cme']) }}" target="_blank" class="btn btn-xs btn-outline-success px-2.5 py-1 rounded-2 extra-small fw-medium" title="Download Workshop (CME) Receipt">
+                                                <i class="bx bxs-file-pdf me-1"></i> Receipt
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
