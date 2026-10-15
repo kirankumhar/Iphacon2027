@@ -439,7 +439,21 @@
                 @enderror
             </div>
 
-            <div class="form-group mb-0">
+            <!-- Aadhaar Notice (Shown when Aadhaar Card is selected) -->
+            <div id="aadhaar_notice" class="alert alert-info py-2.5 px-3 mb-0 small"
+                style="border-radius: 10px; background-color: #E0F2FE; border-color: #BAE6FD; color: #0369A1; {{ old('id_proof_type', $registration->id_proof_type) == 'Aadhaar' ? 'display: block;' : 'display: none;' }}">
+                <div class="d-flex align-items-start gap-2">
+                    <i class="fas fa-info-circle text-primary mt-1 fs-6"></i>
+                    <div>
+                        <strong class="d-block text-dark">Aadhaar Card Selected</strong>
+                        <span class="text-secondary" style="font-size: 0.84rem;">Document upload is not required for Aadhaar. Only your 12-digit Aadhaar number is needed.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ID Proof Document Upload Section (Hidden when Aadhaar is selected) -->
+            <div class="form-group mb-0" id="id_proof_document_section"
+                style="{{ old('id_proof_type', $registration->id_proof_type) == 'Aadhaar' ? 'display: none;' : '' }}">
                 <label for="id_proof_document" class="form-label fw-bold text-dark">
                     <i class="fas fa-file-shield text-primary me-1"></i>Upload ID Document <span
                         class="required-star text-danger">*</span>
@@ -503,7 +517,7 @@
                     <input type="file" id="id_proof_document" name="id_proof_document"
                         style="position: absolute; left: -9999px; opacity: 0;"
                         accept="application/pdf,image/jpeg,image/jpg,image/png"
-                        {{ $registration->id_proof_document_path ? '' : 'required' }}>
+                        {{ ($registration->id_proof_document_path || old('id_proof_type', $registration->id_proof_type) == 'Aadhaar') ? '' : 'required' }}>
                     @error('id_proof_document')
                         <div class="text-danger extra-small mt-2">{{ $message }}</div>
                     @enderror
@@ -740,10 +754,15 @@
         }
     }
 
+    const hasExistingDoc = {{ !empty($registration->id_proof_document_path) ? 'true' : 'false' }};
+
     function updateIdProofValidation() {
         const typeSelect = document.getElementById('id_proof_type');
         const numberInput = document.getElementById('id_proof_number');
         const label = document.getElementById('id_proof_number_label');
+        const docSection = document.getElementById('id_proof_document_section');
+        const aadhaarNotice = document.getElementById('aadhaar_notice');
+        const docInput = document.getElementById('id_proof_document');
         if (!typeSelect || !numberInput) return;
 
         const selectedType = typeSelect.value;
@@ -751,26 +770,46 @@
             if (label) label.innerHTML = 'Aadhaar Number <span class="required-star text-danger">*</span>';
             numberInput.placeholder = 'Enter 12-digit Aadhaar Number';
             numberInput.maxLength = 12;
-        } else if (selectedType === 'PAN') {
-            if (label) label.innerHTML = 'PAN Card Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter 10-character PAN Number (e.g. ABCDE1234F)';
-            numberInput.maxLength = 10;
-        } else if (selectedType === 'Passport') {
-            if (label) label.innerHTML = 'Passport Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter Passport Number';
-            numberInput.maxLength = 12;
-        } else if (selectedType === 'Voter-ID') {
-            if (label) label.innerHTML = 'Voter ID Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter Voter ID Number';
-            numberInput.maxLength = 12;
-        } else if (selectedType === 'Driving License') {
-            if (label) label.innerHTML = 'Driving License Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter Driving License Number';
-            numberInput.maxLength = 20;
+
+            // Aadhaar: Document upload is NOT required
+            if (docSection) docSection.style.display = 'none';
+            if (aadhaarNotice) aadhaarNotice.style.display = 'block';
+            if (docInput) {
+                docInput.removeAttribute('required');
+            }
         } else {
-            if (label) label.innerHTML = 'ID Proof Number <span class="required-star text-danger">*</span>';
-            numberInput.placeholder = 'Enter ID Proof Number';
-            numberInput.removeAttribute('maxlength');
+            // Other ID Types: Document upload is shown
+            if (docSection) docSection.style.display = 'block';
+            if (aadhaarNotice) aadhaarNotice.style.display = 'none';
+            if (docInput) {
+                if (!hasExistingDoc) {
+                    docInput.setAttribute('required', 'required');
+                } else {
+                    docInput.removeAttribute('required');
+                }
+            }
+
+            if (selectedType === 'PAN') {
+                if (label) label.innerHTML = 'PAN Card Number <span class="required-star text-danger">*</span>';
+                numberInput.placeholder = 'Enter 10-character PAN Number (e.g. ABCDE1234F)';
+                numberInput.maxLength = 10;
+            } else if (selectedType === 'Passport') {
+                if (label) label.innerHTML = 'Passport Number <span class="required-star text-danger">*</span>';
+                numberInput.placeholder = 'Enter Passport Number';
+                numberInput.maxLength = 12;
+            } else if (selectedType === 'Voter-ID') {
+                if (label) label.innerHTML = 'Voter ID Number <span class="required-star text-danger">*</span>';
+                numberInput.placeholder = 'Enter Voter ID Number';
+                numberInput.maxLength = 12;
+            } else if (selectedType === 'Driving License') {
+                if (label) label.innerHTML = 'Driving License Number <span class="required-star text-danger">*</span>';
+                numberInput.placeholder = 'Enter Driving License Number';
+                numberInput.maxLength = 20;
+            } else {
+                if (label) label.innerHTML = 'ID Proof Number <span class="required-star text-danger">*</span>';
+                numberInput.placeholder = 'Enter ID Proof Number';
+                numberInput.removeAttribute('maxlength');
+            }
         }
         formatIdProofNumber(numberInput);
     }
