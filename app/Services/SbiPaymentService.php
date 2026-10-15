@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class SbiPaymentService
 {
@@ -22,6 +23,7 @@ class SbiPaymentService
             'apiKey'        => config('services.sbiepay.api_key'),
             'apiSecret'     => config('services.sbiepay.api_secret'),
             'encryptionKey' => config('services.sbiepay.encryption_key'),
+            'domain'        => config('services.sbiepay.domain', 'https://iphacon2027.com'),
         ], config('services.sbiepay.env', 'SANDBOX'), 'JSON', false);
     }
 
@@ -227,35 +229,37 @@ class SbiPaymentService
             $cmeApp = CmeApplication::where('registration_id', $payment->registration_id)->latest()->first();
         }
 
-        if ($cmeApp) {
-            $cmeApp->update([
-                'status'         => 'Approved',
-                'transaction_id' => $sbiOrderRef,
-                'submitted_at'   => $cmeApp->submitted_at ?? now(),
-                'approved_at'    => $cmeApp->approved_at ?? now(),
+        DB::transaction(function () use ($payment, $cmeApp, $sbiOrderRef, $rawGatewayResponse, $amount) {
+            if ($cmeApp) {
+                $cmeApp->update([
+                    'status'         => 'Approved',
+                    'transaction_id' => $sbiOrderRef,
+                    'submitted_at'   => $cmeApp->submitted_at ?? now(),
+                    'approved_at'    => $cmeApp->approved_at ?? now(),
+                ]);
+            }
+
+            $payment->update([
+                'payment_status'         => 'Success',
+                'transaction_id'         => $sbiOrderRef,
+                'gateway_response'       => $rawGatewayResponse,
+                'admin_verified'         => true,
+                'payment_date'           => $payment->payment_date ?? now(),
+                'total_amount'           => $amount > 0 ? $amount : ($payment->total_amount ?: 2360.00),
+                'cme_fee'                => 2000.00,
+                'gst_amount'             => 360.00,
+                'delegate_category_fee'  => 0.00,
+                'accompanying_persons_fee' => 0.00,
             ]);
-        }
 
-        $payment->update([
-            'payment_status'         => 'Success',
-            'transaction_id'         => $sbiOrderRef,
-            'gateway_response'       => $rawGatewayResponse,
-            'admin_verified'         => true,
-            'payment_date'           => $payment->payment_date ?? now(),
-            'total_amount'           => $amount > 0 ? $amount : ($payment->total_amount ?: 2360.00),
-            'cme_fee'                => 2000.00,
-            'gst_amount'             => 360.00,
-            'delegate_category_fee'  => 0.00,
-            'accompanying_persons_fee' => 0.00,
-        ]);
-
-        $delegate = Registration::find($payment->registration_id);
-        if ($delegate) {
-            $delegate->participate_in_cme = 1;
-            $delegate->cme_fee = 2000.00;
-            $delegate->updateAmounts();
-            $delegate->save();
-        }
+            $delegate = Registration::find($payment->registration_id);
+            if ($delegate) {
+                $delegate->participate_in_cme = 1;
+                $delegate->cme_fee = 2000.00;
+                $delegate->updateAmounts();
+                $delegate->save();
+            }
+        });
 
         // Generate CME Workshop PDF Receipt & Send Confirmation Email
         $cmeReceiptPath = null;
@@ -348,35 +352,37 @@ class SbiPaymentService
             $gstAmt = $delegate->gst_amount ?: round($subtotal * 0.18, 2);
         }
 
-        $payment->update([
-            'payment_status'           => 'Success',
-            'transaction_id'           => $sbiOrderRef,
-            'gateway_response'         => $rawGatewayResponse,
-            'admin_verified'           => true,
-            'payment_date'             => $payment->payment_date ?? now(),
-            'delegate_category_fee'    => $delFee,
-            'accompanying_persons_fee' => $accFee,
-            'cme_fee'                  => $cmeFee,
-            'gst_amount'               => $gstAmt,
-            'total_amount'             => $payAmount,
-        ]);
-
-        $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
-        if (empty($delegate->acknowledgement_id)) {
-            $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
-        }
-
         $wasAlreadyApproved = ($delegate->status === 'Approved');
 
-        $delegate->updateAmounts();
-        if ($payAmount > 0) {
-            $delegate->total_amount = $payAmount;
-        }
-        $delegate->status = 'Approved';
-        $delegate->submitted_at = $delegate->submitted_at ?? now();
-        $delegate->registration_number = $registrationNo;
-        $delegate->approved_at = $delegate->approved_at ?? now();
-        $delegate->save();
+        DB::transaction(function () use ($payment, $delegate, $sbiOrderRef, $rawGatewayResponse, $delFee, $accFee, $cmeFee, $gstAmt, $payAmount) {
+            $payment->update([
+                'payment_status'           => 'Success',
+                'transaction_id'           => $sbiOrderRef,
+                'gateway_response'         => $rawGatewayResponse,
+                'admin_verified'           => true,
+                'payment_date'             => $payment->payment_date ?? now(),
+                'delegate_category_fee'    => $delFee,
+                'accompanying_persons_fee' => $accFee,
+                'cme_fee'                  => $cmeFee,
+                'gst_amount'               => $gstAmt,
+                'total_amount'             => $payAmount,
+            ]);
+
+            $registrationNo = $delegate->registration_number ?: $delegate->generateRegistrationNumber();
+            if (empty($delegate->acknowledgement_id)) {
+                $delegate->acknowledgement_id = $delegate->generateAcknowledgementId();
+            }
+
+            $delegate->updateAmounts();
+            if ($payAmount > 0) {
+                $delegate->total_amount = $payAmount;
+            }
+            $delegate->status = 'Approved';
+            $delegate->submitted_at = $delegate->submitted_at ?? now();
+            $delegate->registration_number = $registrationNo;
+            $delegate->approved_at = $delegate->approved_at ?? now();
+            $delegate->save();
+        });
 
         // Send emails and generate PDF receipt if not already done
         if (!$wasAlreadyApproved || empty($delegate->registration_pdf_path)) {

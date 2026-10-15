@@ -310,11 +310,12 @@
                     </h6>
                 </div>
                 <div class="card-body p-3.5">
+                    @php
+                        $primaryPay = $delegate->conferencePayment ?? $delegate->latestPayment;
+                        $detMethod = $primaryPay?->payment_method;
+                    @endphp
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
                         <span class="text-muted extra-small fw-semibold">Mode of Payment</span>
-                        @php
-                            $detMethod = $delegate->latestPayment?->payment_method;
-                        @endphp
                         <div>
                             @if($detMethod === 'SBI_ePay')
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
@@ -328,11 +329,11 @@
                                 <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
                                     <i class="bx bx-wallet me-1"></i>{{ str_replace('_', ' ', $detMethod) }}
                                 </span>
-                            @elseif($delegate->latestPayment?->gateway_transaction_id)
+                            @elseif($primaryPay?->gateway_transaction_id)
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
                                     <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
                                 </span>
-                            @elseif($delegate->latestPayment?->payment_receipt_path)
+                            @elseif($primaryPay?->payment_receipt_path)
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1 rounded-2 extra-small fw-semibold">
                                     <i class="bx bx-qr-scan me-1"></i>QR Code
                                 </span>
@@ -344,25 +345,66 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
                         <span class="text-muted extra-small fw-semibold">Transaction Reference ID</span>
-                        <span class="fw-bold font-monospace text-dark extra-small">{{ $delegate->latestPayment?->transaction_id ?? 'N/A' }}</span>
+                        <span class="fw-bold font-monospace text-dark extra-small">{{ $primaryPay?->transaction_id ?? 'N/A' }}</span>
                     </div>
 
-                    @if($delegate->latestPayment && $delegate->latestPayment->payment_receipt_path)
+                    @if($primaryPay && $primaryPay->payment_receipt_path)
                     @php
-                        $receiptUrl = asset('storage/' . $delegate->latestPayment->payment_receipt_path);
-                        $isReceiptPdf = str_ends_with(strtolower($delegate->latestPayment->payment_receipt_path), '.pdf');
+                        $receiptUrl = asset('storage/' . $primaryPay->payment_receipt_path);
+                        $isReceiptPdf = str_ends_with(strtolower($primaryPay->payment_receipt_path), '.pdf');
                     @endphp
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2.5 rounded-2 bg-light border">
                         <span class="extra-small fw-semibold text-dark"><i class="bx bx-file text-primary me-1"></i>Payment Screenshot</span>
                         <div class="d-flex align-items-center gap-1">
                             <button type="button" class="btn btn-xs btn-outline-primary py-1 px-3 fw-bold rounded-pill"
-                                onclick="openMediaLightbox('{{ $receiptUrl }}', '{{ $isReceiptPdf ? 'pdf' : 'image' }}', 'Payment Receipt - Txn #{{ $delegate->latestPayment->transaction_id }}')">
+                                onclick="openMediaLightbox('{{ $receiptUrl }}', '{{ $isReceiptPdf ? 'pdf' : 'image' }}', 'Payment Receipt - Txn #{{ $primaryPay->transaction_id }}')">
                                 <i class="bx bx-show me-1"></i>View Lightbox
                             </button>
                             <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-xs btn-light text-secondary rounded-pill px-2.5 py-1 fw-semibold" title="Open in new tab">
                                 <i class="bx bx-export"></i>
                             </a>
                         </div>
+                    </div>
+                    @endif
+
+                    @php
+                        $cmePay = $delegate->cmePayment;
+                        $cmeApp = $delegate->cmeApplication;
+                    @endphp
+                    @if($cmePay || ($cmeApp && $delegate->hasSeparateCmePayment()))
+                    <div class="p-2.5 rounded-2 mb-3 border" style="background-color: #F8FAFC; border-color: #E2E8F0 !important;">
+                        <div class="d-flex justify-content-between align-items-center mb-1.5">
+                            <span class="extra-small fw-bold text-dark d-flex align-items-center gap-1">
+                                <i class="bx bx-certification text-success"></i>Pre-Conference Workshop Payment
+                            </span>
+                            @php
+                                $cmeStatus = $cmePay?->payment_status ?? ($cmeApp?->status ?? 'Pending');
+                                $isCmePaid = in_array(strtoupper($cmeStatus), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']) || $delegate->status === 'Approved';
+                            @endphp
+                            <span class="badge {{ $isCmePaid ? 'bg-success-subtle text-success border border-success' : 'bg-warning-subtle text-warning border border-warning' }} extra-small px-2 py-0.5 rounded-pill fw-semibold">
+                                {{ $isCmePaid ? 'PAID' : $cmeStatus }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1 extra-small">
+                            <span class="text-muted">CME Txn ID:</span>
+                            <span class="font-monospace fw-semibold text-dark">{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? 'N/A') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center extra-small">
+                            <span class="text-muted">CME Amount:</span>
+                            <span class="fw-bold text-dark">₹{{ number_format($cmePay?->total_amount ?? 2360, 2) }}</span>
+                        </div>
+                        @if($cmePay?->payment_receipt_path || $cmeApp?->payment_receipt_path)
+                            @php
+                                $cmeReceiptUrl = asset('storage/' . ($cmePay?->payment_receipt_path ?: $cmeApp->payment_receipt_path));
+                                $isCmePdf = str_ends_with(strtolower($cmePay?->payment_receipt_path ?: $cmeApp->payment_receipt_path), '.pdf');
+                            @endphp
+                            <div class="mt-2 pt-1 border-top border-light text-end">
+                                <button type="button" class="btn btn-xs btn-outline-success py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                    onclick="openMediaLightbox('{{ $cmeReceiptUrl }}', '{{ $isCmePdf ? 'pdf' : 'image' }}', 'CME Receipt - Txn #{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? '') }}')">
+                                    <i class="bx bx-show me-1"></i>View CME Receipt
+                                </button>
+                            </div>
+                        @endif
                     </div>
                     @endif
 
@@ -397,11 +439,8 @@
                     <hr class="my-3 text-muted opacity-50">
 
                     @php
-                        $payRec = $delegate->latestPayment;
-                        $isPaid = ($delegate->status === 'Approved' || in_array(strtolower($payRec?->payment_status ?? ''), ['success', 'paid', 'approved']));
-                        $actualPaidAmt = ($payRec && (float)$payRec->total_amount > 0)
-                            ? (float)$payRec->total_amount
-                            : (float)($delegate->total_amount ?: $delegate->calculateTotalAmount());
+                        $actualPaidAmt = $delegate->totalPaidAmount();
+                        $isPaid = ($delegate->status === 'Approved' || in_array(strtolower($primaryPay?->payment_status ?? ''), ['success', 'paid', 'approved']));
                     @endphp
 
                     <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: {{ $isPaid ? '#F0FDF4; border: 1px solid #BBF7D0;' : '#F8FAFC; border: 1px solid #E2E8F0;' }}">
@@ -413,6 +452,12 @@
                             {{ $delegate->delegate_type == 'International' ? '$' : '₹' }}{{ number_format($actualPaidAmt, 2) }}
                         </h4>
                     </div>
+                    @if($delegate->hasSeparateCmePayment() && $delegate->conferencePayment)
+                        <div class="mt-2 text-muted extra-small d-flex align-items-center gap-1">
+                            <i class="bx bx-info-circle text-primary"></i>
+                            <span>Incl. Registration (₹{{ number_format($delegate->conferencePayment->total_amount, 2) }}) + Pre-Conference Workshop (₹{{ number_format($delegate->cmePayment->total_amount, 2) }})</span>
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -439,7 +484,7 @@
                 <div class="card-body p-3.5">
                     <div class="d-flex flex-column gap-3">
                         @php
-                            $hasPaymentProof = !empty($delegate->latestPayment?->payment_receipt_path) || !empty($delegate->latestPayment?->transaction_id);
+                            $hasPaymentProof = !empty($delegate->conferencePayment?->payment_receipt_path) || !empty($delegate->conferencePayment?->transaction_id) || !empty($delegate->latestPayment?->payment_receipt_path) || !empty($delegate->latestPayment?->transaction_id);
                             $isPaymentSubmitted = ($delegate->status === 'Payment Submitted') || ($hasPaymentProof && !in_array($delegate->status, ['Pending Payment', 'Draft', 'Incomplete', 'Rejected']));
                             $isPaymentPending = in_array($delegate->status, ['Pending Payment', 'Pending', 'Draft', 'Incomplete']) || (!$hasPaymentProof && $delegate->status !== 'Approved' && $delegate->status !== 'Rejected');
                         @endphp
@@ -559,6 +604,13 @@
                         class="btn btn-primary w-100 py-2.5 fw-bold rounded-3 shadow-xs d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); border: none; font-size: 0.825rem;">
                         <i class="bx bxs-file-pdf fs-5"></i>Download Receipt PDF
                     </a>
+                    @if($delegate->cmeApplication?->status === 'Approved' || ($delegate->cmePayment && in_array(strtolower($delegate->cmePayment->payment_status ?? ''), ['success', 'paid', 'approved'])))
+                    <a href="{{ route('delgate.download.receipt', ['registration_number' => $delegate->registration_number ?? ($delegate->acknowledgement_id ?? $delegate->id), 'type' => 'cme']) }}"
+                        target="_blank"
+                        class="btn btn-outline-success w-100 py-2 fw-semibold rounded-3 shadow-xs d-flex align-items-center justify-content-center gap-2 mt-2" style="font-size: 0.825rem;">
+                        <i class="bx bxs-file-pdf fs-5"></i>Download CME Workshop Receipt
+                    </a>
+                    @endif
                     @else
                     <button class="btn btn-light border text-muted w-100 py-2.5 fw-semibold rounded-3 d-flex align-items-center justify-content-center gap-2" style="font-size: 0.825rem;" disabled title="Receipt download is available after approval">
                         <i class="bx bxs-file-pdf fs-5 text-muted"></i>Download Receipt PDF (Pending Approval)

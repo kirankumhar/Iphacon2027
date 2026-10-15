@@ -83,16 +83,22 @@
                                  </td>
                                  <td>
                                      @php
-                                         $payRec = $reg->latestPayment;
-                                         $actualPaidAmount = ($payRec && (float)$payRec->total_amount > 0)
-                                             ? (float)$payRec->total_amount
-                                             : (float)($reg->total_amount ?: 45000);
+                                         $payRec = $reg->conferencePayment ?? $reg->latestPayment;
+                                         $actualPaidAmount = $reg->totalPaidAmount();
                                          $method = $payRec?->payment_method;
+                                         $hasSeparateCme = $reg->cmePayment && in_array(strtoupper($reg->cmePayment->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']);
                                      @endphp
                                      <div class="extra-small text-muted mb-0.5 fw-semibold"><i class="bx bx-check-circle text-success me-0.5"></i>Total Paid:</div>
                                      <div class="fw-bold text-dark fs-6 mb-1">
                                          ₹{{ number_format($actualPaidAmount, 2) }} INR
                                      </div>
+                                     @if($hasSeparateCme)
+                                         <div class="mb-1">
+                                             <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 extra-small px-1.5 py-0.5 rounded-1" title="Includes Pre-Conference Workshop">
+                                                 <i class="bx bx-check me-0.5"></i>Incl. CME (₹{{ number_format($reg->cmePayment->total_amount, 2) }})
+                                             </span>
+                                         </div>
+                                     @endif
                                      <div class="mb-1">
                                          @if($method === 'SBI_ePay')
                                              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
@@ -106,11 +112,11 @@
                                              <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
                                                  <i class="bx bx-wallet me-1"></i>{{ str_replace('_', ' ', $method) }}
                                              </span>
-                                         @elseif($reg->latestPayment?->gateway_transaction_id)
+                                         @elseif($payRec?->gateway_transaction_id)
                                              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
                                                  <i class="bx bx-credit-card me-1"></i>Online (SBI ePay)
                                              </span>
-                                         @elseif($reg->latestPayment?->payment_receipt_path)
+                                         @elseif($payRec?->payment_receipt_path)
                                              <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 extra-small px-2 py-0.5 rounded-2" title="Mode of Payment">
                                                  <i class="bx bx-qr-scan me-1"></i>QR Code
                                              </span>
@@ -120,12 +126,12 @@
                                              </span>
                                          @endif
                                      </div>
-                                     @if($reg->latestPayment && $reg->latestPayment->payment_receipt_path)
-                                         <a href="{{ asset('storage/' . $reg->latestPayment->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-2 px-2.5 py-0.5 extra-small fw-medium">
-                                             <i class="bx bx-file me-1"></i>Receipt: {{ $reg->latestPayment->transaction_id ?? 'View' }}
+                                     @if($payRec && $payRec->payment_receipt_path)
+                                         <a href="{{ asset('storage/' . $payRec->payment_receipt_path) }}" target="_blank" class="btn btn-xs btn-outline-secondary rounded-2 px-2.5 py-0.5 extra-small fw-medium">
+                                             <i class="bx bx-file me-1"></i>Receipt: {{ $payRec->transaction_id ?? 'View' }}
                                          </a>
-                                     @elseif($reg->latestPayment && $reg->latestPayment->transaction_id)
-                                         <span class="badge bg-light text-secondary border extra-small font-monospace"><i class="bx bx-hash me-0.5"></i>{{ $reg->latestPayment->transaction_id }}</span>
+                                     @elseif($payRec && $payRec->transaction_id)
+                                         <span class="badge bg-light text-secondary border extra-small font-monospace"><i class="bx bx-hash me-0.5"></i>{{ $payRec->transaction_id }}</span>
                                      @endif
                                  </td>
                                  <td>

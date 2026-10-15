@@ -444,9 +444,12 @@ class AdminRegistrationController extends Controller
             // Generate Registration Receipt PDF & Save
             $pdfPath = null;
             try {
-                $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
+                $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'conferencePayment', 'latestPayment']);
+                $regPayment = $registration->conferencePayment ?? $registration->latestPayment;
                 $pdf = Pdf::loadView('pdfs.registration', [
-                    'registration' => $registration,
+                    'registration'      => $registration,
+                    'payment'           => $regPayment,
+                    'receiptTitle'      => 'IPHACON 2027 Registration Acknowledgement Receipt',
                     'applicationNumber' => $registration->registration_number
                 ])->setPaper('a4', 'portrait')
                     ->setOption('margin-top', 10)
@@ -515,9 +518,11 @@ class AdminRegistrationController extends Controller
         $reason = $request->input('reason') ?? $request->input('rejection_reason') ?? $request->input('revert_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('id', $regNo)
-              ->orWhere('registration_number', $regNo)
+            $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->first();
 
         if ($reg) {
@@ -556,9 +561,11 @@ class AdminRegistrationController extends Controller
         $reason = $request->input('reason') ?? $request->input('revert_reason') ?? $request->input('rejection_reason') ?? $request->input('remarks') ?? null;
 
         $reg = Registration::where(function($q) use ($regNo) {
-            $q->where('id', $regNo)
-              ->orWhere('registration_number', $regNo)
+            $q->where('registration_number', $regNo)
               ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->first();
 
         if ($reg) {
@@ -596,8 +603,10 @@ class AdminRegistrationController extends Controller
 
         Registration::where(function($q) use ($regNo) {
             $q->where('registration_number', $regNo)
-              ->orWhere('acknowledgement_id', $regNo)
-              ->orWhere('id', $regNo);
+              ->orWhere('acknowledgement_id', $regNo);
+            if (is_numeric($regNo)) {
+                $q->orWhere('id', (int) $regNo);
+            }
         })->update([
             'is_deleted' => '1',
             'deleted_datetime' => date('Y-m-d H:i:s')
@@ -606,11 +615,14 @@ class AdminRegistrationController extends Controller
         return redirect()->back()->with('success', "Registration successfully deleted.");
     }
 
-    public function receiptCumRegistrationSlipDownload($id)
+    public function receiptCumRegistrationSlipDownload($id, $type = null)
     {
+        $type = strtolower($type ?: request('type', ''));
 
         $delegate = Registration::with([
             'user',
+            'conferencePayment',
+            'cmePayment',
             'latestPayment',
             'delegateCategory',
             'country',
@@ -619,16 +631,30 @@ class AdminRegistrationController extends Controller
             'cmeApplication'
         ])->where(function($q) use ($id) {
             $q->where('registration_number', $id)
-              ->orWhere('acknowledgement_id', $id)
-              ->orWhere('id', $id);
-        })->latest('created_at')->firstOrFail();
+              ->orWhere('acknowledgement_id', $id);
+            if (is_numeric($id)) {
+                $q->orWhere('id', (int) $id);
+            }
+        })->firstOrFail();
 
         if ($delegate->status !== 'Approved') {
             return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
         }
 
+        if ($type === 'cme') {
+            $payment = $delegate->cmePayment ?? $delegate->latestPayment;
+            $receiptTitle = 'IPHACON 2027 Pre-Conference Workshop Receipt';
+            $filename = "Workshop_Receipt_{$id}.pdf";
+        } else {
+            $payment = $delegate->conferencePayment ?? $delegate->latestPayment;
+            $receiptTitle = 'IPHACON 2027 Registration Acknowledgement Receipt';
+            $filename = "Receipt-{$id}.pdf";
+        }
+
         $pdf = PDF::loadView('pdfs.registration', [
-            'registration' => $delegate,
+            'registration'      => $delegate,
+            'payment'           => $payment,
+            'receiptTitle'      => $receiptTitle,
             'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
         ])->setPaper('a4', 'portrait')
             ->setOption('margin-top', 10)
@@ -636,22 +662,28 @@ class AdminRegistrationController extends Controller
             ->setOption('margin-left', 10)
             ->setOption('margin-right', 10);
 
-        return $pdf->download("Receipt-{$id}.pdf");
+        return $pdf->download($filename);
     }
 
     public function viewRegistrationDetails($id)
     {
         $delegate = Registration::with([
             'user',
+            'conferencePayment',
+            'cmePayment',
             'latestPayment',
             'delegateCategory',
             'country',
-            'state'
+            'state',
+            'cmeApplication',
+            'abstractSubmission'
         ])->where(function($q) use ($id) {
             $q->where('registration_number', $id)
-              ->orWhere('acknowledgement_id', $id)
-              ->orWhere('id', $id);
-        })->latest('created_at')->firstOrFail();
+              ->orWhere('acknowledgement_id', $id);
+            if (is_numeric($id)) {
+                $q->orWhere('id', (int) $id);
+            }
+        })->firstOrFail();
 
         // Check if reminder was already sent today for this delegate
         $todayReminder = \App\Models\ActivityLog::where('action', 'ADMIN_SEND_PAYMENT_REMINDER')
