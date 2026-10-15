@@ -623,7 +623,8 @@ class PaymentController extends Controller
 
                 if ($isSuccess) {
                     $payment = null;
-                    DB::transaction(function () use ($cmeApp, $orderRef, $sbiOrderRef, $rawGatewayResponse, $amount, &$payment) {
+                    $delegate = null;
+                    DB::transaction(function () use ($cmeApp, $orderRef, $sbiOrderRef, $rawGatewayResponse, $amount, &$payment, &$delegate) {
                         $cmeApp->update([
                             'status'         => 'Approved',
                             'transaction_id' => $sbiOrderRef ?? $orderRef,
@@ -662,12 +663,16 @@ class PaymentController extends Controller
                         }
                     });
 
+                    if (!$delegate && $cmeApp->registration_id) {
+                        $delegate = Registration::find($cmeApp->registration_id);
+                    }
+
                     // Generate CME Workshop PDF Receipt & Send Confirmation Email
                     $cmeReceiptPath = null;
                     try {
                         if ($delegate) {
                             $delegate->loadMissing(['user', 'delegateCategory', 'country', 'state']);
-                            $pdf = PDF::loadView('pdfs.registration', [
+                            $pdf = Pdf::loadView('pdfs.registration', [
                                 'registration'      => $delegate,
                                 'payment'           => $payment,
                                 'receiptTitle'      => 'IPHACON 2027 Pre-Conference Workshop Receipt',
