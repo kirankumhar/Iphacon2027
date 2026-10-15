@@ -88,19 +88,19 @@
                                     @php
                                         $isApproved = $reg->isCmeApproved();
                                         $isPendingVerification = $reg->isCmePendingVerification();
-                                        $isRejected = ($reg->cmeApplication?->status === 'Rejected') || ($reg->cmePayment?->payment_status === 'Failed');
+                                        $isRejected = ($reg->cmeApplication?->status === 'Rejected');
                                     @endphp
                                     @if($isApproved)
                                         <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0;">
                                             <i class="bx bx-check-circle me-1"></i>APPROVED
                                         </span>
-                                    @elseif($isRejected)
-                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA;">
-                                            <i class="bx bx-x-circle me-1"></i>REJECTED
-                                        </span>
                                     @elseif($isPendingVerification)
                                         <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
                                             <i class="bx bx-time-five me-1"></i>VERIFICATION PENDING
+                                        </span>
+                                    @elseif($isRejected)
+                                        <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA;">
+                                            <i class="bx bx-x-circle me-1"></i>REJECTED
                                         </span>
                                     @else
                                         <span class="badge extra-small px-2.5 py-1 rounded-2 fw-semibold" style="background-color: #E0F2FE; color: #075985; border: 1px solid #BAE6FD;">
@@ -109,9 +109,16 @@
                                     @endif
                                 </td>
                                 <td class="pe-3 text-end">
-                                    <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
-                                        <i class="bx bx-show me-1"></i> Details
-                                    </a>
+                                    <div class="d-inline-flex align-items-center gap-1.5">
+                                        <a href="{{ route('show-registration-details', $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id)) }}" class="btn btn-xs btn-primary px-2.5 py-1 rounded-2 extra-small fw-medium">
+                                            <i class="bx bx-show me-1"></i> Details
+                                        </a>
+                                        @if($isApproved)
+                                            <a href="{{ route('download.receipt', ['registration_number' => $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id), 'type' => 'cme']) }}" target="_blank" class="btn btn-xs btn-outline-success px-2.5 py-1 rounded-2 extra-small fw-medium" title="Download Workshop (CME) Receipt">
+                                                <i class="bx bxs-file-pdf me-1"></i> Receipt
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

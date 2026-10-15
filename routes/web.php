@@ -160,7 +160,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::delete('users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
     Route::post('/view_registrations/{type}', [AdminRegistrationController::class, 'getRegistrations']);
-    Route::get('/download-receipt/{registration_number}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])->name('download.receipt');
+    Route::get('/download-receipt/{registration_number}/{type?}', [AdminRegistrationController::class, 'receiptCumRegistrationSlipDownload'])->name('download.receipt');
     Route::get('/show-registration-details/{registration_number}', [AdminRegistrationController::class, 'viewRegistrationDetails'])->name('show-registration-details');
 
     Route::get('/cme-delegates', [AdminRegistrationController::class, 'cmeDelegates'])->name('admin.cme-delegates');

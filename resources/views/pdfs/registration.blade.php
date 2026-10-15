@@ -242,18 +242,142 @@
 
 <body>
 
-    <div class="pdf-box">
+    @php
+        $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
+
+        // Auto-detect receiptType if not explicitly passed
+        if (empty($receiptType)) {
+            if (isset($receiptTitle) && (str_contains(strtolower($receiptTitle), 'workshop') || str_contains(strtolower($receiptTitle), 'cme'))) {
+                $receiptType = 'cme';
+            } elseif ($pay && (float)($pay->cme_fee ?? 0) > 0 && (float)($pay->delegate_category_fee ?? 0) > 0) {
+                $receiptType = 'consolidated';
+            } elseif ($pay && (float)($pay->cme_fee ?? 0) > 0 && (float)($pay->delegate_category_fee ?? 0) == 0) {
+                $receiptType = 'cme';
+            } else {
+                $receiptType = 'conference';
+            }
+        }
+
+        if ($receiptType === 'cme') {
+            $themeColor = '#0F766E';
+            $themeDark = '#115E59';
+            $themeLight = '#CCFBF1';
+            $themeBorder = '#99F6E4';
+            $watermarkText = 'CME WORKSHOP PAID';
+            $badgeText = 'OFFICIAL RECEIPT: PRE-CONFERENCE WORKSHOP ONLY';
+            $receiptTitle = $receiptTitle ?? 'IPHACON 2027 PRE-CONFERENCE WORKSHOP (CME) RECEIPT';
+            $stampTitle = 'IPHACON 2027 CME VERIFIED';
+        } elseif ($receiptType === 'consolidated') {
+            $themeColor = '#1E3A8A';
+            $themeDark = '#1E40AF';
+            $themeLight = '#EEF2FF';
+            $themeBorder = '#C7D2FE';
+            $watermarkText = 'CONSOLIDATED PAID';
+            $badgeText = 'OFFICIAL RECEIPT: MAIN CONFERENCE + PRE-CONFERENCE WORKSHOP';
+            $receiptTitle = $receiptTitle ?? 'IPHACON 2027 CONSOLIDATED CONFERENCE & WORKSHOP RECEIPT';
+            $stampTitle = 'IPHACON 2027 VERIFIED';
+        } else {
+            $themeColor = '#0288D1';
+            $themeDark = '#01579B';
+            $themeLight = '#E0F2FE';
+            $themeBorder = '#BAE6FD';
+            $watermarkText = 'CONFERENCE PAID';
+            $badgeText = 'OFFICIAL RECEIPT: MAIN CONFERENCE REGISTRATION';
+            $receiptTitle = $receiptTitle ?? 'IPHACON 2027 MAIN CONFERENCE REGISTRATION RECEIPT';
+            $stampTitle = 'IPHACON 2027 VERIFIED';
+        }
+
+        $abstractSub = $registration->abstractSubmission 
+            ?? ($registration->user?->abstractSubmission ?? $registration->user?->abstractSubmissions?->first());
+        $dispDesignation = $registration->designation === 'Other'
+            ? ($registration->other_designation ?: 'Other')
+            : ($registration->designation ?? ($registration->user?->designation ?? 'N/A'));
+        $dispInstitute = $registration->institution 
+            ?? ($registration->user?->institution 
+                ?? ($abstractSub?->presenting_author_institution 
+                    ?? ($registration->user?->abstractSubmissions?->first()?->presenting_author_institution ?? 'N/A')));
+
+        $dispTxnId = $pay?->transaction_id ?? ($pay?->gateway_transaction_id ?? 'N/A');
+        $dispPayMode = 'N/A';
+        if (!empty($pay?->payment_method)) {
+            $dispPayMode = match ($pay->payment_method) {
+                'SBI_ePay' => 'Online (SBI ePay)',
+                'QR_Code' => 'UPI / QR Code',
+                default => str_replace('_', ' ', $pay->payment_method),
+            };
+        } elseif (!empty($pay?->gateway_transaction_id)) {
+            $dispPayMode = 'Online (SBI ePay)';
+        } elseif (!empty($pay?->payment_receipt_path)) {
+            $dispPayMode = 'UPI / QR Code';
+        } elseif ($registration->status === 'Approved') {
+            $dispPayMode = 'Online / Verified';
+        }
+
+        $preConfTopic = $registration->pre_conference_topic 
+            ?: ($registration->cmeApplication?->pre_conference_topic ?? 'General CME Workshop');
+
+        // Financial fee calculations based on receiptType
+        if ($receiptType === 'cme') {
+            $delFee = 0.00;
+            $accFee = 0.00;
+            $cmeFee = (float)($pay && (float)($pay->cme_fee ?? 0) > 0 
+                ? $pay->cme_fee 
+                : ($registration->cmeApplication?->fee_amount ?: 2000.00));
+            $gstAmt = (float)($pay && (float)($pay->gst_amount ?? 0) > 0 
+                ? $pay->gst_amount 
+                : ($registration->cmeApplication?->gst_amount ?: round($cmeFee * 0.18, 2)));
+            $totalAmt = (float)($pay && (float)($pay->total_amount ?? 0) > 0 
+                ? $pay->total_amount 
+                : ($registration->cmeApplication?->total_amount ?: round($cmeFee + $gstAmt, 2)));
+        } elseif ($receiptType === 'consolidated') {
+            if ($registration->delegate_type === 'International') {
+                $delFee = (float)($pay ? ($pay->delegate_category_fee ?? 0) : ($registration->delegate_fee ?: 45000));
+                $cmeFee = (float)($pay ? ($pay->cme_fee ?? 0) : ($registration->cme_fee ?: 2000));
+                $accFee = (float)($pay ? ($pay->accompanying_persons_fee ?? 0) : ($registration->accompanying_fee ?: 0));
+                $gstAmt = (float)($pay ? ($pay->gst_amount ?? 0) : round(($delFee + $cmeFee + $accFee) * 0.18, 2));
+                $totalAmt = (float)($pay ? ($pay->total_amount ?? 0) : round($delFee + $cmeFee + $accFee + $gstAmt, 2));
+            } else {
+                $delFee = (float)($pay ? ($pay->delegate_category_fee ?? 0) : ($registration->delegate_fee ?: ($registration->delegateCategory?->indian_fee ?? 0)));
+                $cmeFee = (float)($pay ? ($pay->cme_fee ?? 0) : ($registration->cme_fee ?: 2000));
+                $accFee = (float)($pay ? ($pay->accompanying_persons_fee ?? 0) : ($registration->accompanying_fee ?: 0));
+                $gstAmt = (float)($pay ? ($pay->gst_amount ?? 0) : round(($delFee + $cmeFee + $accFee) * 0.18, 2));
+                $totalAmt = (float)($pay ? ($pay->total_amount ?? 0) : round($delFee + $cmeFee + $accFee + $gstAmt, 2));
+            }
+        } else {
+            $cmeFee = 0.00;
+            if ($registration->delegate_type === 'International') {
+                $delFee = (float)($pay ? ($pay->delegate_category_fee ?? 0) : ($registration->delegate_fee ?: 45000));
+                $accFee = (float)($pay ? ($pay->accompanying_persons_fee ?? 0) : ($registration->accompanying_fee ?: 0));
+                $gstAmt = (float)($pay ? ($pay->gst_amount ?? 0) : round(($delFee + $accFee) * 0.18, 2));
+                $totalAmt = (float)($pay ? ($pay->total_amount ?? 0) : round($delFee + $accFee + $gstAmt, 2));
+            } else {
+                $delFee = (float)($pay ? ($pay->delegate_category_fee ?? 0) : ($registration->delegate_fee ?: ($registration->delegateCategory?->indian_fee ?? 0)));
+                $accFee = (float)($pay ? ($pay->accompanying_persons_fee ?? 0) : ($registration->accompanying_fee ?: 0));
+                $gstAmt = (float)($pay ? ($pay->gst_amount ?? 0) : round(($delFee + $accFee) * 0.18, 2));
+                $totalAmt = (float)($pay ? ($pay->total_amount ?? 0) : round($delFee + $accFee + $gstAmt, 2));
+            }
+        }
+
+        $dispTotalAmount = '₹' . number_format($totalAmt, 2);
+        $regDate = $registration->submitted_at
+            ? \Carbon\Carbon::parse($registration->submitted_at)->format('d M Y')
+            : ($registration->created_at ? \Carbon\Carbon::parse($registration->created_at)->format('d M Y') : 'N/A');
+        $gender = $registration->user?->gender ?? 'N/A';
+        $dietPref = $registration->dietary_preference ?? 'N/A';
+        $abstractStatusText = $abstractSub
+            ? 'Yes' . ($abstractSub->acknowledgement_id ? ' (' . $abstractSub->acknowledgement_id . ')' : '')
+            : 'No';
+    @endphp
+
+    <div class="pdf-box" style="border: 2px solid {{ $themeColor }};">
 
         {{-- Watermark --}}
-        @php
-            $payForWatermark = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
-        @endphp
-        @if (($payForWatermark->payment_status ?? '') === 'Success' || ($payForWatermark->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
-            <div class="watermark">PAID RECEIPT</div>
+        @if (($pay->payment_status ?? '') === 'Success' || ($pay->payment_status ?? '') === 'PAID' || $registration->status === 'Approved')
+            <div class="watermark" style="color: {{ $themeColor }};">{{ $watermarkText }}</div>
         @endif
 
         {{-- Top Header Wrap --}}
-        <div class="header-wrap">
+        <div class="header-wrap" style="border-bottom: 2px solid {{ $themeColor }};">
             <table class="logo-table">
                 <tr>
                     {{-- Left Logo (IPHACON Main Logo) --}}
@@ -294,7 +418,7 @@
             {{-- Organization Meta --}}
             <div class="brand-block">
                 <div class="brand-title">71<sup>st</sup> Annual National Conference of IPHA</div>
-                <div class="brand-subtitle">IPHACON 2027 | RIMS, RANCHI, JHARKHAND</div>
+                <div class="brand-subtitle" style="color: {{ $themeColor }};">IPHACON 2027 | RIMS, RANCHI, JHARKHAND</div>
                 <div class="brand-meta">
                     <strong>Dates:</strong> 12<sup>th</sup> - 14<sup>th</sup> March 2027 &nbsp;|&nbsp;
                     <strong>Venue:</strong> Rajendra Institute of Medical Sciences (RIMS), Ranchi &nbsp;|&nbsp;
@@ -303,96 +427,24 @@
             </div>
         </div>
 
-        {{-- Document Title Badge - Fixed for Dompdf --}}
+        {{-- Document Title Badge --}}
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
             <tr>
-                <td
-                    style="background-color: #0288D1; color: #FFFFFF; font-weight: bold; font-size: 11.5px; padding: 6px 8px; text-align: center; text-transform: uppercase;">
-                    {{ $receiptTitle ?? 'IPHACON 2027 Registration Acknowledgement Receipt' }}
+                <td style="background-color: {{ $themeColor }}; color: #FFFFFF; font-weight: bold; font-size: 11.5px; padding: 7px 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <div>{{ $receiptTitle }}</div>
+                    <div style="font-size: 8px; font-weight: bold; color: #FFFFFF; background-color: {{ $themeDark }}; padding: 2px 7px; border-radius: 3px; display: inline-block; margin-top: 3px; letter-spacing: 0.6px;">
+                        [{{ $badgeText }}]
+                    </div>
                 </td>
             </tr>
         </table>
-
-        @php
-            $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
-            $abstractSub =
-                $registration->abstractSubmission ??
-                ($registration->user?->abstractSubmission ?? $registration->user?->abstractSubmissions?->first());
-            $dispDesignation =
-                $registration->designation === 'Other'
-                    ? ($registration->other_designation ?:
-                    'Other')
-                    : $registration->designation ?? ($registration->user?->designation ?? 'N/A');
-            $dispInstitute =
-                $registration->institution ??
-                ($registration->user?->institution ??
-                    ($abstractSub?->presenting_author_institution ??
-                        ($registration->user?->abstractSubmissions?->first()?->presenting_author_institution ??
-                            'N/A')));
-            $dispTxnId = $pay?->transaction_id ?? ($pay?->gateway_transaction_id ?? 'N/A');
-            $dispPayMode = 'N/A';
-            if (!empty($pay?->payment_method)) {
-                $dispPayMode = match ($pay->payment_method) {
-                    'SBI_ePay' => 'Online (SBI ePay)',
-                    'QR_Code' => 'UPI / QR Code',
-                    default => str_replace('_', ' ', $pay->payment_method),
-                };
-            } elseif (!empty($pay?->gateway_transaction_id)) {
-                $dispPayMode = 'Online (SBI ePay)';
-            } elseif (!empty($pay?->payment_receipt_path)) {
-                $dispPayMode = 'UPI / QR Code';
-            } elseif ($registration->status === 'Approved') {
-                $dispPayMode = 'Online / Verified';
-            }
-
-            if ($registration->delegate_type === 'International') {
-                $delFee = $pay
-                    ? (float) ($pay->delegate_category_fee ?? 0)
-                    : (float) ($registration->delegate_fee ?: 45000);
-                $totalAmt = $pay
-                    ? (float) ($pay->total_amount ?? 0)
-                    : (float) ($registration->total_amount ?: 45000);
-            } else {
-                if ($pay && (float) ($pay->total_amount ?? 0) > 0) {
-                    $delFee = (float) ($pay->delegate_category_fee ?? 0);
-                    $cmeFee = (float) ($pay->cme_fee ?? 0);
-                    $accFee = (float) ($pay->accompanying_persons_fee ?? 0);
-                    $gstAmt = (float) ($pay->gst_amount ?? 0);
-                    $totalAmt = (float) ($pay->total_amount ?? 0);
-                } else {
-                    $delFee =
-                        (float) ($registration->delegate_fee ??
-                            ($registration->delegateCategory->indian_fee ?? 0));
-                    $cmeFee = (float) ($registration->cme_fee ?? 0);
-                    $accFee = (float) ($registration->accompanying_fee ?? 0);
-                    $gstAmt =
-                        (float) ($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
-                    $totalAmt =
-                        (float) ($registration->total_amount ??
-                            round($delFee + $cmeFee + $accFee + $gstAmt, 2));
-                }
-            }
-            $dispTotalAmount = '₹' . number_format($totalAmt, 2);
-
-            $regDate = $registration->submitted_at
-                ? \Carbon\Carbon::parse($registration->submitted_at)->format('d M Y')
-                : ($registration->created_at
-                    ? \Carbon\Carbon::parse($registration->created_at)->format('d M Y')
-                    : 'N/A');
-            $gender = $registration->user?->gender ?? 'N/A';
-            $dietPref = $registration->dietary_preference ?? 'N/A';
-            $preConfWorkshop = $registration->participate_in_cme ? 'Yes' : 'No';
-            $abstractStatusText = $abstractSub
-                ? 'Yes' . ($abstractSub->acknowledgement_id ? ' (' . $abstractSub->acknowledgement_id . ')' : '')
-                : 'No';
-        @endphp
 
         {{-- Info Grid Table --}}
         <table class="info-table">
             <tr>
                 <td style="width: 25%;">
                     <div class="info-label">IPHACON Regn. No.</div>
-                    <div class="info-value" style="color: #0288D1; font-family: monospace; font-size: 10.5px;">
+                    <div class="info-value" style="color: {{ $themeColor }}; font-family: monospace; font-size: 10.5px;">
                         {{ $registration->registration_number ?? ($registration->status === 'Approved' ? 'N/A' : 'Pending Approval') }}
                     </div>
                 </td>
@@ -403,7 +455,9 @@
                     </div>
                 </td>
                 <td style="width: 25%;">
-                    <div class="info-label">Date of Registration</div>
+                    <div class="info-label">
+                        {{ $receiptType === 'cme' ? 'Date of Payment' : 'Date of Registration' }}
+                    </div>
                     <div class="info-value">{{ $regDate }}</div>
                 </td>
                 <td style="width: 25%;">
@@ -467,7 +521,7 @@
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Mode of Payment</div>
-                    <div class="info-value" style="color: #0288D1;">{{ $dispPayMode }}</div>
+                    <div class="info-value" style="color: {{ $themeColor }};">{{ $dispPayMode }}</div>
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Transaction ID</div>
@@ -480,14 +534,30 @@
             </tr>
             <tr>
                 <td colspan="3" style="width: 75%;">
-                    <div class="info-label">Pre-Conference Workshop</div>
-                    <div class="info-value">
-                        @php $preConfTopic = $registration->pre_conference_topic ?: $registration->cmeApplication?->pre_conference_topic; @endphp
-                        {{ $preConfWorkshop }}
-                        @if($registration->participate_in_cme && $preConfTopic)
-                            &nbsp;&mdash;&nbsp; <span style="font-weight: normal; color: #475569;">{{ $preConfTopic }}</span>
-                        @endif
-                    </div>
+                    @if($receiptType === 'cme')
+                        <div class="info-label" style="color: {{ $themeColor }}; font-weight: bold;">Enrolled Workshop Topic</div>
+                        <div class="info-value" style="color: {{ $themeColor }}; font-size: 10px;">
+                            {{ $preConfTopic }}
+                        </div>
+                        <div style="font-size: 7.5px; color: #64748B; margin-top: 2px;">
+                            Conference Regn No: <strong style="font-family: monospace;">{{ $registration->registration_number ?? ($registration->acknowledgement_id ?? 'N/A') }}</strong> (Conference registration billed separately)
+                        </div>
+                    @elseif($receiptType === 'consolidated')
+                        <div class="info-label">Pre-Conference Workshop (Bundled)</div>
+                        <div class="info-value">
+                            Yes &nbsp;&mdash;&nbsp; <span style="font-weight: normal; color: #475569;">{{ $preConfTopic }}</span>
+                        </div>
+                    @else
+                        <div class="info-label">Pre-Conference Workshop</div>
+                        <div class="info-value">
+                            @if($registration->participate_in_cme || $registration->cmeApplication)
+                                Yes &nbsp;&mdash;&nbsp; <span style="font-weight: normal; color: #475569;">{{ $preConfTopic }}</span>
+                                <span style="font-size: 7.5px; color: #64748B; display: block; margin-top: 1px;">(Separate enrollment &mdash; billed under CME Workshop Receipt)</span>
+                            @else
+                                No
+                            @endif
+                        </div>
+                    @endif
                 </td>
                 <td style="width: 25%;">
                     <div class="info-label">Abstract Submission</div>
@@ -500,72 +570,60 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 55%; text-align: left;">Fee Description</th>
-                    <th style="width: 25%; text-align: right;">Amount</th>
-                    <th style="width: 20%; text-align: center;">Currency</th>
+                    <th style="width: 55%; text-align: left; background-color: {{ $themeColor }};">
+                        @if($receiptType === 'cme')
+                            Pre-Conference Workshop Fee Breakdown
+                        @elseif($receiptType === 'consolidated')
+                            Consolidated Conference &amp; Workshop Fee Breakdown
+                        @else
+                            Main Conference Registration Fee Breakdown
+                        @endif
+                    </th>
+                    <th style="width: 25%; text-align: right; background-color: {{ $themeColor }};">Amount</th>
+                    <th style="width: 20%; text-align: center; background-color: {{ $themeColor }};">Currency</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($registration->delegate_type === 'International')
-                    @php
-                        $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
-                        $delFee = $pay
-                            ? (float) ($pay->delegate_category_fee ?? 0)
-                            : (float) ($registration->delegate_fee ?: 45000);
-                        $totalAmt = $pay
-                            ? (float) ($pay->total_amount ?? 0)
-                            : (float) ($registration->total_amount ?: 45000);
-                    @endphp
+                @if ($receiptType === 'cme')
                     <tr>
-                        <td>Delegate Category Registration Fee</td>
-                        <td style="text-align: right;">₹{{ number_format($delFee, 2) }}</td>
+                        <td>
+                            <strong>Pre-Conference Workshop Participation Fee (Excl. GST)</strong>
+                            <div style="font-size: 8px; color: #64748B; margin-top: 2px;">
+                                Enrolled Workshop: {{ $preConfTopic }}
+                            </div>
+                        </td>
+                        <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>
-                    <tr class="total-row">
-                        <td><strong>TOTAL AMOUNT PAID</strong></td>
-                        <td style="text-align: right;"><strong>₹{{ number_format($totalAmt, 2) }}</strong></td>
+                    <tr>
+                        <td>GST Amount (18%)</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($gstAmt, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    <tr class="total-row" style="background-color: {{ $themeLight }} !important; color: {{ $themeDark }}; border-top: 2px solid {{ $themeColor }} !important;">
+                        <td><strong>TOTAL WORKSHOP FEE PAID (INCL. GST)</strong></td>
+                        <td style="text-align: right;"><strong>&#8377;{{ number_format($totalAmt, 2) }}</strong></td>
                         <td style="text-align: center;"><strong>INR</strong></td>
                     </tr>
-                @else
-                    @php
-                        $pay = $payment ?? ($registration->conferencePayment ?? $registration->latestPayment);
-                        if ($pay) {
-                            $delFee = (float) ($pay->delegate_category_fee ?? 0);
-                            $cmeFee = (float) ($pay->cme_fee ?? 0);
-                            $accFee = (float) ($pay->accompanying_persons_fee ?? 0);
-                            $gstAmt = (float) ($pay->gst_amount ?? 0);
-                            $totalAmt = (float) ($pay->total_amount ?? 0);
-                        } else {
-                            $delFee =
-                                (float) ($registration->delegate_fee ??
-                                    ($registration->delegateCategory->indian_fee ?? 0));
-                            $cmeFee = (float) ($registration->cme_fee ?? 0);
-                            $accFee = (float) ($registration->accompanying_fee ?? 0);
-                            $gstAmt =
-                                (float) ($registration->gst_amount ?? round(($delFee + $cmeFee + $accFee) * 0.18, 2));
-                            $totalAmt =
-                                (float) ($registration->total_amount ??
-                                    round($delFee + $cmeFee + $accFee + $gstAmt, 2));
-                        }
-                    @endphp
-                    @if ($delFee > 0)
-                        <tr>
-                            <td>Delegate Registration Fee (Excl. GST)</td>
-                            <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
-                            <td style="text-align: center;">INR</td>
-                        </tr>
-                    @endif
-                    @if ($cmeFee > 0)
-                        <tr>
-                            <td>Pre-Conference Workshop Participation Fee</td>
-                            <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
-                            <td style="text-align: center;">INR</td>
-                        </tr>
-                    @endif
+                @elseif ($receiptType === 'consolidated')
+                    <tr>
+                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Pre-Conference Workshop Participation Fee (Excl. GST)
+                            <div style="font-size: 8px; color: #64748B; margin-top: 2px;">
+                                Topic: {{ $preConfTopic }}
+                            </div>
+                        </td>
+                        <td style="text-align: right;">&#8377;{{ number_format($cmeFee, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
                     @if ($accFee > 0)
                         <tr>
-                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))
-                            </td>
+                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))</td>
                             <td style="text-align: right;">&#8377;{{ number_format($accFee, 2) }}</td>
                             <td style="text-align: center;">INR</td>
                         </tr>
@@ -575,8 +633,31 @@
                         <td style="text-align: right;">&#8377;{{ number_format($gstAmt, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>
-                    <tr class="total-row">
-                        <td><strong>TOTAL AMOUNT PAID (INCL. GST)</strong></td>
+                    <tr class="total-row" style="background-color: {{ $themeLight }} !important; color: {{ $themeDark }}; border-top: 2px solid {{ $themeColor }} !important;">
+                        <td><strong>TOTAL BUNDLED AMOUNT PAID (INCL. GST)</strong></td>
+                        <td style="text-align: right;"><strong>&#8377;{{ number_format($totalAmt, 2) }}</strong></td>
+                        <td style="text-align: center;"><strong>INR</strong></td>
+                    </tr>
+                @else
+                    <tr>
+                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    @if ($accFee > 0)
+                        <tr>
+                            <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))</td>
+                            <td style="text-align: right;">&#8377;{{ number_format($accFee, 2) }}</td>
+                            <td style="text-align: center;">INR</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td>GST Amount (18%)</td>
+                        <td style="text-align: right;">&#8377;{{ number_format($gstAmt, 2) }}</td>
+                        <td style="text-align: center;">INR</td>
+                    </tr>
+                    <tr class="total-row" style="background-color: {{ $themeLight }} !important; color: {{ $themeDark }}; border-top: 2px solid {{ $themeColor }} !important;">
+                        <td><strong>TOTAL REGISTRATION AMOUNT PAID (INCL. GST)</strong></td>
                         <td style="text-align: right;"><strong>&#8377;{{ number_format($totalAmt, 2) }}</strong></td>
                         <td style="text-align: center;"><strong>INR</strong></td>
                     </tr>
@@ -584,8 +665,18 @@
             </tbody>
         </table>
 
+        @if($receiptType === 'conference' && ($registration->participate_in_cme || $registration->cmeApplication))
+            <div style="margin-top: -4px; margin-bottom: 8px; font-size: 8px; color: #64748B; font-style: italic;">
+                * Note: Delegate has also enrolled in Pre-Conference Workshop ({{ $preConfTopic }}). Workshop fee is billed under an independent Pre-Conference Workshop Receipt.
+            </div>
+        @elseif($receiptType === 'cme')
+            <div style="margin-top: -4px; margin-bottom: 8px; font-size: 8px; color: #64748B; font-style: italic;">
+                * Note: This receipt acknowledges payment solely for Pre-Conference Workshop participation. Main Conference registration is covered by a separate Conference Registration Receipt.
+            </div>
+        @endif
+
         {{-- Footer Section --}}
-        <div class="footer-wrap">
+        <div class="footer-wrap" style="border-top: 1px solid #CBD5E1;">
             <table class="footer-table">
                 <tr>
                     <td class="footer-left">
@@ -596,10 +687,9 @@
                             Computer-generated official receipt. No physical signature required.</span>
                     </td>
                     <td class="footer-right">
-                        <div class="stamp-box">
-                            <div class="stamp-title">IPHACON 2027 VERIFIED</div>
-                            <div style="font-size: 8.5px; color: #16A34A; font-weight: bold; margin-top: 2px;">OFFICIAL
-                                RECEIPT</div>
+                        <div class="stamp-box" style="border: 1px dashed {{ $themeColor }}; background-color: {{ $themeLight }};">
+                            <div class="stamp-title" style="color: {{ $themeDark }};">{{ $stampTitle }}</div>
+                            <div style="font-size: 8.5px; color: #16A34A; font-weight: bold; margin-top: 2px;">OFFICIAL RECEIPT</div>
                         </div>
                     </td>
                 </tr>

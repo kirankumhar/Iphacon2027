@@ -156,6 +156,10 @@
                                     <div class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
                                         <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification Pending
                                     </div>
+                                @elseif($isCmeApproved)
+                                    <div class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
+                                        <i class="fas fa-check-circle me-1"></i>Pre-Conference Workshop Enrolled
+                                    </div>
                                 @endif
                             @endif
                             <a href="{{ route('registration.index') }}" class="btn text-white btn-sm btn-capsule w-100 py-2 shadow-xs" style="background: linear-gradient(135deg, #0288D1, #00897B); border: none;">

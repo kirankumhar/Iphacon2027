@@ -246,18 +246,22 @@
                             <tr class="border-bottom border-light">
                                 <th class="text-muted fw-semibold py-3 px-3.5">Pre-Conference Workshop</th>
                                 <td class="py-3 px-3.5">
-                                    @if($delegate->participate_in_cme)
-                                        <span class="badge bg-success px-3 py-1 rounded-pill"><i class="bx bx-check me-1"></i> Participating</span>
-                                        @php
-                                            $adminTopic = $delegate->pre_conference_topic ?: $delegate->cmeApplication?->pre_conference_topic;
-                                        @endphp
-                                        @if($adminTopic)
-                                            <div class="mt-2 p-2 rounded-2 bg-light border small text-dark fw-semibold" style="font-size: 0.82rem;">
-                                                <i class="bx bx-book-open text-primary me-1"></i><strong>Workshop Topic:</strong> {{ $adminTopic }}
-                                            </div>
-                                        @endif
+                                    @if($delegate->isCmeApproved())
+                                        <span class="badge bg-success px-3 py-1 rounded-pill"><i class="bx bx-check me-1"></i> Participating (Approved)</span>
+                                    @elseif($delegate->isCmePendingVerification())
+                                        <span class="badge bg-warning text-dark px-3 py-1 rounded-pill"><i class="bx bx-time-five me-1"></i> Verification Pending</span>
+                                    @elseif($delegate->participate_in_cme || $delegate->cmeApplication)
+                                        <span class="badge bg-info text-dark px-3 py-1 rounded-pill"><i class="bx bx-credit-card me-1"></i> Payment Pending</span>
                                     @else
                                         <span class="badge bg-light text-muted border px-2.5 py-1">No</span>
+                                    @endif
+                                    @php
+                                        $adminTopic = $delegate->cme_topic;
+                                    @endphp
+                                    @if($adminTopic && ($delegate->participate_in_cme || $delegate->cmeApplication))
+                                        <div class="mt-2 p-2 rounded-2 bg-light border small text-dark fw-semibold" style="font-size: 0.82rem;">
+                                            <i class="bx bx-book-open text-primary me-1"></i><strong>Workshop Topic:</strong> {{ $adminTopic }}
+                                        </div>
                                     @endif
                                 </td>
                             </tr>
@@ -470,20 +474,23 @@
                                 $isCmeApproved = $delegate->isCmeApproved();
                                 $isCmePendingVerification = $delegate->isCmePendingVerification();
                                 $isCmePendingPayment = $delegate->isCmePendingPayment();
-                                $isCmeRejected = ($cmeApp?->status === 'Rejected') || ($cmePay?->payment_status === 'Failed');
+                                $isCmeRejected = ($cmeApp?->status === 'Rejected');
 
                                 if ($isCmeApproved) {
                                     $cmeBadgeClass = 'bg-success-subtle text-success border border-success';
                                     $cmeStatusText = 'PAID / APPROVED';
-                                } elseif ($isCmeRejected) {
-                                    $cmeBadgeClass = 'bg-danger-subtle text-danger border border-danger';
-                                    $cmeStatusText = 'REJECTED';
                                 } elseif ($isCmePendingVerification) {
                                     $cmeBadgeClass = 'bg-warning-subtle text-warning border border-warning';
                                     $cmeStatusText = 'UNDER VERIFICATION';
-                                } else {
+                                } elseif ($isCmePendingPayment) {
                                     $cmeBadgeClass = 'bg-info-subtle text-info border border-info';
                                     $cmeStatusText = 'PAYMENT PENDING';
+                                } elseif ($isCmeRejected) {
+                                    $cmeBadgeClass = 'bg-danger-subtle text-danger border border-danger';
+                                    $cmeStatusText = 'REJECTED';
+                                } else {
+                                    $cmeBadgeClass = 'bg-warning-subtle text-warning border border-warning';
+                                    $cmeStatusText = 'UNDER VERIFICATION';
                                 }
                             @endphp
                             <span class="badge {{ $cmeBadgeClass }} extra-small px-2 py-0.5 rounded-pill fw-bold" style="font-size: 0.7rem;">

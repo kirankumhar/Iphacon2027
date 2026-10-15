@@ -368,7 +368,7 @@
                                     <h6 class="fw-bold text-dark mb-2 small">Main Registration Payment Details</h6>
                                     @foreach($registration->payments as $payment)
                                         {{-- Skip CME payments in main registration list --}}
-                                        @if(($registration->cmeApplication && $registration->cmeApplication->transaction_id && $payment->transaction_id === $registration->cmeApplication->transaction_id) || (isset($payment->payment_type) && strtolower($payment->payment_type) === 'cme'))
+                                        @if(($registration->cmeApplication && $registration->cmeApplication->transaction_id && $payment->transaction_id === $registration->cmeApplication->transaction_id) || (isset($payment->payment_type) && strtolower($payment->payment_type) === 'cme') || ($payment->cme_fee > 0 && ($payment->delegate_category_fee == 0 || empty($payment->delegate_category_fee))))
                                             @continue
                                         @endif
                                         <div class="p-3 bg-light rounded-3 mb-2 small" style="border: 1px solid #E2E8F0;">
@@ -378,9 +378,17 @@
                                             </div>
                                             <div class="d-flex justify-content-between mb-1">
                                                 <span class="text-muted">Payment Status:</span>
-                                                @if ($payment->payment_status === 'Approved' || $payment->payment_status === 'PAID' || $payment->payment_status === 'Success' || $registration->status === 'Approved')
+                                                @php
+                                                    $isPaidStatus = in_array(strtoupper($payment->payment_status), ['APPROVED', 'PAID', 'SUCCESS', 'COMPLETED', '0300', 'OTS0000']) || $payment->admin_verified;
+                                                    $isFailedStatus = in_array(strtoupper($payment->payment_status), ['FAILED', 'CANCELLED']);
+                                                @endphp
+                                                @if ($isPaidStatus)
                                                     <span class="badge bg-success-subtle text-success border border-success px-2.5 py-1 rounded-pill fw-bold">
                                                         <i class="fas fa-check-circle me-1"></i>PAID
+                                                    </span>
+                                                @elseif ($isFailedStatus)
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1 rounded-pill fw-bold">
+                                                        <i class="fas fa-times-circle me-1"></i>Failed
                                                     </span>
                                                 @else
                                                     <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1 rounded-pill fw-bold">
@@ -420,17 +428,20 @@
                                             $isCmeApproved = $registration->isCmeApproved();
                                             $isCmePendingVerification = $registration->isCmePendingVerification();
                                             $isCmePendingPayment = $registration->isCmePendingPayment();
-                                            $isCmeRejected = ($cmeApp?->status === 'Rejected') || ($cmePay?->payment_status === 'Failed');
+                                            $isCmeRejected = ($cmeApp?->status === 'Rejected');
 
                                             if ($isCmeApproved) {
                                                 $cmeBadgeClass = 'bg-success-subtle text-success border-success';
                                                 $cmeStatusText = 'PAID';
-                                            } elseif ($isCmeRejected) {
-                                                $cmeBadgeClass = 'bg-danger-subtle text-danger border-danger';
-                                                $cmeStatusText = 'Rejected';
+                                            } elseif ($isCmePendingVerification) {
+                                                $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
+                                                $cmeStatusText = 'Under Verification';
                                             } elseif ($isCmePendingPayment) {
                                                 $cmeBadgeClass = 'bg-info-subtle text-info border-info';
                                                 $cmeStatusText = 'Payment Pending';
+                                            } elseif ($isCmeRejected) {
+                                                $cmeBadgeClass = 'bg-danger-subtle text-danger border-danger';
+                                                $cmeStatusText = 'Rejected';
                                             } else {
                                                 $cmeBadgeClass = 'bg-warning-subtle text-warning border-warning';
                                                 $cmeStatusText = 'Under Verification';

@@ -441,24 +441,8 @@ class AdminRegistrationController extends Controller
                     'admin_verified' => true
                 ]);
 
-            // Only approve CME application if proof was already submitted or previously approved
-            // (Do NOT approve unpaid "Pending Payment" CME applications)
-            if ($registration->cmeApplication && in_array($registration->cmeApplication->status, ['Payment Submitted', 'Approved'])) {
-                $registration->cmeApplication->update([
-                    'status' => 'Approved',
-                    'approved_at' => now(),
-                ]);
-
-                // Sync standalone CME payment record to PAID
-                $registration->cmePayment()?->update([
-                    'payment_status' => 'PAID',
-                    'admin_verified' => true
-                ]);
-
-                if (!empty($registration->cmeApplication->pre_conference_topic)) {
-                    $registration->pre_conference_topic = $registration->cmeApplication->pre_conference_topic;
-                }
-                $registration->participate_in_cme = true;
+            // If delegate selected CME in initial registration wizard (bundled payment without separate cmeApplication)
+            if ($registration->participate_in_cme && !$registration->cmeApplication) {
                 $registration->save();
             }
 
@@ -662,21 +646,37 @@ class AdminRegistrationController extends Controller
             if (!$delegate->isCmeApproved()) {
                 return redirect()->back()->with('error', 'Pre-Conference Workshop receipt can only be downloaded after the workshop payment is approved.');
             }
-            $payment = $delegate->cmePayment ?? $delegate->latestPayment;
-            $receiptTitle = 'IPHACON 2027 Pre-Conference Workshop Receipt';
-            $filename = "Workshop_Receipt_{$id}.pdf";
+            $payment = $delegate->cmePayment 
+                ?: $delegate->payments()->where('cme_fee', '>', 0)->latest('id')->first()
+                ?: $delegate->latestPayment;
+
+            $receiptType = 'cme';
+            $receiptTitle = 'IPHACON 2027 PRE-CONFERENCE WORKSHOP (CME) RECEIPT';
+            $filename = "CME_Workshop_Receipt_{$id}.pdf";
         } else {
             if ($delegate->status !== 'Approved') {
                 return redirect()->back()->with('error', 'Receipt PDF can only be downloaded after registration has been Approved.');
             }
-            $payment = $delegate->conferencePayment ?? $delegate->latestPayment;
-            $receiptTitle = 'IPHACON 2027 Registration Acknowledgement Receipt';
-            $filename = "Receipt-{$id}.pdf";
+            $payment = $delegate->conferencePayment ?: $delegate->latestPayment;
+
+            // Check if single payment bundled CME together
+            $isBundled = $payment && (float)($payment->cme_fee ?? 0) > 0 && (float)($payment->delegate_category_fee ?? 0) > 0;
+
+            if ($isBundled) {
+                $receiptType = 'consolidated';
+                $receiptTitle = 'IPHACON 2027 CONSOLIDATED CONFERENCE & WORKSHOP RECEIPT';
+                $filename = "Consolidated_Receipt_{$id}.pdf";
+            } else {
+                $receiptType = 'conference';
+                $receiptTitle = 'IPHACON 2027 MAIN CONFERENCE REGISTRATION RECEIPT';
+                $filename = "Conference_Registration_Receipt_{$id}.pdf";
+            }
         }
 
         $pdf = PDF::loadView('pdfs.registration', [
             'registration'      => $delegate,
             'payment'           => $payment,
+            'receiptType'       => $receiptType,
             'receiptTitle'      => $receiptTitle,
             'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
         ])->setPaper('a4', 'portrait')
