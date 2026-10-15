@@ -330,15 +330,17 @@ class Registration extends Model
                 return true;
             }
             $cmePay = $this->cmePayment;
-            if ($cmePay && (in_array(strtoupper($cmePay->payment_status), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']) || $cmePay->admin_verified)) {
+            if ($cmePay && (in_array(strtoupper($cmePay->payment_status), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']) || $cmePay->admin_verified)) {
                 return true;
             }
             return false;
         }
 
-        // For delegates who selected CME in initial registration wizard
+        // For delegates who selected CME in initial registration wizard (bundled)
         if ($this->participate_in_cme) {
-            return strtolower($this->status) === 'approved';
+            $confPay = $this->conferencePayment ?: $this->latestPayment;
+            $isPaid = $confPay && (in_array(strtoupper($confPay->payment_status), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']) || $confPay->admin_verified);
+            return (strtolower($this->status) === 'approved') && $isPaid;
         }
 
         return false;
@@ -349,13 +351,30 @@ class Registration extends Model
      */
     public function isCmePendingVerification(): bool
     {
+        if ($this->isCmeApproved()) {
+            return false;
+        }
+
         if ($this->cmeApplication) {
-            return $this->cmeApplication->status === 'Payment Submitted';
+            if ($this->cmeApplication->status === 'Payment Submitted') {
+                return true;
+            }
         }
 
         $cmePay = $this->cmePayment;
-        if ($cmePay && in_array($cmePay->payment_status, ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION']) && !empty($cmePay->payment_receipt_path)) {
+        if ($cmePay && in_array(strtoupper($cmePay->payment_status), ['PENDING', 'PAYMENT SUBMITTED', 'SUBMITTED', 'UNDER_VERIFICATION']) && !empty($cmePay->payment_receipt_path)) {
             return true;
+        }
+
+        // For delegates who selected CME in initial registration wizard (bundled)
+        if ($this->participate_in_cme && !$this->cmeApplication) {
+            if (in_array($this->status, ['Payment Submitted', 'Submitted'])) {
+                return true;
+            }
+            $confPay = $this->conferencePayment ?: $this->latestPayment;
+            if ($confPay && in_array(strtoupper($confPay->payment_status), ['PENDING', 'PAYMENT SUBMITTED', 'SUBMITTED', 'UNDER_VERIFICATION']) && !empty($confPay->payment_receipt_path)) {
+                return true;
+            }
         }
 
         return false;
@@ -366,8 +385,16 @@ class Registration extends Model
      */
     public function isCmePendingPayment(): bool
     {
+        if ($this->isCmeApproved() || $this->isCmePendingVerification()) {
+            return false;
+        }
+
         if ($this->cmeApplication) {
             return $this->cmeApplication->status === 'Pending Payment';
+        }
+
+        if ($this->participate_in_cme && in_array($this->status, ['Pending Payment', 'Draft'])) {
+            return true;
         }
 
         return false;

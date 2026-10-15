@@ -101,6 +101,10 @@
                                                     <span class="badge bg-warning text-dark border px-2 py-1 me-1 small">
                                                         <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Pending
                                                     </span>
+                                                @elseif($isCmeApproved)
+                                                    <span class="badge bg-success-subtle text-success border border-success px-2 py-1 me-1 small">
+                                                        <i class="fas fa-check-circle me-1"></i>Pre-Conference Workshop Enrolled
+                                                    </span>
                                                 @endif
                                                 @if($registration->status === 'Draft')
                                                     <a href="{{ route('registration.create') }}" class="btn btn-sm btn-primary px-3 py-1 fw-semibold" style="background: #2D69FF; border: none; border-radius: 6px;">

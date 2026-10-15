@@ -794,18 +794,18 @@ class RegistrationController extends Controller
             'pre_conference_topic.in' => 'Please select a valid Pre-Conference Workshop topic from the list.',
         ]);
 
-        // Create or get CME Application in Pending Payment state
+        // Create or update CME Application in Pending Payment state
         $cmeApp = \App\Models\CmeApplication::updateOrCreate(
             [
                 'user_id' => $user->id,
                 'registration_id' => $registration->id,
-                'status' => 'Pending Payment'
             ],
             [
                 'cme_fee' => 2000.00,
                 'gst_amount' => 360.00,
                 'total_amount' => 2360.00,
                 'pre_conference_topic' => $request->pre_conference_topic,
+                'status' => 'Pending Payment'
             ]
         );
 

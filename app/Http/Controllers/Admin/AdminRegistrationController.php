@@ -441,24 +441,8 @@ class AdminRegistrationController extends Controller
                     'admin_verified' => true
                 ]);
 
-            // Only approve CME application if proof was already submitted or previously approved
-            // (Do NOT approve unpaid "Pending Payment" CME applications)
-            if ($registration->cmeApplication && in_array($registration->cmeApplication->status, ['Payment Submitted', 'Approved'])) {
-                $registration->cmeApplication->update([
-                    'status' => 'Approved',
-                    'approved_at' => now(),
-                ]);
-
-                // Sync standalone CME payment record to PAID
-                $registration->cmePayment()?->update([
-                    'payment_status' => 'PAID',
-                    'admin_verified' => true
-                ]);
-
-                if (!empty($registration->cmeApplication->pre_conference_topic)) {
-                    $registration->pre_conference_topic = $registration->cmeApplication->pre_conference_topic;
-                }
-                $registration->participate_in_cme = true;
+            // If delegate selected CME in initial registration wizard (bundled payment without separate cmeApplication)
+            if ($registration->participate_in_cme && !$registration->cmeApplication) {
                 $registration->save();
             }
 
