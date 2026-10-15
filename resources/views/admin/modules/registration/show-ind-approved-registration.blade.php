@@ -275,7 +275,7 @@
                                 ? (float)$payRec->total_amount
                                 : (float)($reg->total_amount ?: $reg->calculateTotalAmount());
                             $method = $payRec?->payment_method;
-                            $hasCme = $reg->participate_in_cme || ($reg->cmePayment && in_array(strtoupper($reg->cmePayment->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']));
+                            $hasCme = $reg->isCmeApproved();
                             $regNum = $reg->registration_number ?? ($reg->acknowledgement_id ?? $reg->id);
                             $approvedDate = $reg->approved_at 
                                 ? \Carbon\Carbon::parse($reg->approved_at)->format('d M, Y') 

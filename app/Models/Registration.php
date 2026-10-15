@@ -319,4 +319,89 @@ class Registration extends Model
         }
         return 'XXXXX' . substr($val, -4);
     }
+
+    /**
+     * Determine if CME / Pre-Conference Workshop is officially approved.
+     */
+    public function isCmeApproved(): bool
+    {
+        if ($this->cmeApplication) {
+            if ($this->cmeApplication->status === 'Approved') {
+                return true;
+            }
+            $cmePay = $this->cmePayment;
+            if ($cmePay && (in_array(strtoupper($cmePay->payment_status), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']) || $cmePay->admin_verified)) {
+                return true;
+            }
+            return false;
+        }
+
+        // For delegates who selected CME in initial registration wizard
+        if ($this->participate_in_cme) {
+            return strtolower($this->status) === 'approved';
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if CME / Pre-Conference Workshop payment proof is submitted and pending admin verification.
+     */
+    public function isCmePendingVerification(): bool
+    {
+        if ($this->cmeApplication) {
+            return $this->cmeApplication->status === 'Payment Submitted';
+        }
+
+        $cmePay = $this->cmePayment;
+        if ($cmePay && in_array($cmePay->payment_status, ['Pending', 'Payment Submitted', 'Submitted', 'UNDER_VERIFICATION']) && !empty($cmePay->payment_receipt_path)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if CME / Pre-Conference Workshop application is created but awaiting payment.
+     */
+    public function isCmePendingPayment(): bool
+    {
+        if ($this->cmeApplication) {
+            return $this->cmeApplication->status === 'Pending Payment';
+        }
+
+        return false;
+    }
+
+    /**
+     * Normalized CME status string.
+     */
+    public function getCmeStatusAttribute(): string
+    {
+        if ($this->isCmeApproved()) {
+            return 'Approved';
+        }
+        if ($this->isCmePendingVerification()) {
+            return 'Payment Submitted';
+        }
+        if ($this->isCmePendingPayment()) {
+            return 'Pending Payment';
+        }
+        if ($this->cmeApplication && $this->cmeApplication->status === 'Rejected') {
+            return 'Rejected';
+        }
+        if ($this->participate_in_cme) {
+            return $this->status ?? 'Pending';
+        }
+        return 'Not Enrolled';
+    }
+
+    /**
+     * CME / Pre-Conference Topic attribute.
+     */
+    public function getCmeTopicAttribute(): ?string
+    {
+        return $this->pre_conference_topic ?: ($this->cmeApplication?->pre_conference_topic);
+    }
 }
+

@@ -370,20 +370,41 @@
                     @php
                         $cmePay = $delegate->cmePayment;
                         $cmeApp = $delegate->cmeApplication;
+                        $hasSeparateCme = $cmePay || $cmeApp;
                     @endphp
-                    @if($cmePay || ($cmeApp && $delegate->hasSeparateCmePayment()))
+                    @if($hasSeparateCme)
                     <div class="p-2.5 rounded-2 mb-3 border" style="background-color: #F8FAFC; border-color: #E2E8F0 !important;">
                         <div class="d-flex justify-content-between align-items-center mb-1.5">
                             <span class="extra-small fw-bold text-dark d-flex align-items-center gap-1">
                                 <i class="bx bx-certification text-success"></i>Pre-Conference Workshop Payment
                             </span>
                             @php
-                                $cmeStatus = $cmePay?->payment_status ?? ($cmeApp?->status ?? 'Pending');
-                                $isCmePaid = in_array(strtoupper($cmeStatus), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED']) || $delegate->status === 'Approved';
+                                $isCmeApproved = $delegate->isCmeApproved();
+                                $isCmePendingVerification = $delegate->isCmePendingVerification();
+                                $isCmePendingPayment = $delegate->isCmePendingPayment();
+                                $isCmeRejected = ($cmeApp?->status === 'Rejected') || ($cmePay?->payment_status === 'Failed');
+
+                                if ($isCmeApproved) {
+                                    $cmeBadgeClass = 'bg-success-subtle text-success border border-success';
+                                    $cmeStatusText = 'PAID / APPROVED';
+                                } elseif ($isCmeRejected) {
+                                    $cmeBadgeClass = 'bg-danger-subtle text-danger border border-danger';
+                                    $cmeStatusText = 'REJECTED';
+                                } elseif ($isCmePendingVerification) {
+                                    $cmeBadgeClass = 'bg-warning-subtle text-warning border border-warning';
+                                    $cmeStatusText = 'UNDER VERIFICATION';
+                                } else {
+                                    $cmeBadgeClass = 'bg-info-subtle text-info border border-info';
+                                    $cmeStatusText = 'PAYMENT PENDING';
+                                }
                             @endphp
-                            <span class="badge {{ $isCmePaid ? 'bg-success-subtle text-success border border-success' : 'bg-warning-subtle text-warning border border-warning' }} extra-small px-2 py-0.5 rounded-pill fw-semibold">
-                                {{ $isCmePaid ? 'PAID' : $cmeStatus }}
+                            <span class="badge {{ $cmeBadgeClass }} extra-small px-2 py-0.5 rounded-pill fw-semibold">
+                                {{ $cmeStatusText }}
                             </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1 extra-small">
+                            <span class="text-muted">CME Topic:</span>
+                            <span class="fw-semibold text-dark text-truncate" style="max-width: 200px;" title="{{ $delegate->cme_topic ?? 'N/A' }}">{{ $delegate->cme_topic ?? 'N/A' }}</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-1 extra-small">
                             <span class="text-muted">CME Txn ID:</span>
@@ -393,16 +414,36 @@
                             <span class="text-muted">CME Amount:</span>
                             <span class="fw-bold text-dark">₹{{ number_format($cmePay?->total_amount ?? 2360, 2) }}</span>
                         </div>
-                        @if($cmePay?->payment_receipt_path || $cmeApp?->payment_receipt_path)
-                            @php
-                                $cmeReceiptUrl = asset('storage/' . ($cmePay?->payment_receipt_path ?: $cmeApp->payment_receipt_path));
-                                $isCmePdf = str_ends_with(strtolower($cmePay?->payment_receipt_path ?: $cmeApp->payment_receipt_path), '.pdf');
-                            @endphp
-                            <div class="mt-2 pt-1 border-top border-light text-end">
-                                <button type="button" class="btn btn-xs btn-outline-success py-0.5 px-2 rounded-pill fw-semibold extra-small"
-                                    onclick="openMediaLightbox('{{ $cmeReceiptUrl }}', '{{ $isCmePdf ? 'pdf' : 'image' }}', 'CME Receipt - Txn #{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? '') }}')">
-                                    <i class="bx bx-show me-1"></i>View CME Receipt
-                                </button>
+                        @php
+                            $cmeReceipt = $cmePay?->payment_receipt_path ?: $cmeApp?->payment_receipt_path;
+                        @endphp
+                        @if($cmeReceipt || ($cmeApp && !$isCmeApproved))
+                            <div class="mt-2 pt-1 border-top border-light d-flex justify-content-end align-items-center gap-1.5 flex-wrap">
+                                @if($cmeReceipt)
+                                    @php
+                                        $cmeReceiptUrl = asset('storage/' . $cmeReceipt);
+                                        $isCmePdf = str_ends_with(strtolower($cmeReceipt), '.pdf');
+                                    @endphp
+                                    <button type="button" class="btn btn-xs btn-outline-info py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                        onclick="openMediaLightbox('{{ $cmeReceiptUrl }}', '{{ $isCmePdf ? 'pdf' : 'image' }}', 'CME Receipt - Txn #{{ $cmePay?->transaction_id ?? ($cmeApp?->transaction_id ?? '') }}')">
+                                        <i class="bx bx-show me-1"></i>View CME Receipt
+                                    </button>
+                                @endif
+
+                                @if($cmeApp && !$isCmeApproved)
+                                    <form action="{{ route('admin.cme.approve') }}" method="POST" class="d-inline m-0">
+                                        @csrf
+                                        <input type="hidden" name="cme_app_id" value="{{ $cmeApp->id }}">
+                                        <button type="submit" class="btn btn-xs btn-success py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                            onclick="return confirm('Approve Pre-Conference Workshop for this delegate?')">
+                                            <i class="bx bx-check me-0.5"></i>Approve CME
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-2 rounded-pill fw-semibold extra-small"
+                                        data-bs-toggle="modal" data-bs-target="#rejectCmeModal">
+                                        <i class="bx bx-x me-0.5"></i>Reject
+                                    </button>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -793,6 +834,34 @@
         </div>
     </div>
 </div>
+
+@if($delegate->cmeApplication)
+<!-- Reject CME Modal -->
+<div class="modal fade" id="rejectCmeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <form action="{{ route('admin.cme.reject') }}" method="POST">
+                @csrf
+                <input type="hidden" name="cme_app_id" value="{{ $delegate->cmeApplication->id }}">
+                <div class="modal-header border-bottom py-3">
+                    <h6 class="modal-title fw-bold text-danger mb-0"><i class="bx bx-x-circle me-1"></i>Reject Pre-Conference Workshop Payment</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label class="form-label extra-small fw-semibold text-dark">Rejection Reason</label>
+                        <textarea name="rejection_reason" class="form-control form-control-sm" rows="3" placeholder="e.g. Invalid UTR / Payment proof not readable" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2.5">
+                    <button type="button" class="btn btn-sm btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 
 <!-- Media Lightbox Modal -->
 <div class="modal fade" id="mediaLightboxModal" tabindex="-1" aria-hidden="true">
