@@ -224,8 +224,38 @@
                         </div>
                     @endif
 
+                    @php
+                        $delegateType = $registration?->delegate_type ?? $cmeApp?->registration?->delegate_type ?? $cmeApp?->user?->delegate_type ?? auth()->user()?->delegate_type ?? 'Indian';
+                        $isInternational = strtolower(trim($delegateType)) === 'international';
+                    @endphp
+
+                    <!-- CME Quick Info Bar -->
+                    <div class="card border-0 bg-white shadow-sm mb-4" style="border-radius: 14px;">
+                        <div class="card-body py-3 px-4">
+                            <div class="row align-items-center g-3 text-dark">
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Delegate Name</small>
+                                    <span class="fw-bold text-success">{{ $cmeApp->user->prefix ?? $registration?->user->prefix ?? '' }} {{ $cmeApp->user->full_name ?? $registration?->user->full_name ?? '' }}</span>
+                                </div>
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">CME App ID</small>
+                                    <span class="fw-bold font-monospace text-dark">CME#{{ $cmeApp->id }}</span>
+                                </div>
+                                <div class="col-md-3 col-6 border-end">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Workshop Topic</small>
+                                    <span class="fw-bold text-dark text-truncate d-block" style="font-size: 12px;" title="{{ $cmeApp->pre_conference_topic ?? 'CME Workshop' }}">{{ $cmeApp->pre_conference_topic ? \Illuminate\Support\Str::limit($cmeApp->pre_conference_topic, 28) : 'CME Workshop' }}</span>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Delegate Type</small>
+                                    <span class="badge bg-success-subtle text-success fw-bold px-2.5 py-1 rounded-pill">{{ $delegateType }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!$isInternational)
                     <!-- ========================================================================= -->
-                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION)                        -->
+                    <!-- SECTION 1: SBI ONLINE PAYMENT (FOR INDIAN DELEGATES)                      -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-sbi shadow-sm mb-4">
                         <div class="method-header-sbi d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -234,7 +264,7 @@
                                     <i class="fas fa-bolt text-warning fs-5"></i>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 fw-bold text-white">OPTION 1: Instant Online Payment (SBI ePay)</h5>
+                                    <h5 class="mb-0 fw-bold text-white">Instant Online Payment (SBI ePay)</h5>
                                     <small class="text-white-50">State Bank of India Official Payment Gateway</small>
                                 </div>
                             </div>
@@ -294,15 +324,12 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- OR DIVIDER -->
-                    <div class="divider-or">
-                        <span>OR PAY VIA UPI QR CODE / DIRECT TRANSFER</span>
-                    </div>
+                    @endif
 
 
+                    @if ($isInternational)
                     <!-- ========================================================================= -->
-                    <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (DEDICATED SECTION)                 -->
+                    <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (FOR INTERNATIONAL DELEGATES)       -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-qr shadow-sm mb-4">
                         <div class="method-header-qr d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -311,7 +338,7 @@
                                     <i class="fas fa-qrcode text-primary fs-5"></i>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 fw-bold text-white">OPTION 2: Pay via UPI QR Code & Upload Proof</h5>
+                                    <h5 class="mb-0 fw-bold text-white">Pay via UPI QR Code / Bank Transfer</h5>
                                     <small class="text-white-50">Scan & Pay or Bank Transfer</small>
                                 </div>
                             </div>
@@ -327,7 +354,7 @@
                                         <h6 class="fw-bold text-dark mb-2">
                                             <i class="fas fa-camera text-primary me-1"></i>Scan QR Code for Workshop
                                         </h6>
-                                        <p class="text-muted small mb-3">Scan via GPay, PhonePe, Paytm, BHIM</p>
+                                        <p class="text-muted small mb-3">Scan via GPay, PhonePe, Paytm, BHIM or any UPI App</p>
 
                                         <div class="qr-frame-box mb-2">
                                             <img src="{{ asset('images/iphacon_qrcode.jpeg') }}"
@@ -341,6 +368,43 @@
                                             </span>
                                         </div>
                                     </div>
+
+                                    <!-- Direct Bank Details Accordion -->
+                                    <div class="accordion" id="cmeBankDetailsAccordion">
+                                        <div class="accordion-item border rounded-3 overflow-hidden">
+                                            <h2 class="accordion-header" id="headingCmeBank">
+                                                <button class="accordion-button collapsed py-2 px-3 bg-light text-dark fw-bold small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCmeBank">
+                                                    <i class="fas fa-university text-primary me-2"></i>Prefer NEFT / RTGS / IMPS? View Bank Details
+                                                </button>
+                                            </h2>
+                                            <div id="collapseCmeBank" class="accordion-collapse collapse" data-bs-parent="#cmeBankDetailsAccordion">
+                                                <div class="accordion-body text-start p-3 small bg-white">
+                                                    <table class="table table-sm table-borderless mb-0">
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Account Name:</td>
+                                                            <td class="fw-bold text-dark">IPHACON 2027</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Account No:</td>
+                                                            <td class="fw-bold text-primary font-monospace">925020005721245</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">IFSC Code:</td>
+                                                            <td class="fw-bold text-dark font-monospace">UTIB0000183</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Bank Name:</td>
+                                                            <td class="text-dark">Axis Bank</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted ps-0">Branch:</td>
+                                                            <td class="text-dark">Main Road Ranchi Branch</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-lg-7">
@@ -350,15 +414,15 @@
                                         </h6>
                                         <div class="d-flex align-items-start gap-2 mb-2">
                                             <span class="step-bubble">1</span>
-                                            <span class="small text-secondary">Scan QR code on the left & pay <strong>₹2,360.00</strong>.</span>
+                                            <span class="small text-secondary">Scan QR code or transfer funds using bank details for <strong>₹2,360.00</strong>.</span>
                                         </div>
                                         <div class="d-flex align-items-start gap-2 mb-2">
                                             <span class="step-bubble">2</span>
-                                            <span class="small text-secondary">Copy the <strong>12-digit UTR / Transaction ID</strong>.</span>
+                                            <span class="small text-secondary">Copy the <strong>12-digit UTR / UPI / Transaction Reference Number</strong>.</span>
                                         </div>
                                         <div class="d-flex align-items-start gap-2">
                                             <span class="step-bubble">3</span>
-                                            <span class="small text-secondary">Enter UTR & upload receipt screenshot below.</span>
+                                            <span class="small text-secondary">Enter UTR & upload receipt screenshot/PDF below, then click submit.</span>
                                         </div>
                                     </div>
 
@@ -413,6 +477,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <!-- ========================================================================= -->
                     <!-- SECTION 3: WORKSHOP FEE BREAKDOWN SUMMARY                                 -->
@@ -440,7 +505,13 @@
                                         <tr>
                                             <td>
                                                 <strong>Pre-Conference CME / Workshop Base Fee</strong>
-                                                <div class="text-muted small">Specialized medical training session</div>
+                                                @if($cmeApp->pre_conference_topic)
+                                                    <div class="text-secondary small mt-0.5">
+                                                        <i class="fas fa-book-reader text-success me-1"></i><strong>Topic:</strong> {{ $cmeApp->pre_conference_topic }}
+                                                    </div>
+                                                @else
+                                                    <div class="text-muted small">Specialized medical training session</div>
+                                                @endif
                                             </td>
                                             <td class="text-center">Fixed Workshop Fee</td>
                                             <td class="text-end">₹2,000.00</td>
