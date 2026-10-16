@@ -233,7 +233,7 @@ class RegistrationController extends Controller
             'dietary_preference' => 'nullable|in:Vegetarian,Non-Vegetarian',
             'id_proof_type' => $isDraft ? 'nullable|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID' : 'required|string|in:Aadhaar,PAN,Passport,Driving License,Voter-ID',
             'id_proof_number' => $isDraft ? 'nullable|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/' : 'required|string|max:50|regex:/^[A-Za-z0-9\/\-]+$/',
-            'id_proof_document' => $registration->id_proof_document_path !== null ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500' : 'required|file|mimes:pdf,jpg,jpeg,png|max:500')
+            'id_proof_document' => ($request->id_proof_type === 'Aadhaar' || $registration->id_proof_document_path !== null || $isDraft) ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500' : 'required|file|mimes:pdf,jpg,jpeg,png|max:500'
         ];
 
         $messages = [
@@ -270,6 +270,7 @@ class RegistrationController extends Controller
             if ($idType === 'Aadhaar') {
                 $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[0-9]{12}$/'];
                 $messages['id_proof_number.regex'] = 'Aadhaar number must be exactly 12 digits.';
+                $rules['id_proof_document'] = 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500';
             } elseif ($idType === 'PAN') {
                 $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$/'];
                 $messages['id_proof_number.regex'] = 'PAN number must be 10 characters in standard format (e.g. ABCDE1234F).';

@@ -98,7 +98,11 @@
                                 @if ($registration->photo_path)
                                     <span class="badge bg-success-subtle text-success extra-small me-1"><i class="fas fa-check me-1"></i>Photo</span>
                                 @endif
-                                <span class="badge bg-success-subtle text-success extra-small"><i class="fas fa-check me-1"></i>ID Doc</span>
+                                @if ($registration->id_proof_document_path)
+                                    <span class="badge bg-success-subtle text-success extra-small"><i class="fas fa-check me-1"></i>ID Doc</span>
+                                @elseif($registration->id_proof_type === 'Aadhaar')
+                                    <span class="badge bg-info-subtle text-info extra-small"><i class="fas fa-id-card me-1"></i>Aadhaar (No Doc Req.)</span>
+                                @endif
                             </td>
                         </tr>
                     </tbody>
