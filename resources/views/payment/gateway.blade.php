@@ -169,15 +169,17 @@
                         <div class="text-md-end px-3 py-2 rounded-3 shadow-sm d-flex flex-column justify-content-center" style="background: #ffffff !important; border: 1px solid #e2e8f0; min-width: 210px;">
                             <span class="d-block text-muted text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 10.5px; margin-bottom: 1px;">Total Payable Amount</span>
                             @php
+                                $isInternational = strtolower(trim($registration->delegate_type ?? $registration->user->delegate_type ?? 'Indian')) === 'international';
                                 $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
                                 $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                                 $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
                                 $subtotalBase = $catBase + $cmeBase + $accBase;
                                 $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
                                 $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                                $finalPayableAmt = $isInternational ? 45000.00 : $totalAmt;
                             @endphp
                             <div class="fw-bolder" style="color: #2e3192; font-size: 1.5rem; line-height: 1.15;">
-                                @if ($registration->delegate_type === 'International')
+                                @if ($isInternational)
                                     ₹45,000.00 <span class="fw-normal text-muted" style="font-size: 0.75rem;">INR</span>
                                 @else
                                     ₹{{ number_format($totalAmt, 2) }} <span class="fw-normal text-muted" style="font-size: 0.75rem;">INR</span>
@@ -254,14 +256,15 @@
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 11px;">Delegate Type</small>
-                                    <span class="badge bg-primary-subtle text-primary fw-bold px-2.5 py-1 rounded-pill">{{ $registration->delegate_type }}</span>
+                                    <span class="badge bg-primary-subtle text-primary fw-bold px-2.5 py-1 rounded-pill">{{ $registration->delegate_type ?? ($registration->user->delegate_type ?? 'Indian') }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    @if (!$isInternational)
                     <!-- ========================================================================= -->
-                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION)                        -->
+                    <!-- SECTION 1: SBI ONLINE PAYMENT (DEDICATED SECTION FOR INDIAN DELEGATES)    -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-sbi shadow-sm mb-4">
                         <div class="method-header-sbi d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -270,7 +273,7 @@
                                     <i class="fas fa-bolt text-warning fs-5"></i>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 fw-bold text-white">OPTION 1: Instant Online Payment (SBI ePay)</h5>
+                                    <h5 class="mb-0 fw-bold text-white">Instant Online Payment (SBI ePay)</h5>
                                     <small class="text-white-50">State Bank of India Official Payment Gateway</small>
                                 </div>
                             </div>
@@ -319,11 +322,7 @@
                                     <div class="p-4 bg-light rounded-4 border text-center shadow-sm">
                                         <small class="text-muted d-block text-uppercase fw-semibold mb-1" style="font-size: 11px;">Amount to Pay Online</small>
                                         <h3 class="fw-bolder text-primary mb-3">
-                                            @if ($registration->delegate_type === 'International')
-                                                ₹45,000.00
-                                            @else
-                                                ₹{{ number_format($totalAmt, 2) }}
-                                            @endif
+                                            ₹{{ number_format($totalAmt, 2) }}
                                         </h3>
                                         
                                         <a href="{{ route('payment.sbi.initiate', $registration->id) }}" class="btn btn-sbi-pay w-100 mb-2 text-white">
@@ -338,15 +337,12 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- OR DIVIDER -->
-                    <div class="divider-or">
-                        <span>OR PAY VIA UPI QR CODE / BANK TRANSFER</span>
-                    </div>
+                    @endif
 
 
+                    @if ($isInternational)
                     <!-- ========================================================================= -->
-                    <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (DEDICATED SECTION)                 -->
+                    <!-- SECTION 2: UPI QR CODE & PROOF UPLOAD (FOR INTERNATIONAL DELEGATES)       -->
                     <!-- ========================================================================= -->
                     <div class="method-card method-card-qr shadow-sm mb-4">
                         <div class="method-header-qr d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -355,7 +351,7 @@
                                     <i class="fas fa-qrcode text-success fs-5"></i>
                                 </div>
                                 <div>
-                                    <h5 class="mb-0 fw-bold text-white">OPTION 2: Pay via UPI QR Code & Upload Payment Proof</h5>
+                                    <h5 class="mb-0 fw-bold text-white">Pay via UPI QR Code / Bank Transfer</h5>
                                     <small class="text-white-50">Direct Scan & Pay or NEFT / RTGS Transfer</small>
                                 </div>
                             </div>
@@ -387,13 +383,13 @@
 
                                         <div class="mt-2">
                                             <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold" style="font-size: 13px;">
-                                                Pay Exact: ₹{{ number_format($totalAmt, 2) }}
+                                                Pay Exact: ₹{{ number_format($finalPayableAmt, 2) }}
                                             </span>
                                         </div>
                                     </div>
 
                                     <!-- Direct Bank Details Accordion -->
-                                    {{-- <div class="accordion" id="bankDetailsAccordion">
+                                    <div class="accordion" id="bankDetailsAccordion">
                                         <div class="accordion-item border rounded-3 overflow-hidden">
                                             <h2 class="accordion-header" id="headingBank">
                                                 <button class="accordion-button collapsed py-2 px-3 bg-light text-dark fw-bold small" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBank">
@@ -427,7 +423,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                 </div>
 
                                 <!-- Right Sub-Column: Payment Proof Upload Form -->
@@ -438,15 +434,15 @@
                                         </h6>
                                         <div class="d-flex align-items-start gap-2 mb-2">
                                             <span class="step-bubble">1</span>
-                                            <span class="small text-secondary">Scan QR code on the left & complete the payment of <strong>₹{{ number_format($totalAmt, 2) }}</strong>.</span>
+                                            <span class="small text-secondary">Scan QR code or transfer funds using bank details for <strong>₹{{ number_format($finalPayableAmt, 2) }}</strong>.</span>
                                         </div>
                                         <div class="d-flex align-items-start gap-2 mb-2">
                                             <span class="step-bubble">2</span>
-                                            <span class="small text-secondary">Note down the <strong>12-digit UTR / UPI Transaction Reference Number</strong>.</span>
+                                            <span class="small text-secondary">Note down the <strong>12-digit UTR / UPI / Transaction Reference Number</strong>.</span>
                                         </div>
                                         <div class="d-flex align-items-start gap-2">
                                             <span class="step-bubble">3</span>
-                                            <span class="small text-secondary">Enter UTR & upload the payment screenshot below, then click submit.</span>
+                                            <span class="small text-secondary">Enter UTR & upload the payment screenshot/receipt below, then click submit.</span>
                                         </div>
                                     </div>
 
@@ -502,6 +498,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <!-- ========================================================================= -->
                     <!-- SECTION 3: ITEMISED FEE BREAKDOWN SUMMARY                                 -->
@@ -526,7 +523,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if ($registration->delegate_type === 'International')
+                                        @if ($isInternational)
                                             <tr>
                                                 <td>
                                                     <strong>Delegate Registration (International / Foreign)</strong>
