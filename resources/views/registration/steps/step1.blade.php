@@ -354,7 +354,7 @@
         <!-- Profile Photo Section -->
         <div class="sidebar-section p-3 mb-3">
             <h6 class="fw-bold text-dark mb-2 extra-small">
-                <i class="fas fa-camera text-primary me-1.5"></i>Profile Photo <span class="required-star">*</span>
+                <i class="fas fa-camera text-primary me-1.5"></i>Profile Photo <span class="text-muted fw-normal extra-small">(Optional)</span>
             </h6>
 
             <div class="text-center">
@@ -369,11 +369,10 @@
                             <i class="fas fa-camera me-1"></i>Choose Photo
                         </button>
                     </div>
-                    <small class="text-muted extra-small d-block mt-1">JPG/PNG • Max 500KB</small>
+                    <small class="text-muted extra-small d-block mt-1">JPG/PNG • Max 500KB (Optional)</small>
                 </div>
                 <input type="file" id="photo" name="photo"
-                    style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png"
-                    {{ $registration->photo_path ? '' : 'required' }}>
+                    style="position: absolute; left: -9999px; opacity: 0;" accept="image/jpeg,image/jpg,image/png">
                 @error('photo')
                     <div class="text-danger extra-small mt-1"><i
                             class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
@@ -432,9 +431,11 @@
                 <input type="text" class="form-control @error('id_proof_number') is-invalid @enderror"
                     id="id_proof_number" name="id_proof_number"
                     value="{{ old('id_proof_number', $registration->id_proof_number) }}"
-                    placeholder="Enter Aadhaar / PAN / ID Number" required oninput="formatIdProofNumber(this)">
+                    placeholder="Enter Aadhaar / PAN / ID Number" required oninput="formatIdProofNumber(this)"
+                    autocomplete="off">
+                <div id="aadhaar_feedback" class="extra-small mt-1 d-none"></div>
                 @error('id_proof_number')
-                    <div class="invalid-feedback d-block extra-small mt-1"><i
+                    <div class="invalid-feedback d-block extra-small mt-1" id="server_id_proof_error"><i
                             class="fas fa-exclamation-circle me-1"></i>{{ $message }}</div>
                 @enderror
             </div>
@@ -814,16 +815,96 @@
         formatIdProofNumber(numberInput);
     }
 
+    let aadhaarCheckTimeout = null;
+    let aadhaarIsDuplicate = false;
+
+    function resetAadhaarFeedback() {
+        const feedback = document.getElementById('aadhaar_feedback');
+        const input = document.getElementById('id_proof_number');
+        if (feedback) {
+            feedback.innerHTML = '';
+            feedback.className = 'extra-small mt-1 d-none';
+        }
+        if (input) {
+            input.classList.remove('is-invalid', 'is-valid');
+        }
+        aadhaarIsDuplicate = false;
+    }
+
+    function checkAadhaarUniquenessLive(aadhaarVal) {
+        clearTimeout(aadhaarCheckTimeout);
+        const feedback = document.getElementById('aadhaar_feedback');
+        const input = document.getElementById('id_proof_number');
+        const serverError = document.getElementById('server_id_proof_error');
+        if (serverError) {
+            serverError.style.display = 'none';
+        }
+
+        const digits = (aadhaarVal || '').replace(/[^0-9]/g, '');
+        if (digits.length < 12) {
+            resetAadhaarFeedback();
+            return;
+        }
+
+        if (feedback) {
+            feedback.className = 'extra-small mt-1 text-muted';
+            feedback.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Checking Aadhaar availability...';
+        }
+
+        aadhaarCheckTimeout = setTimeout(() => {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                              document.querySelector('input[name="_token"]')?.value;
+
+            fetch("{{ route('registration.check-aadhaar') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ aadhaar: digits })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!feedback || !input) return;
+
+                if (data.unique === false) {
+                    aadhaarIsDuplicate = true;
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                    feedback.className = 'invalid-feedback d-block extra-small mt-1';
+                    feedback.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>' + data.message;
+                } else if (data.unique === true) {
+                    aadhaarIsDuplicate = false;
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    feedback.className = 'text-success extra-small mt-1';
+                    feedback.innerHTML = '<i class="fas fa-check-circle me-1"></i>' + data.message;
+                } else {
+                    resetAadhaarFeedback();
+                }
+            })
+            .catch(err => {
+                console.error("Aadhaar check error:", err);
+                resetAadhaarFeedback();
+            });
+        }, 350);
+    }
+
     function formatIdProofNumber(input) {
         if (!input) return;
         const typeSelect = document.getElementById('id_proof_type');
         const selectedType = typeSelect ? typeSelect.value : '';
         if (selectedType === 'Aadhaar') {
             input.value = input.value.replace(/[^0-9]/g, '');
-        } else if (selectedType === 'PAN' || selectedType === 'Voter-ID' || selectedType === 'Passport') {
-            input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        } else if (selectedType === 'Driving License') {
-            input.value = input.value.toUpperCase().replace(/[^A-Z0-9\/-]/g, '');
+            checkAadhaarUniquenessLive(input.value);
+        } else {
+            resetAadhaarFeedback();
+            if (selectedType === 'PAN' || selectedType === 'Voter-ID' || selectedType === 'Passport') {
+                input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            } else if (selectedType === 'Driving License') {
+                input.value = input.value.toUpperCase().replace(/[^A-Z0-9\/-]/g, '');
+            }
         }
     }
 
@@ -845,5 +926,30 @@
     document.addEventListener('DOMContentLoaded', function() {
         updateIdProofValidation();
         handleDesignationChange();
+
+        // Prevent submission if Aadhaar last 8 digits are duplicate
+        const wizardForm = document.getElementById("wizardForm");
+        if (wizardForm) {
+            wizardForm.addEventListener("submit", function(e) {
+                const typeSelect = document.getElementById('id_proof_type');
+                const numberInput = document.getElementById('id_proof_number');
+                if (typeSelect && typeSelect.value === 'Aadhaar') {
+                    if (aadhaarIsDuplicate) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        if (numberInput) numberInput.focus();
+                        alert("The last 8 digits of this Aadhaar number are already registered. Please enter a valid unique Aadhaar number.");
+
+                        // Re-enable submit buttons
+                        const submitBtns = wizardForm.querySelectorAll('button[type="submit"]');
+                        submitBtns.forEach(btn => {
+                            btn.disabled = false;
+                            btn.innerHTML = 'Next Step <i class="fas fa-arrow-right ms-2"></i>';
+                        });
+                        return false;
+                    }
+                }
+            }, true);
+        }
     });
 </script>
