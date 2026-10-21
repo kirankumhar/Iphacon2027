@@ -88,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('registration/wizard/{step?}', [RegistrationController::class, 'wizard'])->name('registration.wizard');
     Route::post('registration/wizard/{step}', [RegistrationController::class, 'storeStep'])->name('registration.store-step');
+    Route::post('registration/check-aadhaar', [RegistrationController::class, 'checkAadhaarUnique'])->name('registration.check-aadhaar');
 
     // CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');

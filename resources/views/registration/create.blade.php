@@ -34,13 +34,13 @@
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label for="photo" class="form-label fw-semibold" style="color:#2e3192">
-                                    <i class="fas fa-camera me-1"></i>Photo<span class="text-danger">*</span>
+                                    <i class="fas fa-camera me-1"></i>Photo <span class="text-muted fw-normal small">(Optional)</span>
                                 </label>
                             </div>
                             <div class="col-md-9">
                                 <input type="file" class="form-control @error('photo') is-invalid @enderror"
-                                       id="photo" name="photo" accept="image/*" required>
-                                <small class="text-muted">Upload a passport-size photo (JPG, JPEG, PNG - Max 2MB)</small>
+                                       id="photo" name="photo" accept="image/*">
+                                <small class="text-muted">Upload a passport-size photo (JPG, JPEG, PNG - Max 2MB, Optional)</small>
                                 @error('photo')
                                 <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

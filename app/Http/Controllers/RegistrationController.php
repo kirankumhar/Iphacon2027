@@ -219,7 +219,7 @@ class RegistrationController extends Controller
             'gender' => 'nullable|in:Male,Female',
             'dob' => $isDraft ? 'nullable|date|before_or_equal:-18 years' : 'required|date|before_or_equal:-18 years',
             'mobile_number' => ['nullable', 'string', 'max:18', 'regex:/^[0-9+\s\-]+$/'],
-            'photo' => $registration->photo_path !== null ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : ($isDraft ? 'nullable|image|mimes:jpg,jpeg,png|max:500' : 'required|image|mimes:jpg,jpeg,png|max:500'),
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:500',
             'address' => [$isDraft ? 'nullable' : 'required', 'string', 'max:500', 'regex:/^[A-Za-z0-9\s,.\-\/#&():]+$/'],
             'state_id' => auth()->user()->delegate_type == 'Indian' 
                 ? ($isDraft ? 'nullable|integer' : 'required|integer') 
@@ -268,7 +268,36 @@ class RegistrationController extends Controller
         if ($request->filled('id_proof_type') && ($request->filled('id_proof_number') || !$isDraft)) {
             $idType = $request->id_proof_type;
             if ($idType === 'Aadhaar') {
-                $rules['id_proof_number'] = [$isDraft ? 'nullable' : 'required', 'string', 'regex:/^[0-9]{12}$/'];
+                $rules['id_proof_number'] = [
+                    $isDraft ? 'nullable' : 'required',
+                    'string',
+                    'regex:/^[0-9]{12}$/',
+                    function ($attribute, $value, $fail) use ($registration) {
+                        if (empty($value)) return;
+                        $cleaned = preg_replace('/[^0-9]/', '', (string)$value);
+                        if (strlen($cleaned) >= 8) {
+                            $last8 = substr($cleaned, -8);
+                            $duplicateExists = Registration::where('id_proof_type', 'Aadhaar')
+                                ->where('id', '!=', $registration->id)
+                                ->where('user_id', '!=', $registration->user_id)
+                                ->where(function ($q) {
+                                    $q->where('is_deleted', '0')
+                                      ->orWhere('is_deleted', false)
+                                      ->orWhereNull('is_deleted');
+                                })
+                                ->whereNotNull('id_proof_number')
+                                ->where(function ($q) use ($last8) {
+                                    $q->where('id_proof_number', 'LIKE', '%' . $last8)
+                                      ->orWhereRaw("RIGHT(REGEXP_REPLACE(id_proof_number, '[^0-9]', ''), 8) = ?", [$last8]);
+                                })
+                                ->exists();
+
+                            if ($duplicateExists) {
+                                $fail('The last 8 digits of this Aadhaar number are already registered.');
+                            }
+                        }
+                    }
+                ];
                 $messages['id_proof_number.regex'] = 'Aadhaar number must be exactly 12 digits.';
                 $rules['id_proof_document'] = 'nullable|file|mimes:pdf,jpg,jpeg,png|max:500';
             } elseif ($idType === 'PAN') {
@@ -342,8 +371,13 @@ class RegistrationController extends Controller
             $updateData['dietary_preference'] = $request->dietary_preference;
         if ($request->filled('id_proof_type'))
             $updateData['id_proof_type'] = $request->id_proof_type;
-        if ($request->filled('id_proof_number'))
-            $updateData['id_proof_number'] = $request->id_proof_number;
+        if ($request->filled('id_proof_number')) {
+            $val = trim($request->id_proof_number);
+            if ($request->id_proof_type === 'Aadhaar') {
+                $val = preg_replace('/[^0-9]/', '', $val);
+            }
+            $updateData['id_proof_number'] = $val;
+        }
 
         if ($request->hasFile('photo')) {
             $updateData['photo_path'] = $request->file('photo')->store('photos', 'public');
@@ -815,5 +849,55 @@ class RegistrationController extends Controller
         ]);
 
         return redirect()->route('cme.payment.gateway');
+    }
+
+    /**
+     * Check if Aadhaar number (last 8 digits) is unique for registration.
+     */
+    public function checkAadhaarUnique(Request $request)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->first();
+        $regId = $registration ? $registration->id : null;
+
+        $aadhaar = preg_replace('/[^0-9]/', '', (string)$request->input('aadhaar', ''));
+
+        if (strlen($aadhaar) !== 12) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Aadhaar number must be exactly 12 digits.'
+            ]);
+        }
+
+        $last8 = substr($aadhaar, -8);
+
+        $exists = Registration::where('id_proof_type', 'Aadhaar')
+            ->when($regId, function ($query, $id) {
+                return $query->where('id', '!=', $id);
+            })
+            ->where('user_id', '!=', $user->id)
+            ->where(function ($q) {
+                $q->where('is_deleted', '0')
+                  ->orWhere('is_deleted', false)
+                  ->orWhereNull('is_deleted');
+            })
+            ->whereNotNull('id_proof_number')
+            ->where(function ($q) use ($last8) {
+                $q->where('id_proof_number', 'LIKE', '%' . $last8)
+                  ->orWhereRaw("RIGHT(REGEXP_REPLACE(id_proof_number, '[^0-9]', ''), 8) = ?", [$last8]);
+            })
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'unique' => false,
+                'message' => 'The last 8 digits of this Aadhaar number are already registered.'
+            ]);
+        }
+
+        return response()->json([
+            'unique' => true,
+            'message' => 'Aadhaar number is available.'
+        ]);
     }
 }
