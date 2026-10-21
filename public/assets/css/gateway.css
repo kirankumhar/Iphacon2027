@@ -1,0 +1,138 @@
+.payment-checkout-container {
+    max-width: 1060px;
+    margin: 0 auto;
+}
+.hero-header-card {
+    background: linear-gradient(135deg, #1e293b 0%, #2e3192 60%, #4a5bcc 100%);
+    border-radius: 16px 16px 0 0;
+    color: #ffffff;
+}
+.method-card {
+    border-radius: 16px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+.method-card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+}
+.method-card-sbi {
+    border: 2px solid #2e3192 !important;
+    background: #ffffff;
+}
+.method-card-qr {
+    border: 2px solid #059669 !important;
+    background: #ffffff;
+}
+.method-header-sbi {
+    background: linear-gradient(135deg, #2e3192, #3b82f6);
+    color: #ffffff;
+    padding: 14px 20px;
+    border-radius: 13px 13px 0 0;
+}
+.method-header-qr {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #ffffff;
+    padding: 14px 20px;
+    border-radius: 13px 13px 0 0;
+}
+.qr-frame-box {
+    background: #ffffff;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 16px;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    position: relative;
+}
+.qr-frame-box img {
+    max-width: 220px;
+    height: auto;
+    border-radius: 10px;
+}
+.divider-or {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 32px 0;
+}
+.divider-or::before,
+.divider-or::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px dashed #cbd5e1;
+}
+.divider-or span {
+    padding: 8px 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.pill-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.payment-channel-badge {
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e2e8f0;
+}
+.step-bubble {
+    width: 28px;
+    height: 28px;
+    background: #059669;
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.btn-sbi-pay {
+    background: linear-gradient(135deg, #2e3192 0%, #1d4ed8 100%);
+    border: none;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 17px;
+    box-shadow: 0 6px 20px rgba(46, 49, 146, 0.35);
+    transition: all 0.2s ease;
+}
+.btn-sbi-pay:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(46, 49, 146, 0.45);
+    color: #ffffff;
+}
+.btn-qr-submit {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: none;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+    transition: all 0.2s ease;
+}
+.btn-qr-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+    color: #ffffff;
+}
