@@ -104,16 +104,40 @@ class SbiPaymentService
             return [
                 'success'     => false,
                 'status'      => 'NOT_FOUND',
+                'isNotFound'  => true,
                 'message'     => $errorMessage,
                 'rawResponse' => is_string($rawResponse) ? $rawResponse : json_encode($rawResponse),
             ];
 
         } catch (\Throwable $e) {
-            Log::error("[SBI ePay Search] Error querying {$orderRefNumber}: " . $e->getMessage());
+            $msg = $e->getMessage();
+
+            // Detect if SBI returned "Transaction details was not found" (Error 2003 / Status 603)
+            $isNotFound = (
+                str_contains($msg, '2003') ||
+                stripos($msg, 'Transaction details was not found') !== false ||
+                stripos($msg, 'Transaction details not found') !== false ||
+                stripos($msg, 'Order details not found') !== false
+            );
+
+            if ($isNotFound) {
+                Log::info("[SBI ePay Search] Order {$orderRefNumber} not found on SBI ePay gateway (Customer abandoned checkout before payment).");
+                return [
+                    'success'     => false,
+                    'status'      => 'NOT_FOUND',
+                    'isNotFound'  => true,
+                    'message'     => 'Transaction details was not found at bank (Session abandoned or uninitiated).',
+                    'rawResponse' => $msg,
+                ];
+            }
+
+            Log::error("[SBI ePay Search] Error querying {$orderRefNumber}: " . $msg);
             return [
-                'success' => false,
-                'status'  => 'ERROR',
-                'message' => $e->getMessage(),
+                'success'     => false,
+                'status'      => 'ERROR',
+                'isNotFound'  => false,
+                'message'     => $msg,
+                'rawResponse' => $msg,
             ];
         }
     }
@@ -139,9 +163,36 @@ class SbiPaymentService
         $searchResult = $this->searchOrder($orderRef, $amount);
 
         if (!$searchResult['success']) {
+            $isNotFound = ($searchResult['status'] === 'NOT_FOUND') || (!empty($searchResult['isNotFound']));
+
+            // If SBI has no record of the transaction (code 2003 / abandoned checkout)
+            if ($isNotFound) {
+                $isOlderThan15Mins = !$payment->created_at || $payment->created_at->lt(now()->subMinutes(15));
+
+                if ($isOlderThan15Mins) {
+                    $payment->update([
+                        'payment_status'   => 'Failed',
+                        'gateway_response' => $searchResult['rawResponse'] ?? $searchResult['message'],
+                    ]);
+
+                    return [
+                        'status'      => 'MARKED_FAILED',
+                        'orderStatus' => 'NOT_FOUND',
+                        'message'     => "Order {$orderRef} not found on SBI ePay (>15m old). Marked as Failed (abandoned).",
+                    ];
+                }
+
+                return [
+                    'status'      => 'STILL_PENDING',
+                    'orderStatus' => 'NOT_FOUND_RECENT',
+                    'message'     => "Order {$orderRef} not found at bank, but created recently. Will re-verify later.",
+                ];
+            }
+
             return [
-                'status'  => 'FAILED_SEARCH',
-                'message' => $searchResult['message'] ?? 'Unable to search order',
+                'status'      => 'FAILED_SEARCH',
+                'orderStatus' => 'N/A',
+                'message'     => $searchResult['message'] ?? 'Unable to search order',
             ];
         }
 
