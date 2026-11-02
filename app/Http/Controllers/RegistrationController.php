@@ -97,6 +97,11 @@ class RegistrationController extends Controller
 
         $step = $requestedStep;
 
+        if ($registration && $registration->status !== 'Approved' && $step >= 2) {
+            $registration->updateAmounts();
+            $registration->save();
+        }
+
         $countries = Country::active()->orderBy('country_name')->get();
         $states = State::active()->where('country_id', 1)->orderBy('state_name')->get();
         $delegateCategories = DelegateCategory::where('is_active', true)->get();

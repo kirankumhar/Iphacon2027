@@ -58,6 +58,11 @@ class PaymentController extends Controller
                 ->with('error', 'Please complete all registration steps before payment.');
         }
 
+        if ($registration->status !== 'Approved') {
+            $registration->updateAmounts();
+            $registration->save();
+        }
+
         return view('payment.gateway', compact('registration'));
     }
 
@@ -190,6 +195,11 @@ class PaymentController extends Controller
             ]);
             return redirect()->route('payment.success', ['registration' => $registration->registration_number ?? $registration->id])
                 ->with('success', 'Registration is already approved.');
+        }
+
+        if ($registration->status !== 'Approved') {
+            $registration->updateAmounts();
+            $registration->save();
         }
 
         $totalAmount = (float) ($registration->total_amount ?: $registration->calculateTotalAmount());

@@ -143,6 +143,10 @@
                         id="delegate_category_id" name="delegate_category_id" required
                         style="border-radius: 0 8px 8px 0;">
                         <option value="">-- Choose Delegate Category --</option>
+                        @php
+                            $isFestive = \App\Services\FestiveDiscountService::isActive();
+                            $discPercent = \App\Services\FestiveDiscountService::getDiscountPercentage();
+                        @endphp
                         @foreach ($delegateCategories as $category)
                             @if (
                                 $category->id == 5 ||
@@ -152,9 +156,18 @@
                                     str_contains(strtolower($category->category_name), 'co-delegate'))
                                 @continue
                             @endif
-                            <option value="{{ $category->id }}" data-fee="{{ $category->indian_fee }}"
+                            @php
+                                $origFee = (float) $category->indian_fee;
+                                $effectiveFee = $isFestive ? \App\Services\FestiveDiscountService::getDiscountedFee($origFee) : $origFee;
+                                $discAmt = $origFee - $effectiveFee;
+                            @endphp
+                            <option value="{{ $category->id }}" data-fee="{{ $effectiveFee }}" data-original-fee="{{ $origFee }}"
                                 {{ old('delegate_category_id', $registration->delegate_category_id) == $category->id ? 'selected' : '' }}>
-                                {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
+                                @if ($isFestive && $discAmt > 0)
+                                    {{ $category->category_name }} — ₹{{ number_format($effectiveFee) }} (5% Festive Off • Save ₹{{ number_format($discAmt) }})
+                                @else
+                                    {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
+                                @endif
                             </option>
                         @endforeach
                     </select>
@@ -427,6 +440,13 @@
         </div>
         <div class="col-md-7 text-md-end">
             <div class="d-inline-flex flex-wrap gap-2 align-items-center justify-content-md-end">
+                @if (\App\Services\FestiveDiscountService::isActive())
+                    <div class="px-2.5 py-1.5 rounded-3 text-center"
+                        style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.45);">
+                        <span class="d-block text-white-50 extra-small fw-semibold">Special Offer</span>
+                        <span class="fw-bold text-white extra-small"><i class="fas fa-gift text-warning me-1"></i>5% OFF Applied</span>
+                    </div>
+                @endif
                 <div class="px-2.5 py-1.5 rounded-3 text-center"
                     style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
                     <span class="d-block text-white-50 extra-small fw-semibold">Reg. Fee</span>
