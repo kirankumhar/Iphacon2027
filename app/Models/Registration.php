@@ -239,15 +239,16 @@ class Registration extends Model
         }
 
         $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
-
-        if (\App\Services\FestiveDiscountService::isActiveForRegistration($this)) {
-            $categoryBase = \App\Services\FestiveDiscountService::getDiscountedFee($categoryBase);
-        }
-
         $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
         $cmeBase = $this->participate_in_cme ? 2000.00 : 0.00;
 
         $subtotal = $categoryBase + $accompanyingBase + $cmeBase;
+
+        if (\App\Services\FestiveDiscountService::isActiveForRegistration($this)) {
+            $discount = \App\Services\FestiveDiscountService::calculateDiscount($subtotal);
+            $subtotal = max(0.00, $subtotal - $discount);
+        }
+
         return round($subtotal * 1.18, 2);
     }
 
@@ -275,25 +276,38 @@ class Registration extends Model
             return;
         }
 
-        $origCategoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
-        if (\App\Services\FestiveDiscountService::isActiveForRegistration($this)) {
-            $categoryBase = \App\Services\FestiveDiscountService::getDiscountedFee($origCategoryBase);
-        } else {
-            $categoryBase = $origCategoryBase;
-        }
-
+        $categoryBase = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : 0.00;
         $cmeBase = $this->participate_in_cme ? 2000.00 : 0.00;
         $accompanyingBase = ($this->accompanying_persons ?? 0) * 5000.00;
 
-        $subtotalBase = $categoryBase + $cmeBase + $accompanyingBase;
-        $gstAmount = round($subtotalBase * 0.18, 2);
-        $totalAmount = round($subtotalBase + $gstAmount, 2);
+        $grossSubtotal = $categoryBase + $cmeBase + $accompanyingBase;
+
+        if (\App\Services\FestiveDiscountService::isActiveForRegistration($this)) {
+            $discount = \App\Services\FestiveDiscountService::calculateDiscount($grossSubtotal);
+            $netSubtotal = max(0.00, $grossSubtotal - $discount);
+        } else {
+            $netSubtotal = $grossSubtotal;
+        }
+
+        $gstAmount = round($netSubtotal * 0.18, 2);
+        $totalAmount = round($netSubtotal + $gstAmount, 2);
 
         $this->delegate_fee = $categoryBase;
         $this->cme_fee = $cmeBase;
         $this->accompanying_fee = $accompanyingBase;
         $this->gst_amount = $gstAmount;
         $this->total_amount = $totalAmount;
+    }
+
+    public function getGrossSubtotalAttribute(): float
+    {
+        if ($this->delegate_type === 'International') {
+            return 45000.00 + ($this->participate_in_cme ? 2000.00 : 0.00) + (($this->accompanying_persons ?? 0) * 5000.00);
+        }
+        $catFee = $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : (float)($this->delegate_fee ?? 0.00);
+        $cmeFee = $this->participate_in_cme ? 2000.00 : (float)($this->cme_fee ?? 0.00);
+        $accFee = ($this->accompanying_persons ?? 0) * 5000.00;
+        return (float)($catFee + $cmeFee + $accFee);
     }
 
     public function getOriginalDelegateFeeAttribute(): float
@@ -304,16 +318,25 @@ class Registration extends Model
         return $this->delegateCategory ? (float)$this->delegateCategory->indian_fee : (float)($this->delegate_fee ?? 0.00);
     }
 
+    public function getFestiveDiscountBaseAmountAttribute(): float
+    {
+        if (!\App\Services\FestiveDiscountService::isActiveForRegistration($this)) {
+            return 0.00;
+        }
+        return \App\Services\FestiveDiscountService::calculateDiscount($this->gross_subtotal);
+    }
+
     public function getFestiveDiscountAmountAttribute(): float
     {
-        $orig = $this->original_delegate_fee;
-        $current = (float)($this->delegate_fee ?? 0.00);
-        return ($orig > $current && $current > 0) ? round($orig - $current, 2) : 0.00;
+        $gross = $this->gross_subtotal;
+        $origTotal = round($gross * 1.18, 2);
+        $currentTotal = (float)($this->total_amount ?: $this->calculateTotalAmount());
+        return ($origTotal > $currentTotal && $currentTotal > 0) ? round($origTotal - $currentTotal, 2) : 0.00;
     }
 
     public function getHasFestiveDiscountAttribute(): bool
     {
-        return $this->festive_discount_amount > 0;
+        return $this->festive_discount_amount > 0 || $this->festive_discount_base_amount > 0;
     }
 
     public function updateStepAndCalculateTotal($step)

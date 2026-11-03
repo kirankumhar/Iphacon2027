@@ -607,18 +607,12 @@
                     </tr>
                 @elseif ($receiptType === 'consolidated')
                     @php
-                        $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
-                        $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                        $grossSub = $delFee + $cmeFee + $accFee;
+                        $expectedTot = round($grossSub * 1.18, 2);
+                        $delDiscAmt = ($expectedTot > $totalAmt) ? round($grossSub * 0.05, 2) : 0;
                     @endphp
                     <tr>
-                        <td>
-                            Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}
-                            @if ($delDiscAmt > 0)
-                                <div style="font-size: 7.5px; color: #16A34A; margin-top: 1px;">
-                                    (Includes 5% Festive Benefit Discount: -&#8377;{{ number_format($delDiscAmt, 2) }}; Original: &#8377;{{ number_format($origIndianFee, 2) }})
-                                </div>
-                            @endif
-                        </td>
+                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
                         <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>
@@ -639,6 +633,15 @@
                             <td style="text-align: center;">INR</td>
                         </tr>
                     @endif
+                    @if ($delDiscAmt > 0)
+                        <tr>
+                            <td>
+                                <strong style="color: #16A34A;">Festive Benefit Discount (5% on Total Price)</strong>
+                            </td>
+                            <td style="text-align: right; color: #16A34A;">-&#8377;{{ number_format($delDiscAmt, 2) }}</td>
+                            <td style="text-align: center; color: #16A34A;">INR</td>
+                        </tr>
+                    @endif
                     <tr>
                         <td>GST Amount (18%)</td>
                         <td style="text-align: right;">&#8377;{{ number_format($gstAmt, 2) }}</td>
@@ -651,18 +654,12 @@
                     </tr>
                 @else
                     @php
-                        $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
-                        $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                        $grossSub = $delFee + $accFee;
+                        $expectedTot = round($grossSub * 1.18, 2);
+                        $delDiscAmt = ($expectedTot > $totalAmt) ? round($grossSub * 0.05, 2) : 0;
                     @endphp
                     <tr>
-                        <td>
-                            Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}
-                            @if ($delDiscAmt > 0)
-                                <div style="font-size: 7.5px; color: #16A34A; margin-top: 1px;">
-                                    (Includes 5% Festive Benefit Discount: -&#8377;{{ number_format($delDiscAmt, 2) }}; Original: &#8377;{{ number_format($origIndianFee, 2) }})
-                                </div>
-                            @endif
-                        </td>
+                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
                         <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>
@@ -671,6 +668,15 @@
                             <td>Accompanying Persons Fee ({{ $registration->accompanying_persons ?? 0 }} Person(s))</td>
                             <td style="text-align: right;">&#8377;{{ number_format($accFee, 2) }}</td>
                             <td style="text-align: center;">INR</td>
+                        </tr>
+                    @endif
+                    @if ($delDiscAmt > 0)
+                        <tr>
+                            <td>
+                                <strong style="color: #16A34A;">Festive Benefit Discount (5% on Total Price)</strong>
+                            </td>
+                            <td style="text-align: right; color: #16A34A;">-&#8377;{{ number_format($delDiscAmt, 2) }}</td>
+                            <td style="text-align: center; color: #16A34A;">INR</td>
                         </tr>
                     @endif
                     <tr>

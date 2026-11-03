@@ -143,10 +143,6 @@
                         id="delegate_category_id" name="delegate_category_id" required
                         style="border-radius: 0 8px 8px 0;">
                         <option value="">-- Choose Delegate Category --</option>
-                        @php
-                            $isFestive = \App\Services\FestiveDiscountService::isActive();
-                            $discPercent = \App\Services\FestiveDiscountService::getDiscountPercentage();
-                        @endphp
                         @foreach ($delegateCategories as $category)
                             @if (
                                 $category->id == 5 ||
@@ -156,18 +152,9 @@
                                     str_contains(strtolower($category->category_name), 'co-delegate'))
                                 @continue
                             @endif
-                            @php
-                                $origFee = (float) $category->indian_fee;
-                                $effectiveFee = $isFestive ? \App\Services\FestiveDiscountService::getDiscountedFee($origFee) : $origFee;
-                                $discAmt = $origFee - $effectiveFee;
-                            @endphp
-                            <option value="{{ $category->id }}" data-fee="{{ $effectiveFee }}" data-original-fee="{{ $origFee }}"
+                            <option value="{{ $category->id }}" data-fee="{{ $category->indian_fee }}"
                                 {{ old('delegate_category_id', $registration->delegate_category_id) == $category->id ? 'selected' : '' }}>
-                                @if ($isFestive && $discAmt > 0)
-                                    {{ $category->category_name }} — ₹{{ number_format($effectiveFee) }} (5% Festive Off • Save ₹{{ number_format($discAmt) }})
-                                @else
-                                    {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
-                                @endif
+                                {{ $category->category_name }} — ₹{{ number_format($category->indian_fee) }}
                             </option>
                         @endforeach
                     </select>
@@ -440,18 +427,18 @@
         </div>
         <div class="col-md-7 text-md-end">
             <div class="d-inline-flex flex-wrap gap-2 align-items-center justify-content-md-end">
+                <div class="px-2.5 py-1.5 rounded-3 text-center"
+                    style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
+                    <span class="d-block text-white-50 extra-small fw-semibold">Subtotal</span>
+                    <span class="fw-bold text-white extra-small" id="base-amount">₹0.00</span>
+                </div>
                 @if (\App\Services\FestiveDiscountService::isActive())
                     <div class="px-2.5 py-1.5 rounded-3 text-center"
                         style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.45);">
-                        <span class="d-block text-white-50 extra-small fw-semibold">Special Offer</span>
-                        <span class="fw-bold text-white extra-small"><i class="fas fa-gift text-warning me-1"></i>5% OFF Applied</span>
+                        <span class="d-block text-white-50 extra-small fw-semibold">Festive (5% OFF)</span>
+                        <span class="fw-bold text-white extra-small" id="discount-amount">- ₹0.00</span>
                     </div>
                 @endif
-                <div class="px-2.5 py-1.5 rounded-3 text-center"
-                    style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
-                    <span class="d-block text-white-50 extra-small fw-semibold">Reg. Fee</span>
-                    <span class="fw-bold text-white extra-small" id="base-amount">₹0.00</span>
-                </div>
                 <div class="px-2.5 py-1.5 rounded-3 text-center"
                     style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
                     <span class="d-block text-white-50 extra-small fw-semibold">GST (18%)</span>
@@ -631,22 +618,38 @@
             baseSubtotal += cmeFee;
         }
 
-        var gstAmount = Math.round(baseSubtotal * 0.18);
-        var totalPayable = baseSubtotal + gstAmount;
+        function formatINR(val) {
+            return val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        @if (\App\Services\FestiveDiscountService::isActive())
+            var discount = Math.round(baseSubtotal * 0.05 * 100) / 100;
+            var netSubtotal = baseSubtotal - discount;
+            var gstAmount = Math.round(netSubtotal * 0.18 * 100) / 100;
+            var totalPayable = Math.round((netSubtotal + gstAmount) * 100) / 100;
+
+            var $discElement = $('#discount-amount');
+            if ($discElement.length) {
+                $discElement.text('- ₹' + formatINR(discount));
+            }
+        @else
+            var gstAmount = Math.round(baseSubtotal * 0.18 * 100) / 100;
+            var totalPayable = Math.round((baseSubtotal + gstAmount) * 100) / 100;
+        @endif
 
         var $baseElement = $('#base-amount');
         if ($baseElement.length) {
-            $baseElement.text('₹' + baseSubtotal.toLocaleString('en-IN') + '.00');
+            $baseElement.text('₹' + formatINR(baseSubtotal));
         }
 
         var $gstElement = $('#gst-amount');
         if ($gstElement.length) {
-            $gstElement.text('+ ₹' + gstAmount.toLocaleString('en-IN') + '.00');
+            $gstElement.text('+ ₹' + formatINR(gstAmount));
         }
 
         var $totalElement = $('#total-amount');
         if ($totalElement.length) {
-            $totalElement.text('₹' + totalPayable.toLocaleString('en-IN') + '.00');
+            $totalElement.text('₹' + formatINR(totalPayable));
         }
     }
 
