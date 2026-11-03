@@ -5,6 +5,20 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-11 col-lg-10 col-xl-10">
+
+                    <!-- Festive Diwali Bonanza Offer Banner -->
+                    <div class="festive-banner-wrapper mb-3 mb-md-4">
+                        <a href="#registrationForm" class="d-block text-decoration-none" title="Register now for IPHACON 2027 with 5% Discount">
+                            <div class="card border-0 shadow-lg overflow-hidden position-relative" 
+                                 style="border-radius: 16px; background: linear-gradient(135deg, #090e24 0%, #161e48 100%); border: 1.5px solid rgba(245, 158, 11, 0.45) !important; transition: transform 0.25s ease, box-shadow 0.25s ease;">
+                                <img src="{{ asset('images/Gemini_Generated_Image_qoowlxqoowlxqoow (1).png') }}" 
+                                     alt="IPHACON 2027 Diwali Bonanza Offer - Flat 5% Discount on Conference Registration (Valid 6th to 8th November 2026)" 
+                                     class="img-fluid w-100 d-block" 
+                                     style="height: auto; max-height: 400px; object-fit: contain; margin: 0 auto; border-radius: 14px;">
+                            </div>
+                        </a>
+                    </div>
+
                     <!-- Compact Registration Card -->
                     <div class="card registration-card shadow-lg border-0 overflow-hidden">
                         
