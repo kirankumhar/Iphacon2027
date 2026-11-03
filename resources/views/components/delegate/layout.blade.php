@@ -184,18 +184,15 @@
     <main class="main">
         @if (request()->is('/') || request()->routeIs('register'))
             <div class="site-breadcrumb">
-                <img src="{{ asset('images/diwali-bonanza-offer-banner.png') }}"
-                    alt="IPHACON 2027 Diwali Bonanza Offer" title="IPHACON 2027 Diwali Bonanza Offer"
-                    class="breadcrumb-banner-img">
+                <img src="{{ asset('images/diwali-offer-banner_01.png') }}" alt="IPHACON 2027 Diwali Bonanza Offer"
+                    title="IPHACON 2027 Diwali Bonanza Offer" class="breadcrumb-banner-img">
             </div>
         @else
             <div class="site-breadcrumb">
                 <img src="{{ asset('assets/img/htop_img/mast_iphacon2027_online-reg.jpg') }}"
                     alt="Online Registration" title="Online Registration" class="breadcrumb-banner-img">
                 <div class="breadcrumb-content">
-                    <!-- <h5 class="breadcrumb-title">@yield('inner-title', $inner_title ?? ($title ?? 'Online Registration'))</h5> -->
                     <h5 class="breadcrumb-title">IPHACON 2027</h5>
-
                 </div>
             </div>
         @endif
