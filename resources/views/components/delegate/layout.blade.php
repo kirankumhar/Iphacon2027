@@ -208,14 +208,20 @@
             </nav>
         </div>
         <main class="main">
-            <div class="site-breadcrumb">
-                <img src="{{ asset('assets/img/htop_img/mast_iphacon2027_online-reg.jpg') }}" alt="Online Registration" title="Online Registration" class="breadcrumb-banner-img">
-                <div class="breadcrumb-content">
-                    <!-- <h5 class="breadcrumb-title">@yield('inner-title', $inner_title ?? ($title ?? 'Online Registration'))</h5> -->
-                    <h5 class="breadcrumb-title">IPHACON 2027</h5> 
-
+            @if(request()->is('/') || request()->routeIs('register'))
+                <div class="site-breadcrumb">
+                    <img src="{{ asset('images/Gemini_Generated_Image_qoowlxqoowlxqoow (1).png') }}" alt="IPHACON 2027 Diwali Bonanza Offer" title="IPHACON 2027 Diwali Bonanza Offer" class="breadcrumb-banner-img">
                 </div>
-            </div>
+            @else
+                <div class="site-breadcrumb">
+                    <img src="{{ asset('assets/img/htop_img/mast_iphacon2027_online-reg.jpg') }}" alt="Online Registration" title="Online Registration" class="breadcrumb-banner-img">
+                    <div class="breadcrumb-content">
+                        <!-- <h5 class="breadcrumb-title">@yield('inner-title', $inner_title ?? ($title ?? 'Online Registration'))</h5> -->
+                        <h5 class="breadcrumb-title">IPHACON 2027</h5> 
+
+                    </div>
+                </div>
+            @endif
 
             <div class="py-4">
                 {{ $slot }}
