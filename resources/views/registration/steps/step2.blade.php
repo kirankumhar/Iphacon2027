@@ -618,34 +618,38 @@
             baseSubtotal += cmeFee;
         }
 
+        function formatINR(val) {
+            return val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
         @if (\App\Services\FestiveDiscountService::isActive())
-            var discount = Math.round(baseSubtotal * 0.05);
+            var discount = Math.round(baseSubtotal * 0.05 * 100) / 100;
             var netSubtotal = baseSubtotal - discount;
-            var gstAmount = Math.round(netSubtotal * 0.18);
-            var totalPayable = netSubtotal + gstAmount;
+            var gstAmount = Math.round(netSubtotal * 0.18 * 100) / 100;
+            var totalPayable = Math.round((netSubtotal + gstAmount) * 100) / 100;
 
             var $discElement = $('#discount-amount');
             if ($discElement.length) {
-                $discElement.text('- ₹' + discount.toLocaleString('en-IN') + '.00');
+                $discElement.text('- ₹' + formatINR(discount));
             }
         @else
-            var gstAmount = Math.round(baseSubtotal * 0.18);
-            var totalPayable = baseSubtotal + gstAmount;
+            var gstAmount = Math.round(baseSubtotal * 0.18 * 100) / 100;
+            var totalPayable = Math.round((baseSubtotal + gstAmount) * 100) / 100;
         @endif
 
         var $baseElement = $('#base-amount');
         if ($baseElement.length) {
-            $baseElement.text('₹' + baseSubtotal.toLocaleString('en-IN') + '.00');
+            $baseElement.text('₹' + formatINR(baseSubtotal));
         }
 
         var $gstElement = $('#gst-amount');
         if ($gstElement.length) {
-            $gstElement.text('+ ₹' + gstAmount.toLocaleString('en-IN') + '.00');
+            $gstElement.text('+ ₹' + formatINR(gstAmount));
         }
 
         var $totalElement = $('#total-amount');
         if ($totalElement.length) {
-            $totalElement.text('₹' + totalPayable.toLocaleString('en-IN') + '.00');
+            $totalElement.text('₹' + formatINR(totalPayable));
         }
     }
 
