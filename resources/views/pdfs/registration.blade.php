@@ -606,8 +606,19 @@
                         <td style="text-align: center;"><strong>INR</strong></td>
                     </tr>
                 @elseif ($receiptType === 'consolidated')
+                    @php
+                        $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
+                        $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                    @endphp
                     <tr>
-                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
+                        <td>
+                            Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}
+                            @if ($delDiscAmt > 0)
+                                <div style="font-size: 7.5px; color: #16A34A; margin-top: 1px;">
+                                    (Includes 5% Festive Benefit Discount: -&#8377;{{ number_format($delDiscAmt, 2) }}; Original: &#8377;{{ number_format($origIndianFee, 2) }})
+                                </div>
+                            @endif
+                        </td>
                         <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>
@@ -639,8 +650,19 @@
                         <td style="text-align: center;"><strong>INR</strong></td>
                     </tr>
                 @else
+                    @php
+                        $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
+                        $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                    @endphp
                     <tr>
-                        <td>Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}</td>
+                        <td>
+                            Delegate Registration Fee (Excl. GST) &mdash; {{ $registration->delegateCategory?->category_name ?? 'Indian Delegate' }}
+                            @if ($delDiscAmt > 0)
+                                <div style="font-size: 7.5px; color: #16A34A; margin-top: 1px;">
+                                    (Includes 5% Festive Benefit Discount: -&#8377;{{ number_format($delDiscAmt, 2) }}; Original: &#8377;{{ number_format($origIndianFee, 2) }})
+                                </div>
+                            @endif
+                        </td>
                         <td style="text-align: right;">&#8377;{{ number_format($delFee, 2) }}</td>
                         <td style="text-align: center;">INR</td>
                     </tr>

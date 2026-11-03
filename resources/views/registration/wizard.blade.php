@@ -175,6 +175,30 @@
 
                     <!-- Form Body -->
                     <div class="card-body compact-form-body">
+                        <!-- Festive Offer Promotional Banner -->
+                        @if (\App\Services\FestiveDiscountService::isActive())
+                            <div class="alert border-0 shadow-sm p-3 mb-3 position-relative overflow-hidden text-white" 
+                                style="border-radius: 12px; background: linear-gradient(135deg, #059669 0%, #10B981 50%, #047857 100%);">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                                        style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2); font-size: 1.25rem;">
+                                        🎁
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 rounded-pill extra-small">
+                                                SPECIAL BENEFIT
+                                            </span>
+                                            <strong class="text-white small">Festive Benefit Window ({{ \App\Services\FestiveDiscountService::getWindowText() }})</strong>
+                                        </div>
+                                        <div class="text-white-50 extra-small mt-0.5" style="font-size: 0.8rem; color: #E6FFFA !important;">
+                                            Delegates registering for <strong>IPHACON 2027</strong> during this festive window enjoy an automatic <strong>5% discount</strong> on their conference delegate registration fee!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Reverted Alert Banner in Wizard -->
                         @if ($registration && !empty($registration->revert_reason) && ($registration->status === 'Draft' || $registration->status === 'Reverted' || !empty($registration->reverted_at)))
                             <div class="alert alert-warning border-0 shadow-sm p-3.5 mb-4 position-relative overflow-hidden" style="border-radius: 12px; background: #FFFBEB; border-left: 5px solid #F59E0B !important;">

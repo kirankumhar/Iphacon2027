@@ -307,9 +307,20 @@
                             <td class="value" style="color: #0288D1; font-size: 16px;">₹{{ number_format($totalAmt ?: 45000, 2) }} INR</td>
                           </tr>
                         @else
+                          @php
+                            $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
+                            $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                          @endphp
                           @if ($delFee > 0)
                           <tr>
-                            <td class="label">Delegate Fee (Excl. GST)</td>
+                            <td class="label">
+                              Delegate Fee (Excl. GST)
+                              @if ($delDiscAmt > 0)
+                                <div style="font-size: 11px; color: #16A34A; font-weight: normal; margin-top: 2px;">
+                                  (Includes 5% Festive Benefit Discount: -₹{{ number_format($delDiscAmt, 2) }})
+                                </div>
+                              @endif
+                            </td>
                             <td class="value">₹{{ number_format($delFee, 2) }}</td>
                           </tr>
                           @endif

@@ -170,7 +170,9 @@
                             <span class="d-block text-muted text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 10.5px; margin-bottom: 1px;">Total Payable Amount</span>
                             @php
                                 $isInternational = strtolower(trim($registration->delegate_type ?? $registration->user->delegate_type ?? 'Indian')) === 'international';
-                                $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                                $origCatBase = $registration->original_delegate_fee;
+                                $catBase = (float)($registration->delegate_fee ?: $origCatBase);
+                                $discAmt = $isInternational ? 0.00 : $registration->festive_discount_amount;
                                 $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                                 $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
                                 $subtotalBase = $catBase + $cmeBase + $accBase;
@@ -193,6 +195,29 @@
                 </div>
 
                 <div class="card-body p-3 p-md-4 bg-light">
+
+                    @if (\App\Services\FestiveDiscountService::isActive())
+                        <div class="alert border-0 shadow-sm p-3 mb-4 position-relative overflow-hidden text-white" 
+                            style="border-radius: 12px; background: linear-gradient(135deg, #059669 0%, #10B981 50%, #047857 100%);">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                                    style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2); font-size: 1.25rem;">
+                                    🎁
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 rounded-pill extra-small">
+                                            FESTIVE BENEFIT APPLIED
+                                        </span>
+                                        <strong class="text-white small">Early Participant Window ({{ \App\Services\FestiveDiscountService::getWindowText() }})</strong>
+                                    </div>
+                                    <div class="text-white-50 extra-small mt-0.5" style="font-size: 0.82rem; color: #E6FFFA !important;">
+                                        Your registration fee reflects the <strong>5% festive discount</strong>. Complete your payment now to avail this special rate!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Session / Alert Messages -->
                     @if (session('success'))
@@ -538,9 +563,31 @@
                                                     <strong>Delegate Category Base Fee</strong>
                                                     <div class="text-muted small">{{ $registration->delegateCategory->category_name ?? 'Indian Delegate' }}</div>
                                                 </td>
-                                                <td class="text-center">Base Price</td>
-                                                <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
+                                                <td class="text-center">
+                                                    @if ($discAmt > 0)
+                                                        <del class="text-muted small">₹{{ number_format($origCatBase, 2) }}</del>
+                                                    @else
+                                                        Base Price
+                                                    @endif
+                                                </td>
+                                                <td class="text-end">
+                                                    @if ($discAmt > 0)
+                                                        <strong class="text-success">₹{{ number_format($catBase, 2) }}</strong>
+                                                    @else
+                                                        ₹{{ number_format($catBase, 2) }}
+                                                    @endif
+                                                </td>
                                             </tr>
+                                            @if ($discAmt > 0)
+                                                <tr class="table-success">
+                                                    <td>
+                                                        <strong class="text-success"><i class="fas fa-gift me-1"></i>Special Festive Discount (5% OFF)</strong>
+                                                        <div class="text-success small">Early participant benefit ({{ \App\Services\FestiveDiscountService::getWindowText() }})</div>
+                                                    </td>
+                                                    <td class="text-center text-success fw-bold">5% OFF</td>
+                                                    <td class="text-end text-success fw-bold">- ₹{{ number_format($discAmt, 2) }}</td>
+                                                </tr>
+                                            @endif
                                             @if ($registration->participate_in_cme)
                                                 <tr>
                                                     <td>

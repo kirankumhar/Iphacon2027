@@ -125,10 +125,14 @@
                     @php
                         if ($registration->delegate_type == 'International') {
                             $catName = 'Foreign Delegate Package';
+                            $origCatBase = 45000.00;
                             $catBase = 45000.00;
+                            $discAmt = 0.00;
                         } else {
                             $catName = $registration->delegateCategory ? $registration->delegateCategory->category_name : 'Standard';
-                            $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : 0;
+                            $origCatBase = $registration->original_delegate_fee;
+                            $catBase = (float)($registration->delegate_fee ?: $origCatBase);
+                            $discAmt = $registration->festive_discount_amount;
                         }
                         $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                         $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
@@ -144,8 +148,23 @@
                             </tr>
                             <tr>
                                 <td class="text-muted py-1">Delegate Fee:</td>
-                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($catBase, 2) }}</td>
+                                <td class="fw-semibold text-dark py-1 text-end">
+                                    @if ($discAmt > 0)
+                                        <del class="text-muted small me-1">₹{{ number_format($origCatBase, 2) }}</del>
+                                        <span class="text-success">₹{{ number_format($catBase, 2) }}</span>
+                                    @else
+                                        ₹{{ number_format($catBase, 2) }}
+                                    @endif
+                                </td>
                             </tr>
+                            @if ($discAmt > 0)
+                                <tr>
+                                    <td class="text-success py-1 small">
+                                        <i class="fas fa-gift me-1"></i>Festive Discount (5% OFF):
+                                    </td>
+                                    <td class="fw-bold text-success py-1 text-end small">- ₹{{ number_format($discAmt, 2) }}</td>
+                                </tr>
+                            @endif
                             @if ($registration->participate_in_cme)
                                 <tr>
                                     <td class="text-muted py-1">
