@@ -39,7 +39,7 @@ class FestiveDiscountService
     public static function getEndDate(): Carbon
     {
         $tz = config('services.festive_discount.timezone', 'Asia/Kolkata');
-        $dateStr = config('services.festive_discount.end_date', '2026-11-08 23:59:59');
+        $dateStr = config('services.festive_discount.end_date', '2026-11-10 23:59:59');
         return Carbon::parse($dateStr, $tz);
     }
 
