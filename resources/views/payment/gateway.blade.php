@@ -170,14 +170,15 @@
                             <span class="d-block text-muted text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 10.5px; margin-bottom: 1px;">Total Payable Amount</span>
                             @php
                                 $isInternational = strtolower(trim($registration->delegate_type ?? $registration->user->delegate_type ?? 'Indian')) === 'international';
-                                $origCatBase = $registration->original_delegate_fee;
-                                $catBase = (float)($registration->delegate_fee ?: $origCatBase);
-                                $discAmt = $isInternational ? 0.00 : $registration->festive_discount_amount;
+                                $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : (float)($registration->delegate_fee ?? 0);
                                 $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                                 $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                                $subtotalBase = $catBase + $cmeBase + $accBase;
-                                $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                                $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                                $grossSubtotal = $catBase + $cmeBase + $accBase;
+                                $isFestive = !$isInternational && \App\Services\FestiveDiscountService::isActiveForRegistration($registration);
+                                $discAmt = $isFestive ? round($grossSubtotal * 0.05, 2) : 0.00;
+                                $netSubtotal = $grossSubtotal - $discAmt;
+                                $gstAmt = $registration->gst_amount ?: round($netSubtotal * 0.18, 2);
+                                $totalAmt = $registration->total_amount ?: round($netSubtotal + $gstAmt, 2);
                                 $finalPayableAmt = $isInternational ? 45000.00 : $totalAmt;
                             @endphp
                             <div class="fw-bolder" style="color: #2e3192; font-size: 1.5rem; line-height: 1.15;">
@@ -563,31 +564,9 @@
                                                     <strong>Delegate Category Base Fee</strong>
                                                     <div class="text-muted small">{{ $registration->delegateCategory->category_name ?? 'Indian Delegate' }}</div>
                                                 </td>
-                                                <td class="text-center">
-                                                    @if ($discAmt > 0)
-                                                        <del class="text-muted small">₹{{ number_format($origCatBase, 2) }}</del>
-                                                    @else
-                                                        Base Price
-                                                    @endif
-                                                </td>
-                                                <td class="text-end">
-                                                    @if ($discAmt > 0)
-                                                        <strong class="text-success">₹{{ number_format($catBase, 2) }}</strong>
-                                                    @else
-                                                        ₹{{ number_format($catBase, 2) }}
-                                                    @endif
-                                                </td>
+                                                <td class="text-center">Base Price</td>
+                                                <td class="text-end">₹{{ number_format($catBase, 2) }}</td>
                                             </tr>
-                                            @if ($discAmt > 0)
-                                                <tr class="table-success">
-                                                    <td>
-                                                        <strong class="text-success"><i class="fas fa-gift me-1"></i>Special Festive Discount (5% OFF)</strong>
-                                                        <div class="text-success small">Early participant benefit ({{ \App\Services\FestiveDiscountService::getWindowText() }})</div>
-                                                    </td>
-                                                    <td class="text-center text-success fw-bold">5% OFF</td>
-                                                    <td class="text-end text-success fw-bold">- ₹{{ number_format($discAmt, 2) }}</td>
-                                                </tr>
-                                            @endif
                                             @if ($registration->participate_in_cme)
                                                 <tr>
                                                     <td>
@@ -616,9 +595,23 @@
                                                 </tr>
                                             @endif
                                             <tr class="table-light">
-                                                <td colspan="2" class="text-end"><strong>Subtotal:</strong></td>
-                                                <td class="text-end">₹{{ number_format($subtotalBase, 2) }}</td>
+                                                <td colspan="2" class="text-end"><strong>Total Subtotal (Base Amount):</strong></td>
+                                                <td class="text-end fw-semibold">₹{{ number_format($grossSubtotal, 2) }}</td>
                                             </tr>
+                                            @if ($discAmt > 0)
+                                                <tr class="table-success">
+                                                    <td>
+                                                        <strong class="text-success"><i class="fas fa-gift me-1"></i>Special Festive Discount (5% on Total Price)</strong>
+                                                        <div class="text-success small">Early participant benefit ({{ \App\Services\FestiveDiscountService::getWindowText() }})</div>
+                                                    </td>
+                                                    <td class="text-center text-success fw-bold">5% OFF</td>
+                                                    <td class="text-end text-success fw-bold">- ₹{{ number_format($discAmt, 2) }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="text-end"><strong>Net Taxable Subtotal:</strong></td>
+                                                    <td class="text-end fw-semibold">₹{{ number_format($netSubtotal, 2) }}</td>
+                                                </tr>
+                                            @endif
                                             <tr>
                                                 <td colspan="2" class="text-end text-warning"><strong>GST (18% Applicable):</strong></td>
                                                 <td class="text-end text-warning fw-bold">+ ₹{{ number_format($gstAmt, 2) }}</td>

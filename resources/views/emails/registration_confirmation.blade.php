@@ -308,19 +308,13 @@
                           </tr>
                         @else
                           @php
-                            $origIndianFee = (float)($registration->delegateCategory?->indian_fee ?? 0);
-                            $delDiscAmt = ($origIndianFee > $delFee) ? ($origIndianFee - $delFee) : 0;
+                            $grossSub = $delFee + $cmeFee + $accFee;
+                            $expectedTot = round($grossSub * 1.18, 2);
+                            $festiveDiscAmt = ($expectedTot > $totalAmt) ? round($grossSub * 0.05, 2) : 0;
                           @endphp
                           @if ($delFee > 0)
                           <tr>
-                            <td class="label">
-                              Delegate Fee (Excl. GST)
-                              @if ($delDiscAmt > 0)
-                                <div style="font-size: 11px; color: #16A34A; font-weight: normal; margin-top: 2px;">
-                                  (Includes 5% Festive Benefit Discount: -₹{{ number_format($delDiscAmt, 2) }})
-                                </div>
-                              @endif
-                            </td>
+                            <td class="label">Delegate Fee (Excl. GST)</td>
                             <td class="value">₹{{ number_format($delFee, 2) }}</td>
                           </tr>
                           @endif
@@ -342,6 +336,12 @@
                           <tr>
                             <td class="label">Accompanying Persons ({{ $registration->accompanying_persons ?? 0 }})</td>
                             <td class="value">₹{{ number_format($accFee, 2) }}</td>
+                          </tr>
+                          @endif
+                          @if ($festiveDiscAmt > 0)
+                          <tr>
+                            <td class="label" style="color: #16A34A; font-weight: 600;">Festive Benefit Discount (5% on Total Price)</td>
+                            <td class="value" style="color: #16A34A; font-weight: 600;">- ₹{{ number_format($festiveDiscAmt, 2) }}</td>
                           </tr>
                           @endif
                           <tr>

@@ -125,20 +125,19 @@
                     @php
                         if ($registration->delegate_type == 'International') {
                             $catName = 'Foreign Delegate Package';
-                            $origCatBase = 45000.00;
                             $catBase = 45000.00;
-                            $discAmt = 0.00;
                         } else {
                             $catName = $registration->delegateCategory ? $registration->delegateCategory->category_name : 'Standard';
-                            $origCatBase = $registration->original_delegate_fee;
-                            $catBase = (float)($registration->delegate_fee ?: $origCatBase);
-                            $discAmt = $registration->festive_discount_amount;
+                            $catBase = $registration->delegateCategory ? (float)$registration->delegateCategory->indian_fee : (float)($registration->delegate_fee ?? 0);
                         }
                         $cmeBase = $registration->cme_fee ?: ($registration->participate_in_cme ? 2000 : 0);
                         $accBase = $registration->accompanying_fee ?: (($registration->accompanying_persons ?? 0) * 5000);
-                        $subtotalBase = $catBase + $cmeBase + $accBase;
-                        $gstAmt = $registration->gst_amount ?: round($subtotalBase * 0.18, 2);
-                        $totalAmt = $registration->total_amount ?: round($subtotalBase + $gstAmt, 2);
+                        $grossSubtotal = $catBase + $cmeBase + $accBase;
+                        $isFestive = ($registration->delegate_type !== 'International') && \App\Services\FestiveDiscountService::isActiveForRegistration($registration);
+                        $discAmt = $isFestive ? round($grossSubtotal * 0.05, 2) : 0.00;
+                        $netSubtotal = $grossSubtotal - $discAmt;
+                        $gstAmt = $registration->gst_amount ?: round($netSubtotal * 0.18, 2);
+                        $totalAmt = $registration->total_amount ?: round($netSubtotal + $gstAmt, 2);
                     @endphp
                     <table class="table table-sm table-borderless mb-0 align-middle">
                         <tbody>
@@ -148,23 +147,8 @@
                             </tr>
                             <tr>
                                 <td class="text-muted py-1">Delegate Fee:</td>
-                                <td class="fw-semibold text-dark py-1 text-end">
-                                    @if ($discAmt > 0)
-                                        <del class="text-muted small me-1">₹{{ number_format($origCatBase, 2) }}</del>
-                                        <span class="text-success">₹{{ number_format($catBase, 2) }}</span>
-                                    @else
-                                        ₹{{ number_format($catBase, 2) }}
-                                    @endif
-                                </td>
+                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($catBase, 2) }}</td>
                             </tr>
-                            @if ($discAmt > 0)
-                                <tr>
-                                    <td class="text-success py-1 small">
-                                        <i class="fas fa-gift me-1"></i>Festive Discount (5% OFF):
-                                    </td>
-                                    <td class="fw-bold text-success py-1 text-end small">- ₹{{ number_format($discAmt, 2) }}</td>
-                                </tr>
-                            @endif
                             @if ($registration->participate_in_cme)
                                 <tr>
                                     <td class="text-muted py-1">
@@ -186,13 +170,30 @@
                             @endif
                             <tr>
                                 <td class="text-muted py-1">Subtotal (Excl. GST):</td>
-                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($subtotalBase, 2) }}</td>
+                                <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($grossSubtotal, 2) }}</td>
                             </tr>
+                            @if ($discAmt > 0)
+                                <tr>
+                                    <td class="text-success py-1 small">
+                                        <i class="fas fa-gift me-1"></i>Festive Discount (5% on Total Price):
+                                    </td>
+                                    <td class="fw-bold text-success py-1 text-end small">- ₹{{ number_format($discAmt, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted py-1">Net Taxable Subtotal:</td>
+                                    <td class="fw-semibold text-dark py-1 text-end">₹{{ number_format($netSubtotal, 2) }}</td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td class="text-muted py-1">GST (18%):</td>
                                 <td class="fw-semibold text-danger py-1 text-end">+ ₹{{ number_format($gstAmt, 2) }}</td>
                             </tr>
+                            <tr class="border-top">
+                                <td class="fw-bold text-dark py-1.5 fs-6">Total Amount:</td>
+                                <td class="fw-extrabold text-primary py-1.5 text-end fs-6">₹{{ number_format($totalAmt, 2) }}</td>
+                            </tr>
                         </tbody>
+                    </table>
                     </table>
                 </div>
             </div>

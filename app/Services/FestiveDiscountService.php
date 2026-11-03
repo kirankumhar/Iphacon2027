@@ -79,7 +79,11 @@ class FestiveDiscountService
         // If registration is already approved, preserve whether it was approved with discount
         if ($registration->status === 'Approved') {
             $catFee = $registration->delegateCategory ? (float) $registration->delegateCategory->indian_fee : 0.00;
-            return ($catFee > 0 && (float) $registration->delegate_fee < $catFee);
+            $cmeFee = $registration->participate_in_cme ? 2000.00 : (float)($registration->cme_fee ?? 0.00);
+            $accFee = ($registration->accompanying_persons ?? 0) * 5000.00;
+            $regBase = $catFee + $cmeFee + $accFee;
+            $expectedUndiscounted = round($regBase * 1.18, 2);
+            return ($expectedUndiscounted > 0 && (float) $registration->total_amount < $expectedUndiscounted);
         }
 
         // For pending/draft registrations, active based on current time window
