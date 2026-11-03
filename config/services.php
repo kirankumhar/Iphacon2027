@@ -49,7 +49,7 @@ return [
         'enabled'      => env('FESTIVE_DISCOUNT_ENABLED', true),
         'force_active' => env('FESTIVE_DISCOUNT_FORCE_ACTIVE', false),
         'percentage'   => (float) env('FESTIVE_DISCOUNT_PERCENT', 5.0),
-        'start_date'   => env('FESTIVE_DISCOUNT_START', '2026-11-06 00:00:00'),
+        'start_date'   => env('FESTIVE_DISCOUNT_START', '2026-11-04 00:00:00'),
         'end_date'     => env('FESTIVE_DISCOUNT_END', '2026-11-08 23:59:59'),
         'timezone'     => env('FESTIVE_DISCOUNT_TIMEZONE', 'Asia/Kolkata'),
     ],

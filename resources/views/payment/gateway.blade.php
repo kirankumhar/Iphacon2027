@@ -209,7 +209,7 @@
                                         <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 rounded-pill extra-small">
                                             FESTIVE BENEFIT APPLIED
                                         </span>
-                                        <strong class="text-white small">Early Participant Window (6th – 8th November 2026)</strong>
+                                        <strong class="text-white small">Early Participant Window ({{ \App\Services\FestiveDiscountService::getWindowText() }})</strong>
                                     </div>
                                     <div class="text-white-50 extra-small mt-0.5" style="font-size: 0.82rem; color: #E6FFFA !important;">
                                         Your registration fee reflects the <strong>5% festive discount</strong>. Complete your payment now to avail this special rate!
@@ -582,7 +582,7 @@
                                                 <tr class="table-success">
                                                     <td>
                                                         <strong class="text-success"><i class="fas fa-gift me-1"></i>Special Festive Discount (5% OFF)</strong>
-                                                        <div class="text-success small">Early participant benefit (6th – 8th November 2026)</div>
+                                                        <div class="text-success small">Early participant benefit ({{ \App\Services\FestiveDiscountService::getWindowText() }})</div>
                                                     </td>
                                                     <td class="text-center text-success fw-bold">5% OFF</td>
                                                     <td class="text-end text-success fw-bold">- ₹{{ number_format($discAmt, 2) }}</td>

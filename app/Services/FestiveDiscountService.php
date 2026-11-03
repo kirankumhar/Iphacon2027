@@ -29,7 +29,7 @@ class FestiveDiscountService
     public static function getStartDate(): Carbon
     {
         $tz = config('services.festive_discount.timezone', 'Asia/Kolkata');
-        $dateStr = config('services.festive_discount.start_date', '2026-11-06 00:00:00');
+        $dateStr = config('services.festive_discount.start_date', '2026-11-04 00:00:00');
         return Carbon::parse($dateStr, $tz);
     }
 
@@ -119,7 +119,9 @@ class FestiveDiscountService
      */
     public static function getWindowText(): string
     {
-        return '6th to 8th November 2026';
+        $start = self::getStartDate();
+        $end = self::getEndDate();
+        return $start->format('jS') . ' to ' . $end->format('jS F Y');
     }
 }
 

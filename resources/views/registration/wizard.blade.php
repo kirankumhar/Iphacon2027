@@ -189,7 +189,7 @@
                                             <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 rounded-pill extra-small">
                                                 SPECIAL BENEFIT
                                             </span>
-                                            <strong class="text-white small">Festive Benefit Window (6th – 8th November 2026)</strong>
+                                            <strong class="text-white small">Festive Benefit Window ({{ \App\Services\FestiveDiscountService::getWindowText() }})</strong>
                                         </div>
                                         <div class="text-white-50 extra-small mt-0.5" style="font-size: 0.8rem; color: #E6FFFA !important;">
                                             Delegates registering for <strong>IPHACON 2027</strong> during this festive window enjoy an automatic <strong>5% discount</strong> on their conference delegate registration fee!
