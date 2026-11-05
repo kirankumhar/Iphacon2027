@@ -220,13 +220,11 @@
                 <div class="col-lg-4 text-center text-lg-end">
                     <div class="d-flex flex-wrap flex-lg-column justify-content-center justify-content-lg-end gap-2">
                         
-                        {{-- Edit Profile Modal Trigger --}}
-                        <button type="button" class="btn btn-warning text-dark fw-bold btn-sm px-3.5 py-2 rounded-pill shadow-sm"
-                                data-bs-toggle="modal" data-bs-target="#editProfileModal"
-                                data-toggle="modal" data-target="#editProfileModal"
-                                style="background: #F59E0B; border: none; font-size: 0.85rem;">
+                        {{-- Edit Profile Link (New Dedicated Page) --}}
+                        <a href="{{ route('profile.edit') }}" class="btn btn-warning text-dark fw-bold btn-sm px-3.5 py-2 rounded-pill shadow-sm"
+                           style="background: #F59E0B; border: none; font-size: 0.85rem;">
                             <i class="fas fa-user-edit me-1.5"></i>Edit Profile
-                        </button>
+                        </a>
 
                         {{-- Change Password --}}
                         <a href="{{ route('profile.change-password') }}" class="btn btn-outline-light btn-sm px-3.5 py-2 rounded-pill fw-semibold shadow-xs"
@@ -372,12 +370,10 @@
                         </div>
                         <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Personal &amp; Demographic Details</h6>
                     </div>
-                    <button type="button" class="btn btn-sm btn-light text-primary px-3 py-1 rounded-pill fw-semibold"
-                            data-bs-toggle="modal" data-bs-target="#editProfileModal"
-                            data-toggle="modal" data-target="#editProfileModal"
-                            style="font-size: 0.8rem; background: #F0F9FF;">
+                    <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-light text-primary px-3 py-1 rounded-pill fw-semibold"
+                       style="font-size: 0.8rem; background: #F0F9FF;">
                         <i class="fas fa-pen me-1"></i>Edit
-                    </button>
+                    </a>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
@@ -472,12 +468,10 @@
                         </div>
                         <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Professional &amp; Academic Affiliation</h6>
                     </div>
-                    <button type="button" class="btn btn-sm btn-light text-primary px-3 py-1 rounded-pill fw-semibold"
-                            data-bs-toggle="modal" data-bs-target="#editProfileModal"
-                            data-toggle="modal" data-target="#editProfileModal"
-                            style="font-size: 0.8rem; background: #F0F9FF;">
+                    <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-light text-primary px-3 py-1 rounded-pill fw-semibold"
+                       style="font-size: 0.8rem; background: #F0F9FF;">
                         <i class="fas fa-pen me-1"></i>Update
-                    </button>
+                    </a>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
@@ -1032,127 +1026,6 @@
 
 </div>
 
-{{-- Edit Profile Modal --}}
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
-            
-            <div class="modal-header text-white py-3 px-4"
-                 style="background: linear-gradient(135deg, #01224d 0%, #013b82 60%, #0288d1 100%); border-bottom: 3px solid #F59E0B;">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="fas fa-user-edit fs-5 text-warning"></i>
-                    <h5 class="modal-title fw-bold text-white mb-0" id="editProfileModalLabel">Edit Delegate Profile</h5>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form method="POST" action="{{ route('profile.update') }}" id="editProfileForm">
-                @csrf
-                @method('PUT')
-
-                <div class="modal-body p-4">
-                    
-                    <div class="alert alert-info py-2 px-3 mb-3 small d-flex align-items-center gap-2" style="border-radius: 10px;">
-                        <i class="fas fa-info-circle fs-6"></i>
-                        <span>Keep your full name and designations updated for your official conference badge, certificates and receipts.</span>
-                    </div>
-
-                    <div class="row g-3">
-                        
-                        {{-- Prefix & Full Name --}}
-                        <div class="col-md-3">
-                            <label for="modal_prefix" class="form-label fw-semibold text-dark small">Prefix <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-sm" id="modal_prefix" name="prefix" required style="border-radius: 8px;">
-                                <option value="Dr." {{ old('prefix', $user->prefix) == 'Dr.' ? 'selected' : '' }}>Dr.</option>
-                                <option value="Mr." {{ old('prefix', $user->prefix) == 'Mr.' ? 'selected' : '' }}>Mr.</option>
-                                <option value="Mrs." {{ old('prefix', $user->prefix) == 'Mrs.' ? 'selected' : '' }}>Mrs.</option>
-                                <option value="Prof." {{ old('prefix', $user->prefix) == 'Prof.' ? 'selected' : '' }}>Prof.</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-9">
-                            <label for="modal_full_name" class="form-label fw-semibold text-dark small">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-sm" id="modal_full_name" name="full_name"
-                                   value="{{ old('full_name', $user->full_name) }}" required placeholder="Enter your full name" style="border-radius: 8px;">
-                        </div>
-
-                        {{-- Designation & Institution --}}
-                        <div class="col-md-6">
-                            <label for="modal_designation" class="form-label fw-semibold text-dark small">Designation</label>
-                            <input type="text" class="form-control form-control-sm" id="modal_designation" name="designation"
-                                   value="{{ old('designation', $user->designation ?: ($primaryReg->designation ?? '')) }}"
-                                   placeholder="e.g. Associate Professor / Consultant / PG Resident" style="border-radius: 8px;">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="modal_institution" class="form-label fw-semibold text-dark small">Institution / Medical College</label>
-                            <input type="text" class="form-control form-control-sm" id="modal_institution" name="institution"
-                                   value="{{ old('institution', $user->institution ?: ($primaryReg->institution ?? '')) }}"
-                                   placeholder="e.g. AIIMS New Delhi / RIMS Ranchi" style="border-radius: 8px;">
-                        </div>
-
-                        {{-- Gender & DOB --}}
-                        <div class="col-md-6">
-                            <label for="modal_gender" class="form-label fw-semibold text-dark small">Gender <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-sm" id="modal_gender" name="gender" required style="border-radius: 8px;">
-                                <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                                <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>Female</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="modal_date_of_birth" class="form-label fw-semibold text-dark small">Date of Birth <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control form-control-sm" id="modal_date_of_birth" name="date_of_birth"
-                                   value="{{ old('date_of_birth', $user->date_of_birth ? $user->date_of_birth->format('Y-m-d') : '') }}"
-                                   max="{{ date('Y-m-d', strtotime('-18 years')) }}" required style="border-radius: 8px;">
-                        </div>
-
-                        {{-- Mobile Code & Number --}}
-                        <div class="col-md-4">
-                            <label for="modal_mobile_country_code" class="form-label fw-semibold text-dark small">Country Code <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-sm" id="modal_mobile_country_code" name="mobile_country_code" required style="border-radius: 8px;">
-                                @foreach($countries as $c)
-                                    <option value="{{ $c->phone_code }}" {{ old('mobile_country_code', $user->mobile_country_code) == $c->phone_code ? 'selected' : '' }}>
-                                        {{ $c->country_name }} ({{ $c->phone_code }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-8">
-                            <label for="modal_mobile_number" class="form-label fw-semibold text-dark small">Mobile Number <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control form-control-sm" id="modal_mobile_number" name="mobile_number"
-                                   value="{{ old('mobile_number', $user->mobile_number) }}" required maxlength="15"
-                                   placeholder="Enter mobile number" style="border-radius: 8px;">
-                        </div>
-
-                        {{-- Email (Read-only note) --}}
-                        <div class="col-12">
-                            <label class="form-label fw-semibold text-dark small">Registered Email Address</label>
-                            <input type="email" class="form-control form-control-sm bg-light" value="{{ $user->email }}" readonly style="border-radius: 8px;">
-                            <span class="text-muted extra-small">Primary delegate email cannot be changed. Contact the conference secretariat if modification is needed.</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="modal-footer bg-light py-2.5 px-4 d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary btn-sm px-3.5 py-1.5 rounded-pill" data-bs-dismiss="modal" data-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary btn-sm px-4 py-1.5 rounded-pill fw-bold shadow-xs"
-                            style="background: linear-gradient(135deg, #013069, #0288D1); border: none;">
-                        <i class="fas fa-save me-1.5"></i>Save Changes
-                    </button>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-</div>
-
 <style>
 .profile-page-container {
     max-width: 1200px;
@@ -1180,43 +1053,5 @@
     padding: 0.15rem 0.5rem;
     font-size: 0.72rem;
 }
-#editProfileModal {
-    z-index: 1065 !important;
-}
-.modal-backdrop {
-    z-index: 1055 !important;
-}
 </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var editModal = document.getElementById('editProfileModal');
-        if (editModal && editModal.parentElement !== document.body) {
-            document.body.appendChild(editModal);
-        }
-    });
-
-    $(document).on('show.bs.modal', '#editProfileModal', function () {
-        if (this.parentElement !== document.body) {
-            document.body.appendChild(this);
-        }
-    });
-
-    @if (isset($errors) && $errors->any())
-        document.addEventListener("DOMContentLoaded", function () {
-            var editModalEl = document.getElementById('editProfileModal');
-            if (editModalEl) {
-                if (editModalEl.parentElement !== document.body) {
-                    document.body.appendChild(editModalEl);
-                }
-                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    var modal = bootstrap.Modal.getOrCreateInstance(editModalEl);
-                    modal.show();
-                } else if (typeof $ !== 'undefined') {
-                    $(editModalEl).modal('show');
-                }
-            }
-        });
-    @endif
-</script>
 @endsection
