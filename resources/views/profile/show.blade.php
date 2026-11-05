@@ -1180,5 +1180,43 @@
     padding: 0.15rem 0.5rem;
     font-size: 0.72rem;
 }
+#editProfileModal {
+    z-index: 1065 !important;
+}
+.modal-backdrop {
+    z-index: 1055 !important;
+}
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var editModal = document.getElementById('editProfileModal');
+        if (editModal && editModal.parentElement !== document.body) {
+            document.body.appendChild(editModal);
+        }
+    });
+
+    $(document).on('show.bs.modal', '#editProfileModal', function () {
+        if (this.parentElement !== document.body) {
+            document.body.appendChild(this);
+        }
+    });
+
+    @if (isset($errors) && $errors->any())
+        document.addEventListener("DOMContentLoaded", function () {
+            var editModalEl = document.getElementById('editProfileModal');
+            if (editModalEl) {
+                if (editModalEl.parentElement !== document.body) {
+                    document.body.appendChild(editModalEl);
+                }
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    var modal = bootstrap.Modal.getOrCreateInstance(editModalEl);
+                    modal.show();
+                } else if (typeof $ !== 'undefined') {
+                    $(editModalEl).modal('show');
+                }
+            }
+        });
+    @endif
+</script>
 @endsection

@@ -412,6 +412,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Ensure all Bootstrap modals are appended to body to prevent backdrop z-index stacking issues
+            $(document).on('show.bs.modal', '.modal', function () {
+                if (this.parentElement !== document.body) {
+                    document.body.appendChild(this);
+                }
+            });
+
             if (typeof toastr !== 'undefined') {
                 toastr.options = {
                     "closeButton": true,
