@@ -157,7 +157,7 @@
                 <div class="otp-card">
                   <div class="otp-label">Your One-Time Password (OTP)</div>
                   <div class="otp-code">{{ $otp }}</div>
-                  <div class="otp-timer">⏱ Valid for 15 minutes only</div>
+                  <div class="otp-timer">⏱ Valid for 3 days</div>
                 </div>
               </td>
             </tr>

@@ -97,7 +97,7 @@
                         <div class="mb-3 position-relative">
                             <label for="otp" class="form-label fw-semibold text-dark extra-small mb-1 d-flex justify-content-between">
                                 <span>Enter 6-Digit OTP Code <span class="text-danger">*</span></span>
-                                <span class="text-muted extra-small">Valid for 15 mins</span>
+                                <span class="text-muted extra-small">Valid for 3 days</span>
                             </label>
                             <div class="input-group modern-input-group position-relative">
                                 <span class="input-group-text border-end-0 bg-light text-muted px-2.5">
