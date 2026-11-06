@@ -31,3 +31,4 @@ class CheckUserStatus
         return $next($request);
     }
 }
+
