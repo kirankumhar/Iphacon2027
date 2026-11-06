@@ -155,6 +155,13 @@ class RegisterController extends Controller
             return back()->withErrors(['email' => 'No user account found with this email address.'])->withInput();
         }
 
+        if ($user->isDisabled()) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Your account has been disabled. Please contact the conference secretariat for assistance.'], 403);
+            }
+            return back()->withErrors(['otp' => 'Your account has been disabled. Please contact the conference secretariat for assistance.'])->withInput();
+        }
+
         if ($user->hasVerifiedEmail()) {
             if (!Auth::check()) {
                 Auth::login($user);

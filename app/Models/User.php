@@ -15,6 +15,9 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
+    const STATUS_ACTIVE = 'active';
+    const STATUS_DISABLED = 'disabled';
+
     protected $fillable = [
         'prefix',
         'full_name',
@@ -29,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'delegate_type',
         'email',
         'password',
+        'status',
         'consent',
         'verification_token',
         'verification_sent_at',
@@ -135,5 +139,40 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getEmailForVerification()
     {
         return $this->email;
+    }
+
+    /**
+     * Check if user account is active
+     */
+    public function isActive(): bool
+    {
+        return ($this->status ?? self::STATUS_ACTIVE) === self::STATUS_ACTIVE;
+    }
+
+    /**
+     * Check if user account is disabled
+     */
+    public function isDisabled(): bool
+    {
+        return ($this->status ?? self::STATUS_ACTIVE) === self::STATUS_DISABLED;
+    }
+
+    /**
+     * Scope query to only active users
+     */
+    public function scopeActive($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', self::STATUS_ACTIVE)
+              ->orWhereNull('status');
+        });
+    }
+
+    /**
+     * Scope query to only disabled users
+     */
+    public function scopeDisabled($query)
+    {
+        return $query->where('status', self::STATUS_DISABLED);
     }
 }

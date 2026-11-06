@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckAdminPermission;
 use App\Http\Middleware\CheckAdminRole;
+use App\Http\Middleware\CheckUserStatus;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SanitizeInput;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => CheckAdminPermission::class,
             'admin.role' => CheckAdminRole::class,
+            'user.active' => CheckUserStatus::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
