@@ -181,8 +181,13 @@
                                                         onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';" />
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">
-                                                        {{ $delegateName }}
+                                                    <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-1.5" style="font-size: 0.9rem;">
+                                                        <span>{{ $delegateName }}</span>
+                                                        @if($reg->user?->isDisabled())
+                                                            <span class="badge bg-danger text-white extra-small px-1.5 py-0.5 rounded-pill" title="User account is disabled" style="font-size: 0.65rem;">
+                                                                <i class="bx bx-block me-0.5"></i>Disabled
+                                                            </span>
+                                                        @endif
                                                     </h6>
                                                     <div class="extra-small text-muted mb-0.5" style="font-size: 0.76rem;">
                                                         <i class="bx bx-envelope me-1 text-secondary"></i>{{ $reg->user?->email ?? 'N/A' }}
@@ -333,8 +338,13 @@
                                                     {{ strtoupper(substr($u->full_name ?? 'U', 0, 1)) }}
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">
-                                                        {{ $userNameFormatted }}
+                                                    <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-1.5" style="font-size: 0.9rem;">
+                                                        <span>{{ $userNameFormatted }}</span>
+                                                        @if($u->isDisabled())
+                                                            <span class="badge bg-danger text-white extra-small px-1.5 py-0.5 rounded-pill" title="User account is disabled" style="font-size: 0.65rem;">
+                                                                <i class="bx bx-block me-0.5"></i>Disabled
+                                                            </span>
+                                                        @endif
                                                     </h6>
                                                     <div class="extra-small text-muted" style="font-size: 0.76rem;">
                                                         <i class="bx bx-envelope me-1 text-secondary"></i>{{ $u->email }}

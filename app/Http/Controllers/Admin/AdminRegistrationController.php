@@ -1389,5 +1389,48 @@ class AdminRegistrationController extends Controller
 
         return redirect()->back()->with('success', 'Pre-Conference Workshop payment rejected.');
     }
+
+    /**
+     * Toggle User Account Status (Active <-> Disabled)
+     */
+    public function toggleUserStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $oldStatus = $user->status ?? User::STATUS_ACTIVE;
+        $newStatus = ($oldStatus === User::STATUS_ACTIVE) ? User::STATUS_DISABLED : User::STATUS_ACTIVE;
+
+        $user->status = $newStatus;
+        $user->save();
+
+        // If user is being disabled, terminate any active sessions
+        if ($newStatus === User::STATUS_DISABLED) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('sessions')) {
+                    \Illuminate\Support\Facades\DB::table('sessions')
+                        ->where('user_id', $user->id)
+                        ->delete();
+                }
+            } catch (\Throwable $e) {
+                // Continue if session table not used
+            }
+        }
+
+        $actionText = ($newStatus === User::STATUS_DISABLED) ? 'disabled' : 'enabled';
+
+        \App\Models\ActivityLog::record(
+            'ADMIN_USER_STATUS_UPDATED',
+            "User account for {$user->full_name} ({$user->email}) was {$actionText} by admin.",
+            [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'admin_id' => auth('admin')->id(),
+            ]
+        );
+
+        return redirect()->back()->with('success', "User account for {$user->full_name} ({$user->email}) has been {$actionText} successfully.");
+    }
 }
 

@@ -331,6 +331,11 @@
                                             <span class="reg-code-badge" title="Registration Number">
                                                 <i class="bx bx-hash"></i>{{ $reg->registration_number ?? ($reg->acknowledgement_id ?? 'Pending') }}
                                             </span>
+                                            @if($user?->isDisabled())
+                                                <span class="badge bg-danger text-white extra-small px-1.5 py-0.5 rounded-pill" title="User account is disabled" style="font-size: 0.65rem;">
+                                                    <i class="bx bx-block me-0.5"></i>Disabled
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

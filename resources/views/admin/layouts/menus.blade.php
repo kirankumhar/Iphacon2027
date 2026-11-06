@@ -193,7 +193,8 @@
                             request()->routeIs('admin.cme-delegates') || 
                             request()->routeIs('international-rejected-delegates') || 
                             request()->routeIs('international-reverted-delegates') || 
-                            request()->routeIs('deleted-delegates');
+                            request()->routeIs('deleted-delegates') || 
+                            request()->routeIs('admin.users.*');
         @endphp
         <li class="menu-item {{ $isRegActive ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -236,6 +237,13 @@
                         <div>Rejected Registrations</div>
                     </a>
                 </li>
+                @if (Route::has('admin.users.index'))
+                <li class="menu-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.users.index') }}" class="menu-link">
+                        <div>User Accounts</div>
+                    </a>
+                </li>
+                @endif
                 {{-- <li class="menu-item {{ request()->routeIs('international-reverted-delegates') ? 'active' : '' }}">
                     <a href="{{ Route::has('international-reverted-delegates') ? route('international-reverted-delegates') : '#' }}" class="menu-link">
                         <div>Reverted Registrations</div>
