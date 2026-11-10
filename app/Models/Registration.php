@@ -188,20 +188,36 @@ class Registration extends Model
      */
     public function totalPaidAmount(): float
     {
-        $paid = (float) $this->payments()
+        // 1. Check primary conference payment + standalone CME payment (prevents duplicate submission double-counting)
+        $confPay = $this->conferencePayment;
+        $cmePay = $this->hasSeparateCmePayment() ? $this->cmePayment : null;
+
+        $confPaid = ($confPay && ($confPay->admin_verified || in_array(strtoupper($confPay->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']))) 
+            ? (float)$confPay->total_amount 
+            : 0.0;
+        $cmePaid = ($cmePay && ($cmePay->admin_verified || in_array(strtoupper($cmePay->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']))) 
+            ? (float)$cmePay->total_amount 
+            : 0.0;
+
+        if ($confPaid > 0 || $cmePaid > 0) {
+            return $confPaid + $cmePaid;
+        }
+
+        // 2. Fallback: Distinct payments by transaction ID if present
+        $distinctPaid = (float) $this->payments()
             ->where(function ($q) {
                 $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
                   ->orWhere('admin_verified', true);
             })
+            ->get()
+            ->unique(function ($p) {
+                $txn = trim($p->transaction_id ?: ($p->gateway_transaction_id ?: ''));
+                return $txn !== '' ? $txn : 'payment_' . $p->id;
+            })
             ->sum('total_amount');
 
-        if ($paid > 0) {
-            return $paid;
-        }
-
-        // Fallback to conference payment if recorded
-        if ($this->conferencePayment && (float)$this->conferencePayment->total_amount > 0) {
-            return (float) $this->conferencePayment->total_amount;
+        if ($distinctPaid > 0) {
+            return $distinctPaid;
         }
 
         return (float) ($this->total_amount ?: $this->calculateTotalAmount());
