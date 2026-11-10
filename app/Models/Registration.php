@@ -144,6 +144,19 @@ class Registration extends Model
     }
 
     /**
+     * Latest successful / approved payment
+     */
+    public function latestSuccessfulPayment()
+    {
+        return $this->hasOne(Payment::class)
+            ->where(function ($q) {
+                $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                  ->orWhere('admin_verified', true);
+            })
+            ->orderByDesc('id');
+    }
+
+    /**
      * Primary Conference Registration Payment
      * (Excludes standalone CME payments where delegate fee is 0)
      */
