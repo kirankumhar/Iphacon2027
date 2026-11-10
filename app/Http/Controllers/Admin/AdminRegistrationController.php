@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -169,7 +170,8 @@ class AdminRegistrationController extends Controller
 
     public function approvedIndDelegates()
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+        $registrations = Registration::select('registrations.*')
+            ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
             ->where(function ($q) {
                 $q->where('delegate_type', 'Indian')
@@ -179,7 +181,16 @@ class AdminRegistrationController extends Controller
                   ->orWhereNull('delegate_type');
             })
             ->where('is_deleted', '0')
-            ->latest()
+            ->addSelect(['latest_payment_at' => Payment::selectRaw('COALESCE(payment_date, created_at)')
+                ->whereColumn('registration_id', 'registrations.id')
+                ->where(function ($q) {
+                    $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                      ->orWhere('admin_verified', 1);
+                })
+                ->latest('id')
+                ->limit(1)
+            ])
+            ->orderByRaw('COALESCE(latest_payment_at, approved_at, registrations.created_at) DESC')
             ->get();
 
         return view('admin.modules.registration.show-ind-approved-registration', compact('registrations'));
@@ -258,7 +269,8 @@ class AdminRegistrationController extends Controller
 
     public function internationalApprovedDelegates()
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+        $registrations = Registration::select('registrations.*')
+            ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
             ->where(function ($q) {
                 $q->where('delegate_type', 'International')
@@ -267,7 +279,16 @@ class AdminRegistrationController extends Controller
                   });
             })
             ->where('is_deleted', '0')
-            ->latest()
+            ->addSelect(['latest_payment_at' => Payment::selectRaw('COALESCE(payment_date, created_at)')
+                ->whereColumn('registration_id', 'registrations.id')
+                ->where(function ($q) {
+                    $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                      ->orWhere('admin_verified', 1);
+                })
+                ->latest('id')
+                ->limit(1)
+            ])
+            ->orderByRaw('COALESCE(latest_payment_at, approved_at, registrations.created_at) DESC')
             ->get();
 
         return view('admin.modules.registration.show-int-approved-registration', compact('registrations'));
