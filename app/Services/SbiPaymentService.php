@@ -350,36 +350,7 @@ class SbiPaymentService
         }
 
         // Send CME Workshop Confirmation Email with attached PDF
-        try {
-            $recipientEmail = $cmeApp?->user?->email ?? ($delegate?->user?->email ?? null);
-            if ($recipientEmail && $delegate) {
-                $userModel = $cmeApp?->user ?? $delegate->user;
-                $docId = $delegate->registration_number ?? ($delegate->acknowledgement_id ?? 'IPHACON');
-
-                Mail::send('emails.cme_confirmation', [
-                    'cmeApp'       => $cmeApp,
-                    'registration' => $delegate,
-                    'payment'      => $payment,
-                    'user'         => $userModel,
-                ], function ($message) use ($recipientEmail, $docId, $cmeReceiptPath) {
-                    $message->to($recipientEmail)
-                        ->subject("IPHACON 2027 : Pre-Conference Workshop Registration & Payment Confirmation ({$docId})")
-                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
-
-                    if ($cmeReceiptPath && Storage::disk('public')->exists($cmeReceiptPath)) {
-                        $localPath = storage_path("app/public/{$cmeReceiptPath}");
-                        $message->attach($localPath, [
-                            'as' => "Pre-Conference Workshop Receipt - {$docId}.pdf",
-                            'mime' => 'application/pdf'
-                        ]);
-                    }
-                });
-
-                Log::info("[SBI ePay Service] CME Workshop Confirmation email sent successfully to: {$recipientEmail}");
-            }
-        } catch (\Throwable $mailEx) {
-            Log::error("[SBI ePay Service] CME Confirmation Email failed: " . $mailEx->getMessage());
-        }
+        PaymentMailService::sendCmePaymentConfirmation($delegate, $payment, $cmeApp);
     }
 
     /**
@@ -440,51 +411,7 @@ class SbiPaymentService
             $delegate->save();
         });
 
-        // Send emails and generate PDF receipt if not already done
-        if (!$wasAlreadyApproved || empty($delegate->registration_pdf_path)) {
-            try {
-                $pdf = PDF::loadView('pdfs.registration', [
-                    'registration'      => $delegate,
-                    'payment'           => $payment,
-                    'applicationNumber' => $delegate->registration_number ?? $delegate->acknowledgement_id
-                ])->setPaper('a4', 'portrait')
-                    ->setOption('margin-top', 10)
-                    ->setOption('margin-bottom', 10)
-                    ->setOption('margin-left', 10)
-                    ->setOption('margin-right', 10);
-
-                $year  = now()->format('Y');
-                $month = now()->format('m');
-                $docName = $delegate->registration_number ?? $delegate->acknowledgement_id;
-                $filename = "Delegate_Registration_{$docName}.pdf";
-                $path = "registrations_receipt/{$year}/{$month}/{$filename}";
-
-                Storage::disk('public')->put($path, $pdf->output());
-
-                $delegate->update([
-                    'registration_pdf_path' => $path,
-                ]);
-
-                if ($delegate->user && $delegate->user->email) {
-                    Mail::send('emails.registration_confirmation', ['registration' => $delegate, 'registrationID' => $delegate->registration_number], function ($message) use ($delegate, $path) {
-                        $message->to($delegate->user->email)
-                            ->subject('IPHACON 2027 : Delegate Registration Confirmation')
-                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027'));
-
-                        $localPath = storage_path("app/public/{$path}");
-                        if (file_exists($localPath)) {
-                            $message->attach($localPath, [
-                                'as' => "Delegate Registration - {$delegate->registration_number}.pdf",
-                                'mime' => 'application/pdf'
-                            ]);
-                        }
-                    });
-
-                    Log::info("[SBI ePay Service] Registration Confirmation email sent to: {$delegate->user->email}");
-                }
-            } catch (\Throwable $e) {
-                Log::error("[SBI ePay Service] Receipt Generation/Email failed in SBI reconcile: " . $e->getMessage());
-            }
-        }
+        // Send Payment Confirmation Email & Generate Official PDF Receipt
+        PaymentMailService::sendPaymentConfirmation($delegate, $payment);
     }
 }
