@@ -138,6 +138,15 @@
                                      <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2 fw-medium text-uppercase extra-small">
                                          <i class="bx bx-check-double me-1 text-success"></i> {{ $reg->status }}
                                      </span>
+                                     @php
+                                         $intLatestPay = $reg->latestSuccessfulPayment ?? $reg->latestPayment;
+                                         $intLatestPayDate = $intLatestPay?->payment_date ?? ($intLatestPay?->created_at ?? $reg->latest_payment_at);
+                                     @endphp
+                                     @if($intLatestPayDate)
+                                         <div class="extra-small text-muted mt-1" style="font-size: 0.72rem;" title="Latest Payment Timestamp">
+                                             <i class="bx bx-credit-card text-success me-0.5"></i>{{ \Carbon\Carbon::parse($intLatestPayDate)->format('d M, Y h:i A') }}
+                                         </div>
+                                     @endif
                                  </td>
                                  <td class="pe-3 text-end">
                                      <div class="d-inline-flex align-items-center gap-1">

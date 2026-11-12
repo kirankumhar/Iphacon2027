@@ -108,7 +108,11 @@
                                                         style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; font-size: 0.70rem;">
                                                         ACK: {{ $reg->acknowledgement_id ?? 'N/A' }}
                                                     </span>
-                                                    
+                                                    @if($reg->user?->isDisabled())
+                                                        <span class="badge bg-danger text-white extra-small px-1.5 py-0.5 rounded-pill" title="User account is disabled" style="font-size: 0.65rem;">
+                                                            <i class="bx bx-block me-0.5"></i>Disabled
+                                                        </span>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>

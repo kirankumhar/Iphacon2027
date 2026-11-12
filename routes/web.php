@@ -55,7 +55,7 @@ Route::match(['get', 'post'], 'payment/sbi/response', [App\Http\Controllers\Paym
 Route::get('payment/failed/{registration?}', [App\Http\Controllers\PaymentController::class, 'failed'])
     ->name('payment.failed');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'user.active'])->group(function () {
     // Dashboard route
     Route::get('dashboard', function () {
         $user = Auth::user();
@@ -188,6 +188,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::post('/send-incomplete-registration-reminder', [AdminRegistrationController::class, 'sendIncompleteRegistrationReminder'])->name('admin.send-incomplete-registration-reminder');
     Route::post('/cme/approve', [AdminRegistrationController::class, 'approveCmePayment'])->name('admin.cme.approve');
     Route::post('/cme/reject', [AdminRegistrationController::class, 'rejectCmePayment'])->name('admin.cme.reject');
+    Route::post('/user/{id}/toggle-status', [AdminRegistrationController::class, 'toggleUserStatus'])->name('admin.user.toggle-status');
 
     // Abstract Submissions Management
     Route::get('/abstracts', [AdminAbstractController::class, 'index'])->name('admin.abstracts.index');

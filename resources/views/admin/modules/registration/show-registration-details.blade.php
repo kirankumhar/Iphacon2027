@@ -105,6 +105,17 @@
                     <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
                         <i class="bx bx-user text-primary fs-5"></i>Personal &amp; Contact Details
                     </h6>
+                    @if($delegate->user)
+                        @if($delegate->user->isDisabled())
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                <i class="bx bx-block me-1"></i>Account Disabled
+                            </span>
+                        @else
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                <i class="bx bx-check-circle me-1"></i>Account Active
+                            </span>
+                        @endif
+                    @endif
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
@@ -140,6 +151,20 @@
                                 <th class="text-muted fw-semibold py-3 px-3.5">Email Address</th>
                                 <td class="fw-semibold text-dark py-3 px-3.5">
                                     <i class="bx bx-envelope text-primary me-1"></i>{{ $delegate->user?->email }}
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <th class="text-muted fw-semibold py-3 px-3.5">Account Status</th>
+                                <td class="fw-semibold text-dark py-3 px-3.5">
+                                    @if($delegate->user?->isDisabled())
+                                        <span class="badge bg-danger text-white px-2.5 py-1 rounded-2">
+                                            <i class="bx bx-block me-1"></i>Disabled (Login Blocked)
+                                        </span>
+                                    @else
+                                        <span class="badge bg-success text-white px-2.5 py-1 rounded-2">
+                                            <i class="bx bx-check-circle me-1"></i>Active (Can Login)
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr class="border-bottom border-light">
@@ -758,6 +783,28 @@
                                 </span>
                                 <i class="bx bx-chevron-right text-muted"></i>
                             </button>
+
+                            @if($delegate->user)
+                                @if($delegate->user->isDisabled())
+                                    <!-- Enable User Account Button -->
+                                    <button type="button" class="btn btn-outline-success w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#enableUserModal" style="font-size: 0.825rem;">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="bx bx-user-check fs-5 text-success"></i>
+                                            <span>Enable User Account</span>
+                                        </span>
+                                        <span class="badge bg-danger text-white extra-small"><i class="bx bx-block me-0.5"></i>Disabled</span>
+                                    </button>
+                                @else
+                                    <!-- Disable User Account Button -->
+                                    <button type="button" class="btn btn-outline-danger w-100 py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-between px-3 shadow-2xs" data-bs-toggle="modal" data-bs-target="#disableUserModal" style="font-size: 0.825rem;">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="bx bx-user-x fs-5 text-danger"></i>
+                                            <span>Disable User Account</span>
+                                        </span>
+                                        <span class="badge bg-success text-white extra-small"><i class="bx bx-check me-0.5"></i>Active</span>
+                                    </button>
+                                @endif
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -1029,6 +1076,67 @@
         </div>
     </div>
 </div>
+
+<!-- Disable User Modal -->
+@if($delegate->user && !$delegate->user->isDisabled())
+<div class="modal fade" id="disableUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('admin.user.toggle-status', $delegate->user->id) }}" method="POST">
+            @csrf
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; color: #DC2626;">
+                            <i class="bx bx-block fs-4"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Disable User Account</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="text-secondary mb-2">Are you sure you want to disable the user account for <strong>{{ $delegate->user->full_name }}</strong> (<code>{{ $delegate->user->email }}</code>)?</p>
+                    <div class="alert alert-warning border-0 rounded-3 mb-0 py-2 px-3 extra-small">
+                        <i class="bx bx-info-circle me-1"></i> Once disabled, this user will be immediately logged out and will <strong>not be able to log in</strong> to the portal until re-enabled by an admin.
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-danger fw-bold px-3">Confirm &amp; Disable Account</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+<!-- Enable User Modal -->
+@if($delegate->user && $delegate->user->isDisabled())
+<div class="modal fade" id="enableUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('admin.user.toggle-status', $delegate->user->id) }}" method="POST">
+            @csrf
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; color: #16A34A;">
+                            <i class="bx bx-user-check fs-4"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Enable User Account</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="text-secondary mb-0">Are you sure you want to re-enable the user account for <strong>{{ $delegate->user->full_name }}</strong> (<code>{{ $delegate->user->email }}</code>)? The user will be able to log in and access their dashboard.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-sm btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-success fw-bold px-3">Confirm &amp; Enable Account</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 
 @push('scripts')
 <script>

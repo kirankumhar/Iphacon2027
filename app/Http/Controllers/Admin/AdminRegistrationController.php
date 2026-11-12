@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Services\PaymentMailService;
 
 class AdminRegistrationController extends Controller
 {
@@ -169,7 +171,8 @@ class AdminRegistrationController extends Controller
 
     public function approvedIndDelegates()
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+        $registrations = Registration::select('registrations.*')
+            ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
             ->where(function ($q) {
                 $q->where('delegate_type', 'Indian')
@@ -179,7 +182,16 @@ class AdminRegistrationController extends Controller
                   ->orWhereNull('delegate_type');
             })
             ->where('is_deleted', '0')
-            ->latest()
+            ->addSelect(['latest_payment_at' => Payment::selectRaw('COALESCE(payment_date, created_at)')
+                ->whereColumn('registration_id', 'registrations.id')
+                ->where(function ($q) {
+                    $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                      ->orWhere('admin_verified', 1);
+                })
+                ->latest('id')
+                ->limit(1)
+            ])
+            ->orderByRaw('COALESCE(latest_payment_at, approved_at, registrations.created_at) DESC')
             ->get();
 
         return view('admin.modules.registration.show-ind-approved-registration', compact('registrations'));
@@ -258,7 +270,8 @@ class AdminRegistrationController extends Controller
 
     public function internationalApprovedDelegates()
     {
-        $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+        $registrations = Registration::select('registrations.*')
+            ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
             ->where(function ($q) {
                 $q->where('delegate_type', 'International')
@@ -267,7 +280,16 @@ class AdminRegistrationController extends Controller
                   });
             })
             ->where('is_deleted', '0')
-            ->latest()
+            ->addSelect(['latest_payment_at' => Payment::selectRaw('COALESCE(payment_date, created_at)')
+                ->whereColumn('registration_id', 'registrations.id')
+                ->where(function ($q) {
+                    $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                      ->orWhere('admin_verified', 1);
+                })
+                ->latest('id')
+                ->limit(1)
+            ])
+            ->orderByRaw('COALESCE(latest_payment_at, approved_at, registrations.created_at) DESC')
             ->get();
 
         return view('admin.modules.registration.show-int-approved-registration', compact('registrations'));
@@ -476,32 +498,8 @@ class AdminRegistrationController extends Controller
                 Log::warning('PDF generation during approval failed: ' . $pdfEx->getMessage());
             }
 
-            // Send Confirmation Email with Registration Number & PDF Attachment
-            try {
-                $recipientEmail = $registration->user?->email;
-                if ($recipientEmail) {
-                    $registration->loadMissing(['user', 'delegateCategory', 'country', 'state', 'latestPayment']);
-                    Mail::send('emails.registration_confirmation', [
-                        'registration'   => $registration,
-                        'registrationID' => $registration->registration_number,
-                    ], function ($message) use ($recipientEmail, $registration, $pdfPath) {
-                        $message->to($recipientEmail)
-                            ->subject('IPHACON 2027 : Delegate Registration Approved (Reg No: ' . $registration->registration_number . ')')
-                            ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
-
-                        // Attach the PDF file if available
-                        if ($pdfPath && Storage::disk('public')->exists($pdfPath)) {
-                            $localPath = storage_path("app/public/{$pdfPath}");
-                            $message->attach($localPath, [
-                                'as' => "Delegate Registration - {$registration->registration_number}.pdf",
-                                'mime' => 'application/pdf'
-                            ]);
-                        }
-                    });
-                }
-            } catch (\Exception $mailEx) {
-                Log::error('Failed to send delegate approval confirmation email: ' . $mailEx->getMessage());
-            }
+            // Send Payment & Registration Confirmation Email with PDF Attachment
+            PaymentMailService::sendPaymentConfirmation($registration, $registration->latestPayment, true);
 
             // Record Activity Log
             \App\Models\ActivityLog::record(
@@ -766,51 +764,7 @@ class AdminRegistrationController extends Controller
             $shouldSendApprovalEmail = ($emailType === 'approval') || ($registration->status === 'Approved' && $emailType !== 'submission_only');
 
             if ($shouldSendApprovalEmail && $registration->status === 'Approved') {
-                // Ensure PDF is generated if missing
-                $pdfPath = $registration->registration_pdf_path;
-                if (!$pdfPath || !Storage::disk('public')->exists($pdfPath)) {
-                    try {
-                        $pdf = Pdf::loadView('pdfs.registration', [
-                            'registration' => $registration,
-                            'applicationNumber' => $registration->registration_number ?? $registration->acknowledgement_id
-                        ])->setPaper('a4', 'portrait')
-                            ->setOption('margin-top', 10)
-                            ->setOption('margin-bottom', 10)
-                            ->setOption('margin-left', 10)
-                            ->setOption('margin-right', 10);
-
-                        $year = now()->format('Y');
-                        $month = now()->format('m');
-                        $filename = "Delegate_Registration_{$registration->registration_number}.pdf";
-                        $pdfPath = "registrations_receipt/{$year}/{$month}/{$filename}";
-
-                        Storage::disk('public')->put($pdfPath, $pdf->output());
-
-                        $registration->update([
-                            'registration_pdf_path' => $pdfPath
-                        ]);
-                    } catch (\Exception $pdfEx) {
-                        Log::warning('PDF generation during resend email failed: ' . $pdfEx->getMessage());
-                    }
-                }
-
-                // Send Confirmation Email with Registration Number & PDF Attachment
-                Mail::send('emails.registration_confirmation', [
-                    'registration'   => $registration,
-                    'registrationID' => $registration->registration_number,
-                ], function ($message) use ($recipientEmail, $registration, $pdfPath) {
-                    $message->to($recipientEmail)
-                        ->subject('IPHACON 2027 : Delegate Registration Approved (Reg No: ' . $registration->registration_number . ')')
-                        ->from(config('mail.from.address', 'noreply@iphacon2027.com'), config('mail.from.name', 'IPHACON 2027 Secretariat'));
-
-                    if ($pdfPath && Storage::disk('public')->exists($pdfPath)) {
-                        $localPath = storage_path("app/public/{$pdfPath}");
-                        $message->attach($localPath, [
-                            'as' => "Delegate Registration - {$registration->registration_number}.pdf",
-                            'mime' => 'application/pdf'
-                        ]);
-                    }
-                });
+                PaymentMailService::sendPaymentConfirmation($registration, $registration->latestPayment, true);
 
                 $logMsg = "Resent Registration Approval Confirmation Email to {$recipientEmail}. Reg No: {$registration->registration_number}";
                 $successMsg = "Approval confirmation email with PDF receipt successfully sent to {$recipientEmail}!";
@@ -1351,6 +1305,11 @@ class AdminRegistrationController extends Controller
                 $registration->pre_conference_topic = $cmeApp->pre_conference_topic;
             }
             $registration->save();
+
+            $cmePay = $registration->cmePayment ?: $registration->latestPayment;
+            if ($cmePay) {
+                PaymentMailService::sendCmePaymentConfirmation($registration, $cmePay, $cmeApp);
+            }
         }
 
         return redirect()->back()->with('success', 'Pre-Conference Workshop payment verified and approved successfully.');
@@ -1388,6 +1347,49 @@ class AdminRegistrationController extends Controller
         }
 
         return redirect()->back()->with('success', 'Pre-Conference Workshop payment rejected.');
+    }
+
+    /**
+     * Toggle User Account Status (Active <-> Disabled)
+     */
+    public function toggleUserStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $oldStatus = $user->status ?? User::STATUS_ACTIVE;
+        $newStatus = ($oldStatus === User::STATUS_ACTIVE) ? User::STATUS_DISABLED : User::STATUS_ACTIVE;
+
+        $user->status = $newStatus;
+        $user->save();
+
+        // If user is being disabled, terminate any active sessions
+        if ($newStatus === User::STATUS_DISABLED) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('sessions')) {
+                    \Illuminate\Support\Facades\DB::table('sessions')
+                        ->where('user_id', $user->id)
+                        ->delete();
+                }
+            } catch (\Throwable $e) {
+                // Continue if session table not used
+            }
+        }
+
+        $actionText = ($newStatus === User::STATUS_DISABLED) ? 'disabled' : 'enabled';
+
+        \App\Models\ActivityLog::record(
+            'ADMIN_USER_STATUS_UPDATED',
+            "User account for {$user->full_name} ({$user->email}) was {$actionText} by admin.",
+            [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'admin_id' => auth('admin')->id(),
+            ]
+        );
+
+        return redirect()->back()->with('success', "User account for {$user->full_name} ({$user->email}) has been {$actionText} successfully.");
     }
 }
 

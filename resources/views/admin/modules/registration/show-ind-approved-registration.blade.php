@@ -259,10 +259,13 @@
     <div class="delegate-table-card">
         {{-- Card Header with Filter & Live Search --}}
         <div class="py-3 px-4 bg-white border-bottom d-flex align-items-center justify-content-between flex-wrap gap-3">
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
                 <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.92rem;">
                     <i class="bx bx-list-ul me-1.5 text-primary"></i>Delegates Directory
                 </h6>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-medium rounded-pill extra-small" style="font-size: 0.72rem;">
+                    <i class="bx bx-sort-down me-0.5"></i>Latest Payment First
+                </span>
                 <span class="text-muted extra-small" style="font-size: 0.75rem;">(Showing <strong id="visibleCountText">{{ $registrations->count() }}</strong> records)</span>
             </div>
             <div class="search-box" style="max-width: 320px; width: 100%;">
@@ -279,10 +282,10 @@
                 <thead>
                     <tr>
                         <th class="ps-4 text-center" style="width: 4%;">#</th>
-                        <th style="width: 28%;">Delegate</th>
-                        <th style="width: 18%;">Category</th>
-                        <th style="width: 18%;">Paid Amount</th>
-                        <th style="width: 12%;">Approved Date</th>
+                        <th style="width: 26%;">Delegate</th>
+                        <th style="width: 17%;">Category</th>
+                        <th style="width: 17%;">Paid Amount</th>
+                        <th style="width: 16%;">Payment &amp; Approval</th>
                         <th class="pe-4 text-end" style="width: 20%;">Actions</th>
                     </tr>
                 </thead>
@@ -302,10 +305,14 @@
 
                             $activePayments = $reg->payments->filter(function($p) {
                                 return in_array(strtoupper($p->payment_status ?? ''), ['SUCCESS', 'PAID', 'APPROVED', 'COMPLETED', '0300', 'OTS0000']) || $p->admin_verified;
-                            });
+                            })->sortByDesc('id');
                             if ($activePayments->isEmpty() && $reg->latestPayment) {
                                 $activePayments = collect([$reg->latestPayment]);
                             }
+
+                            $latestPay = $reg->latestSuccessfulPayment ?? $activePayments->first() ?? $reg->latestPayment;
+                            $latestPayTimestamp = $latestPay?->payment_date ?? ($latestPay?->created_at ?? $reg->latest_payment_at);
+                            $latestPayFormatted = $latestPayTimestamp ? \Carbon\Carbon::parse($latestPayTimestamp)->format('d M, Y h:i A') : null;
                         @endphp
                         <tr class="delegate-row">
                             <td class="ps-4 text-center fw-semibold text-muted" style="font-size: 0.8rem;">
@@ -331,6 +338,11 @@
                                             <span class="reg-code-badge" title="Registration Number">
                                                 <i class="bx bx-hash"></i>{{ $reg->registration_number ?? ($reg->acknowledgement_id ?? 'Pending') }}
                                             </span>
+                                            @if($user?->isDisabled())
+                                                <span class="badge bg-danger text-white extra-small px-1.5 py-0.5 rounded-pill" title="User account is disabled" style="font-size: 0.65rem;">
+                                                    <i class="bx bx-block me-0.5"></i>Disabled
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -393,14 +405,24 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="small fw-semibold text-dark" style="font-size: 0.8rem;">
-                                    {{ $approvedDate }}
-                                </div>
-                                <div class="mt-0.5">
-                                    <span class="badge-approved-status">
-                                        <i class="bx bx-check-circle"></i>Approved
-                                    </span>
-                                </div>
+                                @if($latestPayFormatted)
+                                    <div class="fw-bold text-dark d-flex align-items-center gap-1" style="font-size: 0.82rem;" title="Latest Payment: {{ $latestPayFormatted }}">
+                                        <i class="bx bx-credit-card text-success"></i>
+                                        <span>{{ $latestPayFormatted }}</span>
+                                    </div>
+                                    <div class="text-muted extra-small mt-0.5" style="font-size: 0.72rem;">
+                                        <span class="text-secondary fw-medium">Approved:</span> {{ $approvedDate }}
+                                    </div>
+                                @else
+                                    <div class="small fw-semibold text-dark" style="font-size: 0.8rem;">
+                                        {{ $approvedDate }}
+                                    </div>
+                                    <div class="mt-0.5">
+                                        <span class="badge-approved-status">
+                                            <i class="bx bx-check-circle"></i>Approved
+                                        </span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="pe-4 text-end">
                                 <div class="d-inline-flex flex-wrap justify-content-end align-items-center gap-1.5">

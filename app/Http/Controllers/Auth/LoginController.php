@@ -58,6 +58,24 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
+            // Check if user account is disabled
+            if ($user->isDisabled()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                \App\Models\ActivityLog::record(
+                    'USER_LOGIN_BLOCKED',
+                    "Login blocked for {$request->email}: User account has been disabled.",
+                    ['email' => $request->email, 'reason' => 'Account disabled'],
+                    $user
+                );
+
+                return back()->withErrors([
+                    'email' => 'Your account has been disabled. Please contact the conference secretariat for assistance.',
+                ])->withInput($request->except('password'));
+            }
+
             // Clear throttle on successful authentication
             RateLimiter::clear($throttleKey);
 

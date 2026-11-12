@@ -24,6 +24,13 @@ class ForgotPasswordController extends Controller
             'email.email' => 'Please enter a valid email address.'
         ]);
 
+        $user = \App\Models\User::where('email', $request->email)->first();
+        if ($user && $user->isDisabled()) {
+            return back()->withErrors([
+                'email' => 'Your account has been disabled. Please contact the conference secretariat for assistance.'
+            ])->withInput($request->except('captcha'));
+        }
+
         $status = Password::sendResetLink(
             $request->only('email')
         );
