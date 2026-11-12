@@ -184,8 +184,9 @@
     <main class="main">
         @if (request()->is('/') || request()->routeIs('register'))
             <div class="site-breadcrumb">
-                <img src="{{ asset('images/diwali-offer-banner_02.png') }}" alt="IPHACON 2027 Diwali Bonanza Offer"
-                    title="IPHACON 2027 Diwali Bonanza Offer" class="breadcrumb-banner-img">
+                <img src="{{ asset('assets/img/htop_img/mast_iphacon2027_online-reg.jpg') }}"
+                    alt="IPHACON 2027 Diwali Bonanza Offer" title="IPHACON 2027 Diwali Bonanza Offer"
+                    class="breadcrumb-banner-img">
             </div>
         @else
             <div class="site-breadcrumb">
