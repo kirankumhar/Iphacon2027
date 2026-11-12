@@ -89,6 +89,8 @@ class Registration extends Model
         'Sample Size calculation and Analysis-hands on',
         'AI-ready Infectious DIsease Modelling for Zoonotic and Vector Borne Disease Control',
         'Survival analysis',
+        'Strengthening Population-Based Oral Cancer Screening in India: from Evidence to Action',
+        'Assessing What Matters: The Art of Designing Robust OSCE/OSPE',
     ];
 
     public static function getPreConferenceTopics(): array
