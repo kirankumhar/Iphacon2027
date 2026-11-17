@@ -857,6 +857,65 @@ class RegistrationController extends Controller
     }
 
     /**
+     * Update Pre-Conference Workshop Topic by Delegate
+     */
+    public function updatePreConferenceTopic(Request $request)
+    {
+        $user = Auth::user();
+        $registration = Registration::where('user_id', $user->id)->latest()->first();
+        $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)->latest()->first();
+
+        if (!$registration && !$cmeApp) {
+            return redirect()->back()->with('error', 'No registration found for your account.');
+        }
+
+        $request->validate([
+            'pre_conference_topic' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::in(Registration::PRE_CONFERENCE_TOPICS)
+            ],
+        ], [
+            'pre_conference_topic.required' => 'Please select a Pre-Conference Workshop topic.',
+            'pre_conference_topic.in' => 'Please select a valid Pre-Conference Workshop topic from the list.',
+        ]);
+
+        $newTopic = $request->input('pre_conference_topic');
+        $oldTopic = $registration?->pre_conference_topic ?: ($cmeApp?->pre_conference_topic ?? 'None');
+
+        if ($oldTopic === $newTopic) {
+            return redirect()->back()->with('info', 'You have already selected this topic.');
+        }
+
+        if ($registration) {
+            $registration->pre_conference_topic = $newTopic;
+            $registration->participate_in_cme = true;
+            $registration->save();
+        }
+
+        if ($cmeApp) {
+            $cmeApp->pre_conference_topic = $newTopic;
+            $cmeApp->save();
+        }
+
+        \App\Models\ActivityLog::record(
+            'DELEGATE_CHANGED_PRE_CONFERENCE_TOPIC',
+            "Delegate {$user->full_name} ({$user->email}) changed pre-conference workshop topic from '{$oldTopic}' to '{$newTopic}'.",
+            [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'old_topic' => $oldTopic,
+                'new_topic' => $newTopic,
+                'registration_id' => $registration?->id,
+                'cme_app_id' => $cmeApp?->id,
+            ],
+            $user
+        );
+
+        return redirect()->back()->with('success', "Pre-Conference Workshop topic successfully updated to: {$newTopic}");
+    }
+
+    /**
      * Check if Aadhaar number (last 8 digits) is unique for registration.
      */
     public function checkAadhaarUnique(Request $request)

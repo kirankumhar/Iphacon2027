@@ -59,10 +59,11 @@ Route::middleware(['auth', 'verified', 'user.active'])->group(function () {
     // Dashboard route
     Route::get('dashboard', function () {
         $user = Auth::user();
-        $registration = \App\Models\Registration::where('user_id', $user->id)->first();
+        $registration = \App\Models\Registration::with(['cmeApplication', 'payments', 'delegateCategory'])->where('user_id', $user->id)->first();
+        $cmeApplication = \App\Models\CmeApplication::where('user_id', $user->id)->latest()->first();
         $abstract = \App\Models\AbstractSubmission::where('user_id', $user->id)->first();
 
-        return view('delegate.dashboard', compact('registration', 'abstract'));
+        return view('delegate.dashboard', compact('registration', 'cmeApplication', 'abstract'));
     })->name('dashboard');
 
     // Profile routes
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'verified', 'user.active'])->group(function () {
     // CME WORKSHOP ROUTES
     Route::get('apply-cme-workshop', [RegistrationController::class, 'showCmeWorkshop'])->name('cme.apply');
     Route::post('apply-cme-workshop', [RegistrationController::class, 'processCmeWorkshop'])->name('cme.process');
+    Route::post('cme-workshop/update-topic', [RegistrationController::class, 'updatePreConferenceTopic'])->name('cme.topic.update');
     Route::get('cme-payment/gateway/{encCmeAppId?}', [App\Http\Controllers\PaymentController::class, 'cmeGateway'])->name('cme.payment.gateway');
     Route::get('cme-payment/sbi/initiate/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'initiateCmeSbiPayment'])->name('cme.payment.sbi.initiate');
     Route::post('cme-payment/process/{cmeAppId}', [App\Http\Controllers\PaymentController::class, 'processCmePayment'])->name('cme.payment.process');
