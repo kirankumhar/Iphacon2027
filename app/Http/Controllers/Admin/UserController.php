@@ -9,10 +9,20 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('registrations')->latest()->paginate(20);
-        return view('admin.users.index', compact('users'));
+        $status = $request->input('status', 'active');
+
+        $query = User::with('registrations');
+
+        if ($status === 'active') {
+            $query->active();
+        } elseif ($status === 'disabled' || $status === 'inactive') {
+            $query->disabled();
+        }
+
+        $users = $query->latest()->paginate(20)->withQueryString();
+        return view('admin.users.index', compact('users', 'status'));
     }
 
     public function show($id)
