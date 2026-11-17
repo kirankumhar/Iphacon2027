@@ -143,6 +143,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get profile photo URL from delegate registration
+     */
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        $path = $this->registrations->first()?->photo_path;
+        if ($path && \Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return asset('storage/' . $path);
+        }
+        return null;
+    }
+
+    /**
      * Check if user account is active
      */
     public function isActive(): bool

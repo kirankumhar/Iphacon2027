@@ -3,6 +3,7 @@
 @php
     $inner_title = 'Edit Delegate Profile';
     $primaryReg = $user->registrations->first();
+    $currentPhoto = $primaryReg?->photo_path;
 @endphp
 
 @section('delegate-content')
@@ -54,7 +55,7 @@
             </div>
 
             {{-- Error Summary Alert --}}
-            @if ($errors->any())
+            @if (isset($errors) && $errors->any())
                 <div class="alert alert-danger alert-dismissible fade show p-3 mb-4 small shadow-xs" role="alert"
                      style="border-radius: 12px; background-color: #FEE2E2; border: 1px solid #FCA5A5; color: #991B1B;">
                     <div class="d-flex align-items-start gap-2">
@@ -72,9 +73,100 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('profile.update') }}" id="editProfileForm">
+            <form method="POST" action="{{ route('profile.update') }}" id="editProfileForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+
+                {{-- Profile Photo Section --}}
+                <div class="mb-4 p-3.5 rounded-3 border" id="photo-section"
+                     style="background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border: 1px dashed #94A3B8 !important; border-radius: 14px;">
+                    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-3.5">
+                        
+                        {{-- Avatar Preview Container --}}
+                        <div class="position-relative flex-shrink-0 text-center">
+                            <div class="profile-avatar-wrapper position-relative d-inline-block">
+                                <img id="photoPreviewImg"
+                                     src="{{ $currentPhoto ? asset('storage/' . $currentPhoto) : asset('images/default-avatar.svg') }}"
+                                     alt="Profile Photo Preview"
+                                     class="rounded-circle shadow-sm border border-3 border-white {{ $currentPhoto ? '' : 'd-none' }}"
+                                     style="width: 105px; height: 105px; object-fit: cover;"
+                                     onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';">
+
+                                <div id="photoPreviewInitial"
+                                     class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm border border-3 border-white {{ $currentPhoto ? 'd-none' : '' }}"
+                                     style="width: 105px; height: 105px; font-size: 2.3rem; background: linear-gradient(135deg, #0288D1 0%, #00897B 100%);">
+                                    {{ strtoupper(substr($user->full_name ?? 'D', 0, 1)) }}
+                                </div>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 d-flex align-items-center justify-content-center shadow"
+                                        style="width: 34px; height: 34px; transform: translate(5%, 5%); border: 2px solid #fff;"
+                                        onclick="document.getElementById('photoInput').click();"
+                                        title="Click to choose a new photo">
+                                    <i class="fas fa-camera text-white" style="font-size: 0.85rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Upload Controls & Instructions --}}
+                        <div class="flex-grow-1 text-center text-sm-start min-w-0">
+                            <label class="form-label fw-bold text-dark mb-1 d-flex align-items-center justify-content-center justify-content-sm-start gap-1.5" style="font-size: 0.95rem;">
+                                <i class="fas fa-portrait text-primary"></i> Profile Photo
+                                <span class="badge bg-white text-secondary border extra-small fw-normal">Badge &amp; Certificates</span>
+                            </label>
+                            <p class="text-muted extra-small mb-2.5" style="font-size: 0.78rem; line-height: 1.45;">
+                                Upload a front-facing passport style photo. This photo will be used for your official <strong>IPHACON 2027</strong> delegate profile, abstract submissions, and conference badge.
+                            </p>
+
+                            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2">
+                                <button type="button"
+                                        class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 extra-small fw-semibold d-inline-flex align-items-center gap-1.5 shadow-xs"
+                                        onclick="document.getElementById('photoInput').click();">
+                                    <i class="fas fa-upload"></i>
+                                    <span id="photoBtnLabel">{{ $currentPhoto ? 'Change Photo' : 'Upload Photo' }}</span>
+                                </button>
+
+                                @if($currentPhoto)
+                                    <button type="button"
+                                            id="removePhotoBtn"
+                                            class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5 extra-small fw-semibold d-inline-flex align-items-center gap-1.5"
+                                            onclick="toggleRemovePhoto()">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span>Remove Photo</span>
+                                    </button>
+                                @endif
+
+                                <button type="button"
+                                        id="cancelNewPhotoBtn"
+                                        class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 extra-small fw-semibold d-none"
+                                        onclick="cancelNewPhoto()">
+                                    <i class="fas fa-undo me-1"></i>Reset
+                                </button>
+                            </div>
+
+                            {{-- Hidden File Input & Removal Flag --}}
+                            <input type="file"
+                                   id="photoInput"
+                                   name="photo"
+                                   class="d-none"
+                                   accept="image/jpeg,image/png,image/jpg,image/webp">
+
+                            <input type="hidden" id="removePhotoInput" name="remove_photo" value="0">
+
+                            <div class="extra-small text-muted mt-2" style="font-size: 0.72rem;">
+                                <i class="fas fa-info-circle me-1 text-info"></i>Allowed formats: JPG, JPEG, PNG, WEBP &bull; Max size: 1 MB
+                            </div>
+
+                            @error('photo')
+                                <div class="text-danger extra-small mt-1.5 fw-semibold">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                            <div id="photoClientError" class="text-danger extra-small mt-1.5 fw-semibold d-none"></div>
+                        </div>
+
+                    </div>
+                </div>
 
                 {{-- Section 1: Personal Identification --}}
                 <div class="mb-4">
@@ -276,5 +368,160 @@
 .extra-small {
     font-size: 0.75rem;
 }
+.profile-avatar-wrapper {
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.profile-avatar-wrapper:hover {
+    transform: scale(1.02);
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('photoInput');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const photoPreviewInitial = document.getElementById('photoPreviewInitial');
+    const photoBtnLabel = document.getElementById('photoBtnLabel');
+    const cancelNewPhotoBtn = document.getElementById('cancelNewPhotoBtn');
+    const removePhotoBtn = document.getElementById('removePhotoBtn');
+    const removePhotoInput = document.getElementById('removePhotoInput');
+    const photoClientError = document.getElementById('photoClientError');
+
+    const originalSrc = photoPreviewImg ? photoPreviewImg.src : '';
+    const hadOriginalPhoto = @json(!empty($currentPhoto));
+
+    if (photoInput) {
+        photoInput.addEventListener('change', function(e) {
+            if (photoClientError) {
+                photoClientError.classList.add('d-none');
+                photoClientError.innerText = '';
+            }
+
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            if (!validTypes.includes(file.type.toLowerCase())) {
+                showPhotoError('Invalid image type. Please select a JPG, JPEG, PNG, or WEBP file.');
+                photoInput.value = '';
+                return;
+            }
+
+            // Validate file size (1MB = 1048576 bytes)
+            if (file.size > 1048576) {
+                showPhotoError('Photo size exceeds 1MB limit. Please upload an image smaller than 1MB.');
+                photoInput.value = '';
+                return;
+            }
+
+            // Reset remove flag if user selects a new file
+            if (removePhotoInput) removePhotoInput.value = '0';
+            if (removePhotoBtn) {
+                removePhotoBtn.classList.remove('btn-danger', 'text-white');
+                removePhotoBtn.classList.add('btn-outline-danger');
+                removePhotoBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i><span>Remove Photo</span>';
+            }
+
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                if (photoPreviewImg) {
+                    photoPreviewImg.src = evt.target.result;
+                    photoPreviewImg.classList.remove('d-none');
+                }
+                if (photoPreviewInitial) {
+                    photoPreviewInitial.classList.add('d-none');
+                }
+                if (cancelNewPhotoBtn) {
+                    cancelNewPhotoBtn.classList.remove('d-none');
+                }
+                if (photoBtnLabel) {
+                    photoBtnLabel.innerText = 'Change Selected Photo';
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function showPhotoError(msg) {
+        if (photoClientError) {
+            photoClientError.innerText = msg;
+            photoClientError.classList.remove('d-none');
+        } else if (typeof toastr !== 'undefined') {
+            toastr.error(msg, 'Validation Error');
+        } else {
+            alert(msg);
+        }
+    }
+
+    window.cancelNewPhoto = function() {
+        if (photoInput) photoInput.value = '';
+        if (photoClientError) photoClientError.classList.add('d-none');
+        if (cancelNewPhotoBtn) cancelNewPhotoBtn.classList.add('d-none');
+        if (removePhotoInput) removePhotoInput.value = '0';
+
+        if (hadOriginalPhoto) {
+            if (photoPreviewImg) {
+                photoPreviewImg.src = originalSrc;
+                photoPreviewImg.classList.remove('d-none');
+            }
+            if (photoPreviewInitial) {
+                photoPreviewInitial.classList.add('d-none');
+            }
+            if (photoBtnLabel) {
+                photoBtnLabel.innerText = 'Change Photo';
+            }
+        } else {
+            if (photoPreviewImg) {
+                photoPreviewImg.classList.add('d-none');
+            }
+            if (photoPreviewInitial) {
+                photoPreviewInitial.classList.remove('d-none');
+            }
+            if (photoBtnLabel) {
+                photoBtnLabel.innerText = 'Upload Photo';
+            }
+        }
+    };
+
+    window.toggleRemovePhoto = function() {
+        if (!removePhotoInput) return;
+        const isRemoving = removePhotoInput.value === '1';
+
+        if (isRemoving) {
+            // Undo removal
+            removePhotoInput.value = '0';
+            if (removePhotoBtn) {
+                removePhotoBtn.classList.remove('btn-danger', 'text-white');
+                removePhotoBtn.classList.add('btn-outline-danger');
+                removePhotoBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i><span>Remove Photo</span>';
+            }
+            window.cancelNewPhoto();
+        } else {
+            // Mark for removal
+            removePhotoInput.value = '1';
+            if (photoInput) photoInput.value = '';
+            if (cancelNewPhotoBtn) cancelNewPhotoBtn.classList.add('d-none');
+
+            if (photoPreviewImg) {
+                photoPreviewImg.classList.add('d-none');
+            }
+            if (photoPreviewInitial) {
+                photoPreviewInitial.classList.remove('d-none');
+            }
+
+            if (removePhotoBtn) {
+                removePhotoBtn.classList.remove('btn-outline-danger');
+                removePhotoBtn.classList.add('btn-danger', 'text-white');
+                removePhotoBtn.innerHTML = '<i class="fas fa-undo me-1"></i><span>Keep Current Photo</span>';
+            }
+            if (photoBtnLabel) {
+                photoBtnLabel.innerText = 'Upload Replacement Photo';
+            }
+        }
+    };
+});
+</script>
 @endsection

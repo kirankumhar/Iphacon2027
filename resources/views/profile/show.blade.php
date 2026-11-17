@@ -105,11 +105,15 @@
                         
                         {{-- Avatar / Photo --}}
                         <div class="position-relative flex-shrink-0">
-                            @if($primaryReg && $primaryReg->photo_path)
-                                <img src="{{ asset('storage/' . $primaryReg->photo_path) }}"
+                            @php
+                                $displayPhoto = $primaryReg?->photo_path;
+                            @endphp
+                            @if($displayPhoto)
+                                <img src="{{ asset('storage/' . $displayPhoto) }}"
                                      alt="{{ $user->full_name }}"
                                      class="rounded-circle shadow"
-                                     style="width: 96px; height: 96px; object-fit: cover; border: 4px solid rgba(255, 255, 255, 0.9);">
+                                     style="width: 96px; height: 96px; object-fit: cover; border: 4px solid rgba(255, 255, 255, 0.9);"
+                                     onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.svg') }}';">
                             @else
                                 <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow"
                                      style="width: 96px; height: 96px; font-size: 2.2rem; background: linear-gradient(135deg, #0288D1 0%, #00897B 100%); border: 4px solid rgba(255, 255, 255, 0.9);">
