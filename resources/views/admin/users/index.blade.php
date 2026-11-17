@@ -43,9 +43,25 @@
 
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
-                <i class="bx bx-list-ul text-primary fs-5"></i>Registered Users
-            </h6>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2 me-2">
+                    <i class="bx bx-list-ul text-primary fs-5"></i>Registered Users
+                </h6>
+                <div class="btn-group btn-group-sm" role="group" aria-label="User Status Filter">
+                    <a href="{{ route('admin.user.index', ['status' => 'active']) }}" 
+                       class="btn btn-sm {{ ($status ?? 'active') === 'active' ? 'btn-primary text-white' : 'btn-outline-secondary' }}" style="font-size: 0.78rem;">
+                       <i class="bx bx-check-circle me-1"></i>Active
+                    </a>
+                    <a href="{{ route('admin.user.index', ['status' => 'disabled']) }}" 
+                       class="btn btn-sm {{ ($status ?? '') === 'disabled' ? 'btn-danger text-white' : 'btn-outline-secondary' }}" style="font-size: 0.78rem;">
+                       <i class="bx bx-block me-1"></i>Inactive / Disabled
+                    </a>
+                    <a href="{{ route('admin.user.index', ['status' => 'all']) }}" 
+                       class="btn btn-sm {{ ($status ?? '') === 'all' ? 'btn-dark text-white' : 'btn-outline-secondary' }}" style="font-size: 0.78rem;">
+                       All
+                    </a>
+                </div>
+            </div>
             <div style="max-width: 280px; width: 100%;">
                 <input type="text" id="userFilterInput" class="form-control form-control-sm rounded-pill" placeholder="Filter by name or email...">
             </div>

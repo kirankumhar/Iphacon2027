@@ -37,7 +37,14 @@ class AdminRegistrationController extends Controller
                 'revert_reason',
                 'rejection_reason',
                 'payments.total_amount'
-            )->where('registrations.is_deleted', '0');
+            )->where('registrations.is_deleted', '0')
+            ->where(function ($q) {
+                $q->whereNull('users.status')
+                  ->orWhere(function ($sq) {
+                      $sq->where('users.status', 'active')
+                         ->whereNotIn('users.status', ['disabled', 'inactive']);
+                  });
+            });
 
         switch ($type) {
             case 'ind-paid':
@@ -48,6 +55,9 @@ class AdminRegistrationController extends Controller
                           ->orWhereNull('registrations.delegate_type');
                     });
                 $totalRecords = Registration::where('status', 'Approved')
+                    ->whereHas('user', function ($uq) {
+                        $uq->active();
+                    })
                     ->where(function ($q) {
                         $q->where('delegate_type', 'Indian')
                           ->orWhereHas('user', function ($uq) {
@@ -65,6 +75,9 @@ class AdminRegistrationController extends Controller
                           ->orWhere('users.delegate_type', 'International');
                     });
                 $totalRecords = Registration::where('status', 'Approved')
+                    ->whereHas('user', function ($uq) {
+                        $uq->active();
+                    })
                     ->where(function ($q) {
                         $q->where('delegate_type', 'International')
                           ->orWhereHas('user', function ($uq) {
@@ -76,19 +89,19 @@ class AdminRegistrationController extends Controller
                 break;
             case 'reject':
                 $query->where('registrations.status', 'Rejected');
-                $totalRecords = Registration::where('status', 'Rejected')->where('is_deleted', '0')->count();
+                $totalRecords = Registration::where('status', 'Rejected')->whereHas('user', fn($uq) => $uq->active())->where('is_deleted', '0')->count();
                 break;
             case 'revert':
                 $query->where('registrations.status', 'Draft')->where('step_completed', 4)->where('reverted_at', '<>', null);
-                $totalRecords = Registration::where('status', 'Rejected')->where('is_deleted', '0')->count();
+                $totalRecords = Registration::where('status', 'Rejected')->whereHas('user', fn($uq) => $uq->active())->where('is_deleted', '0')->count();
                 break;
             case 'pending':
                 $query->where('registrations.status', 'Payment Submitted');
-                $totalRecords = Registration::where('status', 'Payment Submitted')->where('is_deleted', '0')->count();
+                $totalRecords = Registration::where('status', 'Payment Submitted')->whereHas('user', fn($uq) => $uq->active())->where('is_deleted', '0')->count();
                 break;
             case 'incomplete':
                 $query->where('registrations.status', 'Draft');
-                $totalRecords = Registration::where('status', 'Draft')->where('is_deleted', '0')->count();
+                $totalRecords = Registration::where('status', 'Draft')->whereHas('user', fn($uq) => $uq->active())->where('is_deleted', '0')->count();
                 break;
             default:
                 return response()->json(['error' => 'Invalid route type'], 400);
@@ -136,6 +149,9 @@ class AdminRegistrationController extends Controller
     public function submittedDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
                   ->orWhereHas('latestPayment');
@@ -151,6 +167,9 @@ class AdminRegistrationController extends Controller
     public function internationalPaymentSubmittedDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
                   ->orWhereHas('latestPayment');
@@ -174,6 +193,9 @@ class AdminRegistrationController extends Controller
         $registrations = Registration::select('registrations.*')
             ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->where('delegate_type', 'Indian')
                   ->orWhereHas('user', function ($uq) {
@@ -203,6 +225,9 @@ class AdminRegistrationController extends Controller
         $userSearch = trim($request->input('user_search', ''));
 
         $registrationsQuery = Registration::with(['user', 'delegateCategory', 'latestPayment'])
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->where('status', 'Draft')
                   ->orWhere('step_completed', '<', 4)
@@ -229,7 +254,7 @@ class AdminRegistrationController extends Controller
             ->withQueryString();
 
         $registeredUserIds = Registration::where('is_deleted', '0')->pluck('user_id')->toArray();
-        $usersWithoutRegQuery = \App\Models\User::whereNotIn('id', $registeredUserIds);
+        $usersWithoutRegQuery = \App\Models\User::active()->whereNotIn('id', $registeredUserIds);
 
         if (!empty($userSearch)) {
             $usersWithoutRegQuery->where(function ($q) use ($userSearch) {
@@ -273,6 +298,9 @@ class AdminRegistrationController extends Controller
         $registrations = Registration::select('registrations.*')
             ->with(['user', 'delegateCategory', 'latestPayment', 'latestSuccessfulPayment', 'payments', 'conferencePayment', 'cmePayment'])
             ->where('status', 'Approved')
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->where('delegate_type', 'International')
                   ->orWhereHas('user', function ($uq) {
@@ -326,6 +354,9 @@ class AdminRegistrationController extends Controller
     public function cmeDelegates()
     {
         $registrations = Registration::with(['user', 'delegateCategory', 'latestPayment', 'cmeApplication', 'cmePayment'])
+            ->whereHas('user', function ($uq) {
+                $uq->active();
+            })
             ->where(function ($q) {
                 $q->where('participate_in_cme', 1)
                   ->orWhereHas('cmeApplication');
@@ -1138,6 +1169,9 @@ class AdminRegistrationController extends Controller
 
         if (in_array($target, ['all', 'drafts'])) {
             $draftRegs = Registration::with(['user', 'delegateCategory'])
+                ->whereHas('user', function ($uq) {
+                    $uq->active();
+                })
                 ->where(function ($q) {
                     $q->where('status', 'Draft')
                       ->orWhere('step_completed', '<', 4)
@@ -1168,7 +1202,7 @@ class AdminRegistrationController extends Controller
 
         if (in_array($target, ['all', 'users'])) {
             $registeredUserIds = Registration::where('is_deleted', '0')->pluck('user_id')->toArray();
-            $users = \App\Models\User::whereNotIn('id', $registeredUserIds)->get();
+            $users = \App\Models\User::active()->whereNotIn('id', $registeredUserIds)->get();
 
             foreach ($users as $user) {
                 if (!empty($user->email) && filter_var($user->email, FILTER_VALIDATE_EMAIL)) {

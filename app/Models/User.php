@@ -17,6 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const STATUS_ACTIVE = 'active';
     const STATUS_DISABLED = 'disabled';
+    const STATUS_INACTIVE = 'inactive';
 
     protected $fillable = [
         'prefix',
@@ -146,15 +147,17 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isActive(): bool
     {
-        return ($this->status ?? self::STATUS_ACTIVE) === self::STATUS_ACTIVE;
+        $status = strtolower($this->status ?? self::STATUS_ACTIVE);
+        return !in_array($status, [self::STATUS_DISABLED, self::STATUS_INACTIVE], true);
     }
 
     /**
-     * Check if user account is disabled
+     * Check if user account is disabled / inactive
      */
     public function isDisabled(): bool
     {
-        return ($this->status ?? self::STATUS_ACTIVE) === self::STATUS_DISABLED;
+        $status = strtolower($this->status ?? self::STATUS_ACTIVE);
+        return in_array($status, [self::STATUS_DISABLED, self::STATUS_INACTIVE], true);
     }
 
     /**
@@ -163,16 +166,19 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeActive($query)
     {
         return $query->where(function ($q) {
-            $q->where('status', self::STATUS_ACTIVE)
-              ->orWhereNull('status');
+            $q->whereNull('status')
+              ->orWhere(function ($sq) {
+                  $sq->where('status', self::STATUS_ACTIVE)
+                     ->whereNotIn('status', [self::STATUS_DISABLED, self::STATUS_INACTIVE]);
+              });
         });
     }
 
     /**
-     * Scope query to only disabled users
+     * Scope query to only disabled / inactive users
      */
     public function scopeDisabled($query)
     {
-        return $query->where('status', self::STATUS_DISABLED);
+        return $query->whereIn('status', [self::STATUS_DISABLED, self::STATUS_INACTIVE]);
     }
 }

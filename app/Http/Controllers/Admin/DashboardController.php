@@ -18,7 +18,8 @@ class DashboardController extends Controller
             return redirect()->route('admin.moderator.dashboard');
         }
 
-        $appliedCount = Registration::where(function ($q) {
+        $appliedCount = Registration::whereHas('user', fn($uq) => $uq->active())
+            ->where(function ($q) {
                 $q->whereIn('status', ['Payment Submitted', 'Submitted', 'Pending Payment'])
                   ->orWhereHas('latestPayment');
             })
@@ -27,6 +28,7 @@ class DashboardController extends Controller
             ->count();
 
         $IndApprovedCount = Registration::where('status', 'Approved')
+            ->whereHas('user', fn($uq) => $uq->active())
             ->where(function ($q) {
                 $q->where('delegate_type', 'Indian')
                   ->orWhereHas('user', function ($uq) {
@@ -38,6 +40,7 @@ class DashboardController extends Controller
             ->count();
 
         $IntApprovedCount = Registration::where('status', 'Approved')
+            ->whereHas('user', fn($uq) => $uq->active())
             ->where(function ($q) {
                 $q->where('delegate_type', 'International')
                   ->orWhereHas('user', function ($uq) {
@@ -49,6 +52,7 @@ class DashboardController extends Controller
 
         $abstractCount = \App\Models\AbstractSubmission::count();
         $recentRegistrations = Registration::with(['user', 'delegateCategory'])
+            ->whereHas('user', fn($uq) => $uq->active())
             ->where('is_deleted', '0')
             ->latest()
             ->take(5)
