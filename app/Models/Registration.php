@@ -84,7 +84,7 @@ class Registration extends Model
         'Spatio-Temporal Data Analysis and AI Applications in Public Health',
         'From Surveillance to Forecasting: A Hands-on Workshop on Infectious Disease Modelling',
         'PG to PRO: A Comprehensive Toolkit and Skill Transfer Workshop for MD Community Medicine Residents (Research | Service | Career | Leadership | Well-being)',
-        'Meta Analysis',
+        'R software for Basic data analaysis and Meta analysis',
         'Implementation Research',
         'Sample Size calculation and Analysis-hands on',
         'AI-ready Infectious DIsease Modelling for Zoonotic and Vector Borne Disease Control',
