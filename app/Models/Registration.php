@@ -475,6 +475,27 @@ class Registration extends Model
     }
 
     /**
+     * Determine if delegate has completed payment for Pre-Conference Workshop (CME).
+     */
+    public function isCmePaid(): bool
+    {
+        if ($this->isCmeApproved() || $this->isCmePendingVerification()) {
+            return true;
+        }
+
+        if ($this->cmeApplication && in_array($this->cmeApplication->status, ['Approved', 'Payment Submitted'])) {
+            return true;
+        }
+
+        return $this->payments()
+            ->where('cme_fee', '>', 0)
+            ->where(function ($q) {
+                $q->whereIn('payment_status', ['Success', 'PAID', 'Approved', 'Completed', '0300', 'OTS0000'])
+                  ->orWhere('admin_verified', true);
+            })->exists();
+    }
+
+    /**
      * Normalized CME status string.
      */
     public function getCmeStatusAttribute(): string

@@ -2,6 +2,13 @@
     <x-slot:title>Delegate Dashboard | IPHACON 2027</x-slot:title>
 
     <div class="container py-3">
+        @php
+            $isCmePaid = ($registration && $registration->isCmePaid()) || ($cmeApplication && in_array($cmeApplication->status, ['Approved', 'Payment Submitted']));
+            $isCmeApproved = ($registration && $registration->isCmeApproved()) || ($cmeApplication && $cmeApplication->status === 'Approved');
+            $isCmePending = ($registration && $registration->isCmePendingVerification()) || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
+            $cmeSelectedTopic = $registration?->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
+        @endphp
+
         <!-- Welcome Hero Banner -->
         <div class="card border-0 shadow-sm overflow-hidden mb-4"
             style="border-radius: 16px; background: linear-gradient(135deg, #013069 0%, #0d47a1 50%, #0288D1 100%); margin-bottom: 2rem !important; box-shadow: 0 10px 28px rgba(1, 48, 105, 0.18) !important;">
@@ -190,8 +197,7 @@
                         <div class="d-flex flex-column gap-1.5">
                             @if ($registration)
                                 @php
-                                    $hasAppliedCme = ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic))
-                                        || ($cmeApplication && $cmeApplication->id);
+                                    $isCmePaid = $registration->isCmePaid() || ($cmeApplication && in_array($cmeApplication->status, ['Approved', 'Payment Submitted']));
                                     $isCmeApproved = $registration->isCmeApproved() || ($cmeApplication && $cmeApplication->status === 'Approved');
                                     $isCmePending = $registration->isCmePendingVerification() || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
                                     $isRegistrationPaid = in_array($registration->status, [
@@ -199,36 +205,29 @@
                                         'Payment Submitted',
                                     ]);
                                 @endphp
-                                @if (!$hasAppliedCme)
-                                    @if ($isRegistrationPaid)
-                                        <a href="{{ route('cme.apply') }}"
-                                            class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
-                                            style="font-size: 0.8rem;">
-                                            <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
-                                        </a>
-                                    @endif
-                                @else
-                                    {{-- Only for delegates who applied for Pre-Conference Workshop --}}
-                                    @if ($isCmePending)
-                                        <div
-                                            class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
-                                            <i class="fas fa-hourglass-half me-1"></i>Pre-Conf. Verification Pending
-                                        </div>
-                                    @elseif ($isCmeApproved)
+                                @if ($isCmePaid)
+                                    {{-- Sirf wahi delegates jinhone Pre-Conference ke liye payment kar diya hai --}}
+                                    @if ($isCmeApproved)
                                         <div
                                             class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
                                             <i class="fas fa-check-circle me-1"></i>Pre-Conference Enrolled
                                         </div>
                                     @else
                                         <div
-                                            class="badge bg-info-subtle text-info border border-info py-1.5 px-2 rounded-pill small font-semibold">
-                                            <i class="fas fa-check-circle me-1"></i>Workshop Topic Selected
+                                            class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-hourglass-half me-1"></i>Pre-Conf. Verification Pending
                                         </div>
                                     @endif
                                     <button type="button" class="btn btn-outline-primary btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
                                         style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
                                         <i class="fas fa-exchange-alt me-1"></i>Change Workshop Topic
                                     </button>
+                                @elseif ($isRegistrationPaid)
+                                    <a href="{{ route('cme.apply') }}"
+                                        class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
+                                        style="font-size: 0.8rem;">
+                                        <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
+                                    </a>
                                 @endif
                             @endif
                             <a href="{{ route('registration.index') }}"
@@ -319,16 +318,15 @@
             </div>
         </div>
 
-        {{-- Pre-Conference Workshop Details Card (Only if Delegate Applied for Pre-Conference) --}}
+        {{-- Pre-Conference Workshop Details Card (Only if Delegate Paid for Pre-Conference) --}}
         @php
-            $hasAppliedCme = ($registration && ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic)))
-                || ($cmeApplication && $cmeApplication->id);
+            $isCmePaid = ($registration && $registration->isCmePaid()) || ($cmeApplication && in_array($cmeApplication->status, ['Approved', 'Payment Submitted']));
             $cmeSelectedTopic = $registration?->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
             $isCmeConfirmed = ($registration && $registration->isCmeApproved()) || ($cmeApplication && $cmeApplication->status === 'Approved');
             $isCmePendingVerif = ($registration && $registration->isCmePendingVerification()) || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
         @endphp
 
-        @if ($hasAppliedCme)
+        @if ($isCmePaid)
             <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden"
                 style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
                 <!-- Top Accent Line -->
@@ -639,7 +637,7 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
         }
     </style>
-    @if ($hasAppliedCme)
+    @if ($isCmePaid)
     {{-- Modal: Change Pre-Conference Workshop Topic --}}
     <div class="modal fade" id="changePreConferenceTopicModal" tabindex="-1" aria-labelledby="changePreConferenceTopicModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

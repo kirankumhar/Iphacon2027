@@ -862,15 +862,15 @@ class RegistrationController extends Controller
     public function updatePreConferenceTopic(Request $request)
     {
         $user = Auth::user();
-        $registration = Registration::where('user_id', $user->id)->latest()->first();
+        $registration = Registration::with(['cmeApplication', 'payments', 'conferencePayment', 'cmePayment'])->where('user_id', $user->id)->latest()->first();
         $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)->latest()->first();
 
-        // Sirf wahi delegate topic change kar sakta hai jisne Pre-Conference Workshop ke liye apply kiya hai
-        $hasAppliedCme = ($registration && ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic)))
-            || ($cmeApp && $cmeApp->id);
+        // Sirf wahi delegate topic change kar sakta hai jisne Pre-Conference Workshop ke liye payment kar diya hai
+        $isCmePaid = ($registration && $registration->isCmePaid())
+            || ($cmeApp && in_array($cmeApp->status, ['Approved', 'Payment Submitted']));
 
-        if (!$hasAppliedCme) {
-            return redirect()->back()->with('error', 'Aapne Pre-Conference Workshop ke liye apply nahi kiya hai. Sirf wahi delegates topic change kar sakte hain jinhone workshop ke liye apply kiya hai.');
+        if (!$isCmePaid) {
+            return redirect()->back()->with('error', 'Pre-Conference Workshop ke liye payment confirm nahi hai. Topic change karne ka option sirf unhi delegates ke liye hai jinhone workshop ke liye payment kiya hai.');
         }
 
         $request->validate([
