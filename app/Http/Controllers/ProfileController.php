@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Country;
+use App\Models\ActivityLog;
 
 class ProfileController extends Controller
 {
@@ -38,7 +40,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        $user->load('country');
+        $user->load(['country', 'registrations']);
         $countries = Country::active()->orderBy('country_name')->get();
         return view('profile.edit', compact('user', 'countries'));
     }
@@ -68,12 +70,17 @@ class ProfileController extends Controller
                     }
                 }
             ],
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+        ], [
+            'photo.image' => 'Profile photo must be a valid image file.',
+            'photo.mimes' => 'Profile photo must be a file of type: JPG, JPEG, PNG, or WEBP.',
+            'photo.max' => 'Profile photo size must not exceed 1MB (1024 KB).',
         ]);
 
         // Get country ID from phone code
         $country = Country::where('phone_code', $request->mobile_country_code)->first();
 
-        $user->update([
+        $userData = [
             'prefix' => $request->prefix,
             'full_name' => $request->full_name,
             'designation' => $request->designation,
@@ -83,7 +90,36 @@ class ProfileController extends Controller
             'country_id' => $country ? $country->id : $user->country_id,
             'mobile_country_code' => $request->mobile_country_code,
             'mobile_number' => $request->mobile_number,
-        ]);
+        ];
+
+        // Handle Profile Photo Upload
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+
+            // Delete existing photo file if stored
+            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
+                Storage::disk('public')->delete($user->photo_path);
+            }
+
+            $userData['photo_path'] = $photoPath;
+
+            // Sync with all user registrations so badge/receipt/PDF use the updated photo
+            if ($user->registrations()->exists()) {
+                $user->registrations()->update(['photo_path' => $photoPath]);
+            }
+        } elseif ($request->boolean('remove_photo')) {
+            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
+                Storage::disk('public')->delete($user->photo_path);
+            }
+
+            $userData['photo_path'] = null;
+
+            if ($user->registrations()->exists()) {
+                $user->registrations()->update(['photo_path' => null]);
+            }
+        }
+
+        $user->update($userData);
 
         // Sync designation and institution with registration if empty on registration
         if ($user->registrations()->exists()) {
@@ -98,6 +134,17 @@ class ProfileController extends Controller
                 })->update(['institution' => $request->institution]);
             }
         }
+
+        ActivityLog::record(
+            'DELEGATE_PROFILE_UPDATED',
+            "Delegate {$user->full_name} ({$user->email}) updated their profile" . ($request->hasFile('photo') ? ' including profile image.' : '.'),
+            [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'photo_updated' => $request->hasFile('photo'),
+                'photo_removed' => $request->boolean('remove_photo')
+            ]
+        );
 
         return redirect()->route('profile.show')
             ->with('success', 'Profile updated successfully!');

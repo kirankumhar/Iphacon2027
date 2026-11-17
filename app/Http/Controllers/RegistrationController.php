@@ -385,7 +385,11 @@ class RegistrationController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $updateData['photo_path'] = $request->file('photo')->store('photos', 'public');
+            $photoPath = $request->file('photo')->store('photos', 'public');
+            $updateData['photo_path'] = $photoPath;
+            if ($registration->user) {
+                $registration->user->update(['photo_path' => $photoPath]);
+            }
         }
 
         if ($request->hasFile('id_proof_document')) {

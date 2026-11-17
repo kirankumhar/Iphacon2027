@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'delegate_type',
         'email',
         'password',
+        'photo_path',
         'status',
         'consent',
         'verification_token',
@@ -140,6 +141,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getEmailForVerification()
     {
         return $this->email;
+    }
+
+    /**
+     * Get profile photo URL
+     */
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        $path = $this->photo_path ?: $this->registrations->first()?->photo_path;
+        if ($path && \Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return asset('storage/' . $path);
+        }
+        return null;
     }
 
     /**
