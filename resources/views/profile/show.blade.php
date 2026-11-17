@@ -106,7 +106,7 @@
                         {{-- Avatar / Photo --}}
                         <div class="position-relative flex-shrink-0">
                             @php
-                                $displayPhoto = $user->photo_path ?: ($primaryReg?->photo_path);
+                                $displayPhoto = $primaryReg?->photo_path;
                             @endphp
                             @if($displayPhoto)
                                 <img src="{{ asset('storage/' . $displayPhoto) }}"

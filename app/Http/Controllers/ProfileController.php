@@ -92,30 +92,31 @@ class ProfileController extends Controller
             'mobile_number' => $request->mobile_number,
         ];
 
-        // Handle Profile Photo Upload
+        // Handle Profile Photo Upload directly on delegate registration
+        $registration = $user->registrations()->latest('id')->first();
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('photos', 'public');
 
-            // Delete existing photo file if stored
-            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
-                Storage::disk('public')->delete($user->photo_path);
-            }
-
-            $userData['photo_path'] = $photoPath;
-
-            // Sync with all user registrations so badge/receipt/PDF use the updated photo
-            if ($user->registrations()->exists()) {
-                $user->registrations()->update(['photo_path' => $photoPath]);
+            if ($registration) {
+                // Delete previous photo file if exists
+                if ($registration->photo_path && Storage::disk('public')->exists($registration->photo_path)) {
+                    Storage::disk('public')->delete($registration->photo_path);
+                }
+                $registration->update(['photo_path' => $photoPath]);
+            } else {
+                // If user doesn't have a registration yet, create initial draft registration
+                $registration = $user->registrations()->create([
+                    'delegate_type' => $user->delegate_type ?? 'Indian',
+                    'status' => 'Draft',
+                    'photo_path' => $photoPath,
+                ]);
             }
         } elseif ($request->boolean('remove_photo')) {
-            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
-                Storage::disk('public')->delete($user->photo_path);
-            }
-
-            $userData['photo_path'] = null;
-
-            if ($user->registrations()->exists()) {
-                $user->registrations()->update(['photo_path' => null]);
+            if ($registration && $registration->photo_path) {
+                if (Storage::disk('public')->exists($registration->photo_path)) {
+                    Storage::disk('public')->delete($registration->photo_path);
+                }
+                $registration->update(['photo_path' => null]);
             }
         }
 

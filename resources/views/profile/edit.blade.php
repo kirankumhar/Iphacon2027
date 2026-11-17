@@ -3,7 +3,7 @@
 @php
     $inner_title = 'Edit Delegate Profile';
     $primaryReg = $user->registrations->first();
-    $currentPhoto = $user->photo_path ?: ($primaryReg?->photo_path);
+    $currentPhoto = $primaryReg?->photo_path;
 @endphp
 
 @section('delegate-content')
