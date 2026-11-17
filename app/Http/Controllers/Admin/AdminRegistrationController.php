@@ -358,8 +358,10 @@ class AdminRegistrationController extends Controller
                 $uq->active();
             })
             ->where(function ($q) {
-                $q->where('participate_in_cme', 1)
-                  ->orWhereHas('cmeApplication');
+                $q->where(function ($sub) {
+                    $sub->where('participate_in_cme', 1)
+                        ->whereNotIn('status', ['Draft']);
+                })->orWhereHas('cmeApplication');
             })
             ->where('is_deleted', '0')
             ->latest()
