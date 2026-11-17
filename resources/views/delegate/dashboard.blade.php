@@ -60,6 +60,15 @@
             </div>
         @endif
 
+        @if (session('info'))
+            <div class="alert alert-info alert-dismissible fade show py-2.5 px-3 mb-4 small fw-semibold shadow-xs"
+                role="alert"
+                style="border-radius: 12px; background-color: #E0F2FE; border-color: #BAE6FD; color: #0369A1;">
+                <i class="fas fa-info-circle me-2 fs-6"></i>{{ session('info') }}
+                <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 mb-4 small shadow-xs" role="alert"
                 style="border-radius: 12px;">
@@ -181,30 +190,45 @@
                         <div class="d-flex flex-column gap-1.5">
                             @if ($registration)
                                 @php
-                                    $isCmeApproved = $registration->isCmeApproved();
-                                    $isCmePending = $registration->isCmePendingVerification();
+                                    $hasAppliedCme = ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic))
+                                        || ($cmeApplication && $cmeApplication->id);
+                                    $isCmeApproved = $registration->isCmeApproved() || ($cmeApplication && $cmeApplication->status === 'Approved');
+                                    $isCmePending = $registration->isCmePendingVerification() || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
                                     $isRegistrationPaid = in_array($registration->status, [
                                         'Approved',
                                         'Payment Submitted',
                                     ]);
                                 @endphp
-                                @if ($isRegistrationPaid && !$isCmeApproved && !$isCmePending)
-                                    <a href="{{ route('cme.apply') }}"
-                                        class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
-                                        style="font-size: 0.8rem;">
-                                        <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
-                                    </a>
-                                @elseif($isCmePending)
-                                    <div
-                                        class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conference Workshop Verification
-                                        Pending
-                                    </div>
-                                @elseif($isCmeApproved)
-                                    <div
-                                        class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-check-circle me-1"></i>Pre-Conference Workshop Enrolled
-                                    </div>
+                                @if (!$hasAppliedCme)
+                                    @if ($isRegistrationPaid)
+                                        <a href="{{ route('cme.apply') }}"
+                                            class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
+                                            style="font-size: 0.8rem;">
+                                            <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
+                                        </a>
+                                    @endif
+                                @else
+                                    {{-- Only for delegates who applied for Pre-Conference Workshop --}}
+                                    @if ($isCmePending)
+                                        <div
+                                            class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-hourglass-half me-1"></i>Pre-Conf. Verification Pending
+                                        </div>
+                                    @elseif ($isCmeApproved)
+                                        <div
+                                            class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-check-circle me-1"></i>Pre-Conference Enrolled
+                                        </div>
+                                    @else
+                                        <div
+                                            class="badge bg-info-subtle text-info border border-info py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-check-circle me-1"></i>Workshop Topic Selected
+                                        </div>
+                                    @endif
+                                    <button type="button" class="btn btn-outline-primary btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
+                                        style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
+                                        <i class="fas fa-exchange-alt me-1"></i>Change Workshop Topic
+                                    </button>
                                 @endif
                             @endif
                             <a href="{{ route('registration.index') }}"
@@ -294,6 +318,130 @@
                 </div>
             </div>
         </div>
+
+        {{-- Pre-Conference Workshop Details Card (Only if Delegate Applied for Pre-Conference) --}}
+        @php
+            $hasAppliedCme = ($registration && ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic)))
+                || ($cmeApplication && $cmeApplication->id);
+            $cmeSelectedTopic = $registration?->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
+            $isCmeConfirmed = ($registration && $registration->isCmeApproved()) || ($cmeApplication && $cmeApplication->status === 'Approved');
+            $isCmePendingVerif = ($registration && $registration->isCmePendingVerification()) || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
+        @endphp
+
+        @if ($hasAppliedCme)
+            <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden"
+                style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
+                <!-- Top Accent Line -->
+                <div style="height: 4px; background: linear-gradient(90deg, #0288D1 0%, #00897B 50%, #013069 100%);">
+                </div>
+
+                <div class="card-header bg-white py-3 px-3.5 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2.5">
+                        <div class="rounded-circle text-primary p-2 d-flex align-items-center justify-content-center shadow-xs"
+                            style="width: 38px; height: 38px; color: #0288D1 !important; background: #E0F2FE;">
+                            <i class="fas fa-chalkboard-teacher fs-6"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0" style="font-size: 0.98rem; letter-spacing: -0.2px;">
+                                Pre-Conference Workshop Details
+                            </h6>
+                            <small class="text-muted extra-small" style="font-size: 0.76rem;">
+                                Date: <strong class="text-dark ms-1">11th March 2027</strong> | Venue: <strong class="text-dark ms-1">RIMS, Ranchi</strong>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        @if ($isCmeConfirmed)
+                            <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.74rem; background-color: #10B981 !important;">
+                                <i class="fas fa-check-circle me-1"></i>CONFIRMED / ENROLLED
+                            </span>
+                        @elseif ($isCmePendingVerif)
+                            <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.74rem;">
+                                <i class="fas fa-hourglass-half me-1"></i>VERIFICATION PENDING
+                            </span>
+                        @else
+                            <span class="badge bg-info text-white px-3 py-1.5 rounded-pill fw-bold shadow-xs"
+                                style="font-size: 0.74rem;">
+                                <i class="fas fa-check me-1"></i>TOPIC SELECTED
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="card-body p-3.5">
+                    <div class="p-3 rounded-3 bg-light border mb-3">
+                        <div class="d-flex align-items-start gap-2.5">
+                            <div class="rounded-circle bg-white text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs mt-0.5"
+                                style="width: 34px; height: 34px; color: #0288D1 !important;">
+                                <i class="fas fa-book-reader" style="font-size: 0.9rem;"></i>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <span class="text-muted extra-small d-block fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                    Selected Workshop Topic
+                                </span>
+                                <h5 class="fw-bold text-dark mb-0 mt-1" style="font-size: 1.05rem; line-height: 1.45; word-break: break-word;">
+                                    {{ $cmeSelectedTopic ?: 'No topic selected yet' }}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2.5 mb-3">
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="far fa-calendar-check text-primary" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Workshop Schedule</span>
+                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">11th March 2027</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-success p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="fas fa-map-marker-alt text-success" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Workshop Venue</span>
+                                    <strong class="text-dark d-block text-truncate" style="font-size: 0.82rem;">RIMS, Ranchi, Jharkhand</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white text-info p-2 d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="fas fa-id-card text-info" style="font-size: 0.85rem;"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <span class="text-muted extra-small d-block" style="font-size: 0.7rem;">Reg / App Reference</span>
+                                    <strong class="text-dark d-block text-truncate font-monospace" style="font-size: 0.82rem;">
+                                        {{ $registration?->registration_number ?: ($cmeApplication?->application_number ?? ($registration?->acknowledgement_id ?? 'Enrolled')) }}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top flex-wrap gap-2">
+                        <span class="text-muted extra-small" style="font-size: 0.78rem;">
+                            <i class="fas fa-info-circle me-1 text-primary"></i>Galat topic select ho gaya hai? Aap yahan se apna workshop topic change kar sakte hain.
+                        </span>
+                        <button type="button" class="btn btn-sm btn-primary btn-capsule px-3.5 py-1.5 shadow-xs"
+                            style="background: linear-gradient(135deg, #0288D1, #00897B); border: none; font-size: 0.82rem;"
+                            data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
+                            <i class="fas fa-exchange-alt me-1.5"></i>Change Workshop Topic
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- Detailed Submitted Abstract Card (If Abstract Exists) -->
         @if ($abstract)
@@ -491,4 +639,74 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
         }
     </style>
+    @if ($hasAppliedCme)
+    {{-- Modal: Change Pre-Conference Workshop Topic --}}
+    <div class="modal fade" id="changePreConferenceTopicModal" tabindex="-1" aria-labelledby="changePreConferenceTopicModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+                <div class="modal-header text-white px-4 py-3" style="background: linear-gradient(135deg, #013069, #0288D1);">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-chalkboard-teacher fs-5"></i>
+                        <h5 class="modal-title fw-bold mb-0" id="changePreConferenceTopicModalLabel" style="font-size: 1.05rem;">
+                            Change Pre-Conference Workshop Topic
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('cme.topic.update') }}" method="POST" id="changePreConferenceTopicForm">
+                    @csrf
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info border-0 d-flex align-items-start gap-2.5 p-3 mb-3.5 rounded-3" style="background-color: #E0F2FE; color: #0288D1;">
+                            <i class="fas fa-info-circle fs-5 flex-shrink-0 mt-0.5"></i>
+                            <div class="small" style="font-size: 0.83rem; line-height: 1.45;">
+                                <strong>Important Note:</strong> If you selected a workshop topic by mistake or wish to change it, you can select your preferred workshop below. The Pre-Conference Workshop will be held on <strong>11th March 2027</strong> at <strong>RIMS, Ranchi</strong>.
+                            </div>
+                        </div>
+
+                        @php
+                            $currentWorkshopTopic = $registration?->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
+                        @endphp
+
+                        @if ($currentWorkshopTopic)
+                            <div class="mb-3.5 p-3 rounded-3 bg-light border">
+                                <span class="text-muted extra-small d-block fw-semibold text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                    Currently Selected Topic
+                                </span>
+                                <div class="fw-bold text-dark d-flex align-items-center gap-2" style="font-size: 0.92rem;">
+                                    <i class="fas fa-check-circle text-success flex-shrink-0"></i>
+                                    <span>{{ $currentWorkshopTopic }}</span>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="mb-3">
+                            <label for="pre_conference_topic_select" class="form-label fw-bold text-dark small mb-1.5">
+                                Select New Workshop Topic <span class="text-danger">*</span>
+                            </label>
+                            <select name="pre_conference_topic" id="pre_conference_topic_select" class="form-select form-select-lg py-2.5" style="font-size: 0.88rem; border-radius: 10px;" required>
+                                <option value="" disabled {{ empty($currentWorkshopTopic) ? 'selected' : '' }}>-- Select Pre-Conference Workshop Topic --</option>
+                                @foreach (\App\Models\Registration::PRE_CONFERENCE_TOPICS as $index => $topic)
+                                    <option value="{{ $topic }}" {{ $currentWorkshopTopic === $topic ? 'selected' : '' }}>
+                                        {{ $index + 1 }}. {{ $topic }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="form-text text-muted extra-small mt-1.5">
+                                <i class="fas fa-shield-alt me-1 text-primary"></i>Total 13 Pre-Conference Workshop topics available.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light px-4 py-2.5 border-top d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-3.5 py-1.5 rounded-pill" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-xs fw-bold" style="background: linear-gradient(135deg, #013069, #0288D1); border: none;">
+                            <i class="fas fa-check me-1.5"></i>Update Workshop Topic
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 </x-delegate.layout>
