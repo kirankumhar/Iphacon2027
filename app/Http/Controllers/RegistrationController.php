@@ -865,8 +865,12 @@ class RegistrationController extends Controller
         $registration = Registration::where('user_id', $user->id)->latest()->first();
         $cmeApp = \App\Models\CmeApplication::where('user_id', $user->id)->latest()->first();
 
-        if (!$registration && !$cmeApp) {
-            return redirect()->back()->with('error', 'No registration found for your account.');
+        // Sirf wahi delegate topic change kar sakta hai jisne Pre-Conference Workshop ke liye apply kiya hai
+        $hasAppliedCme = ($registration && ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic)))
+            || ($cmeApp && $cmeApp->id);
+
+        if (!$hasAppliedCme) {
+            return redirect()->back()->with('error', 'Aapne Pre-Conference Workshop ke liye apply nahi kiya hai. Sirf wahi delegates topic change kar sakte hain jinhone workshop ke liye apply kiya hai.');
         }
 
         $request->validate([
@@ -889,7 +893,6 @@ class RegistrationController extends Controller
 
         if ($registration) {
             $registration->pre_conference_topic = $newTopic;
-            $registration->participate_in_cme = true;
             $registration->save();
         }
 

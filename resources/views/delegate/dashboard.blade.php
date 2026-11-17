@@ -190,44 +190,41 @@
                         <div class="d-flex flex-column gap-1.5">
                             @if ($registration)
                                 @php
+                                    $hasAppliedCme = ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic))
+                                        || ($cmeApplication && $cmeApplication->id);
                                     $isCmeApproved = $registration->isCmeApproved() || ($cmeApplication && $cmeApplication->status === 'Approved');
                                     $isCmePending = $registration->isCmePendingVerification() || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
                                     $isRegistrationPaid = in_array($registration->status, [
                                         'Approved',
                                         'Payment Submitted',
                                     ]);
-                                    $chosenCmeTopic = $registration->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
-                                    $hasCmeEnrolled = $isCmeApproved || $isCmePending || !empty($chosenCmeTopic) || ($registration->participate_in_cme);
                                 @endphp
-                                @if ($isRegistrationPaid && !$hasCmeEnrolled)
-                                    <a href="{{ route('cme.apply') }}"
-                                        class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
-                                        style="font-size: 0.8rem;">
-                                        <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
-                                    </a>
-                                @elseif($isCmePending)
-                                    <div
-                                        class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-hourglass-half me-1"></i>Pre-Conf. Verification Pending
-                                    </div>
-                                    <button type="button" class="btn btn-outline-primary btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
-                                        style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
-                                        <i class="fas fa-exchange-alt me-1"></i>Change Workshop Topic
-                                    </button>
-                                @elseif($isCmeApproved)
-                                    <div
-                                        class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-check-circle me-1"></i>Pre-Conference Enrolled
-                                    </div>
-                                    <button type="button" class="btn btn-outline-primary btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
-                                        style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
-                                        <i class="fas fa-exchange-alt me-1"></i>Change Workshop Topic
-                                    </button>
-                                @elseif($hasCmeEnrolled)
-                                    <div
-                                        class="badge bg-info-subtle text-info border border-info py-1.5 px-2 rounded-pill small font-semibold">
-                                        <i class="fas fa-check-circle me-1"></i>Workshop Topic Selected
-                                    </div>
+                                @if (!$hasAppliedCme)
+                                    @if ($isRegistrationPaid)
+                                        <a href="{{ route('cme.apply') }}"
+                                            class="btn btn-outline-success btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
+                                            style="font-size: 0.8rem;">
+                                            <i class="fas fa-plus-circle me-1"></i>Apply for Pre-Conference Workshop
+                                        </a>
+                                    @endif
+                                @else
+                                    {{-- Only for delegates who applied for Pre-Conference Workshop --}}
+                                    @if ($isCmePending)
+                                        <div
+                                            class="badge bg-warning text-dark border py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-hourglass-half me-1"></i>Pre-Conf. Verification Pending
+                                        </div>
+                                    @elseif ($isCmeApproved)
+                                        <div
+                                            class="badge bg-success-subtle text-success border border-success py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-check-circle me-1"></i>Pre-Conference Enrolled
+                                        </div>
+                                    @else
+                                        <div
+                                            class="badge bg-info-subtle text-info border border-info py-1.5 px-2 rounded-pill small font-semibold">
+                                            <i class="fas fa-check-circle me-1"></i>Workshop Topic Selected
+                                        </div>
+                                    @endif
                                     <button type="button" class="btn btn-outline-primary btn-sm btn-capsule w-100 py-1.5 shadow-xs fw-bold"
                                         style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#changePreConferenceTopicModal">
                                         <i class="fas fa-exchange-alt me-1"></i>Change Workshop Topic
@@ -322,15 +319,16 @@
             </div>
         </div>
 
-        <!-- Pre-Conference Workshop Details Card (If Enrolled or Topic Selected) -->
+        {{-- Pre-Conference Workshop Details Card (Only if Delegate Applied for Pre-Conference) --}}
         @php
+            $hasAppliedCme = ($registration && ($registration->participate_in_cme == 1 || !empty($registration->pre_conference_topic)))
+                || ($cmeApplication && $cmeApplication->id);
             $cmeSelectedTopic = $registration?->cme_topic ?: ($cmeApplication?->pre_conference_topic ?? null);
-            $hasCmeWorkshop = !empty($cmeSelectedTopic) || ($registration && $registration->participate_in_cme) || ($cmeApplication && $cmeApplication->id);
             $isCmeConfirmed = ($registration && $registration->isCmeApproved()) || ($cmeApplication && $cmeApplication->status === 'Approved');
             $isCmePendingVerif = ($registration && $registration->isCmePendingVerification()) || ($cmeApplication && in_array($cmeApplication->status, ['Pending', 'Payment Submitted']));
         @endphp
 
-        @if ($hasCmeWorkshop)
+        @if ($hasAppliedCme)
             <div class="card border-0 shadow-sm mt-3.5 mb-4 overflow-hidden"
                 style="border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.9) !important; box-shadow: 0 8px 24px rgba(1, 48, 105, 0.07) !important;">
                 <!-- Top Accent Line -->
@@ -641,7 +639,8 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
         }
     </style>
-    <!-- Modal: Change Pre-Conference Workshop Topic -->
+    @if ($hasAppliedCme)
+    {{-- Modal: Change Pre-Conference Workshop Topic --}}
     <div class="modal fade" id="changePreConferenceTopicModal" tabindex="-1" aria-labelledby="changePreConferenceTopicModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
@@ -709,4 +708,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-delegate.layout>
