@@ -51,6 +51,24 @@ class DelegateCategorySeeder extends Seeder
                 'foreign_fee' => 45000.00,
                 'is_active' => true,
             ],
+            [
+                'category_name' => 'MBBS (including UG)',
+                'indian_fee' => 4000.00,
+                'foreign_fee' => 175.00,
+                'is_active' => true,
+            ],
+            [
+                'category_name' => 'MPH (Member IPHA)',
+                'indian_fee' => 4000.00,
+                'foreign_fee' => 175.00,
+                'is_active' => true,
+            ],
+            [
+                'category_name' => 'Nutrition and Dietician',
+                'indian_fee' => 4000.00,
+                'foreign_fee' => 175.00,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($categories as $category) {
