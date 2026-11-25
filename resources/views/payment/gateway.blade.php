@@ -530,13 +530,23 @@
                     <!-- SECTION 3: ITEMISED FEE BREAKDOWN SUMMARY                                 -->
                     <!-- ========================================================================= -->
                     <div class="card border-0 bg-white shadow-sm mt-4" style="border-radius: 14px;">
-                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
                             <h6 class="mb-0 fw-bold text-dark">
                                 <i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Itemized Fee Breakdown
                             </h6>
-                            <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill">
-                                Reference: {{ $registration->registration_number ?: ('REG#' . $registration->id) }}
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                @if (in_array($registration->status, ['Draft', 'Pending Payment']))
+                                    <form method="POST" action="{{ route('payment.back-to-wizard', $registration->id) }}" class="d-inline" onsubmit="return confirm('Go back to Step 2 to edit your registration, Pre-Conference Workshop, or Accompanying Person(s)?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1 fw-semibold">
+                                            <i class="fas fa-arrow-left me-1"></i>Back / Edit Details
+                                        </button>
+                                    </form>
+                                @endif
+                                <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill">
+                                    Reference: {{ $registration->registration_number ?: ('REG#' . $registration->id) }}
+                                </span>
+                            </div>
                         </div>
                         <div class="card-body p-4">
                             <div class="table-responsive">
@@ -580,17 +590,7 @@
                                                             <div class="text-muted small">Specialized training workshop</div>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center">
-                                                        <div>Optional Add-on</div>
-                                                        @if (in_array($registration->status, ['Draft', 'Pending Payment']))
-                                                            <form method="POST" action="{{ route('payment.remove-cme', $registration->id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove Pre-Conference Workshop from your registration?');">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-0.5 mt-1" style="font-size: 0.75rem;">
-                                                                    <i class="fas fa-times me-1"></i>Remove
-                                                                </button>
-                                                            </form>
-                                                        @endif
-                                                    </td>
+                                                    <td class="text-center">Optional Add-on</td>
                                                     <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
                                                 </tr>
                                             @endif
@@ -600,17 +600,7 @@
                                                         <strong>Accompanying Person(s)</strong>
                                                         <div class="text-muted small">{{ $registration->accompanying_persons }} person(s) @ ₹5,000 each</div>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <div>{{ $registration->accompanying_persons }} × ₹5,000</div>
-                                                        @if (in_array($registration->status, ['Draft', 'Pending Payment']))
-                                                            <form method="POST" action="{{ route('payment.remove-accompanying', $registration->id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove Accompanying Person(s) from your registration?');">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-0.5 mt-1" style="font-size: 0.75rem;">
-                                                                    <i class="fas fa-times me-1"></i>Remove
-                                                                </button>
-                                                            </form>
-                                                        @endif
-                                                    </td>
+                                                    <td class="text-center">{{ $registration->accompanying_persons }} × ₹5,000</td>
                                                     <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
                                                 </tr>
                                             @endif

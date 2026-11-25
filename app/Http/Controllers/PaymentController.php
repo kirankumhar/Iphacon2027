@@ -93,56 +93,23 @@ class PaymentController extends Controller
     }
 
     /**
-     * Remove Pre-Conference CME / Workshop from a registration before payment
+     * Send registration back to Step 2 of the wizard so the delegate can edit selections before payment
      */
-    public function removeCme($encRegistrationId)
+    public function backToWizard($encRegistrationId)
     {
         $registration = $this->findUserRegistration($encRegistrationId);
 
         if (!in_array($registration->status, ['Draft', 'Pending Payment'])) {
             return redirect()->route('payment.gateway', $registration->id)
-                ->with('error', 'Cannot remove Pre-Conference Workshop after payment submission or approval.');
+                ->with('error', 'Cannot edit registration after payment submission or approval.');
         }
 
-        if (!$registration->participate_in_cme) {
-            return redirect()->route('payment.gateway', $registration->id)
-                ->with('error', 'Pre-Conference Workshop is not selected for this registration.');
-        }
-
-        $registration->participate_in_cme = false;
-        $registration->pre_conference_topic = null;
-        $registration->cme_fee = 0;
-        $registration->updateAmounts();
+        $registration->status = 'Draft';
+        $registration->step_completed = min((int) $registration->step_completed, 1);
         $registration->save();
 
-        return redirect()->route('payment.gateway', $registration->id)
-            ->with('success', 'Pre-Conference Workshop removed. Your payable amount has been updated.');
-    }
-
-    /**
-     * Remove Accompanying Person(s) from a registration before payment
-     */
-    public function removeAccompanying($encRegistrationId)
-    {
-        $registration = $this->findUserRegistration($encRegistrationId);
-
-        if (!in_array($registration->status, ['Draft', 'Pending Payment'])) {
-            return redirect()->route('payment.gateway', $registration->id)
-                ->with('error', 'Cannot remove Accompanying Person(s) after payment submission or approval.');
-        }
-
-        if (($registration->accompanying_persons ?? 0) <= 0) {
-            return redirect()->route('payment.gateway', $registration->id)
-                ->with('error', 'No Accompanying Person(s) added for this registration.');
-        }
-
-        $registration->accompanying_persons = 0;
-        $registration->accompanying_fee = 0;
-        $registration->updateAmounts();
-        $registration->save();
-
-        return redirect()->route('payment.gateway', $registration->id)
-            ->with('success', 'Accompanying Person(s) removed. Your payable amount has been updated.');
+        return redirect()->route('registration.wizard', ['step' => 2])
+            ->with('info', 'You can now update your registration category, Pre-Conference Workshop, or Accompanying Person(s) details.');
     }
 
     /**
