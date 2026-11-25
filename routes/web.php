@@ -112,6 +112,9 @@ Route::middleware(['auth', 'verified', 'user.active'])->group(function () {
     Route::post('payment/process/{registration}', [App\Http\Controllers\PaymentController::class, 'processPayment'])
         ->name('payment.process');
 
+    Route::post('payment/back-to-wizard/{registration}', [App\Http\Controllers\PaymentController::class, 'backToWizard'])
+        ->name('payment.back-to-wizard');
+
     Route::get('payment/success/{registration}', [App\Http\Controllers\PaymentController::class, 'success'])
         ->name('payment.success');
 

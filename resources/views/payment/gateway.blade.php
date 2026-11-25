@@ -530,13 +530,23 @@
                     <!-- SECTION 3: ITEMISED FEE BREAKDOWN SUMMARY                                 -->
                     <!-- ========================================================================= -->
                     <div class="card border-0 bg-white shadow-sm mt-4" style="border-radius: 14px;">
-                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
                             <h6 class="mb-0 fw-bold text-dark">
                                 <i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Itemized Fee Breakdown
                             </h6>
-                            <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill">
-                                Reference: {{ $registration->registration_number ?: ('REG#' . $registration->id) }}
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                @if (in_array($registration->status, ['Draft', 'Pending Payment']))
+                                    <form method="POST" action="{{ route('payment.back-to-wizard', $registration->id) }}" class="d-inline" onsubmit="return confirm('Go back to Step 2 to edit your registration, Pre-Conference Workshop, or Accompanying Person(s)?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1 fw-semibold">
+                                            <i class="fas fa-arrow-left me-1"></i>Back / Edit Details
+                                        </button>
+                                    </form>
+                                @endif
+                                <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill">
+                                    Reference: {{ $registration->registration_number ?: ('REG#' . $registration->id) }}
+                                </span>
+                            </div>
                         </div>
                         <div class="card-body p-4">
                             <div class="table-responsive">

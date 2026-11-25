@@ -68,6 +68,51 @@ class PaymentController extends Controller
     }
 
     /**
+     * Resolve a registration belonging to the authenticated user from a raw or encrypted ID
+     */
+    private function findUserRegistration($encRegistrationId): Registration
+    {
+        $registrationId = null;
+        if (is_numeric($encRegistrationId)) {
+            $registrationId = (int) $encRegistrationId;
+        } else {
+            try {
+                $decrypted = Crypt::decryptString($encRegistrationId);
+                $stepData = json_decode($decrypted, true);
+                if (isset($stepData['reg_id'])) {
+                    $registrationId = (int) $stepData['reg_id'];
+                }
+            } catch (\Exception $e) {
+                $registrationId = (int) $encRegistrationId;
+            }
+        }
+
+        return Registration::where('user_id', Auth::id())
+            ->where('id', $registrationId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Send registration back to Step 2 of the wizard so the delegate can edit selections before payment
+     */
+    public function backToWizard($encRegistrationId)
+    {
+        $registration = $this->findUserRegistration($encRegistrationId);
+
+        if (!in_array($registration->status, ['Draft', 'Pending Payment'])) {
+            return redirect()->route('payment.gateway', $registration->id)
+                ->with('error', 'Cannot edit registration after payment submission or approval.');
+        }
+
+        $registration->status = 'Draft';
+        $registration->step_completed = min((int) $registration->step_completed, 1);
+        $registration->save();
+
+        return redirect()->route('registration.wizard', ['step' => 2])
+            ->with('info', 'You can now update your registration category, Pre-Conference Workshop, or Accompanying Person(s) details.');
+    }
+
+    /**
      * Get configured SBIEPayClient instance
      */
     protected function getSbiClient(): SBIEPayClient
