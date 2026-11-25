@@ -68,6 +68,84 @@ class PaymentController extends Controller
     }
 
     /**
+     * Resolve a registration belonging to the authenticated user from a raw or encrypted ID
+     */
+    private function findUserRegistration($encRegistrationId): Registration
+    {
+        $registrationId = null;
+        if (is_numeric($encRegistrationId)) {
+            $registrationId = (int) $encRegistrationId;
+        } else {
+            try {
+                $decrypted = Crypt::decryptString($encRegistrationId);
+                $stepData = json_decode($decrypted, true);
+                if (isset($stepData['reg_id'])) {
+                    $registrationId = (int) $stepData['reg_id'];
+                }
+            } catch (\Exception $e) {
+                $registrationId = (int) $encRegistrationId;
+            }
+        }
+
+        return Registration::where('user_id', Auth::id())
+            ->where('id', $registrationId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Remove Pre-Conference CME / Workshop from a registration before payment
+     */
+    public function removeCme($encRegistrationId)
+    {
+        $registration = $this->findUserRegistration($encRegistrationId);
+
+        if (!in_array($registration->status, ['Draft', 'Pending Payment'])) {
+            return redirect()->route('payment.gateway', $registration->id)
+                ->with('error', 'Cannot remove Pre-Conference Workshop after payment submission or approval.');
+        }
+
+        if (!$registration->participate_in_cme) {
+            return redirect()->route('payment.gateway', $registration->id)
+                ->with('error', 'Pre-Conference Workshop is not selected for this registration.');
+        }
+
+        $registration->participate_in_cme = false;
+        $registration->pre_conference_topic = null;
+        $registration->cme_fee = 0;
+        $registration->updateAmounts();
+        $registration->save();
+
+        return redirect()->route('payment.gateway', $registration->id)
+            ->with('success', 'Pre-Conference Workshop removed. Your payable amount has been updated.');
+    }
+
+    /**
+     * Remove Accompanying Person(s) from a registration before payment
+     */
+    public function removeAccompanying($encRegistrationId)
+    {
+        $registration = $this->findUserRegistration($encRegistrationId);
+
+        if (!in_array($registration->status, ['Draft', 'Pending Payment'])) {
+            return redirect()->route('payment.gateway', $registration->id)
+                ->with('error', 'Cannot remove Accompanying Person(s) after payment submission or approval.');
+        }
+
+        if (($registration->accompanying_persons ?? 0) <= 0) {
+            return redirect()->route('payment.gateway', $registration->id)
+                ->with('error', 'No Accompanying Person(s) added for this registration.');
+        }
+
+        $registration->accompanying_persons = 0;
+        $registration->accompanying_fee = 0;
+        $registration->updateAmounts();
+        $registration->save();
+
+        return redirect()->route('payment.gateway', $registration->id)
+            ->with('success', 'Accompanying Person(s) removed. Your payable amount has been updated.');
+    }
+
+    /**
      * Get configured SBIEPayClient instance
      */
     protected function getSbiClient(): SBIEPayClient

@@ -580,7 +580,17 @@
                                                             <div class="text-muted small">Specialized training workshop</div>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center">Optional Add-on</td>
+                                                    <td class="text-center">
+                                                        <div>Optional Add-on</div>
+                                                        @if (in_array($registration->status, ['Draft', 'Pending Payment']))
+                                                            <form method="POST" action="{{ route('payment.remove-cme', $registration->id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove Pre-Conference Workshop from your registration?');">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-0.5 mt-1" style="font-size: 0.75rem;">
+                                                                    <i class="fas fa-times me-1"></i>Remove
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </td>
                                                     <td class="text-end">₹{{ number_format($cmeBase, 2) }}</td>
                                                 </tr>
                                             @endif
@@ -590,7 +600,17 @@
                                                         <strong>Accompanying Person(s)</strong>
                                                         <div class="text-muted small">{{ $registration->accompanying_persons }} person(s) @ ₹5,000 each</div>
                                                     </td>
-                                                    <td class="text-center">{{ $registration->accompanying_persons }} × ₹5,000</td>
+                                                    <td class="text-center">
+                                                        <div>{{ $registration->accompanying_persons }} × ₹5,000</div>
+                                                        @if (in_array($registration->status, ['Draft', 'Pending Payment']))
+                                                            <form method="POST" action="{{ route('payment.remove-accompanying', $registration->id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to remove Accompanying Person(s) from your registration?');">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-0.5 mt-1" style="font-size: 0.75rem;">
+                                                                    <i class="fas fa-times me-1"></i>Remove
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </td>
                                                     <td class="text-end">₹{{ number_format($accBase, 2) }}</td>
                                                 </tr>
                                             @endif

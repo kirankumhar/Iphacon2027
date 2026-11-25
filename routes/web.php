@@ -110,6 +110,12 @@ Route::middleware(['auth', 'verified', 'user.active'])->group(function () {
     Route::post('payment/process/{registration}', [App\Http\Controllers\PaymentController::class, 'processPayment'])
         ->name('payment.process');
 
+    Route::post('payment/remove-cme/{registration}', [App\Http\Controllers\PaymentController::class, 'removeCme'])
+        ->name('payment.remove-cme');
+
+    Route::post('payment/remove-accompanying/{registration}', [App\Http\Controllers\PaymentController::class, 'removeAccompanying'])
+        ->name('payment.remove-accompanying');
+
     Route::get('payment/success/{registration}', [App\Http\Controllers\PaymentController::class, 'success'])
         ->name('payment.success');
 
